@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <VCProjectVersion>16.0</VCProjectVersion>
+    <ProjectGuid>{7FA9857C-6BE0-860D-14CD-6C1000E3020F}</ProjectGuid>
+    <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{9b738014-f644-419e-852b-1226584cb4c1}</ProjectGuid>
     <RootNamespace>Game</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -21,20 +21,17 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Label="Shared">
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -45,17 +42,28 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>..\bin\Debug-x86_64\Game\</OutDir>
+    <IntDir>..\bin-int\Debug-x86_64\Game\</IntDir>
+    <TargetName>Game</TargetName>
+    <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>..\bin\Release-x86_64\Game\</OutDir>
+    <IntDir>..\bin-int\Release-x86_64\Game\</IntDir>
+    <TargetName>Game</TargetName>
+    <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;_DEBUG;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor\imgui;vendor\imgui\.github;vendor\imgui\backends;vendor\imgui\bin;vendor\imgui\bin-int;vendor\imgui\docs;vendor\imgui\examples;vendor\imgui\ImGui;vendor\imgui\misc;vendor\imgui\.github\workflows;vendor\imgui\backends\vulkan;vendor\imgui\bin\Debug-x86_64;vendor\imgui\bin\Release-x86_64;vendor\imgui\bin\Debug-x86_64\ImGui;vendor\imgui\bin\Release-x86_64\ImGui;vendor\imgui\bin-int\Debug-x86_64;vendor\imgui\bin-int\Release-x86_64;vendor\imgui\bin-int\Debug-x86_64\ImGui;vendor\imgui\bin-int\Debug-x86_64\ImGui\ImGui.tlog;vendor\imgui\bin-int\Release-x86_64\ImGui;vendor\imgui\bin-int\Release-x86_64\ImGui\ImGui.tlog;vendor\imgui\examples\example_allegro5;vendor\imgui\examples\example_android_opengl3;vendor\imgui\examples\example_apple_metal;vendor\imgui\examples\example_apple_opengl2;vendor\imgui\examples\example_emscripten_opengl3;vendor\imgui\examples\example_emscripten_wgpu;vendor\imgui\examples\example_glfw_metal;vendor\imgui\examples\example_glfw_opengl2;vendor\imgui\examples\example_glfw_opengl3;vendor\imgui\examples\example_glfw_vulkan;vendor\imgui\examples\example_glut_opengl2;vendor\imgui\examples\example_marmalade;vendor\imgui\examples\example_null;vendor\imgui\examples\example_sdl_directx11;vendor\imgui\examples\example_sdl_metal;vendor\imgui\examples\example_sdl_opengl2;vendor\imgui\examples\example_sdl_opengl3;vendor\imgui\examples\example_sdl_vulkan;vendor\imgui\examples\example_win32_directx10;vendor\imgui\examples\example_win32_directx11;vendor\imgui\examples\example_win32_directx12;vendor\imgui\examples\example_win32_directx9;vendor\imgui\examples\libs;vendor\imgui\examples\example_android_opengl3\android;vendor\imgui\examples\example_android_opengl3\android\app;vendor\imgui\examples\example_android_opengl3\android\app\src;vendor\imgui\examples\example_android_opengl3\android\app\src\main;vendor\imgui\examples\example_android_opengl3\android\app\src\main\java;vendor\imgui\examples\example_apple_metal\example_apple_metal.xcodeproj;vendor\imgui\examples\example_apple_metal\iOS;vendor\imgui\examples\example_apple_metal\macOS;vendor\imgui\examples\example_apple_opengl2\example_apple_opengl2.xcodeproj;vendor\imgui\examples\example_emscripten_wgpu\web;vendor\imgui\examples\example_marmalade\data;vendor\imgui\examples\libs\gl3w;vendor\imgui\examples\libs\glfw;vendor\imgui\examples\libs\usynergy;vendor\imgui\examples\libs\gl3w\GL;vendor\imgui\examples\libs\glfw\include;vendor\imgui\examples\libs\glfw\lib-vc2010-32;vendor\imgui\examples\libs\glfw\lib-vc2010-64;vendor\imgui\examples\libs\glfw\include\GLFW;vendor\imgui\misc\cpp;vendor\imgui\misc\debuggers;vendor\imgui\misc\fonts;vendor\imgui\misc\freetype;vendor\imgui\misc\single_file;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -64,33 +72,41 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;_NDEBUG;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>src;vendor\imgui;vendor\imgui\.github;vendor\imgui\backends;vendor\imgui\bin;vendor\imgui\bin-int;vendor\imgui\docs;vendor\imgui\examples;vendor\imgui\ImGui;vendor\imgui\misc;vendor\imgui\.github\workflows;vendor\imgui\backends\vulkan;vendor\imgui\bin\Debug-x86_64;vendor\imgui\bin\Release-x86_64;vendor\imgui\bin\Debug-x86_64\ImGui;vendor\imgui\bin\Release-x86_64\ImGui;vendor\imgui\bin-int\Debug-x86_64;vendor\imgui\bin-int\Release-x86_64;vendor\imgui\bin-int\Debug-x86_64\ImGui;vendor\imgui\bin-int\Debug-x86_64\ImGui\ImGui.tlog;vendor\imgui\bin-int\Release-x86_64\ImGui;vendor\imgui\bin-int\Release-x86_64\ImGui\ImGui.tlog;vendor\imgui\examples\example_allegro5;vendor\imgui\examples\example_android_opengl3;vendor\imgui\examples\example_apple_metal;vendor\imgui\examples\example_apple_opengl2;vendor\imgui\examples\example_emscripten_opengl3;vendor\imgui\examples\example_emscripten_wgpu;vendor\imgui\examples\example_glfw_metal;vendor\imgui\examples\example_glfw_opengl2;vendor\imgui\examples\example_glfw_opengl3;vendor\imgui\examples\example_glfw_vulkan;vendor\imgui\examples\example_glut_opengl2;vendor\imgui\examples\example_marmalade;vendor\imgui\examples\example_null;vendor\imgui\examples\example_sdl_directx11;vendor\imgui\examples\example_sdl_metal;vendor\imgui\examples\example_sdl_opengl2;vendor\imgui\examples\example_sdl_opengl3;vendor\imgui\examples\example_sdl_vulkan;vendor\imgui\examples\example_win32_directx10;vendor\imgui\examples\example_win32_directx11;vendor\imgui\examples\example_win32_directx12;vendor\imgui\examples\example_win32_directx9;vendor\imgui\examples\libs;vendor\imgui\examples\example_android_opengl3\android;vendor\imgui\examples\example_android_opengl3\android\app;vendor\imgui\examples\example_android_opengl3\android\app\src;vendor\imgui\examples\example_android_opengl3\android\app\src\main;vendor\imgui\examples\example_android_opengl3\android\app\src\main\java;vendor\imgui\examples\example_apple_metal\example_apple_metal.xcodeproj;vendor\imgui\examples\example_apple_metal\iOS;vendor\imgui\examples\example_apple_metal\macOS;vendor\imgui\examples\example_apple_opengl2\example_apple_opengl2.xcodeproj;vendor\imgui\examples\example_emscripten_wgpu\web;vendor\imgui\examples\example_marmalade\data;vendor\imgui\examples\libs\gl3w;vendor\imgui\examples\libs\glfw;vendor\imgui\examples\libs\usynergy;vendor\imgui\examples\libs\gl3w\GL;vendor\imgui\examples\libs\glfw\include;vendor\imgui\examples\libs\glfw\lib-vc2010-32;vendor\imgui\examples\libs\glfw\lib-vc2010-64;vendor\imgui\examples\libs\glfw\include\GLFW;vendor\imgui\misc\cpp;vendor\imgui\misc\debuggers;vendor\imgui\misc\fonts;vendor\imgui\misc\freetype;vendor\imgui\misc\single_file;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <ClCompile>
-      <LanguageStandard>stdcpp20</LanguageStandard>
-    </ClCompile>
-  </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source.cpp" />
+    <ClInclude Include="vendor\imgui\backends\imgui_impl_dx11.h" />
+    <ClInclude Include="vendor\imgui\backends\imgui_impl_win32.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Source.cpp" />
+    <ClCompile Include="vendor\imgui\backends\imgui_impl_dx11.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="vendor\imgui\backends\imgui_impl_win32.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="vendor\imgui\ImGui\ImGui.vcxproj">
+      <Project>{C0FF640D-2C14-8DBE-F595-301E616989EF}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

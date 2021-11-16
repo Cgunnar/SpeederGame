@@ -17,6 +17,10 @@
 mono_crash.*
 
 # Build results
+
+bin/
+bin-int/
+
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
@@ -75,7 +79,7 @@ StyleCopReport.xml
 *_h.h
 *.ilk
 *.meta
-*.obj
+#*.obj
 *.iobj
 *.pch
 *.pdb

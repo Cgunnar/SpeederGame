@@ -8,6 +8,7 @@ outputdir = "%{cfg.buildcfg}-%{cfg.architecture}"
 
 
 include "Game/vendor/imgui"
+include "Game/vendor/directxtk"
 
 project "Game"
     location "Game"
@@ -50,7 +51,8 @@ project "Game"
 
     links
     {
-        "ImGui"
+        "ImGui",
+        "DirectXTK"
     }
 
 

@@ -13,11 +13,6 @@ examples/*/Debug/*
 examples/*/Release/*
 examples/*/x64/*
 
-## Rimfrost dir
-bin/
-bin-int/
-ImGui/
-
 ## Visual Studio artifacts
 .vs
 ipch

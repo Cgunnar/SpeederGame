@@ -25,20 +25,20 @@ project "Game"
 
     files 
     {
-        "%{prj.name}/src/**.h",
-        "%{prj.name}/src/**.hpp",
-        "%{prj.name}/src/**.cpp",
+        "%{prj.name}/Src/**.h",
+        "%{prj.name}/Src/**.hpp",
+        "%{prj.name}/Src/**.cpp",
         "%{prj.name}/vendor/imgui/backends/imgui_impl_dx11.h",
         "%{prj.name}/vendor/imgui/backends/imgui_impl_dx11.cpp",
         "%{prj.name}/vendor/imgui/backends/imgui_impl_win32.h",
         "%{prj.name}/vendor/imgui/backends/imgui_impl_win32.cpp",
-        "%{prj.name}/src/**.hlsl"
+        "%{prj.name}/Src/**.hlsl"
     }
 
     includedirs
     {
-        "%{prj.name}/src",
-        "%{prj.name}/src/**",
+        "%{prj.name}/Src",
+        "%{prj.name}/Src/**",
         "%{prj.name}/vendor/**",
         --"external_headers/",
     }

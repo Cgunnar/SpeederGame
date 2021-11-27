@@ -2,6 +2,7 @@
 
 #include "Window.h"
 
+
 class Application
 {
 public:

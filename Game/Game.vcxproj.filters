@@ -15,17 +15,55 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Application.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\DX11.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\FrameTimer.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Geometry.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\LowLvlGfx.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Shader.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Window.h">
+      <Filter>Src</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\utilityTypes.h">
+      <Filter>Src</Filter>
+    </ClInclude>
     <ClInclude Include="vendor\imgui\backends\imgui_impl_dx11.h">
       <Filter>vendor\imgui\backends</Filter>
     </ClInclude>
     <ClInclude Include="vendor\imgui\backends\imgui_impl_win32.h">
       <Filter>vendor\imgui\backends</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application.h" />
-    <ClInclude Include="Src\Window.h" />
+    <ClInclude Include="Src\GraphicsResources.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Application.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\DX11.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\FrameTimer.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\LowlvlGfx.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Source.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Window.cpp">
       <Filter>Src</Filter>
     </ClCompile>
     <ClCompile Include="vendor\imgui\backends\imgui_impl_dx11.cpp">
@@ -34,7 +72,13 @@
     <ClCompile Include="vendor\imgui\backends\imgui_impl_win32.cpp">
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application.cpp" />
-    <ClCompile Include="Src\Window.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Src\PixelShader.hlsl">
+      <Filter>Src</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\VertexShader.hlsl">
+      <Filter>Src</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

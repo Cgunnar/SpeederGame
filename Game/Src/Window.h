@@ -5,6 +5,7 @@
 #endif
 
 #include <windows.h>
+#include "utilityTypes.h"
 class Window
 {
 public:
@@ -14,11 +15,14 @@ public:
 	Window& operator=(const Window& other) = delete;
 
 	bool Win32MsgPump();
+	HWND GetHwnd() const;
+	Resolution GetClientSize() const;
 private:
 	LRESULT CALLBACK HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	static Window* s_windowInstance;
 	const wchar_t* m_wndClassName{ L"wcName" };
 	HINSTANCE m_hInst;
+	HWND m_hWnd;
 };
 

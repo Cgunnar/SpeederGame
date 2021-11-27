@@ -20,11 +20,23 @@ Window::Window()
 	//wc.lpfnWndProc = HandleMsg;
 	RegisterClassEx(&wc);
 
-	HWND hWnd = CreateWindowEx(0, m_wndClassName, L"WindowText",
-		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+	RECT wr;
+	wr.left = 100;
+	wr.right = 1280 + wr.left;
+	wr.top = 100;
+	wr.bottom = 720 + wr.top;
+	AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
+
+	m_hWnd = CreateWindowEx(0, m_wndClassName, L"WindowText",
+		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, wr.right - wr.left, wr.bottom - wr.top,
 		nullptr, nullptr, m_hInst, nullptr); //last pointer is to some optional data of any kind that kan be usefull when getting messages
 
-	ShowWindow(hWnd, SW_SHOWDEFAULT);
+	ShowWindow(m_hWnd, SW_SHOWDEFAULT);
+
+
+	//graphics
+
+
 }
 
 Window::~Window()
@@ -48,6 +60,26 @@ bool Window::Win32MsgPump()
 	return true;
 }
 
+HWND Window::GetHwnd() const
+{
+	return m_hWnd;
+}
+
+Resolution Window::GetClientSize() const
+{
+	RECT winRect;
+	if (GetClientRect(m_hWnd, &winRect))
+	{
+		return { static_cast<uint32_t>(winRect.right - winRect.left), static_cast<uint32_t>(winRect.bottom - winRect.top) };
+	}
+	else
+	{
+		assert(false);
+		return Resolution();
+	}
+	
+}
+
 LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
@@ -64,6 +96,17 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		return 0;
 	}
+	case WM_SIZE:
+	{
+		UINT width = LOWORD(lParam);
+		UINT height = HIWORD(lParam);
+		std::cout << "WM_SIZE\twidth: " << width << " height: " << height << std::endl;
+		auto res = GetClientSize();
+		assert(width == res.width && height == res.height);
+
+		return 0;
+	}
+
 	}
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }

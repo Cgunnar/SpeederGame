@@ -1,15 +1,7 @@
 #pragma once
 #include "DX11.h"
-#include "Shader.h"
 #include "GraphicsResources.h"
 #include <memory>
-
-enum class Topology
-{
-	TRIANGLELIST = 0,
-};
-
-
 
 
 struct BufferDesc
@@ -46,15 +38,23 @@ public:
 
 	static void Init(HWND hwnd, Resolution res);
 	static void Destroy();
+	static Microsoft::WRL::ComPtr<IDXGISwapChain>& SwapChain();
+	static Microsoft::WRL::ComPtr<ID3D11Device>& Device();
+	static Microsoft::WRL::ComPtr<ID3D11DeviceContext>& Context();
 	static void SetViewPort(Resolution res);
 	static std::shared_ptr<Texture2D> CreateTexture2D(D3D11_TEXTURE2D_DESC desc, D3D11_SUBRESOURCE_DATA* data = nullptr, bool fixedRes = true);
-	static void SetTopology(Topology t);
 	static Shader CreateShader(const std::string& path, ShaderType type);
 	static VertexBuffer CreateVertexBuffer(const float* data, uint32_t size, uint32_t stride, uint32_t offset = 0);
 	static void Bind(Shader shader);
 	static void Bind(VertexBuffer vertexBuffer);
 	static ConstantBuffer CreateConstantBuffer(BufferDesc desc, void* data = nullptr);
 	static void Bind(ConstantBuffer cBuff, ShaderType shaderType, uint32_t bindSlot);
+	static void BindRTVs(std::vector<std::shared_ptr<Texture2D>> rtvs = {}, std::shared_ptr<Texture2D> dsv = nullptr);
+	static void BindRTVsAndUAVs(std::vector<std::shared_ptr<Texture2D>> rtvs,
+		std::vector<std::shared_ptr<Texture2D>> uavs, std::shared_ptr<Texture2D> dsv = nullptr);
+	static void BindUAV(std::shared_ptr<Texture2D> uav, ShaderType shaderType, uint32_t bindSlot);
+	static void BindSRV(std::shared_ptr<Texture2D> srv, ShaderType shaderType, uint32_t bindSlot);
+
 	static void UpdateBuffer(ConstantBuffer cBuff, void* data);
 	static void Draw(uint32_t vertexCount);
 	static void ClearRTV(float rgba[4], std::shared_ptr<Texture2D> rtv);

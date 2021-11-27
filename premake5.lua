@@ -28,11 +28,14 @@ project "Game"
         "%{prj.name}/Src/**.h",
         "%{prj.name}/Src/**.hpp",
         "%{prj.name}/Src/**.cpp",
+        "%{prj.name}/Src/**.hlsl",
+        "%{prj.name}/vendor/singleHeaders/**.h",
+        "%{prj.name}/vendor/singleHeaders/**.hpp",
         "%{prj.name}/vendor/imgui/backends/imgui_impl_dx11.h",
         "%{prj.name}/vendor/imgui/backends/imgui_impl_dx11.cpp",
         "%{prj.name}/vendor/imgui/backends/imgui_impl_win32.h",
         "%{prj.name}/vendor/imgui/backends/imgui_impl_win32.cpp",
-        "%{prj.name}/Src/**.hlsl"
+        
     }
 
     includedirs
@@ -40,7 +43,6 @@ project "Game"
         "%{prj.name}/Src",
         "%{prj.name}/Src/**",
         "%{prj.name}/vendor/**",
-        --"external_headers/",
     }
 
     defines

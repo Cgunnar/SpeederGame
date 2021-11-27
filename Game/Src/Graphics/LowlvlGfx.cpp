@@ -22,6 +22,21 @@ void LowLvlGfx::Destroy()
 	s_dx11 = nullptr;
 }
 
+Microsoft::WRL::ComPtr<IDXGISwapChain>& LowLvlGfx::SwapChain()
+{
+	return s_dx11->m_swapChain;
+}
+
+Microsoft::WRL::ComPtr<ID3D11Device>& LowLvlGfx::Device()
+{
+	return s_dx11->m_device;
+}
+
+Microsoft::WRL::ComPtr<ID3D11DeviceContext>& LowLvlGfx::Context()
+{
+	return s_dx11->m_context;
+}
+
 void LowLvlGfx::SetViewPort(Resolution res)
 {
 	D3D11_VIEWPORT vp;
@@ -44,18 +59,6 @@ std::shared_ptr<Texture2D> LowLvlGfx::CreateTexture2D(D3D11_TEXTURE2D_DESC desc,
 	assert(SUCCEEDED(hr));
 
 	return tex2d;
-}
-
-void LowLvlGfx::SetTopology(Topology t)
-{
-	switch (t)
-	{
-	case Topology::TRIANGLELIST:
-		s_dx11->m_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		break;
-	default:
-		break;
-	}
 }
 
 Shader LowLvlGfx::CreateShader(const std::string& path, ShaderType type)
@@ -169,6 +172,42 @@ void LowLvlGfx::Bind(ConstantBuffer cBuff, ShaderType shaderType, uint32_t bindS
 	case ShaderType::COMPUTESHADER: s_dx11->m_context->CSSetConstantBuffers(bindSlot, 1, cBuff.m_buffer.GetAddressOf()); break;
 	}
 }
+
+void LowLvlGfx::BindRTVs(std::vector<std::shared_ptr<Texture2D>> rtvs, std::shared_ptr<Texture2D> dsv)
+{
+	if (rtvs.empty() && !dsv)
+	{
+		s_dx11->m_context->OMSetRenderTargets(0, nullptr, nullptr);
+		return;
+	}
+
+	assert(rtvs.size() <= D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT);
+	auto dsvPtr = dsv ? dsv->dsv.Get() : nullptr;
+	ID3D11RenderTargetView* views[D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT];
+	for (int i = 0; i < rtvs.size(); i++)
+	{
+		views[i] = rtvs[i]->rtv.Get();
+	}
+	s_dx11->m_context->OMSetRenderTargets(rtvs.size(), views, dsvPtr);
+}
+
+void LowLvlGfx::BindRTVsAndUAVs(std::vector<std::shared_ptr<Texture2D>> rtvs, std::vector<std::shared_ptr<Texture2D>> uavs, std::shared_ptr<Texture2D> dsv)
+{
+	assert(rtvs.size() + uavs.size() <= D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT);
+	assert(false);
+}
+
+void LowLvlGfx::BindUAV(std::shared_ptr<Texture2D> uav, ShaderType shaderType, uint32_t bindSlot)
+{													
+	assert(false);
+}
+
+void LowLvlGfx::BindSRV(std::shared_ptr<Texture2D> srv, ShaderType shaderType, uint32_t bindSlot)
+{
+	assert(false);
+}
+
+
 
 void LowLvlGfx::UpdateBuffer(ConstantBuffer cbuff, void* data)
 {

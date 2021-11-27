@@ -4,6 +4,21 @@
     <Filter Include="Src">
       <UniqueIdentifier>{0D23880B-792C-887C-02A8-9E7C6EB0937C}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Core">
+      <UniqueIdentifier>{8537E246-7104-3D52-9A1D-2BFA864972E0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Graphics">
+      <UniqueIdentifier>{EDA9DC45-D90C-6CEA-8292-A4A06ED4376D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Math">
+      <UniqueIdentifier>{0678E746-F244-4252-1B5E-30FA078A77E0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Shaders">
+      <UniqueIdentifier>{E6043150-52BA-A945-DBAE-A31C4763A049}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Utility">
+      <UniqueIdentifier>{509EB806-BC53-31FC-4548-2BD3B1FC2700}</UniqueIdentifier>
+    </Filter>
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
     </Filter>
@@ -13,31 +28,61 @@
     <Filter Include="vendor\imgui\backends">
       <UniqueIdentifier>{27CEAEAF-933A-6AAA-5C2E-0208C8598C12}</UniqueIdentifier>
     </Filter>
+    <Filter Include="vendor\singleHeaders">
+      <UniqueIdentifier>{00806AAF-EC0E-F478-952D-0874819B041F}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Src\Application.h">
-      <Filter>Src</Filter>
+    <ClInclude Include="Src\Core\Application.h">
+      <Filter>Src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Src\DX11.h">
-      <Filter>Src</Filter>
+    <ClInclude Include="Src\Core\Window.h">
+      <Filter>Src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="Src\FrameTimer.h">
-      <Filter>Src</Filter>
+    <ClInclude Include="Src\Graphics\DX11.h">
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Geometry.h">
-      <Filter>Src</Filter>
+    <ClInclude Include="Src\Graphics\Geometry.h">
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Src\LowLvlGfx.h">
-      <Filter>Src</Filter>
+    <ClInclude Include="Src\Graphics\GraphicsResources.h">
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Shader.h">
-      <Filter>Src</Filter>
+    <ClInclude Include="Src\Graphics\LowLvlGfx.h">
+      <Filter>Src\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Window.h">
-      <Filter>Src</Filter>
+    <ClInclude Include="Src\Math\Matrix.hpp">
+      <Filter>Src\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Src\utilityTypes.h">
-      <Filter>Src</Filter>
+    <ClInclude Include="Src\Math\RfextendedMath.hpp">
+      <Filter>Src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\RimfrostMath.hpp">
+      <Filter>Src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\Transform.hpp">
+      <Filter>Src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Math\Vector.hpp">
+      <Filter>Src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utility\FileUtility.hpp">
+      <Filter>Src\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utility\FrameTimer.hpp">
+      <Filter>Src\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utility\RandGen.hpp">
+      <Filter>Src\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utility\ReadImg.hpp">
+      <Filter>Src\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utility\Timer.hpp">
+      <Filter>Src\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Utility\utilityTypes.h">
+      <Filter>Src\Utility</Filter>
     </ClInclude>
     <ClInclude Include="vendor\imgui\backends\imgui_impl_dx11.h">
       <Filter>vendor\imgui\backends</Filter>
@@ -45,26 +90,49 @@
     <ClInclude Include="vendor\imgui\backends\imgui_impl_win32.h">
       <Filter>vendor\imgui\backends</Filter>
     </ClInclude>
-    <ClInclude Include="Src\GraphicsResources.h" />
+    <ClInclude Include="vendor\singleHeaders\json.hpp">
+      <Filter>vendor\singleHeaders</Filter>
+    </ClInclude>
+    <ClInclude Include="vendor\singleHeaders\stb_image.h">
+      <Filter>vendor\singleHeaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Src\Application.cpp">
-      <Filter>Src</Filter>
+    <ClCompile Include="Src\Core\Application.cpp">
+      <Filter>Src\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Src\DX11.cpp">
-      <Filter>Src</Filter>
+    <ClCompile Include="Src\Core\Source.cpp">
+      <Filter>Src\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Src\FrameTimer.cpp">
-      <Filter>Src</Filter>
+    <ClCompile Include="Src\Core\Window.cpp">
+      <Filter>Src\Core</Filter>
     </ClCompile>
-    <ClCompile Include="Src\LowlvlGfx.cpp">
-      <Filter>Src</Filter>
+    <ClCompile Include="Src\Graphics\DX11.cpp">
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Source.cpp">
-      <Filter>Src</Filter>
+    <ClCompile Include="Src\Graphics\LowlvlGfx.cpp">
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Window.cpp">
-      <Filter>Src</Filter>
+    <ClCompile Include="Src\Math\Matrix.cpp">
+      <Filter>Src\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Math\RfextendedMath.cpp">
+      <Filter>Src\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Math\Transform.cpp">
+      <Filter>Src\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Math\Vector.cpp">
+      <Filter>Src\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Utility\FrameTimer.cpp">
+      <Filter>Src\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Utility\ReadImg.cpp">
+      <Filter>Src\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Utility\Timer.cpp">
+      <Filter>Src\Utility</Filter>
     </ClCompile>
     <ClCompile Include="vendor\imgui\backends\imgui_impl_dx11.cpp">
       <Filter>vendor\imgui\backends</Filter>
@@ -74,11 +142,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Src\PixelShader.hlsl">
-      <Filter>Src</Filter>
+    <FxCompile Include="Src\Shaders\PixelShader.hlsl">
+      <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\VertexShader.hlsl">
-      <Filter>Src</Filter>
+    <FxCompile Include="Src\Shaders\VertexShader.hlsl">
+      <Filter>Src\Shaders</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

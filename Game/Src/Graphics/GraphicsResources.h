@@ -8,6 +8,16 @@
 class LowLvlGfx;
 class DX11;
 
+class Shader
+{
+	friend LowLvlGfx;
+public:
+
+private:
+	Shader(uint32_t id) : m_id(id) {}
+	uint32_t m_id;
+};
+
 class VertexBuffer
 {
 public:
@@ -40,5 +50,4 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
 	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> uav;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> dsv;
-
 };

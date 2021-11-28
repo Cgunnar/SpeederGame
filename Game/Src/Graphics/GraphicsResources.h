@@ -32,6 +32,18 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
 };
 
+class IndexBuffer
+{
+public:
+	IndexBuffer() = default;
+	uint32_t GetIndexCount() const { return indexCount; }
+private:
+	friend LowLvlGfx;
+	uint32_t indexCount = 0;
+	uint32_t startIndexLocation = 0;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_indexBuffer;
+};
+
 
 class Texture2D
 {

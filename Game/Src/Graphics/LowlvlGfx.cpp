@@ -106,6 +106,19 @@ std::shared_ptr<Texture2D> LowLvlGfx::CreateTexture2D(D3D11_TEXTURE2D_DESC desc,
 	return tex2d;
 }
 
+void LowLvlGfx::CreateSRV(std::shared_ptr<Texture2D> tex2d, D3D11_SHADER_RESOURCE_VIEW_DESC* desc)
+{
+	HRESULT hr = s_dx11->m_device->CreateShaderResourceView(tex2d->buffer.Get(), desc, &tex2d->srv);
+	assert(SUCCEEDED(hr));
+
+	D3D11_TEXTURE2D_DESC desc2d;
+	tex2d->buffer->GetDesc(&desc2d);
+	if (desc2d.MiscFlags & D3D11_RESOURCE_MISC_GENERATE_MIPS)
+	{
+		s_dx11->m_context->GenerateMips(tex2d->srv.Get());
+	}
+}
+
 Shader LowLvlGfx::CreateShader(const std::string& path, ShaderType type)
 {
 	std::string shaderModel;
@@ -123,16 +136,16 @@ Shader LowLvlGfx::CreateShader(const std::string& path, ShaderType type)
 	return Shader(id);
 }
 
-VertexBuffer LowLvlGfx::CreateVertexBuffer(const float* data, uint32_t size, uint32_t stride, uint32_t offset)
+VertexBuffer LowLvlGfx::CreateVertexBuffer(const float* data, uint32_t byteWidth, uint32_t stride, uint32_t offset)
 {
 	VertexBuffer vs;
 	vs.vertexStride = stride;
 	vs.vertexOffset = offset;
-	vs.vertexCount = size / stride;
+	vs.vertexCount = byteWidth / stride;
 	vs.vertexBuffer = ComPtr<ID3D11Buffer>();
 
 	D3D11_BUFFER_DESC desc{};
-	desc.ByteWidth = size;
+	desc.ByteWidth = byteWidth;
 	desc.Usage = D3D11_USAGE_DEFAULT;
 	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	desc.CPUAccessFlags = 0;
@@ -145,6 +158,27 @@ VertexBuffer LowLvlGfx::CreateVertexBuffer(const float* data, uint32_t size, uin
 	assert(SUCCEEDED(hr));
 
 	return vs;
+}
+IndexBuffer LowLvlGfx::CreateIndexBuffer(const uint32_t* data, uint32_t indexCount, uint32_t offset)
+{
+	D3D11_BUFFER_DESC indexDesc;
+	indexDesc.ByteWidth = indexCount * sizeof(uint32_t);
+	indexDesc.MiscFlags = 0;
+	indexDesc.StructureByteStride = 0;
+	indexDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	indexDesc.CPUAccessFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA subres;
+	subres.pSysMem = data;
+
+	IndexBuffer ib;
+	ib.startIndexLocation = 0;
+	ib.indexCount = indexCount;
+	HRESULT hr = s_dx11->m_device->CreateBuffer(&indexDesc, &subres, &ib.m_indexBuffer);
+	assert(SUCCEEDED(hr));
+
+	return ib;
 }
 void LowLvlGfx::Bind(Shader shader)
 {
@@ -163,9 +197,14 @@ void LowLvlGfx::Bind(Shader shader)
 	}
 }
 
-void LowLvlGfx::Bind(VertexBuffer vertexBuffer)
+void LowLvlGfx::Bind(const VertexBuffer& vertexBuffer)
 {
 	s_dx11->m_context->IASetVertexBuffers(0, 1, vertexBuffer.vertexBuffer.GetAddressOf(), &vertexBuffer.vertexStride, &vertexBuffer.vertexOffset);
+}
+
+void LowLvlGfx::Bind(const IndexBuffer& indexBuffer)
+{
+	s_dx11->m_context->IASetIndexBuffer(indexBuffer.m_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 }
 
 ConstantBuffer LowLvlGfx::CreateConstantBuffer(BufferDesc desc, void* data)
@@ -233,7 +272,7 @@ void LowLvlGfx::BindRTVs(std::vector<std::shared_ptr<Texture2D>> rtvs, std::shar
 	{
 		views[i] = rtvs[i]->rtv.Get();
 	}
-	s_dx11->m_context->OMSetRenderTargets(rtvs.size(), views, dsvPtr);
+	s_dx11->m_context->OMSetRenderTargets((UINT)rtvs.size(), views, dsvPtr);
 }
 
 void LowLvlGfx::BindRTVsAndUAVs(std::vector<std::shared_ptr<Texture2D>> rtvs, std::vector<std::shared_ptr<Texture2D>> uavs, std::shared_ptr<Texture2D> dsv)
@@ -264,8 +303,12 @@ void LowLvlGfx::UpdateBuffer(ConstantBuffer cbuff, void* data)
 
 void LowLvlGfx::Draw(uint32_t vertexCount)
 {
-	s_dx11->m_context->OMSetRenderTargets(1, GetBackBuffer()->rtv.GetAddressOf(), GetDepthBuffer()->dsv.Get());
 	s_dx11->m_context->Draw(vertexCount, 0);
+}
+
+void LowLvlGfx::DrawIndexed(uint32_t indexCount, uint32_t startIndexLocation, int32_t baseVertexLocation)
+{
+	s_dx11->m_context->DrawIndexed(indexCount, startIndexLocation, baseVertexLocation);
 }
 
 void LowLvlGfx::ClearRTV(float rgba[4], std::shared_ptr<Texture2D> rtv)

@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <functional>
 
+#include "LowLvlGfx.h"
+
 Window* Window::s_windowInstance = nullptr;
 
 Window::Window()
@@ -96,6 +98,17 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		return 0;
 	}
+	case WM_KEYDOWN:
+	{
+		if (wParam == VK_F11 && LowLvlGfx::IsValid())
+		{
+			if (LowLvlGfx::IsFullScreen())
+				LowLvlGfx::LeaveFullScreen();
+			else
+				LowLvlGfx::EnterFullScreen();
+		}
+		return 0;
+	}
 	case WM_SIZE:
 	{
 		UINT width = LOWORD(lParam);
@@ -103,6 +116,8 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		std::cout << "WM_SIZE\twidth: " << width << " height: " << height << std::endl;
 		auto res = GetClientSize();
 		assert(width == res.width && height == res.height);
+
+		LowLvlGfx::OnResize(res);
 
 		return 0;
 	}

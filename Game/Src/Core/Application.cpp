@@ -77,6 +77,9 @@ void Application::Run()
 		{
 			break;
 		}
+
+		
+
 		LowLvlGfx::ClearRTV(0.2f, 0.2f, 0.2f, 0.0f, LowLvlGfx::GetBackBuffer());
 		LowLvlGfx::ClearDSV(LowLvlGfx::GetDepthBuffer());
 		LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }, LowLvlGfx::GetDepthBuffer());

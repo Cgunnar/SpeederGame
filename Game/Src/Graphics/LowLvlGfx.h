@@ -30,6 +30,9 @@ public:
 
 class LowLvlGfx
 {
+
+	// I think the syntax for calling static functions look nice, deal with it.
+
 public:
 	LowLvlGfx() = delete;
 	LowLvlGfx(const LowLvlGfx& other) = delete;
@@ -38,6 +41,11 @@ public:
 
 	static void Init(HWND hwnd, Resolution res);
 	static void Destroy();
+	static void OnResize(Resolution res);
+	static bool IsValid();
+	static void EnterFullScreen();
+	static void LeaveFullScreen();
+	static bool IsFullScreen();
 	static Microsoft::WRL::ComPtr<IDXGISwapChain>& SwapChain();
 	static Microsoft::WRL::ComPtr<ID3D11Device>& Device();
 	static Microsoft::WRL::ComPtr<ID3D11DeviceContext>& Context();

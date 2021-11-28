@@ -12,9 +12,11 @@
 #include <variant>
 #include <memory>
 
-
 #include "utilityTypes.h"
 #include "GraphicsResources.h"
+
+#define D3D11_DEBUG
+
 class LowLvlGfx;
 
 enum class ShaderType
@@ -38,30 +40,8 @@ inline ShaderType operator |(ShaderType l, ShaderType r)
 
 class DX11
 {
-public:
-
-private:
 	friend LowLvlGfx;
-	DX11() = delete;
-	DX11(const DX11& other) = delete;
-	DX11& operator=(const DX11& other) = delete;
 
-	void CreateDeviceAndSwapChain(HWND hwnd, Resolution res);
-	static Microsoft::WRL::ComPtr<ID3DBlob> CompileShader(const std::string& path, const std::string& shaderModel, const std::string& entryPoint);
-	
-	DX11(HWND hwnd, Resolution res);
-	~DX11();
-
-	Microsoft::WRL::ComPtr<IDXGISwapChain> m_swapChain;
-	Microsoft::WRL::ComPtr<ID3D11Device> m_device;
-	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_context;
-	
-
-	std::shared_ptr<Texture2D> m_backBuffer;
-	std::shared_ptr<Texture2D> m_zBuffer;
-	/*Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_backBufferView;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> m_dsv;*/
-	
 	struct ShaderDX
 	{
 		ShaderType type = ShaderType::NONE;
@@ -76,13 +56,43 @@ private:
 			Microsoft::WRL::ComPtr<ID3D11ComputeShader>> shaderVariant;
 	};
 
+	DX11() = delete;
+	DX11(HWND hwnd, Resolution res);
+	~DX11();
+	void SetViewPort(Resolution res);
+	DX11(const DX11& other) = delete;
+	DX11& operator=(const DX11& other) = delete;
 
+	void CreateDeviceAndSwapChain(HWND hwnd, Resolution res);
+	void CreateRTVandDSV();
+	static Microsoft::WRL::ComPtr<ID3DBlob> CompileShader(const std::string& path, const std::string& shaderModel, const std::string& entryPoint);
+	
+#ifdef D3D11_DEBUG
+	ID3D11Debug* m_debug = nullptr;
+#endif // D3D11_DEBUG
+
+
+	Microsoft::WRL::ComPtr<IDXGISwapChain> m_swapChain;
+	Microsoft::WRL::ComPtr<ID3D11Device> m_device;
+	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_context;
+	
+	std::shared_ptr<Texture2D> m_backBuffer;
+	std::shared_ptr<Texture2D> m_zBuffer;
+	BOOL m_fullScreen = false;
+	Resolution m_nativeRes;
+
+	
 	std::vector<ShaderDX> m_shaders;
 	std::unordered_map<uint32_t, Microsoft::WRL::ComPtr<ID3D11InputLayout>> m_inputLayers;
 
+	std::vector<Texture2D> m_allTexture2Ds;
+
+	void OnResize(Resolution res);
+	void CheckMonitorRes();
 	uint32_t CreateShader(Microsoft::WRL::ComPtr<ID3DBlob> blob, ShaderType type);
 	void CreateInputLayout(uint32_t shaderID);
 
+	void ResizeTarget(Resolution res);
+	bool IsFullScreen();
+
 };
-
-

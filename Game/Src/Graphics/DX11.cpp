@@ -6,6 +6,8 @@
 
 #include <assert.h>
 #include <sstream>
+#include <iostream>
+#include <string>
 
 #pragma comment( lib, "d3d11.lib" )
 #pragma comment( lib, "d3dcompiler.lib" )
@@ -13,42 +15,145 @@
 using namespace Microsoft::WRL;
 
 
-
+extern "C" {
+	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+}
 
 
 DX11::DX11(HWND hwnd, Resolution res)
 {
 	CreateDeviceAndSwapChain(hwnd, res);
-
 	m_backBuffer = std::make_shared<Texture2D>();
 	m_zBuffer = std::make_shared<Texture2D>();
-	
-	HRESULT hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), &m_backBuffer->buffer);
-	assert(SUCCEEDED(hr));
+	CreateRTVandDSV();
+	CheckMonitorRes();
 
-	D3D11_RENDER_TARGET_VIEW_DESC desc = {};
-	desc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-	desc.Texture2D.MipSlice = 0;
-	hr = m_device->CreateRenderTargetView(m_backBuffer->buffer.Get(), &desc, &m_backBuffer->rtv);
-	assert(SUCCEEDED(hr));
-
-	D3D11_TEXTURE2D_DESC zbufferDesc;
-	m_backBuffer->buffer->GetDesc(&zbufferDesc);
-	//bufferDesc.Format = DXGI_FORMAT_R32_TYPELESS;
-	zbufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	zbufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	zbufferDesc.Usage = D3D11_USAGE_DEFAULT;
-
-	hr = m_device->CreateTexture2D(&zbufferDesc, nullptr, &m_zBuffer->buffer);
-	assert(SUCCEEDED(hr));
-
-
-	hr = m_device->CreateDepthStencilView(m_zBuffer->buffer.Get(), nullptr, &m_zBuffer->dsv);
-	assert(SUCCEEDED(hr));
 }
 DX11::~DX11()
 {
+	/*m_context->ClearState();
+	m_context->Flush();
+	m_backBuffer->rtv.Reset();
+	m_backBuffer->buffer.Reset();
+	m_zBuffer->dsv.Reset();
+	m_zBuffer->buffer.Reset();*/
+
+}
+
+void DX11::SetViewPort(Resolution res)
+{
+	D3D11_VIEWPORT vp;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	vp.Width = (float)res.width;
+	vp.Height = (float)res.height;
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+
+	m_context->RSSetViewports(1, &vp);
+}
+
+void DX11::OnResize(Resolution res)
+{
+
+	m_context->OMSetRenderTargets(0, nullptr, nullptr);
+
+	m_context->ClearState();
+	m_context->Flush();
+
+	if (m_backBuffer->rtv.Reset()) assert(false);
+	if (m_backBuffer->buffer.Reset()) assert(false);
+
+	if (m_zBuffer->dsv.Reset()) assert(false);
+	if (m_zBuffer->buffer.Reset()) assert(false);
+
+	HRESULT hr;
+#ifdef DEBUG
+	std::cout << "ResizeBuffers width: " << res.width << " height: " << res.height << std::endl;
+#endif // DEBUG
+
+	hr = m_swapChain->ResizeBuffers(0, res.width, res.height, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH);
+#ifdef D3D11_DEBUG
+	if (!SUCCEEDED(hr))
+	{
+		m_debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	}
+#endif // D3D11_DEBUG
+	assert(SUCCEEDED(hr));
+
+	CreateRTVandDSV();
+	SetViewPort(res);
+}
+
+void DX11::ResizeTarget(Resolution res)
+{
+	DXGI_MODE_DESC modeDesc = {};
+
+	DXGI_MODE_DESC prefModeDesc = {};
+
+	prefModeDesc.Width = res.width;
+	prefModeDesc.Height = res.height;
+	prefModeDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+	prefModeDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_PROGRESSIVE;
+
+	IDXGIOutput* outPut = nullptr;
+	HRESULT hr = m_swapChain->GetContainingOutput(&outPut);
+	assert(SUCCEEDED(hr));
+
+	hr = outPut->FindClosestMatchingMode(&prefModeDesc, &modeDesc, m_device.Get());
+	assert(SUCCEEDED(hr));
+
+#ifdef DEBUG
+	std::string debugOut = "FindClosestMatchingMode:\tResolution: " + std::to_string(modeDesc.Width) + "x" + std::to_string(modeDesc.Height) +
+		"\tRefreshRate: " + std::to_string((float)modeDesc.RefreshRate.Numerator / (float)modeDesc.RefreshRate.Denominator) + "\n";
+	std::cout << debugOut;
+#endif // DEBUG
+
+	hr = m_swapChain->ResizeTarget(&modeDesc);
+	assert(SUCCEEDED(hr));
+	outPut->Release();
+}
+
+void DX11::CheckMonitorRes()
+{
+	m_nativeRes = {};
+
+	IDXGIOutput* outPut = nullptr;
+	HRESULT hr = this->m_swapChain->GetContainingOutput(&outPut);
+	assert(SUCCEEDED(hr));
+
+
+	DXGI_FORMAT format = DXGI_FORMAT_B8G8R8A8_UNORM;
+
+	UINT numModes = 0;
+	hr = outPut->GetDisplayModeList(format, 0, &numModes, 0);
+	assert(SUCCEEDED(hr));
+	std::vector<DXGI_MODE_DESC> modeVec;
+	modeVec.resize(numModes);
+	//DXGI_MODE_DESC* modeList = new DXGI_MODE_DESC[numModes];
+	//hr = outPut->GetDisplayModeList(format, 0, &numModes, modeList);
+	hr = outPut->GetDisplayModeList(format, 0, &numModes, modeVec.data());
+	assert(SUCCEEDED(hr));
+
+	/*Logger log = Logger::getLogger();
+	log.setFile("modeList.txt");*/
+	for (UINT i = 0; i < numModes; i++)
+	{
+		//if (modeList[i].Width >= m_nativeWidth) m_nativeWidth = modeList[i].Width;
+		//if (modeList[i].Height >= m_nativeHeight) m_nativeHeight = modeList[i].Height;
+
+		if (modeVec[i].Width >= m_nativeRes.width) m_nativeRes.width = modeVec[i].Width;
+		if (modeVec[i].Height >= m_nativeRes.height) m_nativeRes.height = modeVec[i].Height;
+	}
+
+	//log.dumpLogs();
+	//delete[] modeList;
+	outPut->Release();
+
+#ifdef DEBUG
+	std::string debugOut = "Monitor resolution: " + std::to_string(m_nativeRes.width) + "x" + std::to_string(m_nativeRes.height) + "\n";
+	std::cout << debugOut;
+#endif // DEBUG
 
 }
 
@@ -96,7 +201,7 @@ uint32_t DX11::CreateShader(Microsoft::WRL::ComPtr<ID3DBlob> blob, ShaderType ty
 	hr = D3DReflect(blob->GetBufferPointer(), blob->GetBufferSize(),
 		IID_ID3D11ShaderReflection, &shader.reflection);
 	assert(SUCCEEDED(hr));
-	
+
 	uint32_t id = (uint32_t)m_shaders.size();
 	m_shaders.push_back(shader);
 
@@ -163,6 +268,13 @@ void DX11::CreateInputLayout(uint32_t shaderID)
 	assert(SUCCEEDED(hr));
 }
 
+bool DX11::IsFullScreen()
+{
+	HRESULT hr = this->m_swapChain.Get()->GetFullscreenState(&this->m_fullScreen, nullptr);
+	assert(SUCCEEDED(hr));
+	return (bool)this->m_fullScreen;
+}
+
 
 
 void  DX11::CreateDeviceAndSwapChain(HWND hwnd, Resolution res)
@@ -190,6 +302,12 @@ void  DX11::CreateDeviceAndSwapChain(HWND hwnd, Resolution res)
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
 	swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
+#ifdef D3D11_DEBUG
+	hr = this->m_device->QueryInterface(__uuidof(ID3D11Debug), (void**)&m_debug);
+	assert(SUCCEEDED(hr));
+#endif // D3D11_DEBUG
+
+
 
 	IDXGIDevice* pDXGIDevice = nullptr;
 	hr = m_device->QueryInterface(__uuidof(IDXGIDevice), (void**)&pDXGIDevice);
@@ -206,10 +324,41 @@ void  DX11::CreateDeviceAndSwapChain(HWND hwnd, Resolution res)
 	hr = pIDXGIFactory->CreateSwapChain(m_device.Get(), &swapChainDesc, &m_swapChain);
 	assert(SUCCEEDED(hr));
 
+	pIDXGIFactory->MakeWindowAssociation(hwnd, DXGI_MWA_NO_ALT_ENTER);
+
 	pIDXGIFactory->Release();
 	pDXGIAdapter->Release();
 	pDXGIDevice->Release();
 }
+
+void DX11::CreateRTVandDSV()
+{
+	HRESULT hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), &m_backBuffer->buffer);
+	assert(SUCCEEDED(hr));
+
+	D3D11_RENDER_TARGET_VIEW_DESC desc = {};
+	desc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	desc.Texture2D.MipSlice = 0;
+	hr = m_device->CreateRenderTargetView(m_backBuffer->buffer.Get(), &desc, &m_backBuffer->rtv);
+	assert(SUCCEEDED(hr));
+
+	D3D11_TEXTURE2D_DESC zbufferDesc;
+	m_backBuffer->buffer->GetDesc(&zbufferDesc);
+	//bufferDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+	zbufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	zbufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	zbufferDesc.Usage = D3D11_USAGE_DEFAULT;
+
+	hr = m_device->CreateTexture2D(&zbufferDesc, nullptr, &m_zBuffer->buffer);
+	assert(SUCCEEDED(hr));
+
+
+	hr = m_device->CreateDepthStencilView(m_zBuffer->buffer.Get(), nullptr, &m_zBuffer->dsv);
+	assert(SUCCEEDED(hr));
+}
+
+
 
 Microsoft::WRL::ComPtr<ID3DBlob> DX11::CompileShader(const std::string& path, const std::string& shaderModel, const std::string& entryPoint)
 {

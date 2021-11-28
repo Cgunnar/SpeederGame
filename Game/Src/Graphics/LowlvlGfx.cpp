@@ -1,13 +1,12 @@
 #include "LowLvlGfx.h"
 #include <assert.h>
+#include <iostream>
 
 using namespace Microsoft::WRL;
 
 DX11* LowLvlGfx::s_dx11 = nullptr;
 
-void LowLvlGfx::ResizeWindow(Resolution newRes)
-{
-}
+
 
 void LowLvlGfx::Init(HWND hwnd, Resolution res)
 {
@@ -18,8 +17,62 @@ void LowLvlGfx::Init(HWND hwnd, Resolution res)
 void LowLvlGfx::Destroy()
 {
 	assert(s_dx11);
+#ifdef D3D11_DEBUG
+	ID3D11Debug* debug = s_dx11->m_debug;
+#endif // D3D11_DEBUG
 	delete s_dx11;
 	s_dx11 = nullptr;
+
+
+#ifdef D3D11_DEBUG
+	//debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	debug->Release();
+#endif // DD3D11_DEBUGEBUG
+}
+
+bool LowLvlGfx::IsValid()
+{
+	return s_dx11 != nullptr;
+}
+
+void LowLvlGfx::OnResize(Resolution res)
+{
+	if (!s_dx11) return;
+	s_dx11->OnResize(res);
+}
+
+
+
+void LowLvlGfx::ResizeWindow(Resolution newRes)
+{
+	if (IsFullScreen()) LeaveFullScreen();
+	s_dx11->ResizeTarget(newRes);
+}
+
+void LowLvlGfx::EnterFullScreen()
+{
+	if (IsFullScreen()) return;
+#ifdef DEBUG
+	std::cout << "EnterFullScreen\n";
+#endif // DEBUG
+
+	s_dx11->ResizeTarget(s_dx11->m_nativeRes);
+	s_dx11->m_swapChain->SetFullscreenState(true, nullptr);
+}
+
+void LowLvlGfx::LeaveFullScreen()
+{
+	if (!IsFullScreen()) return;
+#ifdef DEBUG
+	std::cout << "LeaveFullScreen\n";
+#endif // DEBUG
+	s_dx11->m_swapChain->SetFullscreenState(false, nullptr);
+	s_dx11->ResizeTarget({ 1280, 720 });
+}
+
+bool LowLvlGfx::IsFullScreen()
+{
+	return s_dx11->IsFullScreen();
 }
 
 Microsoft::WRL::ComPtr<IDXGISwapChain>& LowLvlGfx::SwapChain()
@@ -39,15 +92,7 @@ Microsoft::WRL::ComPtr<ID3D11DeviceContext>& LowLvlGfx::Context()
 
 void LowLvlGfx::SetViewPort(Resolution res)
 {
-	D3D11_VIEWPORT vp;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	vp.Width = (float)res.width;
-	vp.Height = (float)res.height;
-	vp.MinDepth = 0.0f;
-	vp.MaxDepth = 1.0f;
-
-	s_dx11->m_context->RSSetViewports(1, &vp);
+	s_dx11->SetViewPort(res);
 }
 
 std::shared_ptr<Texture2D> LowLvlGfx::CreateTexture2D(D3D11_TEXTURE2D_DESC desc, D3D11_SUBRESOURCE_DATA* data, bool fixedRes)

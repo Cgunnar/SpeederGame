@@ -146,6 +146,7 @@
     <ClCompile Include="Src\Graphics\Model.cpp" />
     <ClCompile Include="Src\Graphics\RenderUnit.cpp" />
     <ClCompile Include="Src\Graphics\Material.cpp" />
+    <ClCompile Include="Src\Graphics\GraphicsResources.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\PixelShader.hlsl">
@@ -154,5 +155,6 @@
     <FxCompile Include="Src\Shaders\VertexShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Src\Shaders\PS_FlatTexture.hlsl" />
   </ItemGroup>
 </Project>

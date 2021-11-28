@@ -6,6 +6,7 @@
 #include "RimfrostMath.hpp"
 #include "FrameTimer.hpp"
 #include "ReadImg.hpp"
+#include <assert.h>
 
 
 struct alignas(16) VP
@@ -34,14 +35,32 @@ Application::~Application()
 	delete m_window;
 }
 
+void SetSubResDataMips(const void* dataPtr, D3D11_SUBRESOURCE_DATA*& subResMipArray, int mipNumber, int stride)
+{
+	assert(dataPtr);
+
+	subResMipArray = new D3D11_SUBRESOURCE_DATA[mipNumber];
+	int SysMemPitch = stride;
+
+	for (int i = 0; i < mipNumber; i++)
+	{
+		subResMipArray[i].pSysMem = dataPtr;
+		subResMipArray[i].SysMemPitch = SysMemPitch;
+		subResMipArray[i].SysMemSlicePitch = 0;
+		SysMemPitch >>= 1;
+	}
+}
+
 void Application::Run()
 {
 	LowLvlGfx::SetViewPort(m_window->GetClientSize());
 
 	Shader vertexShader = LowLvlGfx::CreateShader("Src/Shaders/VertexShader.hlsl", ShaderType::VERTEXSHADER);
-	Shader pixelShader = LowLvlGfx::CreateShader("Src/Shaders/PixelShader.hlsl", ShaderType::PIXELSHADER);
+	//Shader pixelShader = LowLvlGfx::CreateShader("Src/Shaders/PixelShader.hlsl", ShaderType::PIXELSHADER);
+	Shader pixelShader = LowLvlGfx::CreateShader("Src/Shaders/PS_FlatTexture.hlsl", ShaderType::PIXELSHADER);
 
 	Geometry::Quad_POS_NOR_UV quad2;
+
 	Quad::vertexBuffer = LowLvlGfx::CreateVertexBuffer(quad2.VertexData(), quad2.arraySize, quad2.vertexStride);
 	Quad::indexBuffer = LowLvlGfx::CreateIndexBuffer(quad2.IndexData(), quad2.indexCount);
 
@@ -49,15 +68,39 @@ void Application::Run()
 	ConstantBuffer vpCBuffer = LowLvlGfx::CreateConstantBuffer({ 2 * sizeof(rf::Matrix), BufferDesc::USAGE::DYNAMIC });
 	ConstantBuffer colorCB = LowLvlGfx::CreateConstantBuffer({ sizeof(rf::Vector4), BufferDesc::USAGE::DYNAMIC });
 
-	/*
-	MyImageStruct im;
-	readImage(&im, )
-	D3D11_TEXTURE2D_DESC desc;*/
 	
+	MyImageStruct im;
+	readImage(im, "Assets/Hej.png");
+	D3D11_TEXTURE2D_DESC desc;
+	desc.CPUAccessFlags = 0;
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	desc.Height = im.height;
+	desc.Width = im.width;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	desc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+	desc.ArraySize = 1;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+	desc.MipLevels = im.mipNumber;
 
+	D3D11_SUBRESOURCE_DATA* subResMipArray = nullptr;
+	SetSubResDataMips(im.imagePtr, subResMipArray, im.mipNumber, im.stride);
+	auto myTexture = LowLvlGfx::CreateTexture2D(desc, subResMipArray);
+	delete[] subResMipArray;
+
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	srvDesc.Format = desc.Format;
+	srvDesc.ViewDimension = D3D_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = -1;
+	LowLvlGfx::CreateSRV(myTexture, &srvDesc);
+
+	Sampler mySampler = LowLvlGfx::CreateSampler(standardSamplers::g_linear_wrap);
 
 	rf::Transform camera;
-	camera.setTranslation(0, 3, -10);
+	camera.setTranslation(0, 5, -7);
 	camera.setRotationDeg(15, 0, 0);
 
 	VP vp;
@@ -66,7 +109,7 @@ void Application::Run()
 
 	Quad myBox;
 	myBox.color = { 0.2f, 1.0f, 0.4f, 1.0f };
-	myBox.worldMatrix.setTranslation(0, 4, 0);
+	myBox.worldMatrix.setTranslation(0, 3, 0);
 
 
 	bool running = true;
@@ -96,6 +139,8 @@ void Application::Run()
 		LowLvlGfx::Bind(worldMatrixCBuffer, ShaderType::VERTEXSHADER, 0);
 		LowLvlGfx::UpdateBuffer(colorCB, &myBox.color);
 		LowLvlGfx::Bind(colorCB, ShaderType::PIXELSHADER, 0);
+		LowLvlGfx::BindSRV(myTexture, ShaderType::PIXELSHADER, 0);
+		LowLvlGfx::Bind(mySampler, ShaderType::PIXELSHADER, 0);
 
 		LowLvlGfx::DrawIndexed(Quad::indexBuffer.GetIndexCount(), 0, 0);
 		LowLvlGfx::Present();

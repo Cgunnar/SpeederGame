@@ -37,6 +37,9 @@ void readImage(MyImageStruct& pImageStruct, const std::string& fileName)
 		}
 
 	}
+
+	pImageStruct.mipNumber = 1 + static_cast<int>(floor(log2(std::max(pImageStruct.width, pImageStruct.height))));
+	pImageStruct.stride = pImageStruct.width * 4;
 	pImageStruct.imagePtr = (void*)img;
 }
 

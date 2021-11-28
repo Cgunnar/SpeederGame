@@ -180,7 +180,7 @@ IndexBuffer LowLvlGfx::CreateIndexBuffer(const uint32_t* data, uint32_t indexCou
 
 	return ib;
 }
-void LowLvlGfx::Bind(Shader shader)
+void LowLvlGfx::Bind(const Shader& shader)
 {
 	auto& s = s_dx11->m_shaders[shader.m_id];
 	switch (s.type)
@@ -194,6 +194,19 @@ void LowLvlGfx::Bind(Shader shader)
 	case ShaderType::GEOMETRYSHADER: s_dx11->m_context->GSSetShader(std::get<ComPtr<ID3D11GeometryShader>>(s.shaderVariant).Get(), nullptr, 0); break;
 	case ShaderType::PIXELSHADER: s_dx11->m_context->PSSetShader(std::get<ComPtr<ID3D11PixelShader>>(s.shaderVariant).Get(), nullptr, 0); break;
 	case ShaderType::COMPUTESHADER: s_dx11->m_context->CSSetShader(std::get<ComPtr<ID3D11ComputeShader>>(s.shaderVariant).Get(), nullptr, 0); break;
+	}
+}
+
+void LowLvlGfx::Bind(const Sampler& sampler, ShaderType shaderType, uint32_t bindSlot)
+{
+	switch (shaderType)
+	{
+	case ShaderType::VERTEXSHADER: s_dx11->m_context->VSSetSamplers(bindSlot, 1, sampler.m_sampleState.GetAddressOf()); break;
+	case ShaderType::HULLSHADER: s_dx11->m_context->HSSetSamplers(bindSlot, 1, sampler.m_sampleState.GetAddressOf()); break;
+	case ShaderType::DOMAINSHADER: s_dx11->m_context->DSSetSamplers(bindSlot, 1, sampler.m_sampleState.GetAddressOf()); break;
+	case ShaderType::GEOMETRYSHADER: s_dx11->m_context->GSSetSamplers(bindSlot, 1, sampler.m_sampleState.GetAddressOf()); break;
+	case ShaderType::PIXELSHADER: s_dx11->m_context->PSSetSamplers(bindSlot, 1, sampler.m_sampleState.GetAddressOf()); break;
+	case ShaderType::COMPUTESHADER: s_dx11->m_context->CSSetSamplers(bindSlot, 1, sampler.m_sampleState.GetAddressOf()); break;
 	}
 }
 
@@ -244,6 +257,14 @@ ConstantBuffer LowLvlGfx::CreateConstantBuffer(BufferDesc desc, void* data)
 	return buffer;
 }
 
+Sampler LowLvlGfx::CreateSampler(D3D11_SAMPLER_DESC desc)
+{
+	Sampler s;
+	HRESULT hr = s_dx11->m_device->CreateSamplerState(&desc, &s.m_sampleState);
+	assert(SUCCEEDED(hr));
+	return s;
+}
+
 void LowLvlGfx::Bind(ConstantBuffer cBuff, ShaderType shaderType, uint32_t bindSlot)
 {
 	switch (shaderType)
@@ -288,7 +309,15 @@ void LowLvlGfx::BindUAV(std::shared_ptr<Texture2D> uav, ShaderType shaderType, u
 
 void LowLvlGfx::BindSRV(std::shared_ptr<Texture2D> srv, ShaderType shaderType, uint32_t bindSlot)
 {
-	assert(false);
+	switch (shaderType)
+	{
+	case ShaderType::VERTEXSHADER: s_dx11->m_context->VSSetShaderResources(bindSlot, 1, srv->srv.GetAddressOf()); break;
+	case ShaderType::HULLSHADER: s_dx11->m_context->HSSetShaderResources(bindSlot, 1, srv->srv.GetAddressOf()); break;
+	case ShaderType::DOMAINSHADER: s_dx11->m_context->DSSetShaderResources(bindSlot, 1, srv->srv.GetAddressOf()); break;
+	case ShaderType::GEOMETRYSHADER: s_dx11->m_context->GSSetShaderResources(bindSlot, 1, srv->srv.GetAddressOf()); break;
+	case ShaderType::PIXELSHADER: s_dx11->m_context->PSSetShaderResources(bindSlot, 1, srv->srv.GetAddressOf()); break;
+	case ShaderType::COMPUTESHADER: s_dx11->m_context->CSSetShaderResources(bindSlot, 1, srv->srv.GetAddressOf()); break;
+	}
 }
 
 

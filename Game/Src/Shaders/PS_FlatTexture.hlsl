@@ -1,8 +1,7 @@
 
-cbuffer ColorCB : register(b0)
-{
-    float3 color;
-};
+
+Texture2D colorTexture : register(t0);
+SamplerState mySampler : register(s0);
 
 struct vs_out
 {
@@ -14,6 +13,6 @@ struct vs_out
 
 float4 main(vs_out input) : SV_TARGET
 {
-    
-	return float4(color, 1.0f);
+    float3 texColor = colorTexture.Sample(mySampler, input.textureUV).xyz;
+    return float4(texColor, 1.0f);
 }

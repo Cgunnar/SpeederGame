@@ -117,6 +117,7 @@
     <ClInclude Include="vendor\singleHeaders\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Graphics\GraphicsResources.cpp" />
     <ClCompile Include="Src\Graphics\Material.cpp" />
     <ClCompile Include="Src\Graphics\Model.cpp" />
     <ClCompile Include="Src\Graphics\RenderUnit.cpp" />
@@ -142,6 +143,10 @@
   <ItemGroup>
     <FxCompile Include="Src\Shaders\PixelShader.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\PS_FlatTexture.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Src\Shaders\VertexShader.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>

@@ -1,3 +1,4 @@
+#define NOMINMAX
 #include "Window.h"
 
 #include <iostream>

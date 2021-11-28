@@ -2,11 +2,18 @@
 
 #include <wrl.h>
 #include <d3d11.h>
+#define NOMINMAX
 #include <windows.h>
 #include <cstdint>
 
 class LowLvlGfx;
 class DX11;
+
+
+namespace standardSamplers
+{
+	extern const D3D11_SAMPLER_DESC g_linear_wrap;
+}
 
 class Shader
 {
@@ -62,4 +69,11 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
 	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> uav;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> dsv;
+};
+
+
+class Sampler
+{
+	friend LowLvlGfx;
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_sampleState;
 };

@@ -1,12 +1,12 @@
+#include "pch.hpp"
+
 #include "Application.h"
 #include "LowLvlGfx.h"
-#include <iostream>
 #include "Geometry.h"
 
 #include "RimfrostMath.hpp"
 #include "FrameTimer.hpp"
 #include "ReadImg.hpp"
-#include <assert.h>
 
 
 struct alignas(16) VP
@@ -137,8 +137,8 @@ void Application::Run()
 		LowLvlGfx::Bind(vpCBuffer, ShaderType::VERTEXSHADER, 1);
 		LowLvlGfx::UpdateBuffer(worldMatrixCBuffer, &myBox.worldMatrix);
 		LowLvlGfx::Bind(worldMatrixCBuffer, ShaderType::VERTEXSHADER, 0);
-		LowLvlGfx::UpdateBuffer(colorCB, &myBox.color);
-		LowLvlGfx::Bind(colorCB, ShaderType::PIXELSHADER, 0);
+		/*LowLvlGfx::UpdateBuffer(colorCB, &myBox.color);
+		LowLvlGfx::Bind(colorCB, ShaderType::PIXELSHADER, 0);*/
 		LowLvlGfx::BindSRV(myTexture, ShaderType::PIXELSHADER, 0);
 		LowLvlGfx::Bind(mySampler, ShaderType::PIXELSHADER, 0);
 

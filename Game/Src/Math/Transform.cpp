@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "Transform.hpp"
 #include <DirectXMath.h>
 

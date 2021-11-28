@@ -15,7 +15,7 @@
 #include "utilityTypes.h"
 #include "GraphicsResources.h"
 
-#define D3D11_DEBUG
+//#define D3D11_DEBUG
 
 class LowLvlGfx;
 

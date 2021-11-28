@@ -1,6 +1,5 @@
-
+#include "pch.hpp"
 #include "FrameTimer.hpp"
-#include <iostream>
 
 
 using namespace std;

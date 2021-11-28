@@ -1,4 +1,4 @@
-
+#include "pch.hpp"
 #include "Vector.hpp"
 #include <cmath>
 #include <assert.h>

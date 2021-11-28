@@ -15,7 +15,7 @@ namespace Rimfrost
 				float _20, float _21, float _22, float _23, 
 				float _30, float _31, float _32, float _33);
 		Matrix(Vector4 columnVectors[4]);
-		Matrix(float FovY, float aspectRatio, float near, float far);
+		Matrix(float FovY, float aspectRatio, float nearPlane, float farPlane);
 		~Matrix() = default;
 
 

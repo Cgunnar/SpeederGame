@@ -1,8 +1,4 @@
-#ifndef UNICODE
-#define UNICODE
-#endif
-
-#include <iostream>
+#include "pch.hpp"
 #include "Application.h"
 
 int main()

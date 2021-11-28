@@ -20,8 +20,8 @@ project "Game"
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
-    --pchheader "rfpch.hpp"
-    --pchsource "Rimfrost/src/rfpch.cpp"
+    pchheader "pch.hpp"
+    pchsource "%{prj.name}/Src/pch.cpp"
 
     files 
     {

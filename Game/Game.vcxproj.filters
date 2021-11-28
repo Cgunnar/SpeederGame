@@ -51,6 +51,15 @@
     <ClInclude Include="Src\Graphics\LowLvlGfx.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Graphics\Material.h">
+      <Filter>Src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\Model.h">
+      <Filter>Src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\RenderUnit.h">
+      <Filter>Src\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Math\Matrix.hpp">
       <Filter>Src\Math</Filter>
     </ClInclude>
@@ -84,6 +93,9 @@
     <ClInclude Include="Src\Utility\utilityTypes.h">
       <Filter>Src\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Src\pch.hpp">
+      <Filter>Src</Filter>
+    </ClInclude>
     <ClInclude Include="vendor\imgui\backends\imgui_impl_dx11.h">
       <Filter>vendor\imgui\backends</Filter>
     </ClInclude>
@@ -96,9 +108,6 @@
     <ClInclude Include="vendor\singleHeaders\stb_image.h">
       <Filter>vendor\singleHeaders</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Graphics\Model.h" />
-    <ClInclude Include="Src\Graphics\RenderUnit.h" />
-    <ClInclude Include="Src\Graphics\Material.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">
@@ -113,7 +122,19 @@
     <ClCompile Include="Src\Graphics\DX11.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Graphics\GraphicsResources.cpp">
+      <Filter>Src\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Graphics\LowlvlGfx.cpp">
+      <Filter>Src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\Material.cpp">
+      <Filter>Src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\Model.cpp">
+      <Filter>Src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\RenderUnit.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Math\Matrix.cpp">
@@ -137,24 +158,25 @@
     <ClCompile Include="Src\Utility\Timer.cpp">
       <Filter>Src\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="Src\pch.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
     <ClCompile Include="vendor\imgui\backends\imgui_impl_dx11.cpp">
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
     <ClCompile Include="vendor\imgui\backends\imgui_impl_win32.cpp">
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Graphics\Model.cpp" />
-    <ClCompile Include="Src\Graphics\RenderUnit.cpp" />
-    <ClCompile Include="Src\Graphics\Material.cpp" />
-    <ClCompile Include="Src\Graphics\GraphicsResources.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Src\Shaders\PS_FlatTexture.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
     <FxCompile Include="Src\Shaders\PixelShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\VertexShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\PS_FlatTexture.hlsl" />
   </ItemGroup>
 </Project>

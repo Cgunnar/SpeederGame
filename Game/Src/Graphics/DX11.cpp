@@ -1,23 +1,24 @@
+#include "pch.hpp"
 #include "DX11.h"
+
 #include <dxgi1_6.h>
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <d3d11shader.h>
 
-#include <assert.h>
-#include <sstream>
-#include <iostream>
-#include <string>
-
 #pragma comment( lib, "d3d11.lib" )
 #pragma comment( lib, "d3dcompiler.lib" )
 #pragma comment(lib, "dxguid.lib")
-using namespace Microsoft::WRL;
 
 
 extern "C" {
 	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
 }
+
+
+using namespace Microsoft::WRL;
+
+
 
 
 DX11::DX11(HWND hwnd, Resolution res)
@@ -31,13 +32,8 @@ DX11::DX11(HWND hwnd, Resolution res)
 }
 DX11::~DX11()
 {
-	/*m_context->ClearState();
+	m_context->ClearState();
 	m_context->Flush();
-	m_backBuffer->rtv.Reset();
-	m_backBuffer->buffer.Reset();
-	m_zBuffer->dsv.Reset();
-	m_zBuffer->buffer.Reset();*/
-
 }
 
 void DX11::SetViewPort(Resolution res)

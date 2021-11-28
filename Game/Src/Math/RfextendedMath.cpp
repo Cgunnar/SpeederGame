@@ -1,4 +1,4 @@
-
+#include "pch.hpp"
 #include "RfextendedMath.hpp"
 #include <DirectXMath.h>
 

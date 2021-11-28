@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "GraphicsResources.h"
 
 namespace standardSamplers

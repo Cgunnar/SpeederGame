@@ -1,12 +1,9 @@
+#include "pch.hpp"
 #include "LowLvlGfx.h"
-#include <assert.h>
-#include <iostream>
 
 using namespace Microsoft::WRL;
 
 DX11* LowLvlGfx::s_dx11 = nullptr;
-
-
 
 void LowLvlGfx::Init(HWND hwnd, Resolution res)
 {

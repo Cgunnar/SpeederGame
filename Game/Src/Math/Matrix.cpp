@@ -1,7 +1,6 @@
-
+#include "pch.hpp"
 #include "Matrix.hpp"
 #include "Transform.hpp"
-#include <cstring>
 #include <DirectXMath.h>
 using namespace DirectX;
 
@@ -34,10 +33,10 @@ namespace Rimfrost
 		columns[3] = columnVectors[3];
 	}
 
-	Matrix::Matrix(float FovY, float aspectRatio, float near, float far)
+	Matrix::Matrix(float FovY, float aspectRatio, float nearPlane, float farPlane)
 	{
 		DirectX::XMFLOAT4X4 perspectiveMatrix;
-		DirectX::XMStoreFloat4x4(&perspectiveMatrix, DirectX::XMMatrixPerspectiveFovLH(FovY, aspectRatio, near, far));
+		DirectX::XMStoreFloat4x4(&perspectiveMatrix, DirectX::XMMatrixPerspectiveFovLH(FovY, aspectRatio, nearPlane, farPlane));
 		*this = Matrix((float*)&perspectiveMatrix);
 	}
 

@@ -1,10 +1,6 @@
-#define NOMINMAX
+#include "pch.hpp"
+
 #include "Window.h"
-
-#include <iostream>
-#include <assert.h>
-#include <functional>
-
 #include "LowLvlGfx.h"
 
 Window* Window::s_windowInstance = nullptr;

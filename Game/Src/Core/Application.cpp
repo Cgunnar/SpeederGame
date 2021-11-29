@@ -7,7 +7,10 @@
 #include "RimfrostMath.hpp"
 #include "FrameTimer.hpp"
 #include "ReadImg.hpp"
+#include "rfEntity.hpp"
+#include "StandardComponents.h"
 
+using namespace rfe;
 
 struct alignas(16) VP
 {
@@ -53,6 +56,9 @@ void SetSubResDataMips(const void* dataPtr, D3D11_SUBRESOURCE_DATA*& subResMipAr
 
 void Application::Run()
 {
+	Entity myEntity = EntityReg::createEntity();
+	myEntity.addComponent(TransformComp());
+
 	LowLvlGfx::SetViewPort(m_window->GetClientSize());
 
 	Shader vertexShader = LowLvlGfx::CreateShader("Src/Shaders/VertexShader.hlsl", ShaderType::VERTEXSHADER);
@@ -123,7 +129,7 @@ void Application::Run()
 		}
 
 		
-		LowLvlGfx::ClearRTV(0.2f, 0.2f, 0.2f, 0.0f, LowLvlGfx::GetBackBuffer());
+		LowLvlGfx::ClearRTV(0.1f, 0.2f, 0.4f, 0.0f, LowLvlGfx::GetBackBuffer());
 		LowLvlGfx::ClearDSV(LowLvlGfx::GetDepthBuffer());
 
 		LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }, LowLvlGfx::GetDepthBuffer());

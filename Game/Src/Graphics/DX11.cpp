@@ -113,11 +113,9 @@ void DX11::ResizeTarget(Resolution res)
 void DX11::CheckMonitorRes()
 {
 	m_nativeRes = {};
-
 	IDXGIOutput* outPut = nullptr;
 	HRESULT hr = this->m_swapChain->GetContainingOutput(&outPut);
 	assert(SUCCEEDED(hr));
-
 
 	DXGI_FORMAT format = DXGI_FORMAT_B8G8R8A8_UNORM;
 
@@ -126,8 +124,6 @@ void DX11::CheckMonitorRes()
 	assert(SUCCEEDED(hr));
 	std::vector<DXGI_MODE_DESC> modeVec;
 	modeVec.resize(numModes);
-	//DXGI_MODE_DESC* modeList = new DXGI_MODE_DESC[numModes];
-	//hr = outPut->GetDisplayModeList(format, 0, &numModes, modeList);
 	hr = outPut->GetDisplayModeList(format, 0, &numModes, modeVec.data());
 	assert(SUCCEEDED(hr));
 
@@ -135,22 +131,15 @@ void DX11::CheckMonitorRes()
 	log.setFile("modeList.txt");*/
 	for (UINT i = 0; i < numModes; i++)
 	{
-		//if (modeList[i].Width >= m_nativeWidth) m_nativeWidth = modeList[i].Width;
-		//if (modeList[i].Height >= m_nativeHeight) m_nativeHeight = modeList[i].Height;
-
 		if (modeVec[i].Width >= m_nativeRes.width) m_nativeRes.width = modeVec[i].Width;
 		if (modeVec[i].Height >= m_nativeRes.height) m_nativeRes.height = modeVec[i].Height;
 	}
-
-	//log.dumpLogs();
-	//delete[] modeList;
 	outPut->Release();
 
 #ifdef DEBUG
 	std::string debugOut = "Monitor resolution: " + std::to_string(m_nativeRes.width) + "x" + std::to_string(m_nativeRes.height) + "\n";
 	std::cout << debugOut;
 #endif // DEBUG
-
 }
 
 uint32_t DX11::CreateShader(Microsoft::WRL::ComPtr<ID3DBlob> blob, ShaderType type)

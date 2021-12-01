@@ -3,9 +3,9 @@
 #include "RimfrostMath.hpp"
 struct TransformComp : rfe::Component<TransformComp>
 {
-	rf::Transform transform;
-	operator rf::Transform& () { return transform; }
-	operator rf::Matrix& () { return transform; }
-	operator const rf::Transform& () const { return transform; }
-	operator const rf::Matrix& () const { return transform; }
+	rfm::Transform transform;
+	operator rfm::Transform& () { return transform; }
+	operator rfm::Matrix& () { return transform; }
+	operator const rfm::Transform& () const { return transform; }
+	operator const rfm::Matrix& () const { return transform; }
 };

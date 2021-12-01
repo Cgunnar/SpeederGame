@@ -4,7 +4,7 @@
 #include <DirectXMath.h>
 using namespace DirectX;
 
-namespace Rimfrost
+namespace rfm
 {
 	XMMATRIX getXMMatrix(const Matrix& matrix)
 	{

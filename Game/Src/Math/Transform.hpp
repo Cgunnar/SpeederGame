@@ -2,7 +2,7 @@
 
 #include "Matrix.hpp"
 
-namespace Rimfrost
+namespace rfm
 {
 	class Transform
 	{

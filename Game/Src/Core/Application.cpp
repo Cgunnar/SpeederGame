@@ -11,18 +11,19 @@
 #include "StandardComponents.h"
 
 using namespace rfe;
+using namespace rfm;
 
 struct alignas(16) VP
 {
-	rf::Matrix V;
-	rf::Matrix P;
+	Matrix V;
+	Matrix P;
 };
 
 
 struct Quad
 {
-	rf::Transform worldMatrix;
-	rf::Vector4 color;
+	Transform worldMatrix;
+	Vector4 color;
 	inline static VertexBuffer vertexBuffer;
 	inline static IndexBuffer indexBuffer;
 };
@@ -73,13 +74,13 @@ void Application::Run()
 	Quad::vertexBuffer = LowLvlGfx::CreateVertexBuffer(quad2.VertexData(), quad2.arraySize, quad2.vertexStride);
 	Quad::indexBuffer = LowLvlGfx::CreateIndexBuffer(quad2.IndexData(), quad2.indexCount);
 
-	ConstantBuffer worldMatrixCBuffer = LowLvlGfx::CreateConstantBuffer({ sizeof(rf::Matrix), BufferDesc::USAGE::DYNAMIC });
-	ConstantBuffer vpCBuffer = LowLvlGfx::CreateConstantBuffer({ 2 * sizeof(rf::Matrix), BufferDesc::USAGE::DYNAMIC });
-	ConstantBuffer colorCB = LowLvlGfx::CreateConstantBuffer({ sizeof(rf::Vector4), BufferDesc::USAGE::DYNAMIC });
+	ConstantBuffer worldMatrixCBuffer = LowLvlGfx::CreateConstantBuffer({ sizeof(Matrix), BufferDesc::USAGE::DYNAMIC });
+	ConstantBuffer vpCBuffer = LowLvlGfx::CreateConstantBuffer({ 2 * sizeof(Matrix), BufferDesc::USAGE::DYNAMIC });
+	ConstantBuffer colorCB = LowLvlGfx::CreateConstantBuffer({ sizeof(Vector4), BufferDesc::USAGE::DYNAMIC });
 
-	rf::Vector4 lightPos(1,1,1);
-	ConstantBuffer pointLightCB = LowLvlGfx::CreateConstantBuffer({ sizeof(rf::Vector4), BufferDesc::USAGE::DYNAMIC }, &lightPos);
-	ConstantBuffer cameraCB = LowLvlGfx::CreateConstantBuffer({ sizeof(rf::Vector4), BufferDesc::USAGE::DYNAMIC });
+	Vector4 lightPos(1,1,1);
+	ConstantBuffer pointLightCB = LowLvlGfx::CreateConstantBuffer({ sizeof(Vector4), BufferDesc::USAGE::DYNAMIC }, &lightPos);
+	ConstantBuffer cameraCB = LowLvlGfx::CreateConstantBuffer({ sizeof(Vector4), BufferDesc::USAGE::DYNAMIC });
 
 	
 
@@ -118,8 +119,8 @@ void Application::Run()
 	
 
 	VP vp;
-	vp.P = rf::Matrix(rf::PIDIV4, 16.0f / 9.0f, 0.01f, 1000.0f);
-	vp.V = rf::inverse(*camera.getComponent<TransformComp>());
+	vp.P = Matrix(PIDIV4, 16.0f / 9.0f, 0.01f, 1000.0f);
+	vp.V = inverse(*camera.getComponent<TransformComp>());
 
 	Quad myBox;
 	myBox.color = { 0.2f, 1.0f, 0.4f, 1.0f };

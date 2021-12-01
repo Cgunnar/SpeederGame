@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <DirectXMath.h>
 
-namespace Rimfrost
+namespace rfm
 {
 
 

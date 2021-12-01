@@ -3,7 +3,7 @@
 #include <tuple>
 #include "Vector.hpp"
 
-namespace Rimfrost
+namespace rfm
 {
 	class Matrix
 	{

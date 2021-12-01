@@ -26,16 +26,16 @@ namespace Geometry
 	{
 		struct VertexPOS_NOR_UV
 		{
-			rf::Vector3 pos;
-			rf::Vector3 nor;
-			rf::Vector2 uv;
+			rfm::Vector3 pos;
+			rfm::Vector3 nor;
+			rfm::Vector2 uv;
 		};
 		std::vector<VertexPOS_NOR_UV> vertices
 		{
-			{ rf::Vector3(-1, 1, 1.0),  rf::Vector3(0.0, 0.0, -1.0), rf::Vector2(0.0, 0.0) },
-			{ rf::Vector3(1, 1, 1.0),   rf::Vector3(0.0, 0.0, -1.0), rf::Vector2(1.0, 0.0) },
-			{ rf::Vector3(1, -1, 1.0),  rf::Vector3(0.0, 0.0, -1.0), rf::Vector2(1.0, 1.0) },
-			{ rf::Vector3(-1, -1, 1.0), rf::Vector3(0.0, 0.0, -1.0), rf::Vector2(0.0, 1.0) }
+			{ rfm::Vector3(-1, 1, 1.0),  rfm::Vector3(0.0, 0.0, -1.0), rfm::Vector2(0.0, 0.0) },
+			{ rfm::Vector3(1, 1, 1.0),   rfm::Vector3(0.0, 0.0, -1.0), rfm::Vector2(1.0, 0.0) },
+			{ rfm::Vector3(1, -1, 1.0),  rfm::Vector3(0.0, 0.0, -1.0), rfm::Vector2(1.0, 1.0) },
+			{ rfm::Vector3(-1, -1, 1.0), rfm::Vector3(0.0, 0.0, -1.0), rfm::Vector2(0.0, 1.0) }
 		};
 
 		std::vector<uint32_t> indices = {

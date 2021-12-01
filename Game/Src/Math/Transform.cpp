@@ -2,7 +2,7 @@
 #include "Transform.hpp"
 #include <DirectXMath.h>
 
-namespace Rimfrost
+namespace rfm
 {
 
 	Transform::Transform(const Matrix& matrix)

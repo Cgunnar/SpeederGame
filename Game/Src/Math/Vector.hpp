@@ -1,7 +1,7 @@
 #pragma once
 
 
-namespace Rimfrost
+namespace rfm
 {
 	class Vector3;
 	class Vector4

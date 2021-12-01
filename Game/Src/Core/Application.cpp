@@ -31,10 +31,12 @@ Application::Application()
 {
 	m_window = new Window();
 	LowLvlGfx::Init(m_window->GetHwnd(), m_window->GetClientSize());
+	m_renderer = new Renderer();
 }
 
 Application::~Application()
 {
+	delete m_renderer;
 	LowLvlGfx::Destroy();
 	delete m_window;
 }
@@ -102,7 +104,7 @@ void Application::Run()
 
 	D3D11_SUBRESOURCE_DATA* subResMipArray = nullptr;
 	SetSubResDataMips(im.imagePtr, subResMipArray, im.mipNumber, im.stride);
-	auto myTexture = LowLvlGfx::CreateTexture2D(desc, subResMipArray);
+	std::shared_ptr<Texture2D> myTexture = LowLvlGfx::CreateTexture2D(desc, subResMipArray);
 	delete[] subResMipArray;
 
 

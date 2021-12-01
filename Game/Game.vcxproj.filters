@@ -36,10 +36,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Components\RenderComponents.h">
+      <Filter>Src\Components</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Components\StandardComponents.h">
       <Filter>Src\Components</Filter>
     </ClInclude>
     <ClInclude Include="Src\Core\Application.h">
+      <Filter>Src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Core\AssetManager.h">
       <Filter>Src\Core</Filter>
     </ClInclude>
     <ClInclude Include="Src\Core\Window.h">
@@ -67,6 +73,9 @@
       <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\RenderUnit.h">
+      <Filter>Src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\Renderer.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Matrix.hpp">
@@ -122,6 +131,9 @@
     <ClCompile Include="Src\Core\Application.cpp">
       <Filter>Src\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Core\AssetManager.cpp">
+      <Filter>Src\Core</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Core\Source.cpp">
       <Filter>Src\Core</Filter>
     </ClCompile>
@@ -144,6 +156,9 @@
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\RenderUnit.cpp">
+      <Filter>Src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\Renderer.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Math\Matrix.cpp">

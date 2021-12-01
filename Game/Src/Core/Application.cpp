@@ -56,8 +56,11 @@ void SetSubResDataMips(const void* dataPtr, D3D11_SUBRESOURCE_DATA*& subResMipAr
 
 void Application::Run()
 {
-	Entity myEntity = EntityReg::createEntity();
-	myEntity.addComponent(TransformComp());
+	Entity camera = EntityReg::createEntity();
+	auto& cm = camera.addComponent(TransformComp())->transform;
+
+	cm.setTranslation(0, 5, -7);
+	cm.setRotationDeg(15, 0, 0);
 
 	LowLvlGfx::SetViewPort(m_window->GetClientSize());
 
@@ -73,6 +76,12 @@ void Application::Run()
 	ConstantBuffer worldMatrixCBuffer = LowLvlGfx::CreateConstantBuffer({ sizeof(rf::Matrix), BufferDesc::USAGE::DYNAMIC });
 	ConstantBuffer vpCBuffer = LowLvlGfx::CreateConstantBuffer({ 2 * sizeof(rf::Matrix), BufferDesc::USAGE::DYNAMIC });
 	ConstantBuffer colorCB = LowLvlGfx::CreateConstantBuffer({ sizeof(rf::Vector4), BufferDesc::USAGE::DYNAMIC });
+
+	rf::Vector4 lightPos(1,1,1);
+	ConstantBuffer pointLightCB = LowLvlGfx::CreateConstantBuffer({ sizeof(rf::Vector4), BufferDesc::USAGE::DYNAMIC }, &lightPos);
+	ConstantBuffer cameraCB = LowLvlGfx::CreateConstantBuffer({ sizeof(rf::Vector4), BufferDesc::USAGE::DYNAMIC });
+
+	
 
 	
 	MyImageStruct im;
@@ -105,13 +114,12 @@ void Application::Run()
 
 	Sampler mySampler = LowLvlGfx::CreateSampler(standardSamplers::g_linear_wrap);
 
-	rf::Transform camera;
-	camera.setTranslation(0, 5, -7);
-	camera.setRotationDeg(15, 0, 0);
+
+	
 
 	VP vp;
 	vp.P = rf::Matrix(rf::PIDIV4, 16.0f / 9.0f, 0.01f, 1000.0f);
-	vp.V = rf::inverse(camera);
+	vp.V = rf::inverse(*camera.getComponent<TransformComp>());
 
 	Quad myBox;
 	myBox.color = { 0.2f, 1.0f, 0.4f, 1.0f };

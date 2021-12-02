@@ -146,8 +146,9 @@ namespace rfe
 			componentArray[index].destroy();
 		}
 
+		//requires std::is_trivially_copy_assignable_v<T>
 		template<typename T>
-		requires std::is_trivially_copy_assignable_v<T>
+		requires std::is_copy_assignable_v<T>
 			static ComponentIndex createComponent(BaseComponent* comp)
 		{
 			componentArray.push_back(*static_cast<T*>(comp));

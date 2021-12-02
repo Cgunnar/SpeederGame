@@ -20,6 +20,8 @@ project "Game"
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
+    
+
     pchheader "pch.hpp"
     pchsource "%{prj.name}/Src/pch.cpp"
 
@@ -43,7 +45,10 @@ project "Game"
         "%{prj.name}/Src",
         "%{prj.name}/Src/**",
         "%{prj.name}/vendor/**",
+        "C:/rogram Files (x86)/Visual Leak Detector/include/"
     }
+
+    libdirs { "C:/Program Files (x86)/Visual Leak Detector/lib/Win64;" }
 
     defines
     {

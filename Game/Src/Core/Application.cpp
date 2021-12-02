@@ -9,6 +9,7 @@
 #include "ReadImg.hpp"
 #include "rfEntity.hpp"
 #include "StandardComponents.h"
+#include "RenderComponents.h"
 
 using namespace rfe;
 using namespace rfm;
@@ -60,10 +61,14 @@ void SetSubResDataMips(const void* dataPtr, D3D11_SUBRESOURCE_DATA*& subResMipAr
 void Application::Run()
 {
 	Entity camera = EntityReg::createEntity();
-	auto& cm = camera.addComponent(TransformComp())->transform;
+	camera.addComponent(TransformComp());
 
-	cm.setTranslation(0, 5, -7);
-	cm.setRotationDeg(15, 0, 0);
+	Entity quadEnt = EntityReg::createEntity();
+	quadEnt.addComponent(TransformComp());
+	quadEnt.addComponent(IndexedMeshComp());
+
+	camera.getComponent<TransformComp>()->transform.setTranslation(0, 5, -7);
+	camera.getComponent<TransformComp>()->transform.setRotationDeg(15, 0, 0);
 
 	LowLvlGfx::SetViewPort(m_window->GetClientSize());
 

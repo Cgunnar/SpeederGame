@@ -40,8 +40,9 @@ namespace rfe
 		template<typename T>
 		T* getComponent();
 
+		//requires std::is_trivially_copy_assignable_v<T>
 		template<typename T>
-		requires std::is_trivially_copy_assignable_v<T>
+		requires std::is_copy_assignable_v<T>
 			T* addComponent(const T& component) const;
 
 		template<typename T>
@@ -50,7 +51,7 @@ namespace rfe
 		void reset();
 		EntityID getID() const { return m_entityIndex; }
 		int getRefCount() const { return s_refCounts[m_entityIndex]; }
-		bool empty() const 
+		bool empty() const
 		{
 #ifdef DEBUG
 			if (m_entityIndex != -1)
@@ -62,11 +63,11 @@ namespace rfe
 			{
 				assert(!m_entCompManRef);
 			}
-			
+
 #endif // DEBUG
 
 
-			return m_entityIndex == -1 || !m_entCompManRef || s_refCounts[m_entityIndex] <= 0; 
+			return m_entityIndex == -1 || !m_entCompManRef || s_refCounts[m_entityIndex] <= 0;
 		}
 		operator const EntityID() const { return m_entityIndex; }
 
@@ -208,8 +209,9 @@ namespace rfe
 		void removeEntity(Entity& entity); // this should be encapsulated better
 		void addComponent(EntityID entityID, ComponentTypeID typeID, BaseComponent* component);
 
+		//requires std::is_trivially_copy_assignable_v<T>
 		template<typename T>
-		requires std::is_trivially_copy_assignable_v<T>
+		requires std::is_copy_assignable_v<T>
 			T* addComponent(EntityID entityID, const T& component);
 
 		template<typename T>
@@ -365,7 +367,7 @@ namespace rfe
 
 	inline Entity::~Entity()
 	{
-		
+
 #ifdef _DEBUG
 		if (!this->empty())
 		{
@@ -437,8 +439,9 @@ namespace rfe
 		return m_entCompManRef->getComponent<T>(this->m_entityIndex);
 	}
 
+	//requires std::is_trivially_copy_assignable_v<T>
 	template<typename T>
-	requires std::is_trivially_copy_assignable_v<T>
+	requires std::is_copy_assignable_v<T>
 		inline T* Entity::addComponent(const T& component) const
 	{
 		return m_entCompManRef->addComponent<T>(this->m_entityIndex, component);
@@ -496,7 +499,7 @@ namespace rfe
 		assert(&entity == &m_entityRegistry[entity.m_entityIndex]);
 
 
-		
+
 
 
 		auto& components = m_entitiesComponentHandles[entity.m_entityIndex];
@@ -542,7 +545,7 @@ namespace rfe
 			std::cout << debugOut;
 #endif // DEBUG
 
-			
+
 
 			throw std::runtime_error(debugOut);
 		}
@@ -555,12 +558,12 @@ namespace rfe
 		else if (entity.getRefCount() == 2)
 		{
 			EntityID id = entity.getID();
-			
+
 			//first reset entity: ref count will now be 1, can't call entity.reset(), because that will lead to recursion
 			entity.m_entCompManRef = nullptr;
 			entity.s_refCounts[entity.m_entityIndex]--;
 			entity.m_entityIndex = -1;
-			
+
 			if (id + 1 == m_entitiesComponentHandles.size())
 			{
 				m_entityRegistry.pop_back(); //second reset internal entity
@@ -572,9 +575,9 @@ namespace rfe
 			assert(entity.s_refCounts[id] == 0);
 		}
 
-		
 
-		
+
+
 
 		//return;
 		////----------------------------
@@ -598,7 +601,7 @@ namespace rfe
 		//	m_entitiesComponentHandles[entity.m_entityIndex].clear();
 		//	m_freeEntitySlots.push(entity.m_entityIndex);
 		//}
-		
+
 	}
 
 	inline void EntityComponentManager::addComponent(EntityID entityID, ComponentTypeID typeID, BaseComponent* component)
@@ -609,8 +612,9 @@ namespace rfe
 	}
 
 
+	//requires std::is_trivially_copy_assignable_v<T>
 	template<typename T>
-	requires std::is_trivially_copy_assignable_v<T>
+	requires std::is_copy_assignable_v<T>
 		inline T* EntityComponentManager::addComponent(EntityID entityID, const T& comp)
 	{
 		ComponentTypeID typeID = T::typeID;

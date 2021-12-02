@@ -7,7 +7,6 @@
 #include <vld.h>
 #endif // VLD_MEMORYDEBUG
 
-
 int main()
 {
 	Application myGame;

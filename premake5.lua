@@ -20,7 +20,7 @@ project "Game"
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
-    
+    libdirs { "%{prj.name}/vendor/vld/lib/" }
 
     pchheader "pch.hpp"
     pchsource "%{prj.name}/Src/pch.cpp"
@@ -47,12 +47,19 @@ project "Game"
         "%{prj.name}/vendor/**",
     }
 
-    libdirs { "%{prj.name}/vendor/Visual Leak Detector/lib" }
-
+    
     defines
     {
         "_UNICODE",
         "UNICODE",
+    }
+
+    postbuildcommands 
+    {
+        --"{COPY} \"%{prj.location}/vendor/vld/dlls/**\" \"%{prj.location}\""
+        "{COPY} \"%{prj.location}/vendor/vld/dlls/**\" \"%{cfg.buildtarget.directory}\""
+        
+       -- ("{COPY} vendor/vld/dlls/vld_x64.dll ..bin/" .. outputdir .. "/%{prj.name}")
     }
 
     links
@@ -77,3 +84,5 @@ project "Game"
 
     filter {"files:Game/vendor/**.cpp"}
         flags {"NoPCH"}
+
+    

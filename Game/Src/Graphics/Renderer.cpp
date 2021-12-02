@@ -22,13 +22,6 @@ Renderer::~Renderer()
 
 void Renderer::Render()
 {
-
-	/*LowLvlGfx::Bind(Quad::vertexBuffer);
-		LowLvlGfx::Bind(Quad::indexBuffer);
-		LowLvlGfx::UpdateBuffer(worldMatrixCBuffer, &myBox.worldMatrix);
-		LowLvlGfx::Bind(worldMatrixCBuffer, ShaderType::VERTEXSHADER, 0);
-		LowLvlGfx::BindSRV(myTexture, ShaderType::PIXELSHADER, 0);
-		LowLvlGfx::DrawIndexed(Quad::indexBuffer.GetIndexCount(), 0, 0);*/
 	for (const auto& m : rfe::EntityReg::getComponentArray<DiffuseTexturMaterialComp>())
 	{
 		auto diffuseTex = AssetManager::Get().GetTexture2D(m.textureID);
@@ -36,11 +29,7 @@ void Renderer::Render()
 		{
 			LowLvlGfx::Bind(ib->vertexBuffer);
 			LowLvlGfx::Bind(ib->indexBuffer);
-
-			//FIX
-			LowLvlGfx::UpdateBuffer(m_worldMatrixCBuffer, &worldMatrix); // this is tempglobla matrix
-			//LowLvlGfx::UpdateBuffer(m_worldMatrixCBuffer, rfe::EntityReg::getComponent<TransformComp>(m.getEntityID())); //FIX
-			
+			LowLvlGfx::UpdateBuffer(m_worldMatrixCBuffer, &rfe::EntityReg::getComponent<TransformComp>(m.getEntityID())->transform); //FIX
 			LowLvlGfx::Bind(m_worldMatrixCBuffer, ShaderType::VERTEXSHADER, 0);
 			LowLvlGfx::BindSRV(AssetManager::Get().GetTexture2D(m.textureID), ShaderType::PIXELSHADER, 0);
 			LowLvlGfx::DrawIndexed(ib->indexBuffer.GetIndexCount(), 0, 0);

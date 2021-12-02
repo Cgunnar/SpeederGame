@@ -47,7 +47,7 @@ project "Game"
         "%{prj.name}/vendor/**",
     }
 
-    libdirs { "%{prj.name}/vendor/Visual Leak Detector/lib/Win64" }
+    libdirs { "%{prj.name}/vendor/Visual Leak Detector/lib" }
 
     defines
     {

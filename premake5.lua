@@ -45,10 +45,9 @@ project "Game"
         "%{prj.name}/Src",
         "%{prj.name}/Src/**",
         "%{prj.name}/vendor/**",
-        "C:/rogram Files (x86)/Visual Leak Detector/include/"
     }
 
-    libdirs { "C:/Program Files (x86)/Visual Leak Detector/lib/Win64;" }
+    libdirs { "%{prj.name}/vendor/Visual Leak Detector/lib/Win64" }
 
     defines
     {

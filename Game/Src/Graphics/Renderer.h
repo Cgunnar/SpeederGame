@@ -1,4 +1,5 @@
 #pragma once
+#include "GraphicsResources.h"
 class Renderer
 {
 public:
@@ -10,6 +11,6 @@ public:
 	void Render();
 
 private:
-
+	ConstantBuffer m_worldMatrixCBuffer;
 };
 

@@ -10,6 +10,7 @@
 #include "rfEntity.hpp"
 #include "StandardComponents.h"
 #include "RenderComponents.h"
+#include "AssetManager.h"
 
 using namespace rfe;
 using namespace rfm;
@@ -32,12 +33,14 @@ Application::Application()
 {
 	m_window = new Window();
 	LowLvlGfx::Init(m_window->GetHwnd(), m_window->GetClientSize());
+	AssetManager::Init();
 	m_renderer = new Renderer();
 }
 
 Application::~Application()
 {
 	delete m_renderer;
+	AssetManager::Destroy();
 	LowLvlGfx::Destroy();
 	delete m_window;
 }
@@ -62,13 +65,15 @@ void Application::Run()
 {
 	Entity camera = EntityReg::createEntity();
 	camera.addComponent(TransformComp());
-
-	Entity quadEnt = EntityReg::createEntity();
-	quadEnt.addComponent(TransformComp());
-	quadEnt.addComponent(IndexedMeshComp());
-
 	camera.getComponent<TransformComp>()->transform.setTranslation(0, 5, -7);
 	camera.getComponent<TransformComp>()->transform.setRotationDeg(15, 0, 0);
+
+	Geometry::Quad_POS_NOR_UV quad2;
+	Entity quadEnt = EntityReg::createEntity();
+	quadEnt.addComponent(TransformComp())->transform.setTranslation(0, 3, 0);
+	quadEnt.addComponent(IndexedMeshComp())->indexBuffer = LowLvlGfx::CreateIndexBuffer(quad2.IndexData(), quad2.indexCount);
+	quadEnt.getComponent<IndexedMeshComp>()->vertexBuffer = LowLvlGfx::CreateVertexBuffer(quad2.VertexData(), quad2.arraySize, quad2.vertexStride);
+	
 
 	LowLvlGfx::SetViewPort(m_window->GetClientSize());
 
@@ -76,12 +81,13 @@ void Application::Run()
 	//Shader pixelShader = LowLvlGfx::CreateShader("Src/Shaders/PixelShader.hlsl", ShaderType::PIXELSHADER);
 	Shader pixelShader = LowLvlGfx::CreateShader("Src/Shaders/PS_FlatTexture.hlsl", ShaderType::PIXELSHADER);
 
-	Geometry::Quad_POS_NOR_UV quad2;
+	
 
-	Quad::vertexBuffer = LowLvlGfx::CreateVertexBuffer(quad2.VertexData(), quad2.arraySize, quad2.vertexStride);
-	Quad::indexBuffer = LowLvlGfx::CreateIndexBuffer(quad2.IndexData(), quad2.indexCount);
+	//Quad::vertexBuffer = LowLvlGfx::CreateVertexBuffer(quad2.VertexData(), quad2.arraySize, quad2.vertexStride);
+	//Quad::indexBuffer = LowLvlGfx::CreateIndexBuffer(quad2.IndexData(), quad2.indexCount);
 
-	ConstantBuffer worldMatrixCBuffer = LowLvlGfx::CreateConstantBuffer({ sizeof(Matrix), BufferDesc::USAGE::DYNAMIC });
+
+	
 	ConstantBuffer vpCBuffer = LowLvlGfx::CreateConstantBuffer({ 2 * sizeof(Matrix), BufferDesc::USAGE::DYNAMIC });
 	ConstantBuffer colorCB = LowLvlGfx::CreateConstantBuffer({ sizeof(Vector4), BufferDesc::USAGE::DYNAMIC });
 
@@ -120,6 +126,10 @@ void Application::Run()
 	srvDesc.Texture2D.MipLevels = -1;
 	LowLvlGfx::CreateSRV(myTexture, &srvDesc);
 
+	quadEnt.addComponent(DiffuseTexturMaterialComp())->textureID = AssetManager::Get().AddTexture2D(myTexture);
+
+
+
 	Sampler mySampler = LowLvlGfx::CreateSampler(standardSamplers::g_linear_wrap);
 
 
@@ -129,9 +139,7 @@ void Application::Run()
 	vp.P = Matrix(PIDIV4, 16.0f / 9.0f, 0.01f, 1000.0f);
 	vp.V = inverse(*camera.getComponent<TransformComp>());
 
-	Quad myBox;
-	myBox.color = { 0.2f, 1.0f, 0.4f, 1.0f };
-	myBox.worldMatrix.setTranslation(0, 3, 0);
+	
 
 
 	bool running = true;
@@ -147,24 +155,24 @@ void Application::Run()
 		
 		LowLvlGfx::ClearRTV(0.1f, 0.2f, 0.4f, 0.0f, LowLvlGfx::GetBackBuffer());
 		LowLvlGfx::ClearDSV(LowLvlGfx::GetDepthBuffer());
-
 		LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }, LowLvlGfx::GetDepthBuffer());
-
 		LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		LowLvlGfx::Bind(Quad::vertexBuffer);
-		LowLvlGfx::Bind(Quad::indexBuffer);
-		LowLvlGfx::Bind(vertexShader);
-		LowLvlGfx::Bind(pixelShader);
 		LowLvlGfx::UpdateBuffer(vpCBuffer, &vp);
 		LowLvlGfx::Bind(vpCBuffer, ShaderType::VERTEXSHADER, 1);
-		LowLvlGfx::UpdateBuffer(worldMatrixCBuffer, &myBox.worldMatrix);
-		LowLvlGfx::Bind(worldMatrixCBuffer, ShaderType::VERTEXSHADER, 0);
+		LowLvlGfx::Bind(vertexShader);
+		LowLvlGfx::Bind(pixelShader);
+		LowLvlGfx::Bind(mySampler, ShaderType::PIXELSHADER, 0);
 		/*LowLvlGfx::UpdateBuffer(colorCB, &myBox.color);
 		LowLvlGfx::Bind(colorCB, ShaderType::PIXELSHADER, 0);*/
-		LowLvlGfx::BindSRV(myTexture, ShaderType::PIXELSHADER, 0);
-		LowLvlGfx::Bind(mySampler, ShaderType::PIXELSHADER, 0);
 
-		LowLvlGfx::DrawIndexed(Quad::indexBuffer.GetIndexCount(), 0, 0);
+		/*LowLvlGfx::Bind(Quad::vertexBuffer);
+		LowLvlGfx::Bind(Quad::indexBuffer);
+		LowLvlGfx::UpdateBuffer(worldMatrixCBuffer, &myBox.worldMatrix);
+		LowLvlGfx::Bind(worldMatrixCBuffer, ShaderType::VERTEXSHADER, 0);
+		LowLvlGfx::BindSRV(myTexture, ShaderType::PIXELSHADER, 0);
+		LowLvlGfx::DrawIndexed(Quad::indexBuffer.GetIndexCount(), 0, 0);*/
+		m_renderer->Render();
+
 		LowLvlGfx::Present();
 	}
 }

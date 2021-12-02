@@ -25,6 +25,18 @@ private:
 	uint32_t m_id;
 };
 
+class ConstantBuffer
+{
+	friend LowLvlGfx;
+public:
+	ConstantBuffer() = default;
+private:
+	ConstantBuffer(uint32_t size) : m_size(size) {}
+	uint32_t m_size = 0;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> m_buffer;
+
+};
+
 class VertexBuffer
 {
 public:

@@ -16,16 +16,7 @@ struct BufferDesc
 
 };
 
-class ConstantBuffer
-{
-	friend LowLvlGfx;
-private:
-	ConstantBuffer(uint32_t size) : m_size(size) {}
-	uint32_t m_size;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> m_buffer;
 
-public:
-};
 
 
 class LowLvlGfx

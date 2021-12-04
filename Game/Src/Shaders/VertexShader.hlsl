@@ -31,11 +31,11 @@ vs_out main(vs_in input)
     vs_out output = (vs_out) 0;
     output.textureUV = input.textureUV;
     output.position_world = float4(input.position_local, 1.0f);
-    output.normal_world = float4(input.normal_local, 0.0f);
     output.position_clip = float4(input.position_local, 1.0f);
+    output.normal_world = float4(input.normal_local, 0.0f);
 
     output.position_world = mul(worldMatrix, output.position_world);
-    //output.normal_world = mul(worldMatrix, output.normal_world);
+    output.normal_world = mul(worldMatrix, output.normal_world);
 
     matrix MVP;
     MVP = mul(viewMatrix, worldMatrix);

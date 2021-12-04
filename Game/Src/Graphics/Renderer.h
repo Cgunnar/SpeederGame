@@ -11,6 +11,10 @@ public:
 	void Render();
 
 private:
-	ConstantBuffer m_worldMatrixCBuffer;
+	void PhongRender();
+
+	ConstantBuffer m_worldMatrixCB;
+	ConstantBuffer m_pointLightCB;
+	ConstantBuffer m_phongMaterialCB;
 };
 

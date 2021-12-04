@@ -65,12 +65,12 @@ void Application::Run()
 {
 	Entity camera = EntityReg::createEntity();
 	camera.addComponent(TransformComp());
-	camera.getComponent<TransformComp>()->transform.setTranslation(0, 5, -7);
-	camera.getComponent<TransformComp>()->transform.setRotationDeg(15, 0, 0);
+	camera.getComponent<TransformComp>()->transform.setTranslation(0, 0, 1);
+	camera.getComponent<TransformComp>()->transform.setRotationDeg(0, 0, 0);
 
 	Geometry::Quad_POS_NOR_UV quad2;
 	Entity quadEnt = EntityReg::createEntity();
-	quadEnt.addComponent(TransformComp())->transform.setTranslation(0, 3, 0);
+	quadEnt.addComponent(TransformComp())->transform.setTranslation(0, 0, 8);
 	quadEnt.addComponent(IndexedMeshComp())->indexBuffer = LowLvlGfx::CreateIndexBuffer(quad2.IndexData(), quad2.indexCount);
 	quadEnt.getComponent<IndexedMeshComp>()->vertexBuffer = LowLvlGfx::CreateVertexBuffer(quad2.VertexData(), quad2.arraySize, quad2.vertexStride);
 	
@@ -79,7 +79,8 @@ void Application::Run()
 
 	Shader vertexShader = LowLvlGfx::CreateShader("Src/Shaders/VertexShader.hlsl", ShaderType::VERTEXSHADER);
 	//Shader pixelShader = LowLvlGfx::CreateShader("Src/Shaders/PixelShader.hlsl", ShaderType::PIXELSHADER);
-	Shader pixelShader = LowLvlGfx::CreateShader("Src/Shaders/PS_FlatTexture.hlsl", ShaderType::PIXELSHADER);
+	//Shader pixelShader = LowLvlGfx::CreateShader("Src/Shaders/PS_FlatTexture.hlsl", ShaderType::PIXELSHADER);
+	Shader pixelShader = LowLvlGfx::CreateShader("Src/Shaders/PS_Phong_DiffTexture_singleLight.hlsl", ShaderType::PIXELSHADER);
 
 	
 
@@ -127,7 +128,7 @@ void Application::Run()
 	LowLvlGfx::CreateSRV(myTexture, &srvDesc);
 
 	quadEnt.addComponent(DiffuseTexturMaterialComp())->textureID = AssetManager::Get().AddTexture2D(myTexture);
-
+	quadEnt.getComponent<DiffuseTexturMaterialComp>()->specularColor = { 1,0,0 };
 
 
 	Sampler mySampler = LowLvlGfx::CreateSampler(standardSamplers::g_linear_wrap);
@@ -152,6 +153,8 @@ void Application::Run()
 			break;
 		}
 
+		quadEnt.getComponent<TransformComp>()->transform.rotateDeg(0, 30 * FrameTimer::dt(), 0);
+
 		
 		LowLvlGfx::ClearRTV(0.1f, 0.2f, 0.4f, 0.0f, LowLvlGfx::GetBackBuffer());
 		LowLvlGfx::ClearDSV(LowLvlGfx::GetDepthBuffer());
@@ -159,6 +162,7 @@ void Application::Run()
 		LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		LowLvlGfx::UpdateBuffer(vpCBuffer, &vp);
 		LowLvlGfx::Bind(vpCBuffer, ShaderType::VERTEXSHADER, 1);
+		LowLvlGfx::Bind(vpCBuffer, ShaderType::PIXELSHADER, 1);
 		LowLvlGfx::Bind(vertexShader);
 		LowLvlGfx::Bind(pixelShader);
 		LowLvlGfx::Bind(mySampler, ShaderType::PIXELSHADER, 0);

@@ -32,10 +32,10 @@ namespace Geometry
 		};
 		std::vector<VertexPOS_NOR_UV> vertices
 		{
-			{ rfm::Vector3(-1, 1, 1.0),  rfm::Vector3(0.0, 0.0, -1.0), rfm::Vector2(0.0, 0.0) },
-			{ rfm::Vector3(1, 1, 1.0),   rfm::Vector3(0.0, 0.0, -1.0), rfm::Vector2(1.0, 0.0) },
-			{ rfm::Vector3(1, -1, 1.0),  rfm::Vector3(0.0, 0.0, -1.0), rfm::Vector2(1.0, 1.0) },
-			{ rfm::Vector3(-1, -1, 1.0), rfm::Vector3(0.0, 0.0, -1.0), rfm::Vector2(0.0, 1.0) }
+			{ rfm::Vector3(-1, 1, 0.0),  rfm::Vector3(0.0, 0.0, -1.0), rfm::Vector2(0.0, 0.0) },
+			{ rfm::Vector3(1, 1, 0.0),   rfm::Vector3(0.0, 0.0, -1.0), rfm::Vector2(1.0, 0.0) },
+			{ rfm::Vector3(1, -1, 0.0),  rfm::Vector3(0.0, 0.0, -1.0), rfm::Vector2(1.0, 1.0) },
+			{ rfm::Vector3(-1, -1, 0.0), rfm::Vector3(0.0, 0.0, -1.0), rfm::Vector2(0.0, 1.0) }
 		};
 
 		std::vector<uint32_t> indices = {

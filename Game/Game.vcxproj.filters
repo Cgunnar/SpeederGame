@@ -202,5 +202,6 @@
     <FxCompile Include="Src\Shaders\VertexShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Src\Shaders\PS_Phong_DiffTexture_singleLight.hlsl" />
   </ItemGroup>
 </Project>

@@ -80,6 +80,7 @@ class DX11
 	std::shared_ptr<Texture2D> m_zBuffer;
 	BOOL m_fullScreen = false;
 	Resolution m_nativeRes;
+	Resolution m_resolution;
 
 	
 	std::vector<ShaderDX> m_shaders;

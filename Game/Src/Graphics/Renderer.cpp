@@ -27,11 +27,21 @@ struct alignas(16) PhongMaterial
 	float shininess;
 };
 
+
+
 Renderer::Renderer()
 {
+	m_vp.P = Matrix(PIDIV4, 16.0f / 9.0f, 0.01f, 1000.0f);
+
 	m_worldMatrixCB = LowLvlGfx::CreateConstantBuffer({ sizeof(Matrix), BufferDesc::USAGE::DYNAMIC });
 	m_phongMaterialCB = LowLvlGfx::CreateConstantBuffer({ sizeof(PhongMaterial), BufferDesc::USAGE::DYNAMIC });
 	m_pointLightCB = LowLvlGfx::CreateConstantBuffer({ sizeof(PointLight), BufferDesc::USAGE::DYNAMIC }, &pointLight);
+	m_vpCB = LowLvlGfx::CreateConstantBuffer({ 2 * sizeof(Matrix), BufferDesc::USAGE::DYNAMIC });
+
+
+	m_vertexShader = LowLvlGfx::CreateShader("Src/Shaders/VertexShader.hlsl", ShaderType::VERTEXSHADER);
+	m_phongPS = LowLvlGfx::CreateShader("Src/Shaders/PS_Phong_DiffTexture_singleLight.hlsl", ShaderType::PIXELSHADER);
+	m_sampler = LowLvlGfx::CreateSampler(standardSamplers::g_linear_wrap);
 }
 
 Renderer::~Renderer()
@@ -39,14 +49,28 @@ Renderer::~Renderer()
 }
 
 
-void Renderer::Render()
+void Renderer::Render(rfe::Entity& camera)
 {
-	PhongRender();
+	LowLvlGfx::SetViewPort(LowLvlGfx::GetResolution());
+
+	m_vp.V = inverse(*camera.getComponent<TransformComp>());
+	LowLvlGfx::UpdateBuffer(m_vpCB, &m_vp);
+
+	PhongRender(camera);
 }
 
-void Renderer::PhongRender()
+void Renderer::PhongRender(rfe::Entity& camera)
 {
+	
+	LowLvlGfx::Bind(m_vpCB, ShaderType::VERTEXSHADER, 1);
+	LowLvlGfx::Bind(m_vpCB, ShaderType::PIXELSHADER, 1);
+
+	LowLvlGfx::Bind(m_vertexShader);
+	LowLvlGfx::Bind(m_phongPS);
 	LowLvlGfx::Bind(m_pointLightCB, ShaderType::PIXELSHADER, 0);
+	LowLvlGfx::Bind(m_sampler, ShaderType::PIXELSHADER, 0);
+	LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
 	for (const auto& m : rfe::EntityReg::getComponentArray<DiffuseTexturMaterialComp>())
 	{
 		auto diffuseTex = AssetManager::Get().GetTexture2D(m.textureID);

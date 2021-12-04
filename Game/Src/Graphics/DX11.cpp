@@ -21,7 +21,7 @@ using namespace Microsoft::WRL;
 
 
 
-DX11::DX11(HWND hwnd, Resolution res)
+DX11::DX11(HWND hwnd, Resolution res) : m_resolution(res)
 {
 	CreateDeviceAndSwapChain(hwnd, res);
 	m_backBuffer = std::make_shared<Texture2D>();
@@ -79,6 +79,7 @@ void DX11::OnResize(Resolution res)
 
 	CreateRTVandDSV();
 	SetViewPort(res);
+	m_resolution = res;
 }
 
 void DX11::ResizeTarget(Resolution res)

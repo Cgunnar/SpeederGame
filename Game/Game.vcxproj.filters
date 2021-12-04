@@ -196,12 +196,14 @@
     <FxCompile Include="Src\Shaders\PS_FlatTexture.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Src\Shaders\PS_Phong_DiffTexture_singleLight.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
     <FxCompile Include="Src\Shaders\PixelShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\VertexShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\PS_Phong_DiffTexture_singleLight.hlsl" />
   </ItemGroup>
 </Project>

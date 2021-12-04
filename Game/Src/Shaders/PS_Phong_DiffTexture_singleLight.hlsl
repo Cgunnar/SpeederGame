@@ -71,6 +71,6 @@ float4 main(vs_out input) : SV_TARGET
     ld = kd * id * saturate(dot(dirToLight, N));    
     ls = ks * is * pow(saturate(dot(R, V)), shininess);
     
-    float3 finalColor = la + (ld + ls) * att;
+    float3 finalColor = la + (ld + ls) * att * lightStrength;
     return float4(finalColor, 1.0f);
 }

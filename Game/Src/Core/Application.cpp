@@ -15,20 +15,7 @@
 using namespace rfe;
 using namespace rfm;
 
-struct alignas(16) VP
-{
-	Matrix V;
-	Matrix P;
-};
 
-
-struct Quad
-{
-	Transform worldMatrix;
-	Vector4 color;
-	inline static VertexBuffer vertexBuffer;
-	inline static IndexBuffer indexBuffer;
-};
 Application::Application()
 {
 	m_window = new Window();
@@ -75,29 +62,6 @@ void Application::Run()
 	quadEnt.getComponent<IndexedMeshComp>()->vertexBuffer = LowLvlGfx::CreateVertexBuffer(quad2.VertexData(), quad2.arraySize, quad2.vertexStride);
 	
 
-	LowLvlGfx::SetViewPort(m_window->GetClientSize());
-
-	Shader vertexShader = LowLvlGfx::CreateShader("Src/Shaders/VertexShader.hlsl", ShaderType::VERTEXSHADER);
-	//Shader pixelShader = LowLvlGfx::CreateShader("Src/Shaders/PixelShader.hlsl", ShaderType::PIXELSHADER);
-	//Shader pixelShader = LowLvlGfx::CreateShader("Src/Shaders/PS_FlatTexture.hlsl", ShaderType::PIXELSHADER);
-	Shader pixelShader = LowLvlGfx::CreateShader("Src/Shaders/PS_Phong_DiffTexture_singleLight.hlsl", ShaderType::PIXELSHADER);
-
-	
-
-	//Quad::vertexBuffer = LowLvlGfx::CreateVertexBuffer(quad2.VertexData(), quad2.arraySize, quad2.vertexStride);
-	//Quad::indexBuffer = LowLvlGfx::CreateIndexBuffer(quad2.IndexData(), quad2.indexCount);
-
-
-	
-	ConstantBuffer vpCBuffer = LowLvlGfx::CreateConstantBuffer({ 2 * sizeof(Matrix), BufferDesc::USAGE::DYNAMIC });
-	ConstantBuffer colorCB = LowLvlGfx::CreateConstantBuffer({ sizeof(Vector4), BufferDesc::USAGE::DYNAMIC });
-
-	Vector4 lightPos(1,1,1);
-	ConstantBuffer pointLightCB = LowLvlGfx::CreateConstantBuffer({ sizeof(Vector4), BufferDesc::USAGE::DYNAMIC }, &lightPos);
-	ConstantBuffer cameraCB = LowLvlGfx::CreateConstantBuffer({ sizeof(Vector4), BufferDesc::USAGE::DYNAMIC });
-
-	
-
 	
 	MyImageStruct im;
 	readImage(im, "Assets/Hej.png");
@@ -129,17 +93,6 @@ void Application::Run()
 
 	quadEnt.addComponent(DiffuseTexturMaterialComp())->textureID = AssetManager::Get().AddTexture2D(myTexture);
 	quadEnt.getComponent<DiffuseTexturMaterialComp>()->specularColor = { 1,0,0 };
-
-
-	Sampler mySampler = LowLvlGfx::CreateSampler(standardSamplers::g_linear_wrap);
-
-
-	
-
-	VP vp;
-	vp.P = Matrix(PIDIV4, 16.0f / 9.0f, 0.01f, 1000.0f);
-	vp.V = inverse(*camera.getComponent<TransformComp>());
-
 	
 
 
@@ -158,24 +111,10 @@ void Application::Run()
 		
 		LowLvlGfx::ClearRTV(0.1f, 0.2f, 0.4f, 0.0f, LowLvlGfx::GetBackBuffer());
 		LowLvlGfx::ClearDSV(LowLvlGfx::GetDepthBuffer());
-		LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }, LowLvlGfx::GetDepthBuffer());
-		LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		LowLvlGfx::UpdateBuffer(vpCBuffer, &vp);
-		LowLvlGfx::Bind(vpCBuffer, ShaderType::VERTEXSHADER, 1);
-		LowLvlGfx::Bind(vpCBuffer, ShaderType::PIXELSHADER, 1);
-		LowLvlGfx::Bind(vertexShader);
-		LowLvlGfx::Bind(pixelShader);
-		LowLvlGfx::Bind(mySampler, ShaderType::PIXELSHADER, 0);
-		/*LowLvlGfx::UpdateBuffer(colorCB, &myBox.color);
-		LowLvlGfx::Bind(colorCB, ShaderType::PIXELSHADER, 0);*/
 
-		/*LowLvlGfx::Bind(Quad::vertexBuffer);
-		LowLvlGfx::Bind(Quad::indexBuffer);
-		LowLvlGfx::UpdateBuffer(worldMatrixCBuffer, &myBox.worldMatrix);
-		LowLvlGfx::Bind(worldMatrixCBuffer, ShaderType::VERTEXSHADER, 0);
-		LowLvlGfx::BindSRV(myTexture, ShaderType::PIXELSHADER, 0);
-		LowLvlGfx::DrawIndexed(Quad::indexBuffer.GetIndexCount(), 0, 0);*/
-		m_renderer->Render();
+		LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }, LowLvlGfx::GetDepthBuffer());
+
+		m_renderer->Render(camera);
 
 		LowLvlGfx::Present();
 	}

@@ -72,6 +72,11 @@ bool LowLvlGfx::IsFullScreen()
 	return s_dx11->IsFullScreen();
 }
 
+Resolution LowLvlGfx::GetResolution()
+{
+	return s_dx11->m_resolution;
+}
+
 Microsoft::WRL::ComPtr<IDXGISwapChain>& LowLvlGfx::SwapChain()
 {
 	return s_dx11->m_swapChain;
@@ -143,7 +148,7 @@ VertexBuffer LowLvlGfx::CreateVertexBuffer(const float* data, uint32_t byteWidth
 
 	D3D11_BUFFER_DESC desc{};
 	desc.ByteWidth = byteWidth;
-	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.Usage = D3D11_USAGE_IMMUTABLE;
 	desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	desc.CPUAccessFlags = 0;
 

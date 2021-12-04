@@ -19,10 +19,11 @@ class Shader
 {
 	friend LowLvlGfx;
 public:
+	Shader() = default;
 
 private:
 	Shader(uint32_t id) : m_id(id) {}
-	uint32_t m_id;
+	uint32_t m_id = -1;
 };
 
 class ConstantBuffer

@@ -22,7 +22,7 @@ void LowLvlGfx::Destroy()
 
 
 #ifdef D3D11_DEBUG
-	//debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
+	debug->ReportLiveDeviceObjects(D3D11_RLDO_DETAIL);
 	debug->Release();
 #endif // DD3D11_DEBUGEBUG
 }

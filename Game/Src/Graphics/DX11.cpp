@@ -5,6 +5,8 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <d3d11shader.h>
+#include <backends\imgui_impl_win32.h>
+#include <backends\imgui_impl_dx11.h>
 
 #pragma comment( lib, "d3d11.lib" )
 #pragma comment( lib, "d3dcompiler.lib" )
@@ -29,9 +31,15 @@ DX11::DX11(HWND hwnd, Resolution res) : m_resolution(res)
 	CreateRTVandDSV();
 	CheckMonitorRes();
 
+
+	//imgui
+	ImGui_ImplDX11_Init(m_device.Get(), m_context.Get());
+
 }
 DX11::~DX11()
 {
+	ImGui_ImplDX11_Shutdown();
+
 	m_context->ClearState();
 	m_context->Flush();
 }

@@ -2,6 +2,8 @@
 
 #include "Window.h"
 #include "LowLvlGfx.h"
+#include <imgui.h>
+#include <backends\imgui_impl_win32.h>
 
 Window* Window::s_windowInstance = nullptr;
 
@@ -30,6 +32,29 @@ Window::Window()
 		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, wr.right - wr.left, wr.bottom - wr.top,
 		nullptr, nullptr, m_hInst, nullptr); //last pointer is to some optional data of any kind that kan be usefull when getting messages
 
+
+
+	//imgui
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+	ImGui::StyleColorsDark();
+
+	ImGuiStyle& style = ImGui::GetStyle();
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		style.WindowRounding = 0.0f;
+		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+	}
+	ImGui_ImplWin32_Init(m_hWnd);
+
+
+
 	ShowWindow(m_hWnd, SW_SHOWDEFAULT);
 
 
@@ -40,6 +65,9 @@ Window::Window()
 
 Window::~Window()
 {
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
+
 	UnregisterClass(m_wndClassName, m_hInst);
 	s_windowInstance = nullptr;
 }

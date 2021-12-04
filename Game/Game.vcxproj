@@ -101,6 +101,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Core\Scene.h" />
     <ClInclude Include="Src\Components\RenderComponents.h" />
     <ClInclude Include="Src\Components\StandardComponents.h" />
     <ClInclude Include="Src\Core\Application.h" />
@@ -133,6 +134,7 @@
     <ClInclude Include="vendor\singleHeaders\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Core\Scene.cpp" />
     <ClCompile Include="Src\Core\Application.cpp" />
     <ClCompile Include="Src\Core\AssetManager.cpp" />
     <ClCompile Include="Src\Core\Source.cpp" />

@@ -9,9 +9,10 @@
 
 int main()
 {
-	Application myGame;
+	Application* myGame = new Application();
 
-	myGame.Run();
+	myGame->Run();
+	delete myGame;
 	rfe::EntityReg::clear();
 	return 0;
 }

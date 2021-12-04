@@ -12,8 +12,8 @@ using namespace rfm;
 struct alignas(16) PointLight
 {
 	Vector3 position{ 0, 0, 0 };
-	Vector3 color = { 1, 1, 1 };
 	float lightStrength = 1;
+	Vector3 color = { 1, 1, 1 };
 	float constantAttenuation = 1;
 	float LinearAttenuation = 0.1f;
 	float exponentialAttenuation = 0.1f;

@@ -70,7 +70,7 @@ void Application::Run()
 
 	Geometry::Quad_POS_NOR_UV quad2;
 	Entity quadEnt = EntityReg::createEntity();
-	quadEnt.addComponent(TransformComp())->transform.setTranslation(0, 0, 8);
+	quadEnt.addComponent(TransformComp())->transform.setTranslation(0, 0, 5);
 	quadEnt.addComponent(IndexedMeshComp())->indexBuffer = LowLvlGfx::CreateIndexBuffer(quad2.IndexData(), quad2.indexCount);
 	quadEnt.getComponent<IndexedMeshComp>()->vertexBuffer = LowLvlGfx::CreateVertexBuffer(quad2.VertexData(), quad2.arraySize, quad2.vertexStride);
 	

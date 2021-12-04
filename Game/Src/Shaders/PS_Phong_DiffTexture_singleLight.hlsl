@@ -6,8 +6,8 @@ SamplerState mySampler : register(s0);
 cbuffer PointLight : register(b0)
 {
     float3 lightPosition;
-    float3 lightColor;
     float lightStrength;
+    float3 lightColor;
     float constantAttenuation;
     float LinearAttenuation;
     float exponentialAttenuation;
@@ -34,6 +34,12 @@ struct vs_out
     float4 normal_world : NORMAL_WORLD;
     float2 textureUV : TEXCOORD;
 };
+
+float Attenuate(float attConst, float attLin, float attExp, float distance)
+{
+    return 1.0f / (attConst + attLin * distance + attExp * (distance * distance));
+}
+
 
 float4 main(vs_out input) : SV_TARGET
 {
@@ -69,6 +75,6 @@ float4 main(vs_out input) : SV_TARGET
         ls = ks * is * pow(saturate(dot(R, V)), shininess);
     }
     
-    float3 finalColor = la + ld + ls;
+    float3 finalColor = la + (ld + ls) * Attenuate(constantAttenuation, LinearAttenuation, exponentialAttenuation, length(input.position_world.xyz - lightPosition));
     return float4(finalColor , 1.0f);
 }

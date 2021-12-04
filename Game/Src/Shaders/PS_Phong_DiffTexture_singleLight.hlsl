@@ -58,23 +58,19 @@ float4 main(vs_out input) : SV_TARGET
     float3 ld = float3(0, 0, 0);
     float3 ls = float3(0, 0, 0);
     
-    la = ka * ia;
     
-    float3 dirToLight = normalize(lightPosition - input.position_world.xyz);
     float3 N = normalize(input.normal_world.xyz);
+    float3 dirToLight = normalize(lightPosition - input.position_world.xyz);
+    float3 cameraPos = -float3(viewMatrix[0][3], viewMatrix[1][3], viewMatrix[2][3]);
+    float3 V = normalize(cameraPos - input.position_world.xyz);
+    float3 R = normalize(reflect(-dirToLight, N));
     
-    float diffuseFactor = dot(dirToLight, N);
+    float att = Attenuate(constantAttenuation, LinearAttenuation, exponentialAttenuation, length(input.position_world.xyz - lightPosition));
     
-    if(diffuseFactor > 0)
-    {
-        ld = kd * id * diffuseFactor;
-        
-        float3 R = normalize(reflect(-dirToLight, N));
-        float3 cameraPos = -float3(viewMatrix[0][3], viewMatrix[1][3], viewMatrix[2][3]);
-        float3 V = normalize(cameraPos - input.position_world.xyz);
-        ls = ks * is * pow(saturate(dot(R, V)), shininess);
-    }
+    la = ka * ia;
+    ld = kd * id * saturate(dot(dirToLight, N));    
+    ls = ks * is * pow(saturate(dot(R, V)), shininess);
     
-    float3 finalColor = la + (ld + ls) * Attenuate(constantAttenuation, LinearAttenuation, exponentialAttenuation, length(input.position_world.xyz - lightPosition));
-    return float4(finalColor , 1.0f);
+    float3 finalColor = la + (ld + ls) * att;
+    return float4(finalColor, 1.0f);
 }

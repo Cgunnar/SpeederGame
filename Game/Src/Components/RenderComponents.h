@@ -16,3 +16,10 @@ struct IndexedMeshComp: rfe::Component<IndexedMeshComp>
 	IndexBuffer indexBuffer;
 	VertexBuffer vertexBuffer;
 };
+
+
+
+struct PointLightComp : rfe::Component<PointLightComp>
+{
+	PointLight pointLight;
+};

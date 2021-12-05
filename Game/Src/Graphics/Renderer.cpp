@@ -9,15 +9,7 @@
 
 using namespace rfm;
 
-struct alignas(16) PointLight
-{
-	Vector3 position{ 0, 0, 0 };
-	float lightStrength = 1;
-	Vector3 color = { 1, 1, 1 };
-	float constantAttenuation = 1;
-	float LinearAttenuation = 0.1f;
-	float exponentialAttenuation = 0.1f;
-} pointLight;
+
 
 struct alignas(16) PhongMaterial
 {
@@ -27,7 +19,7 @@ struct alignas(16) PhongMaterial
 	float shininess;
 };
 
-
+PointLight pointLight;
 
 Renderer::Renderer()
 {
@@ -51,8 +43,13 @@ Renderer::~Renderer()
 
 void Renderer::Render(rfe::Entity& camera)
 {
-	LowLvlGfx::SetViewPort(LowLvlGfx::GetResolution());
+	auto& pointLights = rfe::EntityReg::getComponentArray<PointLightComp>();
+	assert(!pointLights.empty());
+	PointLight p = pointLights[0].pointLight;
+	LowLvlGfx::UpdateBuffer(m_pointLightCB, &p);
 
+
+	LowLvlGfx::SetViewPort(LowLvlGfx::GetResolution());
 	m_vp.V = inverse(*camera.getComponent<TransformComp>());
 	LowLvlGfx::UpdateBuffer(m_vpCB, &m_vp);
 

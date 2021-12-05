@@ -21,29 +21,31 @@ void GuiTest::Show()
 	
 	
 	
-	slider[0] = Slider1.x; slider[1] = Slider1.y; slider[2] = Slider1.z;
-	if (ImGui::SliderFloat3("Slider1", (float*)&slider, -5, 5))
+	slider1.GetValue(slider);
+	if (ImGui::SliderFloat3("Slider1", (float*)&slider, slider1.minVal, slider1.maxVal))
 	{
-		Slider1 = Vector3(slider[0], slider[1], slider[2]);
+		slider1.SetValue(slider);
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("Reset1"))
+	if (ImGui::Button("Reset1") || slider1.changed)
 	{
-		Slider1 = Vector3(0, 0, 0);
+		slider1.value = slider1.defaultValue;
+		slider1.changed = false;
 	}
 	
 	
 	
 	
-	slider[0] = Slider2.x; slider[1] = Slider2.y; slider[2] = Slider2.z;
-	if (ImGui::SliderFloat3("Slider2", (float*)&slider, -5, 5))
+	slider2.GetValue(slider);
+	if (ImGui::SliderFloat3("Slider2", (float*)&slider, slider2.minVal, slider2.maxVal))
 	{
-		Slider2 = Vector3(slider[0], slider[1], slider[2]);
+		slider2.SetValue(slider);
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("Reset2"))
+	if (ImGui::Button("Reset2") || slider2.changed)
 	{
-		Slider2 = Vector3(0, 0, 0);
+		slider2.value = slider2.defaultValue;
+		slider2.changed = false;
 	}
 	
 

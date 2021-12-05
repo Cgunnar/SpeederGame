@@ -33,9 +33,13 @@ Scene::Scene()
 	m_camera.getComponent<TransformComp>()->transform.setTranslation(0, 0, 1);
 	m_camera.getComponent<TransformComp>()->transform.setRotationDeg(0, 0, 0);
 
+	m_pointLight = EntityReg::createEntity();
+	m_pointLight.addComponent(TransformComp());
+	m_pointLight.addComponent(PointLightComp());
+
 	Geometry::Quad_POS_NOR_UV quad2;
 	m_quad = EntityReg::createEntity();
-	m_quad.addComponent(TransformComp())->transform.setTranslation(0, 0, 5);
+	m_quad.addComponent(TransformComp());
 	m_quad.addComponent(IndexedMeshComp())->indexBuffer = LowLvlGfx::CreateIndexBuffer(quad2.IndexData(), quad2.indexCount);
 	m_quad.getComponent<IndexedMeshComp>()->vertexBuffer = LowLvlGfx::CreateVertexBuffer(quad2.VertexData(), quad2.arraySize, quad2.vertexStride);
 
@@ -70,7 +74,10 @@ Scene::Scene()
 	m_quad.addComponent(DiffuseTexturMaterialComp())->textureID = AssetManager::Get().AddTexture2D(myTexture);
 	m_quad.getComponent<DiffuseTexturMaterialComp>()->specularColor = { 1,0,0 };
 
-	m_quadContr.Slider1 = m_quad.getComponent<TransformComp>()->transform.getTranslation();
+	m_quadContr.slider1.ChangeDefaultValues({ 0,0,8 });
+
+	m_lightContr.slider1.ChangeDefaultValues({ 0,0,5 });
+	m_lightContr.slider2.ChangeDefaultValues({ 1,1,1 }, 0, 1);
 }
 
 Scene::~Scene()
@@ -82,10 +89,11 @@ void Scene::Update(float dt)
 	m_quadContr.Show();
 	m_lightContr.Show();
 
-	m_quad.getComponent<TransformComp>()->transform.setTranslation(m_quadContr.Slider1);
-	m_quad.getComponent<TransformComp>()->transform.setRotation(m_quadContr.Slider2.x, m_quadContr.Slider2.y, m_quadContr.Slider2.z);
+	m_quad.getComponent<TransformComp>()->transform.setTranslation(m_quadContr.slider1.value);
+	m_quad.getComponent<TransformComp>()->transform.setRotation(m_quadContr.slider2.value.x, m_quadContr.slider2.value.y, m_quadContr.slider2.value.z);
 
-
+	m_pointLight.getComponent<PointLightComp>()->pointLight.position = m_lightContr.slider1.value;
+	m_pointLight.getComponent<PointLightComp>()->pointLight.color = m_lightContr.slider2.value;
 
 }
 

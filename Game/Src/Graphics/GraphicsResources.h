@@ -5,6 +5,7 @@
 #define NOMINMAX
 #include <windows.h>
 #include <cstdint>
+#include "RimfrostMath.hpp"
 
 class LowLvlGfx;
 class DX11;
@@ -14,6 +15,16 @@ namespace standardSamplers
 {
 	extern const D3D11_SAMPLER_DESC g_linear_wrap;
 }
+
+struct alignas(16) PointLight
+{
+	rfm::Vector3 position{ 0, 0, 0 };
+	float lightStrength = 1;
+	rfm::Vector3 color = { 1, 1, 1 };
+	float constantAttenuation = 1;
+	float LinearAttenuation = 0.1f;
+	float exponentialAttenuation = 0.1f;
+};
 
 class Shader
 {

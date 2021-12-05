@@ -10,6 +10,9 @@
     <Filter Include="Src\Core">
       <UniqueIdentifier>{8537E246-7104-3D52-9A1D-2BFA864972E0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\GUI">
+      <UniqueIdentifier>{A1E0E709-0DC0-66A5-16D8-F17B8236CD06}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Src\Graphics">
       <UniqueIdentifier>{EDA9DC45-D90C-6CEA-8292-A4A06ED4376D}</UniqueIdentifier>
     </Filter>
@@ -48,11 +51,17 @@
     <ClInclude Include="Src\Core\AssetManager.h">
       <Filter>Src\Core</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Core\Scene.h">
+      <Filter>Src\Core</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Core\Window.h">
       <Filter>Src\Core</Filter>
     </ClInclude>
     <ClInclude Include="Src\Core\rfEntity.hpp">
       <Filter>Src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\GUI\GuiDebug.h">
+      <Filter>Src\GUI</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\DX11.h">
       <Filter>Src\Graphics</Filter>
@@ -126,7 +135,6 @@
     <ClInclude Include="vendor\singleHeaders\stb_image.h">
       <Filter>vendor\singleHeaders</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Core\Scene.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">
@@ -135,11 +143,17 @@
     <ClCompile Include="Src\Core\AssetManager.cpp">
       <Filter>Src\Core</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Core\Scene.cpp">
+      <Filter>Src\Core</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Core\Source.cpp">
       <Filter>Src\Core</Filter>
     </ClCompile>
     <ClCompile Include="Src\Core\Window.cpp">
       <Filter>Src\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\GUI\GuiDebug.cpp">
+      <Filter>Src\GUI</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\DX11.cpp">
       <Filter>Src\Graphics</Filter>
@@ -192,7 +206,6 @@
     <ClCompile Include="vendor\imgui\backends\imgui_impl_win32.cpp">
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Core\Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\PS_FlatTexture.hlsl">

@@ -48,6 +48,8 @@ void Application::Run()
 		{
 			break;
 		}
+		LowLvlGfx::BeginFrame();
+
 
 		m_scene->Update(FrameTimer::dt());
 
@@ -55,6 +57,7 @@ void Application::Run()
 		LowLvlGfx::ClearDSV(LowLvlGfx::GetDepthBuffer());
 		LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }, LowLvlGfx::GetDepthBuffer());
 		m_renderer->Render(m_scene->GetCamera());
-		LowLvlGfx::Present();
+
+		LowLvlGfx::EndFrame();
 	}
 }

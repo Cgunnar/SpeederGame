@@ -44,6 +44,31 @@ DX11::~DX11()
 	m_context->Flush();
 }
 
+void DX11::BeginFrame()
+{
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+}
+
+
+void DX11::EndFrame(bool vsync)
+{
+
+	m_context->OMSetRenderTargets(1, m_backBufferViewNoSRGB.GetAddressOf(), nullptr);
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+	ImGuiIO& io = ImGui::GetIO();
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+	}
+
+	m_swapChain->Present(vsync ? 1 : 0, 0);
+}
+
 void DX11::SetViewPort(Resolution res)
 {
 	D3D11_VIEWPORT vp;
@@ -65,6 +90,7 @@ void DX11::OnResize(Resolution res)
 	m_context->ClearState();
 	m_context->Flush();
 
+	if (m_backBufferViewNoSRGB.Reset()) assert(false);
 	if (m_backBuffer->rtv.Reset()) assert(false);
 	if (m_backBuffer->buffer.Reset()) assert(false);
 
@@ -335,6 +361,10 @@ void DX11::CreateRTVandDSV()
 	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	desc.Texture2D.MipSlice = 0;
 	hr = m_device->CreateRenderTargetView(m_backBuffer->buffer.Get(), &desc, &m_backBuffer->rtv);
+	assert(SUCCEEDED(hr));
+
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	hr = m_device->CreateRenderTargetView(m_backBuffer->buffer.Get(), &desc, &m_backBufferViewNoSRGB);
 	assert(SUCCEEDED(hr));
 
 	D3D11_TEXTURE2D_DESC zbufferDesc;

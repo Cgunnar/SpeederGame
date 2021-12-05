@@ -5,6 +5,7 @@
 #include "LowLvlGfx.h"
 #include "ReadImg.hpp"
 
+
 using namespace rfm;
 using namespace rfe;
 
@@ -68,6 +69,8 @@ Scene::Scene()
 
 	m_quad.addComponent(DiffuseTexturMaterialComp())->textureID = AssetManager::Get().AddTexture2D(myTexture);
 	m_quad.getComponent<DiffuseTexturMaterialComp>()->specularColor = { 1,0,0 };
+
+	m_quadContr.Slider1 = m_quad.getComponent<TransformComp>()->transform.getTranslation();
 }
 
 Scene::~Scene()
@@ -76,7 +79,14 @@ Scene::~Scene()
 
 void Scene::Update(float dt)
 {
-	m_quad.getComponent<TransformComp>()->transform.rotateDeg(0, 30 * dt, 0);
+	m_quadContr.Show();
+	m_lightContr.Show();
+
+	m_quad.getComponent<TransformComp>()->transform.setTranslation(m_quadContr.Slider1);
+	m_quad.getComponent<TransformComp>()->transform.setRotation(m_quadContr.Slider2.x, m_quadContr.Slider2.y, m_quadContr.Slider2.z);
+
+
+
 }
 
 rfe::Entity& Scene::GetCamera()

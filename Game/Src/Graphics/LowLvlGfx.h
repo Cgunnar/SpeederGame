@@ -73,7 +73,8 @@ public:
 	static void Draw(uint32_t vertexCount);
 	static void DrawIndexed(uint32_t indexCount, uint32_t startIndexLocation, int32_t baseVertexLocation);
 
-	static void Present(bool vsync = false);
+	static void BeginFrame();
+	static void EndFrame(bool vsync = false);
 
 	static std::shared_ptr<Texture2D> GetBackBuffer();
 	static std::shared_ptr<Texture2D> GetDepthBuffer();

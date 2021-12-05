@@ -356,9 +356,14 @@ void LowLvlGfx::ClearDSV(std::shared_ptr<Texture2D> dsv)
 	s_dx11->m_context->ClearDepthStencilView(dsv->dsv.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
-void LowLvlGfx::Present(bool vsync)
+void LowLvlGfx::BeginFrame()
 {
-	s_dx11->m_swapChain->Present(vsync ? 1 : 0, 0);
+	s_dx11->BeginFrame();
+}
+
+void LowLvlGfx::EndFrame(bool vsync)
+{
+	s_dx11->EndFrame(vsync);
 }
 
 std::shared_ptr<Texture2D> LowLvlGfx::GetBackBuffer()

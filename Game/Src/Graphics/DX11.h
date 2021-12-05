@@ -59,6 +59,8 @@ class DX11
 	DX11() = delete;
 	DX11(HWND hwnd, Resolution res);
 	~DX11();
+	void BeginFrame();
+	void EndFrame(bool vsync);
 	void SetViewPort(Resolution res);
 	DX11(const DX11& other) = delete;
 	DX11& operator=(const DX11& other) = delete;
@@ -76,8 +78,10 @@ class DX11
 	Microsoft::WRL::ComPtr<ID3D11Device> m_device;
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext> m_context;
 	
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> m_backBufferViewNoSRGB;
 	std::shared_ptr<Texture2D> m_backBuffer;
 	std::shared_ptr<Texture2D> m_zBuffer;
+
 	BOOL m_fullScreen = false;
 	Resolution m_nativeRes;
 	Resolution m_resolution;

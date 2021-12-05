@@ -4,6 +4,22 @@
 #include "GraphicsResources.h"
 #include "RimfrostMath.hpp"
 
+
+
+struct RenderComp : rfe::Component<RenderComp>
+{
+	enum class RenderPassEnum
+	{
+		phong = 0,
+		phong_transparent,
+		end,
+	};
+
+	RenderPassEnum renderPass = RenderPassEnum::end;
+	MeshID subMeshID;
+	GID materialID;
+};
+
 struct DiffuseTexturMaterialComp : rfe::Component<DiffuseTexturMaterialComp>
 {
 	GID textureID;
@@ -17,7 +33,15 @@ struct IndexedMeshComp: rfe::Component<IndexedMeshComp>
 	VertexBuffer vertexBuffer;
 };
 
-
+//struct IndexedSubMeshComp : rfe::Component<IndexedSubMeshComp>
+//{
+//	struct SubMeshOffsets
+//	{
+//		uint32_t indexCount;
+//		uint32_t startIndexLocation;
+//		int32_t baseVertexLocation;
+//	} meshOffsets;
+//};
 
 struct PointLightComp : rfe::Component<PointLightComp>
 {

@@ -40,8 +40,10 @@ Scene::Scene()
 	Geometry::Quad_POS_NOR_UV quad2;
 	m_quad = EntityReg::createEntity();
 	m_quad.addComponent(TransformComp());
-	m_quad.addComponent(IndexedMeshComp())->indexBuffer = LowLvlGfx::CreateIndexBuffer(quad2.IndexData(), quad2.indexCount);
-	m_quad.getComponent<IndexedMeshComp>()->vertexBuffer = LowLvlGfx::CreateVertexBuffer(quad2.VertexData(), quad2.arraySize, quad2.vertexStride);
+	RenderComp* rendComp = m_quad.addComponent(RenderComp());
+	rendComp->renderPass = RenderComp::RenderPassEnum::phong;
+	rendComp->subMeshID = static_cast<MeshID>(SimpleMesh::Quad);
+
 
 	MyImageStruct im;
 	readImage(im, "Assets/Hej.png");

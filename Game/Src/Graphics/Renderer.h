@@ -17,6 +17,8 @@ private:
 
 	void PhongRender(rfe::Entity& camera);
 
+	void RunRenderPasses(rfe::Entity& camera);
+
 	ConstantBuffer m_worldMatrixCB;
 	ConstantBuffer m_pointLightCB;
 	ConstantBuffer m_phongMaterialCB;

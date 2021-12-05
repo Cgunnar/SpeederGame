@@ -8,6 +8,7 @@
 #include "RimfrostMath.hpp"
 
 using namespace rfm;
+using namespace rfe;
 
 
 
@@ -19,15 +20,13 @@ struct alignas(16) PhongMaterial
 	float shininess;
 };
 
-PointLight pointLight;
-
 Renderer::Renderer()
 {
 	m_vp.P = Matrix(PIDIV4, 16.0f / 9.0f, 0.01f, 1000.0f);
 
 	m_worldMatrixCB = LowLvlGfx::CreateConstantBuffer({ sizeof(Matrix), BufferDesc::USAGE::DYNAMIC });
 	m_phongMaterialCB = LowLvlGfx::CreateConstantBuffer({ sizeof(PhongMaterial), BufferDesc::USAGE::DYNAMIC });
-	m_pointLightCB = LowLvlGfx::CreateConstantBuffer({ sizeof(PointLight), BufferDesc::USAGE::DYNAMIC }, &pointLight);
+	m_pointLightCB = LowLvlGfx::CreateConstantBuffer({ sizeof(PointLight), BufferDesc::USAGE::DYNAMIC });
 	m_vpCB = LowLvlGfx::CreateConstantBuffer({ 2 * sizeof(Matrix), BufferDesc::USAGE::DYNAMIC });
 
 
@@ -53,7 +52,8 @@ void Renderer::Render(rfe::Entity& camera)
 	m_vp.V = inverse(*camera.getComponent<TransformComp>());
 	LowLvlGfx::UpdateBuffer(m_vpCB, &m_vp);
 
-	PhongRender(camera);
+	//PhongRender(camera);
+	RunRenderPasses(camera);
 }
 
 void Renderer::PhongRender(rfe::Entity& camera)
@@ -86,6 +86,51 @@ void Renderer::PhongRender(rfe::Entity& camera)
 			LowLvlGfx::BindSRV(AssetManager::Get().GetTexture2D(m.textureID), ShaderType::PIXELSHADER, 0);
 			LowLvlGfx::DrawIndexed(ib->indexBuffer.GetIndexCount(), 0, 0);
 		}
+
+	}
+}
+
+void Renderer::RunRenderPasses(rfe::Entity& camera)
+{
+	//sort RenderComp and then have switch case for renderpasses, sort more and instance
+
+
+
+	//only one pass for now, fix loop for more passes later
+	
+
+	LowLvlGfx::Bind(m_vpCB, ShaderType::VERTEXSHADER, 1);
+	LowLvlGfx::Bind(m_vpCB, ShaderType::PIXELSHADER, 1);
+
+	LowLvlGfx::Bind(m_vertexShader);
+	LowLvlGfx::Bind(m_phongPS);
+	LowLvlGfx::Bind(m_pointLightCB, ShaderType::PIXELSHADER, 0);
+	LowLvlGfx::Bind(m_sampler, ShaderType::PIXELSHADER, 0);
+	LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	AssetManager& assetMan = AssetManager::Get();
+	for (const auto& rendComp : rfe::EntityReg::getComponentArray<RenderComp>())
+	{
+		EntityID entID = rendComp.getEntityID();
+		auto material = *EntityReg::getComponent<DiffuseTexturMaterialComp>(entID);
+		auto worldMatrix = EntityReg::getComponent<TransformComp>(entID)->transform;
+
+		auto diffTex = assetMan.GetTexture2D(material.textureID);
+		const Mesh& mesh = assetMan.GetMesh(rendComp.subMeshID);
+
+		PhongMaterial mat;
+		mat.ks = material.specularColor;
+		mat.shininess = material.shininess;
+		LowLvlGfx::UpdateBuffer(m_phongMaterialCB, &mat);
+		LowLvlGfx::Bind(m_phongMaterialCB, ShaderType::PIXELSHADER, 2);
+
+		LowLvlGfx::Bind(mesh.vb);
+		LowLvlGfx::Bind(mesh.ib);
+		LowLvlGfx::UpdateBuffer(m_worldMatrixCB, &worldMatrix);
+		LowLvlGfx::Bind(m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
+
+		LowLvlGfx::BindSRV(diffTex, ShaderType::PIXELSHADER, 0);
+		LowLvlGfx::DrawIndexed(mesh.indexCount, mesh.startIndexLocation, mesh.baseVertexLocation);
 
 	}
 }

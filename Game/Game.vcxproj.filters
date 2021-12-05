@@ -78,12 +78,6 @@
     <ClInclude Include="Src\Graphics\Material.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Graphics\Model.h">
-      <Filter>Src\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Graphics\RenderUnit.h">
-      <Filter>Src\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Graphics\Renderer.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
@@ -165,12 +159,6 @@
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\Material.cpp">
-      <Filter>Src\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Graphics\Model.cpp">
-      <Filter>Src\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Graphics\RenderUnit.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\Renderer.cpp">

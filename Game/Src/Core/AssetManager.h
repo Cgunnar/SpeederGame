@@ -2,6 +2,13 @@
 #include "utilityTypes.h"
 #include "GraphicsResources.h"
 
+enum class SimpleMesh
+{
+	Quad = 1,
+};
+
+
+
 class AssetManager
 {
 public:
@@ -10,8 +17,10 @@ public:
 	static AssetManager& Get();
 
 	std::shared_ptr<Texture2D> GetTexture2D(GID guid) const;
+	const Mesh& GetMesh(MeshID id) const;
+	const Mesh& GetMesh(SimpleMesh mesh) const;
 	GID AddTexture2D(std::shared_ptr<Texture2D> tempArgumentFixCreationOfTexture2dLater);
-
+	MeshID AddMesh(Mesh mesh);
 
 private:
 	AssetManager();
@@ -22,5 +31,6 @@ private:
 	static AssetManager* s_instance;
 
 	std::unordered_map<uint64_t, std::shared_ptr<Texture2D>> m_textures;
+	std::vector<Mesh> m_meshes;
 };
 

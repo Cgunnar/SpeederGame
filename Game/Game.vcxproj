@@ -114,8 +114,6 @@
     <ClInclude Include="Src\Graphics\GraphicsResources.h" />
     <ClInclude Include="Src\Graphics\LowLvlGfx.h" />
     <ClInclude Include="Src\Graphics\Material.h" />
-    <ClInclude Include="Src\Graphics\Model.h" />
-    <ClInclude Include="Src\Graphics\RenderUnit.h" />
     <ClInclude Include="Src\Graphics\Renderer.h" />
     <ClInclude Include="Src\Math\Matrix.hpp" />
     <ClInclude Include="Src\Math\RfextendedMath.hpp" />
@@ -145,8 +143,6 @@
     <ClCompile Include="Src\Graphics\GraphicsResources.cpp" />
     <ClCompile Include="Src\Graphics\LowlvlGfx.cpp" />
     <ClCompile Include="Src\Graphics\Material.cpp" />
-    <ClCompile Include="Src\Graphics\Model.cpp" />
-    <ClCompile Include="Src\Graphics\RenderUnit.cpp" />
     <ClCompile Include="Src\Graphics\Renderer.cpp" />
     <ClCompile Include="Src\Math\Matrix.cpp" />
     <ClCompile Include="Src\Math\RfextendedMath.cpp" />

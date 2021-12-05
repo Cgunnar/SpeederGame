@@ -6,10 +6,12 @@
 #include <windows.h>
 #include <cstdint>
 #include "RimfrostMath.hpp"
+#include "utilityTypes.h"
 
 class LowLvlGfx;
 class DX11;
 
+typedef size_t MeshID;
 
 namespace standardSamplers
 {
@@ -73,6 +75,18 @@ private:
 	uint32_t indexCount = 0;
 	uint32_t startIndexLocation = 0;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_indexBuffer;
+};
+
+struct Mesh
+{
+	VertexBuffer vb;
+	IndexBuffer ib;
+	uint32_t indexCount;
+	uint32_t startIndexLocation;
+	int32_t baseVertexLocation;
+	GID GetGID() const { return guid; }
+private:
+	GID guid = GID::GenerateNew();
 };
 
 

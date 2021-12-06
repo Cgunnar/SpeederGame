@@ -7,11 +7,12 @@
 #include <cstdint>
 #include "RimfrostMath.hpp"
 #include "utilityTypes.h"
+#include "GraphicsUtilityTypes.h"
 
 class LowLvlGfx;
 class DX11;
 
-typedef size_t MeshID;
+
 
 namespace standardSamplers
 {

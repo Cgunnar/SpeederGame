@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <vector>
 #include "RimfrostMath.hpp"
+#include "GraphicsUtilityTypes.h"
 namespace Geometry
 {
 
@@ -24,13 +25,8 @@ namespace Geometry
 
 	struct Quad_POS_NOR_UV
 	{
-		struct VertexPOS_NOR_UV
-		{
-			rfm::Vector3 pos;
-			rfm::Vector3 nor;
-			rfm::Vector2 uv;
-		};
-		std::vector<VertexPOS_NOR_UV> vertices
+		
+		std::vector<Vertex_POS_NOR_UV> vertices
 		{
 			{ rfm::Vector3(-1, 1, 0.0),  rfm::Vector3(0.0, 0.0, -1.0), rfm::Vector2(0.0, 0.0) },
 			{ rfm::Vector3(1, 1, 0.0),   rfm::Vector3(0.0, 0.0, -1.0), rfm::Vector2(1.0, 0.0) },

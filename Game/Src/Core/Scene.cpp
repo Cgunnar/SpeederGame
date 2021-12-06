@@ -4,7 +4,7 @@
 #include "Geometry.h"
 #include "LowLvlGfx.h"
 #include "ReadImg.hpp"
-
+#include "AssimpLoader.h"
 
 using namespace rfm;
 using namespace rfe;
@@ -28,6 +28,10 @@ void SetSubResDataMips(const void* dataPtr, D3D11_SUBRESOURCE_DATA*& subResMipAr
 
 Scene::Scene()
 {
+	AssimpLoader a;
+	auto m = a.loadStaticModel("Assets/Models/Sun/Sun.obj");
+
+
 	m_camera = EntityReg::createEntity();
 	m_camera.addComponent(TransformComp());
 	m_camera.getComponent<TransformComp>()->transform.setTranslation(0, 0, 1);

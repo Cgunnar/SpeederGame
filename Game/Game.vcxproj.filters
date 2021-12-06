@@ -63,6 +63,9 @@
     <ClInclude Include="Src\GUI\GuiDebug.h">
       <Filter>Src\GUI</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Graphics\AssimpLoader.h">
+      <Filter>Src\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Graphics\DX11.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
@@ -148,6 +151,9 @@
     </ClCompile>
     <ClCompile Include="Src\GUI\GuiDebug.cpp">
       <Filter>Src\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\AssimpLoader.cpp">
+      <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\DX11.cpp">
       <Filter>Src\Graphics</Filter>

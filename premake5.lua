@@ -20,7 +20,7 @@ project "Game"
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
-    libdirs { "%{prj.name}/vendor/vld/lib/" }
+    libdirs { "%{prj.name}/vendor/vld/lib/", "%{prj.name}/vendor/assimp/%{cfg.buildcfg}/lib/" }
 
     pchheader "pch.hpp"
     pchsource "%{prj.name}/Src/pch.cpp"
@@ -57,7 +57,9 @@ project "Game"
     postbuildcommands 
     {
         --"{COPY} \"%{prj.location}/vendor/vld/dlls/**\" \"%{prj.location}\""
-        "{COPY} \"%{prj.location}/vendor/vld/dlls/**\" \"%{cfg.buildtarget.directory}\""
+        "{COPY} \"%{prj.location}/vendor/vld/dlls/**\" \"%{cfg.buildtarget.directory}\"",
+        "{COPY} \"%{prj.location}/vendor/assimp/%{cfg.buildcfg}/dll/**\" \"%{cfg.buildtarget.directory}\""
+        
         
        -- ("{COPY} vendor/vld/dlls/vld_x64.dll ..bin/" .. outputdir .. "/%{prj.name}")
     }

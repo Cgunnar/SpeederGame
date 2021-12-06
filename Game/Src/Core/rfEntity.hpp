@@ -538,10 +538,11 @@ namespace rfe
 
 		if (entity.s_refCounts[entity.m_entityIndex] > 2)
 		{
-#ifdef DEBUG
+
 			std::string debugOut = "[ERROR] release " + std::to_string(entity.s_refCounts[entity.m_entityIndex] - 2) +
 				" references to Entity, ID: " + std::to_string(entity.m_entityIndex) +
 				"\n\tOnly two references is allowd when removeEntity(Entity) is called.\n\tOne internal and one for the argument to the call.\n";
+#ifdef DEBUG
 			std::cout << debugOut;
 #endif // DEBUG
 

@@ -78,7 +78,28 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_indexBuffer;
 };
 
+struct RenderUnit
+{
+	//SubMeshID
+};
+
+struct Model
+{
+	std::vector<Model> subModels;
+	//std::vector<GID>
+};
+
+
+
+
 struct Mesh
+{
+	VertexBuffer vb;
+	IndexBuffer ib;
+	//std::vector<SubMesh> subMeshes;
+};
+
+struct SubMesh
 {
 	VertexBuffer vb;
 	IndexBuffer ib;

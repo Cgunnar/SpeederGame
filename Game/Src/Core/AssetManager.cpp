@@ -21,8 +21,8 @@ void AssetManager::Destroy()
 AssetManager::AssetManager()
 {
 	Geometry::Quad_POS_NOR_UV quad2;
-	m_meshes.push_back(Mesh());
-	Mesh& mesh = m_meshes.back();
+	m_meshes.push_back(SubMesh());
+	SubMesh& mesh = m_meshes.back();
 	mesh.ib = LowLvlGfx::CreateIndexBuffer(quad2.IndexData(), quad2.indexCount);
 	mesh.vb = LowLvlGfx::CreateVertexBuffer(quad2.VertexData(), quad2.arraySize, quad2.vertexStride);
 	mesh.baseVertexLocation = 0;
@@ -49,13 +49,13 @@ std::shared_ptr<Texture2D> AssetManager::GetTexture2D(GID guid) const
 	return nullptr;
 }
 
-const Mesh& AssetManager::GetMesh(MeshID id) const
+const SubMesh& AssetManager::GetMesh(MeshID id) const
 {
 	assert(id > 0 && id-1 < m_meshes.size());
 	return m_meshes[id - 1];
 }
 
-const Mesh& AssetManager::GetMesh(SimpleMesh mesh) const
+const SubMesh& AssetManager::GetMesh(SimpleMesh mesh) const
 {
 	MeshID id = static_cast<MeshID>(mesh);
 	assert(id > 0 && id - 1 < m_meshes.size());
@@ -70,10 +70,15 @@ GID AssetManager::AddTexture2D(std::shared_ptr<Texture2D> tempArgumentFixCreatio
 	return id;
 }
 
-MeshID AssetManager::AddMesh(Mesh mesh)
+MeshID AssetManager::AddMesh(SubMesh mesh)
 {
 	m_meshes.push_back(mesh);
 	return m_meshes.size(); // MeshID will always be index + 1
+}
+
+GID AssetManager::LoadModel(const std::string& filePath)
+{
+	return GID();
 }
 
 

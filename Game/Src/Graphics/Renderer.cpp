@@ -116,7 +116,7 @@ void Renderer::RunRenderPasses(rfe::Entity& camera)
 		auto worldMatrix = EntityReg::getComponent<TransformComp>(entID)->transform;
 
 		auto diffTex = assetMan.GetTexture2D(material.textureID);
-		const Mesh& mesh = assetMan.GetMesh(rendComp.subMeshID);
+		const SubMesh& mesh = assetMan.GetMesh(rendComp.subMeshID);
 
 		PhongMaterial mat;
 		mat.ks = material.specularColor;

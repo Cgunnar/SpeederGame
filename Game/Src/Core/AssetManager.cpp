@@ -49,7 +49,7 @@ std::shared_ptr<Texture2D> AssetManager::GetTexture2D(GID guid) const
 	return nullptr;
 }
 
-const SubMesh& AssetManager::GetMesh(MeshID id) const
+const SubMesh& AssetManager::GetMesh(SubMeshID id) const
 {
 	assert(id > 0 && id-1 < m_meshes.size());
 	return m_meshes[id - 1];
@@ -57,7 +57,7 @@ const SubMesh& AssetManager::GetMesh(MeshID id) const
 
 const SubMesh& AssetManager::GetMesh(SimpleMesh mesh) const
 {
-	MeshID id = static_cast<MeshID>(mesh);
+	SubMeshID id = static_cast<SubMeshID>(mesh);
 	assert(id > 0 && id - 1 < m_meshes.size());
 	return m_meshes[id - 1];
 }
@@ -70,14 +70,41 @@ GID AssetManager::AddTexture2D(std::shared_ptr<Texture2D> tempArgumentFixCreatio
 	return id;
 }
 
-MeshID AssetManager::AddMesh(SubMesh mesh)
+SubMeshID AssetManager::AddMesh(SubMesh mesh)
 {
 	m_meshes.push_back(mesh);
 	return m_meshes.size(); // MeshID will always be index + 1
 }
 
+void traverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subModel)
+{
+	for (auto m : subMeshTree.subMeshes)
+	{
+		RenderUnit ru;
+		//add all stuf from m
+
+	}
+	for (auto n : subMeshTree.nodes)
+	{
+		traverseSubMeshTree(n, subModel);
+	}
+}
+
 GID AssetManager::LoadModel(const std::string& filePath)
 {
+	AssimpLoader a;
+	EngineMeshData engineMeshData = a.loadStaticModel(filePath);
+
+	Model model;
+	model.ib = LowLvlGfx::CreateIndexBuffer(engineMeshData.getIndicesData(), engineMeshData.getIndicesCount());
+	model.vb = LowLvlGfx::CreateVertexBuffer(engineMeshData.getVertextBuffer(), engineMeshData.getVertexCount() * engineMeshData.getVertexSize(), engineMeshData.getVertexSize());
+
+	traverseSubMeshTree(engineMeshData.subsetsInfo, model);
+	
+
+	model.subModels.push_back(SubModel());
+
+
 	return GID();
 }
 

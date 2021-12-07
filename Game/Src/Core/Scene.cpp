@@ -46,7 +46,7 @@ Scene::Scene()
 	m_quad.addComponent(TransformComp());
 	RenderComp* rendComp = m_quad.addComponent(RenderComp());
 	rendComp->renderPass = RenderComp::RenderPassEnum::phong;
-	rendComp->subMeshID = static_cast<MeshID>(SimpleMesh::Quad);
+	rendComp->subMeshID = static_cast<SubMeshID>(SimpleMesh::Quad);
 
 
 	MyImageStruct im;

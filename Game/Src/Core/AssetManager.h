@@ -18,10 +18,10 @@ public:
 	static AssetManager& Get();
 
 	std::shared_ptr<Texture2D> GetTexture2D(GID guid) const;
-	const SubMesh& GetMesh(MeshID id) const;
+	const SubMesh& GetMesh(SubMeshID id) const;
 	const SubMesh& GetMesh(SimpleMesh mesh) const;
 	GID AddTexture2D(std::shared_ptr<Texture2D> tempArgumentFixCreationOfTexture2dLater);
-	MeshID AddMesh(SubMesh mesh);
+	SubMeshID AddMesh(SubMesh mesh);
 
 	GID LoadModel(const std::string& filePath);
 
@@ -35,6 +35,8 @@ private:
 
 	AssimpLoader m_assimpLoader;
 	std::unordered_map<uint64_t, std::shared_ptr<Texture2D>> m_textures;
+	std::unordered_map<uint64_t, Model> m_models;
+	std::unordered_map<uint64_t, Material> m_materials;
 	std::vector<SubMesh> m_meshes;
 };
 

@@ -16,7 +16,8 @@ struct RenderComp : rfe::Component<RenderComp>
 	};
 
 	RenderPassEnum renderPass = RenderPassEnum::end;
-	MeshID subMeshID;
+	GID ModelID;
+	SubMeshID subMeshID;
 	GID materialID;
 };
 

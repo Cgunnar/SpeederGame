@@ -17,16 +17,15 @@ struct RenderComp : rfe::Component<RenderComp>
 
 	RenderPassEnum renderPass = RenderPassEnum::end;
 	GID ModelID;
-	SubMeshID subMeshID;
-	GID materialID;
+	RenderUnit renderUnit;
 };
 
-struct DiffuseTexturMaterialComp : rfe::Component<DiffuseTexturMaterialComp>
-{
-	GID textureID;
-	rfm::Vector3 specularColor{ 1,1,1 };
-	float shininess = 700;
-};
+//struct DiffuseTexturMaterialComp : rfe::Component<DiffuseTexturMaterialComp>
+//{
+//	GID textureID;
+//	rfm::Vector3 specularColor{ 1,1,1 };
+//	float shininess = 700;
+//};
 
 struct IndexedMeshComp: rfe::Component<IndexedMeshComp>
 {

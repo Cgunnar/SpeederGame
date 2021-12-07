@@ -52,7 +52,7 @@ float4 main(vs_out input) : SV_TARGET
     
     float3 ia = 0.2 * float3(1, 1, 1);
     float3 id = lightColor;
-    float3 is = float3(1, 1, 1);
+    float3 is = lightColor;
     
     float3 la = float3(0, 0, 0);
     float3 ld = float3(0, 0, 0);

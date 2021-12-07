@@ -15,7 +15,7 @@ public:
 
 private:
 
-	void PhongRender(rfe::Entity& camera);
+	//void PhongRender(rfe::Entity& camera);
 
 	void RunRenderPasses(rfe::Entity& camera);
 

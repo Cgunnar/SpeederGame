@@ -78,14 +78,42 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_indexBuffer;
 };
 
+class Texture2D
+{
+	friend LowLvlGfx;
+	friend DX11;
+public:
+	Texture2D() = default;
+	~Texture2D() = default;
+	Texture2D(const Texture2D&) = delete;
+	Texture2D& operator=(const Texture2D&) = delete;
+private:
+
+	bool fixedRes = true;
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> buffer;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
+	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> uav;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> dsv;
+};
+
+
+class Sampler
+{
+	friend LowLvlGfx;
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_sampleState;
+};
+
 struct Material
 {
-
+	GID diffuseTextureID;
+	rfm::Vector3 specularColor{ 1,1,1 };
+	float shininess = 700;
 };
 
 struct RenderUnit
 {
-	GID material;
+	Material material;
 	SubMeshID subMesh;
 };
 
@@ -115,28 +143,3 @@ private:
 };
 
 
-class Texture2D
-{
-	friend LowLvlGfx;
-	friend DX11;
-public:
-	Texture2D() = default;
-	~Texture2D() = default;
-	Texture2D(const Texture2D&) = delete;
-	Texture2D& operator=(const Texture2D&) = delete;
-private:
-
-	bool fixedRes = true;
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> buffer;
-	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> rtv;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> srv;
-	Microsoft::WRL::ComPtr<ID3D11UnorderedAccessView> uav;
-	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> dsv;
-};
-
-
-class Sampler
-{
-	friend LowLvlGfx;
-	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_sampleState;
-};

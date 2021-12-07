@@ -24,7 +24,8 @@ public:
 	SubMeshID AddMesh(SubMesh mesh);
 
 	GID LoadModel(const std::string& filePath);
-
+	Model& GetModel(GID modelID);
+	GID LoadTex2D(const std::string& path, bool srgb, bool generateMips);
 private:
 	AssetManager();
 	~AssetManager();
@@ -33,10 +34,14 @@ private:
 
 	static AssetManager* s_instance;
 
+	void TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subModel, VertexBuffer vb, IndexBuffer ib);
+	
+
 	AssimpLoader m_assimpLoader;
 	std::unordered_map<uint64_t, std::shared_ptr<Texture2D>> m_textures;
 	std::unordered_map<uint64_t, Model> m_models;
 	std::unordered_map<uint64_t, Material> m_materials;
 	std::vector<SubMesh> m_meshes;
+	std::unordered_map<std::string, GID> m_filePathMap;
 };
 

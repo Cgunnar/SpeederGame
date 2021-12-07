@@ -2,8 +2,12 @@
 #include "AssetManager.h"
 #include "Geometry.h"
 #include "LowLvlGfx.h"
+#include "ReadImg.hpp"
+#include "GraphicsHelperFunctions.h"
 
 AssetManager* AssetManager::s_instance = nullptr;
+
+
 
 void AssetManager::Init()
 {
@@ -28,6 +32,7 @@ AssetManager::AssetManager()
 	mesh.baseVertexLocation = 0;
 	mesh.startIndexLocation = 0;
 	mesh.indexCount = mesh.ib.GetIndexCount();
+
 }
 
 AssetManager::~AssetManager()
@@ -76,22 +81,46 @@ SubMeshID AssetManager::AddMesh(SubMesh mesh)
 	return m_meshes.size(); // MeshID will always be index + 1
 }
 
-void traverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subModel)
+void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subModel, VertexBuffer vb, IndexBuffer ib)
 {
 	for (auto m : subMeshTree.subMeshes)
 	{
 		RenderUnit ru;
-		//add all stuf from m
+		if (!m.diffuseFileName.empty())
+		{
+			ru.material.diffuseTextureID = this->LoadTex2D(m.filePath + m.diffuseFileName, true, true);
+			
+		}
+		
+		m_meshes.push_back(SubMesh());
+		SubMesh& mesh = m_meshes.back();
+		mesh.ib = ib;
+		mesh.vb = vb;
+		mesh.baseVertexLocation = m.vertexStart;
+		mesh.startIndexLocation = m.indexStart;
+		mesh.indexCount = m.indexCount;
+		ru.subMesh = m_meshes.size();
+
+		subModel.renderUnits.push_back(ru);
 
 	}
 	for (auto n : subMeshTree.nodes)
 	{
-		traverseSubMeshTree(n, subModel);
+		SubModel newSubModel;
+		TraverseSubMeshTree(n, newSubModel, vb, ib);
+		subModel.subModels.push_back(newSubModel);
 	}
 }
 
 GID AssetManager::LoadModel(const std::string& filePath)
 {
+	if (m_filePathMap.contains(filePath))
+	{
+		return m_filePathMap[filePath];
+	}
+	GID newID = GID::GenerateNew();
+	m_filePathMap[filePath] = newID;
+
 	AssimpLoader a;
 	EngineMeshData engineMeshData = a.loadStaticModel(filePath);
 
@@ -99,13 +128,85 @@ GID AssetManager::LoadModel(const std::string& filePath)
 	model.ib = LowLvlGfx::CreateIndexBuffer(engineMeshData.getIndicesData(), engineMeshData.getIndicesCount());
 	model.vb = LowLvlGfx::CreateVertexBuffer(engineMeshData.getVertextBuffer(), engineMeshData.getVertexCount() * engineMeshData.getVertexSize(), engineMeshData.getVertexSize());
 
-	traverseSubMeshTree(engineMeshData.subsetsInfo, model);
+
 	
 
-	model.subModels.push_back(SubModel());
+	TraverseSubMeshTree(engineMeshData.subsetsInfo, model, model.vb, model.ib);
 
+	m_models[newID] = model;
 
-	return GID();
+	return newID;
+}
+
+Model& AssetManager::GetModel(GID modelID)
+{
+	assert(m_models.contains(modelID));
+	return m_models[modelID];
 }
 
 
+
+GID AssetManager::LoadTex2D(const std::string& path, bool srgb, bool generateMips)
+{
+	if (m_filePathMap.contains(path))
+	{
+		return m_filePathMap[path];
+	}
+	MyImageStruct im;
+	GID newID = GID::GenerateNew();
+	m_filePathMap[path] = newID;
+	readImage(im, path);
+	D3D11_TEXTURE2D_DESC desc;
+	desc.CPUAccessFlags = 0;
+
+	desc.Height = im.height;
+	desc.Width = im.width;
+	desc.ArraySize = 1;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+	desc.Format = srgb ? DXGI_FORMAT_R8G8B8A8_UNORM_SRGB : DXGI_FORMAT_R8G8B8A8_UNORM;
+
+	if (generateMips)
+	{
+		desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		desc.Usage = D3D11_USAGE_DEFAULT;
+		desc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
+		desc.MipLevels = im.mipNumber;
+	}
+		
+	else
+	{
+		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		desc.Usage = D3D11_USAGE_IMMUTABLE;
+		desc.MiscFlags = 0;
+		desc.MipLevels = 0;
+	}
+
+	std::shared_ptr<Texture2D> myTexture;
+
+	if (generateMips)
+	{
+		D3D11_SUBRESOURCE_DATA* subResMipArray = nullptr;
+		GfxHelpers::SetSubResDataMips(im.imagePtr, subResMipArray, im.mipNumber, im.stride);
+		myTexture = LowLvlGfx::CreateTexture2D(desc, subResMipArray);
+		delete[] subResMipArray;
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+		srvDesc.Format = desc.Format;
+		srvDesc.ViewDimension = D3D_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MostDetailedMip = 0;
+		srvDesc.Texture2D.MipLevels = -1;
+		LowLvlGfx::CreateSRV(myTexture, &srvDesc);
+	}
+	else
+	{
+		D3D11_SUBRESOURCE_DATA subRes;
+		subRes.pSysMem = im.imagePtr;
+		subRes.SysMemPitch = im.stride;
+		subRes.SysMemSlicePitch = 0;
+		myTexture = LowLvlGfx::CreateTexture2D(desc, &subRes);
+		LowLvlGfx::CreateSRV(myTexture, nullptr);
+	}
+	
+	return this->AddTexture2D(myTexture);
+}

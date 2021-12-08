@@ -17,7 +17,8 @@ struct RenderComp : rfe::Component<RenderComp>
 
 	RenderPassEnum renderPass = RenderPassEnum::end;
 	GID ModelID;
-	RenderUnit renderUnit;
+	RenderUnitID renderUnitID;
+	RenderUnitID renderUnitBegin, renderUnitEnd;
 };
 
 //struct DiffuseTexturMaterialComp : rfe::Component<DiffuseTexturMaterialComp>

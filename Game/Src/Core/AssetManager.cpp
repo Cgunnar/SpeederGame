@@ -25,8 +25,8 @@ void AssetManager::Destroy()
 AssetManager::AssetManager()
 {
 	Geometry::Quad_POS_NOR_UV quad2;
-	m_meshes.push_back(SubMesh());
-	SubMesh& mesh = m_meshes.back();
+	m_renderUnits.push_back(RenderUnit());
+	SubMesh& mesh = m_renderUnits.back().subMesh;
 	mesh.ib = LowLvlGfx::CreateIndexBuffer(quad2.IndexData(), quad2.indexCount);
 	mesh.vb = LowLvlGfx::CreateVertexBuffer(quad2.VertexData(), quad2.arraySize, quad2.vertexStride);
 	mesh.baseVertexLocation = 0;
@@ -54,17 +54,23 @@ std::shared_ptr<Texture2D> AssetManager::GetTexture2D(GID guid) const
 	return nullptr;
 }
 
-const SubMesh& AssetManager::GetMesh(SubMeshID id) const
+const SubMesh& AssetManager::GetMesh(RenderUnitID id) const
 {
-	assert(id > 0 && id-1 < m_meshes.size());
-	return m_meshes[id - 1];
+	assert(id > 0 && id-1 < m_renderUnits.size());
+	return m_renderUnits[id - 1].subMesh;
 }
 
 const SubMesh& AssetManager::GetMesh(SimpleMesh mesh) const
 {
-	SubMeshID id = static_cast<SubMeshID>(mesh);
-	assert(id > 0 && id - 1 < m_meshes.size());
-	return m_meshes[id - 1];
+	RenderUnitID id = static_cast<RenderUnitID>(mesh);
+	assert(id > 0 && id - 1 < m_renderUnits.size());
+	return m_renderUnits[id - 1].subMesh;
+}
+
+const RenderUnit& AssetManager::GetRenderUnit(RenderUnitID id) const
+{
+	assert(id > 0 && id - 1 < m_renderUnits.size());
+	return m_renderUnits[id - 1];
 }
 
 
@@ -75,40 +81,56 @@ GID AssetManager::AddTexture2D(std::shared_ptr<Texture2D> tempArgumentFixCreatio
 	return id;
 }
 
-SubMeshID AssetManager::AddMesh(SubMesh mesh)
+RenderUnitID AssetManager::AddMesh(SubMesh mesh)
 {
-	m_meshes.push_back(mesh);
-	return m_meshes.size(); // MeshID will always be index + 1
+	m_renderUnits.push_back({ mesh, Material() });
+	return m_renderUnits.size(); // RenderUnitID will always be index + 1
 }
 
-void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subModel, VertexBuffer vb, IndexBuffer ib)
+RenderUnitID AssetManager::AddRenderUnit(const SubMesh& subMesh, const Material& material)
 {
-	for (auto m : subMeshTree.subMeshes)
+	m_renderUnits.push_back({ subMesh, material });
+	return m_renderUnits.size(); // RenderUnitID will always be index + 1
+}
+
+RenderUnitID AssetManager::AddRenderUnit(RenderUnit renderUnit)
+{
+	m_renderUnits.push_back(renderUnit);
+	return m_renderUnits.size(); // RenderUnitID will always be index + 1
+}
+
+void AssetManager::TraverseSubMeshTree(std::vector<SubMeshTree>& subMeshTrees, SubModel& subModel, VertexBuffer vb, IndexBuffer ib)
+{
+	static RenderUnitID largestIDinSubTree = 0;
+	for (auto& subMeshTree : subMeshTrees)
 	{
-		RenderUnit ru;
-		if (!m.diffuseFileName.empty())
+		for (auto m : subMeshTree.subMeshes)
 		{
-			ru.material.diffuseTextureID = this->LoadTex2D(m.filePath + m.diffuseFileName, true, true);
+			RenderUnit ru;
+			if (!m.diffuseFileName.empty())
+			{
+				ru.material.diffuseTextureID = this->LoadTex2D(m.filePath + m.diffuseFileName, true, true);
+
+			}
 			
+			ru.subMesh.ib = ib;
+			ru.subMesh.vb = vb;
+			ru.subMesh.baseVertexLocation = m.vertexStart;
+			ru.subMesh.startIndexLocation = m.indexStart;
+			ru.subMesh.indexCount = m.indexCount;
+			RenderUnitID ID = AddRenderUnit(ru);
+			largestIDinSubTree = ID + 1;
+			subModel.renderUnitIDs.push_back(ID);
+
 		}
-		
-		m_meshes.push_back(SubMesh());
-		SubMesh& mesh = m_meshes.back();
-		mesh.ib = ib;
-		mesh.vb = vb;
-		mesh.baseVertexLocation = m.vertexStart;
-		mesh.startIndexLocation = m.indexStart;
-		mesh.indexCount = m.indexCount;
-		ru.subMesh = m_meshes.size();
-
-		subModel.renderUnits.push_back(ru);
-
-	}
-	for (auto n : subMeshTree.nodes)
-	{
-		SubModel newSubModel;
-		TraverseSubMeshTree(n, newSubModel, vb, ib);
-		subModel.subModels.push_back(newSubModel);
+		for (auto n : subMeshTree.nodes)
+		{
+			SubModel newSubModel;
+			TraverseSubMeshTree(n.nodes, newSubModel, vb, ib);
+			subModel.subModels.push_back(newSubModel);
+		}
+		subModel.RenderUnitBegin = subModel.renderUnitIDs.front();	// hope this works
+		subModel.RenderUnitEnd = largestIDinSubTree;				// hope this works
 	}
 }
 
@@ -130,8 +152,8 @@ GID AssetManager::LoadModel(const std::string& filePath)
 
 
 	
-
-	TraverseSubMeshTree(engineMeshData.subsetsInfo, model, model.vb, model.ib);
+	assert(engineMeshData.subsetsInfo.subMeshes.empty() && engineMeshData.subsetsInfo.subMeshesIndex.empty());
+	TraverseSubMeshTree(engineMeshData.subsetsInfo.nodes, model, model.vb, model.ib);
 
 	m_models[newID] = model;
 

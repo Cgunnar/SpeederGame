@@ -21,8 +21,9 @@ Scene::Scene()
 	m_sun.addComponent(TransformComp())->transform.setTranslation(0, 0, 8);
 	RenderComp* rendCompSun = m_sun.addComponent(RenderComp());
 	rendCompSun->renderPass = RenderComp::RenderPassEnum::phong;
-	rendCompSun->renderUnit.subMesh = sunModel.subModels[0].renderUnits[0].subMesh;
-	rendCompSun->renderUnit.material = sunModel.subModels[0].renderUnits[0].material;
+	rendCompSun->renderUnitID = sunModel.renderUnitIDs[0];
+	rendCompSun->renderUnitBegin = sunModel.RenderUnitBegin;
+	rendCompSun->renderUnitEnd = sunModel.RenderUnitEnd;
 	rendCompSun->ModelID = sunModelID;
 
 
@@ -48,8 +49,9 @@ Scene::Scene()
 	m_quad.addComponent(TransformComp());
 	RenderComp* rendComp = m_quad.addComponent(RenderComp());
 	rendComp->renderPass = RenderComp::RenderPassEnum::phong;
-	rendComp->renderUnit.subMesh = static_cast<SubMeshID>(SimpleMesh::Quad);
-	rendComp->renderUnit.material = quadMat;
+	SubMesh quadMeshCopy = AssetManager::Get().GetMesh(SimpleMesh::Quad);
+	
+	rendComp->renderUnitID = AssetManager::Get().AddRenderUnit(quadMeshCopy, quadMat);
 	
 
 

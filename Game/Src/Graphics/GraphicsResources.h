@@ -111,25 +111,6 @@ struct Material
 	float shininess = 700;
 };
 
-struct RenderUnit
-{
-	Material material;
-	SubMeshID subMesh;
-};
-
-struct SubModel
-{
-	std::vector<SubModel> subModels;
-	std::vector<RenderUnit> renderUnits;
-};
-
-struct Model : public SubModel
-{
-	
-	VertexBuffer vb;
-	IndexBuffer ib;
-};
-
 struct SubMesh
 {
 	VertexBuffer vb;
@@ -141,5 +122,31 @@ struct SubMesh
 private:
 	GID guid = GID::GenerateNew();
 };
+
+typedef size_t RenderUnitID;
+
+struct RenderUnit
+{
+	SubMesh subMesh;
+	Material material;
+};
+
+struct SubModel
+{
+	std::vector<SubModel> subModels;
+	std::vector<RenderUnitID> renderUnitIDs;
+	RenderUnitID RenderUnitBegin, RenderUnitEnd;	// begin is renderUnitIDs[0], end is the last RenderUnitID+1 in the the tree of submodels
+													// this is usefull if we want to give a function or class the ability to
+													// loop over all Id:s but dont want to save the tree of submodels
+};
+
+struct Model : public SubModel
+{
+	
+	VertexBuffer vb;
+	IndexBuffer ib;
+};
+
+
 
 

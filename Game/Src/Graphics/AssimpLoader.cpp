@@ -63,7 +63,7 @@ EngineMeshData AssimpLoader::loadStaticModel(const std::string& filePath)
 	SubMeshTree modelGraph;
 
 	modelGraph = processNode(scene->mRootNode, scene, path);
-
+	assert(modelGraph.subMeshes.empty()); // i want to know if this can be filled or if the root always is empty
 
 
 

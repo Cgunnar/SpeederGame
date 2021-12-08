@@ -111,26 +111,35 @@ void Renderer::RunRenderPasses(rfe::Entity& camera)
 	AssetManager& assetMan = AssetManager::Get();
 	for (const auto& rendComp : rfe::EntityReg::getComponentArray<RenderComp>())
 	{
+
+		//it can render a range of RenderUnits, but need know what renderpass thay should belong to, add this to RenderUnit
+		// and fix a function where RenderUnits are submitted insead of just renderd in this function
+		/*for (RenderUnitID i = rendComp.renderUnitBegin; i < rendComp.renderUnitEnd; i++)
+		{
+			const RenderUnit& renderUnit = assetMan.GetRenderUnit(i);
+		}*/
+
+
+
 		EntityID entID = rendComp.getEntityID();
-		auto material = rendComp.renderUnit.material;
+		const RenderUnit& renderUnit = assetMan.GetRenderUnit(rendComp.renderUnitID);
 		auto worldMatrix = EntityReg::getComponent<TransformComp>(entID)->transform;
 
-		auto diffTex = assetMan.GetTexture2D(material.diffuseTextureID);
-		const SubMesh& mesh = assetMan.GetMesh(rendComp.renderUnit.subMesh);
+		auto diffTex = assetMan.GetTexture2D(renderUnit.material.diffuseTextureID);
 
 		PhongMaterial mat;
-		mat.ks = material.specularColor;
-		mat.shininess = material.shininess;
+		mat.ks = renderUnit.material.specularColor;
+		mat.shininess = renderUnit.material.shininess;
 		LowLvlGfx::UpdateBuffer(m_phongMaterialCB, &mat);
 		LowLvlGfx::Bind(m_phongMaterialCB, ShaderType::PIXELSHADER, 2);
 
-		LowLvlGfx::Bind(mesh.vb);
-		LowLvlGfx::Bind(mesh.ib);
+		LowLvlGfx::Bind(renderUnit.subMesh.vb);
+		LowLvlGfx::Bind(renderUnit.subMesh.ib);
 		LowLvlGfx::UpdateBuffer(m_worldMatrixCB, &worldMatrix);
 		LowLvlGfx::Bind(m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
 
 		LowLvlGfx::BindSRV(diffTex, ShaderType::PIXELSHADER, 0);
-		LowLvlGfx::DrawIndexed(mesh.indexCount, mesh.startIndexLocation, mesh.baseVertexLocation);
+		LowLvlGfx::DrawIndexed(renderUnit.subMesh.indexCount, renderUnit.subMesh.startIndexLocation, renderUnit.subMesh.baseVertexLocation);
 
 	}
 }

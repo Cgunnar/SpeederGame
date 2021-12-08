@@ -1,8 +1,6 @@
 #pragma once
 #include "RimfrostMath.hpp"
 
-typedef size_t SubMeshID;
-
 struct Vertex_POS_NOR_UV
 {
 	rfm::Vector3 position;

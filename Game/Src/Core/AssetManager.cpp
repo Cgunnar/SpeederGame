@@ -112,6 +112,11 @@ void AssetManager::TraverseSubMeshTree(std::vector<SubMeshTree>& subMeshTrees, S
 				ru.material.diffuseTextureID = this->LoadTex2D(m.filePath + m.diffuseFileName, true, true);
 
 			}
+			else
+			{
+				ru.material.diffuseColor = rfm::Vector3(m.color[0], m.color[1], m.color[2]);
+				assert(!ru.material.diffuseTextureID);
+			}
 			
 			ru.subMesh.ib = ib;
 			ru.subMesh.vb = vb;

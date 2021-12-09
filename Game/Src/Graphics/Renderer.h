@@ -2,6 +2,8 @@
 #include "GraphicsResources.h"
 #include "RimfrostMath.hpp"
 #include "rfEntity.hpp"
+#include "AssetManager.h"
+
 class Renderer
 {
 	
@@ -18,6 +20,10 @@ private:
 	//void PhongRender(rfe::Entity& camera);
 
 	void RunRenderPasses(rfe::Entity& camera);
+
+	void RunRenderPasses2(rfe::Entity& camera);
+
+	void DrawRenderUnit(RenderUnitID id, const AssetManager& am);
 
 	ConstantBuffer m_worldMatrixCB;
 	ConstantBuffer m_pointLightCB;

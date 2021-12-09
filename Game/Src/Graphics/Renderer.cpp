@@ -53,7 +53,7 @@ void Renderer::Render(rfe::Entity& camera)
 	LowLvlGfx::UpdateBuffer(m_vpCB, &m_vp);
 
 	//PhongRender(camera);
-	RunRenderPasses(camera);
+	RunRenderPasses2(camera);
 }
 
 //void Renderer::PhongRender(rfe::Entity& camera)
@@ -142,4 +142,84 @@ void Renderer::RunRenderPasses(rfe::Entity& camera)
 		LowLvlGfx::DrawIndexed(renderUnit.subMesh.indexCount, renderUnit.subMesh.startIndexLocation, renderUnit.subMesh.baseVertexLocation);
 
 	}
+}
+
+void Renderer::RunRenderPasses2(rfe::Entity& camera)
+{
+	//sort RenderComp and then have switch case for renderpasses, sort more and instance
+
+
+
+	//only one pass for now, fix loop for more passes later
+
+
+	LowLvlGfx::Bind(m_vpCB, ShaderType::VERTEXSHADER, 1);
+	LowLvlGfx::Bind(m_vpCB, ShaderType::PIXELSHADER, 1);
+
+	LowLvlGfx::Bind(m_vertexShader);
+	LowLvlGfx::Bind(m_phongPS);
+	LowLvlGfx::Bind(m_pointLightCB, ShaderType::PIXELSHADER, 0);
+	LowLvlGfx::Bind(m_sampler, ShaderType::PIXELSHADER, 0);
+	LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	AssetManager& assetMan = AssetManager::Get();
+	for (const auto& rendComp : rfe::EntityReg::getComponentArray<RenderComp>())
+	{
+
+		//it can render a range of RenderUnits, but need know what renderpass thay should belong to, add this to RenderUnit
+		// and fix a function where RenderUnits are submitted insead of just renderd in this function
+		/*for (RenderUnitID i = rendComp.renderUnitBegin; i < rendComp.renderUnitEnd; i++)
+		{
+			const RenderUnit& renderUnit = assetMan.GetRenderUnit(i);
+		}*/
+
+
+		EntityID entID = rendComp.getEntityID();
+		auto worldMatrix = EntityReg::getComponent<TransformComp>(entID)->transform;
+		LowLvlGfx::UpdateBuffer(m_worldMatrixCB, &worldMatrix);
+		LowLvlGfx::Bind(m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
+
+		
+		
+		RenderUnitID b = rendComp.renderUnitBegin;
+		RenderUnitID e = rendComp.renderUnitEnd;
+		if (b | e)
+		{
+			for (RenderUnitID i = b; i < e; i++)
+			{
+				DrawRenderUnit(i, assetMan);
+			}
+		}
+		else
+		{
+			DrawRenderUnit(rendComp.renderUnitID, assetMan);
+		}
+
+		
+		
+
+	}
+}
+
+void Renderer::DrawRenderUnit(RenderUnitID id, const AssetManager& am)
+{
+	
+	const RenderUnit& renderUnit = am.GetRenderUnit(id);
+	auto diffTex = am.GetTexture2D(renderUnit.material.diffuseTextureID);
+	if (diffTex == nullptr)
+	{
+		return; // fix this later
+	}
+
+	PhongMaterial mat;
+	mat.ks = renderUnit.material.specularColor;
+	mat.shininess = renderUnit.material.shininess;
+	LowLvlGfx::UpdateBuffer(m_phongMaterialCB, &mat);
+	LowLvlGfx::Bind(m_phongMaterialCB, ShaderType::PIXELSHADER, 2);
+
+	LowLvlGfx::Bind(renderUnit.subMesh.vb);
+	LowLvlGfx::Bind(renderUnit.subMesh.ib);
+
+	LowLvlGfx::BindSRV(diffTex, ShaderType::PIXELSHADER, 0);
+	LowLvlGfx::DrawIndexed(renderUnit.subMesh.indexCount, renderUnit.subMesh.startIndexLocation, renderUnit.subMesh.baseVertexLocation);
 }

@@ -108,7 +108,9 @@ struct Material
 {
 	GID diffuseTextureID;
 	rfm::Vector3 specularColor{ 1,1,1 };
+	rfm::Vector3 diffuseColor{ 0.8f, 0.8f, 0.8f };
 	float shininess = 700;
+	std::string name;
 };
 
 struct SubMesh

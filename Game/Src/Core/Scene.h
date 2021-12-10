@@ -17,7 +17,7 @@ public:
 
 private:
 	rfe::Entity m_camera;
-	rfe::Entity m_sun;
+	rfe::Entity m_nanosuit;
 	rfe::Entity m_arrow;
 	rfe::Entity m_quad;
 	rfe::Entity m_pointLight;

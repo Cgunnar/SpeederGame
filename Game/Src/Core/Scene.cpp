@@ -14,34 +14,15 @@ using namespace rfe;
 
 Scene::Scene()
 {
-	//auto sunModelID = AssetManager::Get().LoadModel("Assets/Models/Sun/Sun.obj");
-	//auto sunModelID = AssetManager::Get().LoadModel("Assets/Models/sponza/sponza.obj");
-	auto sunModelID = AssetManager::Get().LoadModel("Assets/Models/nanosuit/nanosuit.obj");
-	Model& sunModel = AssetManager::Get().GetModel(sunModelID);
+	m_nanosuit = EntityReg::createEntity();
+	m_nanosuit.addComponent(TransformComp())->transform.setTranslation(0, 0, 8);
+	m_nanosuit.getComponent<TransformComp>()->transform.setScale(0.05);
+	m_nanosuit.addComponent(RenderComp("Assets/Models/nanosuit/nanosuit.obj"));
 
-	m_sun = EntityReg::createEntity();
-	m_sun.addComponent(TransformComp())->transform.setTranslation(0, 0, 8);
-	m_sun.getComponent<TransformComp>()->transform.setScale(0.05);
-	RenderComp* rendCompSun = m_sun.addComponent(RenderComp());
-	rendCompSun->renderPass = RenderComp::RenderPassEnum::phong;
-	rendCompSun->renderUnitID = sunModel.renderUnitIDs[0];
-	rendCompSun->renderUnitBegin = sunModel.RenderUnitBegin;
-	rendCompSun->renderUnitEnd = sunModel.RenderUnitEnd;
-	rendCompSun->ModelID = sunModelID;
-
-
-
-	auto arrowModelID = AssetManager::Get().LoadModel("Assets/Models/Arrows/DXRefSys.obj");
-	Model& arrowModel = AssetManager::Get().GetModel(arrowModelID);
 
 	m_arrow = EntityReg::createEntity();
 	m_arrow.addComponent(TransformComp());
-	RenderComp* rendCompArrow = m_arrow.addComponent(RenderComp());
-	rendCompArrow->renderPass = RenderComp::RenderPassEnum::phong;
-	rendCompArrow->renderUnitID = arrowModel.renderUnitIDs[0];
-	rendCompArrow->renderUnitBegin = arrowModel.RenderUnitBegin;
-	rendCompArrow->renderUnitEnd = arrowModel.RenderUnitEnd;
-	rendCompArrow->ModelID = arrowModelID;
+	m_arrow.addComponent(RenderComp("Assets/Models/Arrows/DXRefSys.obj"));
 
 
 	m_camera = EntityReg::createEntity();
@@ -52,10 +33,6 @@ Scene::Scene()
 	m_pointLight = EntityReg::createEntity();
 	m_pointLight.addComponent(TransformComp());
 	m_pointLight.addComponent(PointLightComp());
-
-	Geometry::Quad_POS_NOR_UV quad2;
-	MyImageStruct im;
-	readImage(im, "Assets/Hej.png");
 
 	
 	Material quadMat;

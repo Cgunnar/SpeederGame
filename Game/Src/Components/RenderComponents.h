@@ -3,11 +3,25 @@
 #include "utilityTypes.h"
 #include "GraphicsResources.h"
 #include "RimfrostMath.hpp"
+#include "AssetManager.h"
 
 
 
 struct RenderComp : rfe::Component<RenderComp>
 {
+	RenderComp(const std::string& filePath = "")
+	{
+		if (!filePath.empty())
+		{
+			auto modelID = AssetManager::Get().LoadModel(filePath);
+			Model& model = AssetManager::Get().GetModel(modelID);
+			renderPass = RenderComp::RenderPassEnum::phong;
+			renderUnitID = model.renderUnitIDs[0];
+			renderUnitBegin = model.RenderUnitBegin;
+			renderUnitEnd = model.RenderUnitEnd;
+			ModelID = modelID;
+		}
+	}
 	enum class RenderPassEnum
 	{
 		phong = 0,
@@ -18,8 +32,8 @@ struct RenderComp : rfe::Component<RenderComp>
 
 	RenderPassEnum renderPass = RenderPassEnum::end;
 	GID ModelID;
-	RenderUnitID renderUnitID;
-	RenderUnitID renderUnitBegin, renderUnitEnd;
+	RenderUnitID renderUnitID = 0;
+	RenderUnitID renderUnitBegin = 0, renderUnitEnd = 0;
 };
 
 //struct DiffuseTexturMaterialComp : rfe::Component<DiffuseTexturMaterialComp>

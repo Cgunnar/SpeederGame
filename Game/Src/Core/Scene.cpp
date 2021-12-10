@@ -15,12 +15,12 @@ using namespace rfe;
 Scene::Scene()
 {
 	//auto sunModelID = AssetManager::Get().LoadModel("Assets/Models/Sun/Sun.obj");
-	auto sunModelID = AssetManager::Get().LoadModel("Assets/Models/sponza/sponza.obj");
-	//auto sunModelID = AssetManager::Get().LoadModel("Assets/Models/nanosuit/nanosuit.obj");
+	//auto sunModelID = AssetManager::Get().LoadModel("Assets/Models/sponza/sponza.obj");
+	auto sunModelID = AssetManager::Get().LoadModel("Assets/Models/nanosuit/nanosuit.obj");
 	Model& sunModel = AssetManager::Get().GetModel(sunModelID);
 
 	m_sun = EntityReg::createEntity();
-	m_sun.addComponent(TransformComp())->transform.setTranslation(0, -10, 8);
+	m_sun.addComponent(TransformComp())->transform.setTranslation(0, 0, 8);
 	m_sun.getComponent<TransformComp>()->transform.setScale(0.05);
 	RenderComp* rendCompSun = m_sun.addComponent(RenderComp());
 	rendCompSun->renderPass = RenderComp::RenderPassEnum::phong;
@@ -45,8 +45,11 @@ Scene::Scene()
 
 	
 	Material quadMat;
-	quadMat.diffuseTextureID = AssetManager::Get().LoadTex2D("Assets/Hej.png", true, true);
-	quadMat.specularColor = { 1,0,0 };
+	quadMat.type = Material::Type::PhongMaterial_DiffTex;
+	PhongMaterial_DiffTex mat;
+	mat.specularColor = { 1,0,0 };
+	mat.diffuseTextureID = AssetManager::Get().LoadTex2D("Assets/Hej.png", true, true);
+	quadMat.materialVariant = mat;
 
 	m_quad = EntityReg::createEntity();
 	m_quad.addComponent(TransformComp());
@@ -73,8 +76,8 @@ void Scene::Update(float dt)
 	m_quadContr.Show();
 	m_lightContr.Show();
 
-	m_sun.getComponent<TransformComp>()->transform.setTranslation(m_quadContr.slider1.value);
-	m_sun.getComponent<TransformComp>()->transform.setRotation(m_quadContr.slider2.value.x, m_quadContr.slider2.value.y, m_quadContr.slider2.value.z);
+	m_quad.getComponent<TransformComp>()->transform.setTranslation(m_quadContr.slider1.value);
+	m_quad.getComponent<TransformComp>()->transform.setRotation(m_quadContr.slider2.value.x, m_quadContr.slider2.value.y, m_quadContr.slider2.value.z);
 
 	m_pointLight.getComponent<PointLightComp>()->pointLight.position = m_lightContr.slider1.value;
 	m_pointLight.getComponent<PointLightComp>()->pointLight.color = m_lightContr.slider2.value;

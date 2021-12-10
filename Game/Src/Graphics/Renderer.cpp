@@ -6,19 +6,19 @@
 #include "LowLvlGfx.h"
 #include "AssetManager.h"
 #include "RimfrostMath.hpp"
+#include "Material.h"
 
 using namespace rfm;
 using namespace rfe;
 
-
-
 struct alignas(16) PhongMaterial
 {
-	Vector4 ka;
-	Vector4 kd;
-	Vector3 ks;
+	rfm::Vector4 ka;
+	rfm::Vector4 kd;
+	rfm::Vector3 ks;
 	float shininess;
 };
+
 
 Renderer::Renderer()
 {
@@ -125,11 +125,12 @@ void Renderer::RunRenderPasses(rfe::Entity& camera)
 		const RenderUnit& renderUnit = assetMan.GetRenderUnit(rendComp.renderUnitID);
 		auto worldMatrix = EntityReg::getComponent<TransformComp>(entID)->transform;
 
-		auto diffTex = assetMan.GetTexture2D(renderUnit.material.diffuseTextureID);
+		const PhongMaterial_DiffTex& matVariant = std::get<PhongMaterial_DiffTex>(renderUnit.material.materialVariant);
+		auto diffTex = assetMan.GetTexture2D(matVariant.diffuseTextureID);
 
 		PhongMaterial mat;
-		mat.ks = renderUnit.material.specularColor;
-		mat.shininess = renderUnit.material.shininess;
+		mat.ks = matVariant.specularColor;
+		mat.shininess = matVariant.shininess;
 		LowLvlGfx::UpdateBuffer(m_phongMaterialCB, &mat);
 		LowLvlGfx::Bind(m_phongMaterialCB, ShaderType::PIXELSHADER, 2);
 
@@ -205,21 +206,27 @@ void Renderer::DrawRenderUnit(RenderUnitID id, const AssetManager& am)
 {
 	
 	const RenderUnit& renderUnit = am.GetRenderUnit(id);
-	auto diffTex = am.GetTexture2D(renderUnit.material.diffuseTextureID);
-	if (diffTex == nullptr)
+
+	if (renderUnit.material.type == Material::Type::PhongMaterial_DiffTex)
 	{
-		return; // fix this later
+
+		const PhongMaterial_DiffTex& matVariant = std::get<PhongMaterial_DiffTex>(renderUnit.material.materialVariant);
+		auto diffTex = am.GetTexture2D(matVariant.diffuseTextureID);
+		if (diffTex == nullptr)
+		{
+			return; // fix this later
+		}
+
+		PhongMaterial mat;
+		mat.ks = matVariant.specularColor;
+		mat.shininess = matVariant.shininess;
+		LowLvlGfx::UpdateBuffer(m_phongMaterialCB, &mat);
+		LowLvlGfx::Bind(m_phongMaterialCB, ShaderType::PIXELSHADER, 2);
+
+		LowLvlGfx::Bind(renderUnit.subMesh.vb);
+		LowLvlGfx::Bind(renderUnit.subMesh.ib);
+
+		LowLvlGfx::BindSRV(diffTex, ShaderType::PIXELSHADER, 0);
+		LowLvlGfx::DrawIndexed(renderUnit.subMesh.indexCount, renderUnit.subMesh.startIndexLocation, renderUnit.subMesh.baseVertexLocation);
 	}
-
-	PhongMaterial mat;
-	mat.ks = renderUnit.material.specularColor;
-	mat.shininess = renderUnit.material.shininess;
-	LowLvlGfx::UpdateBuffer(m_phongMaterialCB, &mat);
-	LowLvlGfx::Bind(m_phongMaterialCB, ShaderType::PIXELSHADER, 2);
-
-	LowLvlGfx::Bind(renderUnit.subMesh.vb);
-	LowLvlGfx::Bind(renderUnit.subMesh.ib);
-
-	LowLvlGfx::BindSRV(diffTex, ShaderType::PIXELSHADER, 0);
-	LowLvlGfx::DrawIndexed(renderUnit.subMesh.indexCount, renderUnit.subMesh.startIndexLocation, renderUnit.subMesh.baseVertexLocation);
 }

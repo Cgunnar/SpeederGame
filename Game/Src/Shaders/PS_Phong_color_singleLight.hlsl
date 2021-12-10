@@ -1,8 +1,3 @@
-
-
-Texture2D colorTexture : register(t0);
-SamplerState mySampler : register(s0);
-
 cbuffer PointLight : register(b0)
 {
     float3 lightPosition;
@@ -43,10 +38,8 @@ float Attenuate(float attConst, float attLin, float attExp, float distance)
 
 float4 main(vs_out input) : SV_TARGET
 {
-    float4 textureColor = colorTexture.Sample(mySampler, input.textureUV);
-    
-    float3 ka = textureColor.xyz;
-    float3 kd = textureColor.xyz;
+    float3 ka = materialAmbientColor.xyz;
+    float3 kd = materialDiffuseColor.xyz;
     float3 ks = materialSpeculaColor;
     float shininess = materialShininess;
     

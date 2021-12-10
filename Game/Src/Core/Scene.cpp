@@ -45,7 +45,7 @@ Scene::Scene()
 
 	
 	Material quadMat;
-	quadMat.type = Material::Type::PhongMaterial_DiffTex;
+	quadMat.type = MaterialType::PhongMaterial_DiffTex;
 	PhongMaterial_DiffTex mat;
 	mat.specularColor = { 1,0,0 };
 	mat.diffuseTextureID = AssetManager::Get().LoadTex2D("Assets/Hej.png", true, true);

@@ -72,6 +72,9 @@
     <ClInclude Include="Src\Graphics\Geometry.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Graphics\GraphicsHelperFunctions.h">
+      <Filter>Src\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Graphics\GraphicsResources.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
@@ -138,7 +141,8 @@
     <ClInclude Include="vendor\singleHeaders\stb_image.h">
       <Filter>vendor\singleHeaders</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Graphics\GraphicsHelperFunctions.h" />
+    <ClInclude Include="Src\Graphics\PhongRenderer.h" />
+    <ClInclude Include="Src\Graphics\SharedRendererResources.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">
@@ -163,6 +167,9 @@
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\DX11.cpp">
+      <Filter>Src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\GraphicsHelperFunctions.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\GraphicsResources.cpp">
@@ -207,7 +214,7 @@
     <ClCompile Include="vendor\imgui\backends\imgui_impl_win32.cpp">
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Graphics\GraphicsHelperFunctions.cpp" />
+    <ClCompile Include="Src\Graphics\PhongRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\PS_FlatTexture.hlsl">
@@ -222,5 +229,6 @@
     <FxCompile Include="Src\Shaders\VertexShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Src\Shaders\PS_Phong_color_singleLight.hlsl" />
   </ItemGroup>
 </Project>

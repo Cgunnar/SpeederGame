@@ -143,6 +143,15 @@ struct Model : public SubModel
 	IndexBuffer ib;
 };
 
+struct RendUnitIDAndTransform
+{
+	RendUnitIDAndTransform(RenderUnitID unitID, rfm::Transform worldMatrix, MaterialType matType) : id(unitID),
+		worldMatrix(worldMatrix), type(matType) {}
+	RenderUnitID id;
+	MaterialType type;
+	rfm::Transform worldMatrix;
+};
+
 
 
 

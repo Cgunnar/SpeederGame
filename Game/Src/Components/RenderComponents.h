@@ -11,6 +11,7 @@ struct RenderComp : rfe::Component<RenderComp>
 	enum class RenderPassEnum
 	{
 		phong = 0,
+		mixed,
 		phong_transparent,
 		end,
 	};

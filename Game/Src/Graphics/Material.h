@@ -20,14 +20,29 @@ struct PhongMaterial_DiffTex
 	float shininess = 800;
 };
 
+
+enum class MaterialType
+{
+	none = 0,
+	PhongMaterial_Color = 1 << 0,
+	PhongMaterial_DiffTex = 1 << 1,
+	wireframe = 1 << 2,
+	transparent = 1 << 3,
+};
+inline MaterialType operator &(MaterialType l, MaterialType r)
+{
+	return (MaterialType)((int)l & (int)r);
+}
+inline MaterialType operator |(MaterialType l, MaterialType r)
+{
+	return (MaterialType)((int)l | (int)r);
+}
+
 struct Material
 {
 	std::string name;
-	enum class Type
-	{
-		PhongMaterial_Color = 0,
-		PhongMaterial_DiffTex,
-	} type;
+	MaterialType type;
+
 	std::variant <
 		PhongMaterial_Color, PhongMaterial_DiffTex
 	> materialVariant;

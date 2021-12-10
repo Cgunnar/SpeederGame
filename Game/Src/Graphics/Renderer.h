@@ -3,6 +3,8 @@
 #include "RimfrostMath.hpp"
 #include "rfEntity.hpp"
 #include "AssetManager.h"
+#include "PhongRenderer.h"
+#include "SharedRendererResources.h"
 
 class Renderer
 {
@@ -16,28 +18,13 @@ public:
 	void Render(rfe::Entity& camera);
 
 private:
+	std::shared_ptr<SharedRenderResources> m_sharedRenderResources;
 
-	//void PhongRender(rfe::Entity& camera);
+	void SubmitToRender(rfe::Entity& camera);
+	std::vector<RendUnitIDAndTransform> m_transparentRenderUnits;
 
-	void RunRenderPasses(rfe::Entity& camera);
+	PhongRenderer m_phongRenderer;
 
-	void RunRenderPasses2(rfe::Entity& camera);
-
-	void DrawRenderUnit(RenderUnitID id, const AssetManager& am);
-
-	ConstantBuffer m_worldMatrixCB;
-	ConstantBuffer m_pointLightCB;
-	ConstantBuffer m_phongMaterialCB;
-	ConstantBuffer m_vpCB;
-
-	Shader m_vertexShader;
-	Shader m_phongPS;
-	Sampler m_sampler;
-
-	struct alignas(16) VP
-	{
-		rfm::Matrix V;
-		rfm::Matrix P;
-	} m_vp;
+	VP m_vp;
 };
 

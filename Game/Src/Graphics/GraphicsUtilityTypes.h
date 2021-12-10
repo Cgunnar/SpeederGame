@@ -17,6 +17,12 @@ struct Vertex_POS_NOR_UV_TAN_BITAN
 	rfm::Vector3 biTangent;
 };
 
+struct alignas(16) VP
+{
+	rfm::Matrix V;
+	rfm::Matrix P;
+};
+
 enum class TextureTypes
 {
 	NONE = 0,

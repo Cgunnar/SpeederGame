@@ -113,6 +113,7 @@ void AssetManager::TraverseSubMeshTree(std::vector<SubMeshTree>& subMeshTrees, S
 			{
 				PhongMaterial_Color mat;
 				mat.diffuseColor = rfm::Vector3(m.color[0], m.color[1], m.color[2]);
+				mat.ambientColor = rfm::Vector3(m.color[0], m.color[1], m.color[2]);
 				ru.material.materialVariant = mat;
 				ru.material.type = MaterialType::PhongMaterial_Color;
 			}

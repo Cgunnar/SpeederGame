@@ -30,9 +30,23 @@ Scene::Scene()
 	rendCompSun->ModelID = sunModelID;
 
 
+
+	auto arrowModelID = AssetManager::Get().LoadModel("Assets/Models/Arrows/DXRefSys.obj");
+	Model& arrowModel = AssetManager::Get().GetModel(arrowModelID);
+
+	m_arrow = EntityReg::createEntity();
+	m_arrow.addComponent(TransformComp());
+	RenderComp* rendCompArrow = m_arrow.addComponent(RenderComp());
+	rendCompArrow->renderPass = RenderComp::RenderPassEnum::phong;
+	rendCompArrow->renderUnitID = arrowModel.renderUnitIDs[0];
+	rendCompArrow->renderUnitBegin = arrowModel.RenderUnitBegin;
+	rendCompArrow->renderUnitEnd = arrowModel.RenderUnitEnd;
+	rendCompArrow->ModelID = arrowModelID;
+
+
 	m_camera = EntityReg::createEntity();
 	m_camera.addComponent(TransformComp());
-	m_camera.getComponent<TransformComp>()->transform.setTranslation(0, 0, 1);
+	m_camera.getComponent<TransformComp>()->transform.setTranslation(0, 0, -5);
 	m_camera.getComponent<TransformComp>()->transform.setRotationDeg(0, 0, 0);
 
 	m_pointLight = EntityReg::createEntity();
@@ -75,9 +89,13 @@ void Scene::Update(float dt)
 {
 	m_quadContr.Show();
 	m_lightContr.Show();
+	m_cameraContr.Show();
 
 	m_quad.getComponent<TransformComp>()->transform.setTranslation(m_quadContr.slider1.value);
 	m_quad.getComponent<TransformComp>()->transform.setRotation(m_quadContr.slider2.value.x, m_quadContr.slider2.value.y, m_quadContr.slider2.value.z);
+
+	m_camera.getComponent<TransformComp>()->transform.setTranslation(m_cameraContr.slider1.value);
+	m_camera.getComponent<TransformComp>()->transform.setRotation(m_cameraContr.slider2.value.x, m_cameraContr.slider2.value.y, m_cameraContr.slider2.value.z);
 
 	m_pointLight.getComponent<PointLightComp>()->pointLight.position = m_lightContr.slider1.value;
 	m_pointLight.getComponent<PointLightComp>()->pointLight.color = m_lightContr.slider2.value;

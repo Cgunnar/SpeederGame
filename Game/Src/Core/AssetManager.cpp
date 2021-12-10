@@ -74,13 +74,6 @@ const RenderUnit& AssetManager::GetRenderUnit(RenderUnitID id) const
 }
 
 
-GID AssetManager::AddTexture2D(std::shared_ptr<Texture2D> tempArgumentFixCreationOfTexture2dLater)
-{
-	GID id = GID::GenerateNew();
-	m_textures[id] = tempArgumentFixCreationOfTexture2dLater;
-	return id;
-}
-
 RenderUnitID AssetManager::AddMesh(SubMesh mesh)
 {
 	m_renderUnits.push_back({ mesh, Material() });
@@ -234,6 +227,6 @@ GID AssetManager::LoadTex2D(const std::string& path, bool srgb, bool generateMip
 		myTexture = LowLvlGfx::CreateTexture2D(desc, &subRes);
 		LowLvlGfx::CreateSRV(myTexture, nullptr);
 	}
-	
-	return this->AddTexture2D(myTexture);
+	m_textures[newID] = myTexture;
+	return newID;
 }

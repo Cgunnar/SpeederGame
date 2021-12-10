@@ -21,7 +21,6 @@ public:
 	const SubMesh& GetMesh(RenderUnitID id) const;
 	const SubMesh& GetMesh(SimpleMesh mesh) const;
 	const RenderUnit& GetRenderUnit(RenderUnitID id) const;
-	GID AddTexture2D(std::shared_ptr<Texture2D> tempArgumentFixCreationOfTexture2dLater);
 	RenderUnitID AddMesh(SubMesh mesh);
 	RenderUnitID AddRenderUnit(const SubMesh& subMesh, const Material& material);
 	RenderUnitID AddRenderUnit(RenderUnit renderUnit);

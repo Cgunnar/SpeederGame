@@ -144,6 +144,7 @@
     <ClInclude Include="Src\Graphics\PhongRenderer.h" />
     <ClInclude Include="Src\Graphics\SharedRendererResources.h" />
     <ClInclude Include="Src\Core\Input.h" />
+    <ClInclude Include="Src\Core\Mouse.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">
@@ -217,6 +218,7 @@
     </ClCompile>
     <ClCompile Include="Src\Graphics\PhongRenderer.cpp" />
     <ClCompile Include="Src\Core\Input.cpp" />
+    <ClCompile Include="Src\Core\Mouse.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\PS_FlatTexture.hlsl">

@@ -4,12 +4,14 @@
 #include "Mouse.h"
 //#include <SimpleMath.h>
 #include "RimfrostMath.hpp"
+#include "Mouse.hpp"
 
 //this code is taken from a game project i was part of and it is not written by me, but i might poke around a little to make it work for this project
 //Gunnar Cerne
-
+class Window;
 class Input
 {
+	friend Window;
 public:
 	enum Keys
 	{
@@ -28,6 +30,13 @@ public:
 		LeftButton = 1, RightButton, MiddleButton
 	};
 
+	enum class MouseState
+	{
+		Absolute_Confined = 0,
+		Absolute_UnConfined,
+		Relative,
+	};
+
 	void operator=(Input const&) = delete;
 	~Input();
 	static Input& getInput();
@@ -44,12 +53,15 @@ public:
 	bool mouseBeingPressed(MouseKeys key);
 	bool mousePressed(MouseKeys key);
 	bool mouseReleased(MouseKeys key);
-	void lockMouse(int code = 0);
+	void SetMouseState(int code = 0);
 	void update(long double dt);
 	int getLatestCode();
 	long double getTime();
 
 	void setModeAbsolute();
+
+	void ShowMouseCursor(bool yn);
+	void ConfineCursor(bool yn);
 
 private:
 	static Input* instance;
@@ -58,10 +70,13 @@ private:
 	int m_width;
 	int m_height;
 	int m_latestCode;
-	int m_cursorShowState;
+	bool m_showCursor = true;
+	bool m_cursorIsConfined = false;
+	bool m_windowOutOfFocus = false;
 	HWND m_hwnd;
 	std::unique_ptr<DirectX::Keyboard> m_keyboard;
-	std::unique_ptr<DirectX::Mouse> m_mouse;
+	std::unique_ptr<DirectX::Mouse> m_xtkmouse;
+	std::unique_ptr<Mouse> m_myMouse;
 	DirectX::Keyboard::KeyboardStateTracker m_keys;
 	DirectX::Mouse::ButtonStateTracker m_mouseButtons;
 	bool m_mouseMode;

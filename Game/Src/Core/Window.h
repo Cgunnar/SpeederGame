@@ -24,5 +24,9 @@ private:
 	const wchar_t* m_wndClassName{ L"wcName" };
 	HINSTANCE m_hInst;
 	HWND m_hWnd;
+	bool m_isClosed = false;
+	bool m_isStarting = true;
+
+	std::vector<unsigned char> m_ridData;
 };
 

@@ -22,7 +22,7 @@ Application::Application()
 {
 	m_window = new Window();
 	LowLvlGfx::Init(m_window->GetHwnd(), m_window->GetClientSize());
-	Input::Init(m_window->GetHwnd(), m_window->GetClientSize().width, m_window->GetClientSize().width);
+	
 	AssetManager::Init();
 	m_renderer = new Renderer();
 	m_scene = new Scene();
@@ -33,7 +33,7 @@ Application::~Application()
 	delete m_scene;
 	delete m_renderer;
 	AssetManager::Destroy();
-	Input::Destroy();
+	
 	LowLvlGfx::Destroy();
 	delete m_window;
 }
@@ -42,6 +42,8 @@ Application::~Application()
 
 void Application::Run()
 {
+	//Input::getInput().ConfineCursor(true);
+
 	bool running = true;
 	while (running)
 	{
@@ -53,7 +55,6 @@ void Application::Run()
 		}
 		LowLvlGfx::BeginFrame();
 		Input::getInput().update(FrameTimer::dt());
-		if (Input::getInput().keyPressed(Input::A)) std::cout << "A\n";
 
 		m_scene->Update(FrameTimer::dt());
 

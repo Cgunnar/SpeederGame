@@ -7,12 +7,12 @@ Input* Input::instance = nullptr;
 Input::Input(HWND wndHandle, int width, int height)
 {
 	m_keyboard = std::make_unique<DirectX::Keyboard>();
-	m_mouse = std::make_unique<DirectX::Mouse>();
-	m_mouse->SetWindow(wndHandle);
-	m_mouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
+	m_xtkmouse = std::make_unique<DirectX::Mouse>();
+	m_xtkmouse->SetWindow(wndHandle);
+	m_xtkmouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
 	m_mouseX = 0.0f;
 	m_mouseY = 0.0f;
-	mouse = m_mouse->GetState();
+	mouse = m_xtkmouse->GetState();
 	m_frameTime = 0.0f;
 	m_width = width;
 	m_height = height;
@@ -100,7 +100,7 @@ bool Input::mouseReleased(MouseKeys key)
 
 rfm::Vector2 Input::mousePos()
 {
-	mouse = m_mouse->GetState();
+	mouse = m_xtkmouse->GetState();
 	rfm::Vector2 delta = rfm::Vector2(float(mouse.x), float(mouse.y));
 	return delta;
 
@@ -183,19 +183,19 @@ bool Input::mousePressed(MouseKeys key)
 	return false;
 }
 
-void Input::lockMouse(int code)
+void Input::SetMouseState(int code)
 {
 	if (code == 0)
 	{
 		m_latestCode = code;
 		if (mouse.positionMode == DirectX::Mouse::MODE_ABSOLUTE)
 		{
-			m_mouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
+			m_xtkmouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
 			while (ShowCursor(0) > 0);
 		}
 		else
 		{
-			m_mouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
+			m_xtkmouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
 			ShowCursor(1);
 		}
 	}
@@ -203,14 +203,14 @@ void Input::lockMouse(int code)
 	{
 		m_latestCode = code;
 
-		m_mouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
+		m_xtkmouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
 		while (ShowCursor(0) > 0);
 	}
 	else if (code == 2)
 	{
 		m_latestCode = code;
 
-		m_mouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
+		m_xtkmouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
 		ShowCursor(1);
 	}
 }
@@ -219,7 +219,7 @@ void Input::update(long double dt)
 {
 	m_frameTime = dt;
 	auto kb = m_keyboard->GetState();
-	mouse = m_mouse->GetState();
+	mouse = m_xtkmouse->GetState();
 	if (mouse.positionMode == DirectX::Mouse::MODE_RELATIVE)
 	{
 		POINT ref_p;
@@ -231,6 +231,7 @@ void Input::update(long double dt)
 	m_mouseY = static_cast<float>(mouse.y);
 	m_mouseX = static_cast<float>(mouse.x);
 
+	m_myMouse->update();
 	m_keys.Update(kb);
 	m_mouseButtons.Update(mouse);
 }
@@ -247,5 +248,26 @@ long double Input::getTime() {
 void Input::setModeAbsolute()
 {
 	ShowCursor(1);
-	m_mouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
+	m_xtkmouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
+}
+
+void Input::ShowMouseCursor(bool yn)
+{
+	m_showCursor = yn;
+	ShowCursor(yn);
+}
+void Input::ConfineCursor(bool yn)
+{
+	m_cursorIsConfined = yn;
+	if (m_cursorIsConfined && !m_windowOutOfFocus)
+	{
+		RECT r;
+		GetClientRect(m_hwnd, &r);
+		MapWindowPoints(m_hwnd, nullptr, (POINT*)&r, 2);
+		ClipCursor(&r);
+	}
+	else
+	{
+		ClipCursor(nullptr);
+	}
 }

@@ -104,6 +104,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Src\Core\Input.h" />
+    <ClInclude Include="Src\Core\Mouse.hpp" />
     <ClInclude Include="Src\Graphics\PhongRenderer.h" />
     <ClInclude Include="Src\Components\RenderComponents.h" />
     <ClInclude Include="Src\Components\StandardComponents.h" />
@@ -143,6 +144,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Input.cpp" />
+    <ClCompile Include="Src\Core\Mouse.cpp" />
     <ClCompile Include="Src\Graphics\PhongRenderer.cpp" />
     <ClCompile Include="Src\Core\Application.cpp" />
     <ClCompile Include="Src\Core\AssetManager.cpp" />

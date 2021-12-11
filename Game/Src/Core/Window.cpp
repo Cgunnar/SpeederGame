@@ -155,14 +155,91 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		assert(width == res.width && height == res.height);
 
 		LowLvlGfx::OnResize(res);
-		if (Input::Valid()) Input::getInput().SetNewWidthAndHight(width, height);
+		if (Input::Valid())
+		{
+			Mouse& mouse = Input::getInput().GetMouse();
+			mouse.confineCursor(mouse.m_cursorIsConfined);
+		}
 		return 0;
 	}
 	case WM_ACTIVATEAPP:
 	{
 		DirectX::Keyboard::ProcessMessage(uMsg, wParam, lParam);
 		//DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
+
+		if (!Input::Valid()) return 0;
+		Mouse& mouse = Input::getInput().GetMouse();
+		if (wParam)
+		{
+			//this->GetGraphics().SetFullScreen(this->GetGraphics().ShouldBeFullScreen());
+			mouse.m_windowOutOfFocus = false; //window is a friend of mouse to fix alt tab
+			mouse.confineCursor(mouse.m_cursorIsConfined);
+		}
+		else
+		{
+			mouse.m_windowOutOfFocus = true;
+		}
 		return 0;
+	}
+
+	case WM_MOUSEMOVE:
+	{
+		if (!Input::Valid()) return 0;
+		Mouse& mouse = Input::getInput().GetMouse();
+		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) break;
+		
+		POINTS p = MAKEPOINTS(lParam);
+		mouse.m_mouseState.x = p.x;
+		mouse.m_mouseState.y = p.y;
+		break;
+	}
+	case WM_MOUSEWHEEL:
+	{
+		if (!Input::Valid()) return 0;
+		Mouse& mouse = Input::getInput().GetMouse();
+		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
+		mouse.m_mouseState.z += GET_WHEEL_DELTA_WPARAM(wParam);
+		break;
+	}
+	case WM_LBUTTONDOWN:
+	{
+		if (!Input::Valid()) return 0;
+		Mouse& mouse = Input::getInput().GetMouse();
+		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
+		mouse.m_mouseState.LMBClicked = true;
+		mouse.m_mouseState.LMBHeld = true;
+		//print("MousePos:  \n");
+		break;
+	}
+
+	case WM_LBUTTONUP:
+	{
+		if (!Input::Valid()) return 0;
+		Mouse& mouse = Input::getInput().GetMouse();
+		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
+		mouse.m_mouseState.LMBReleased = true;
+		mouse.m_mouseState.LMBHeld = false;
+		break;
+	}
+	case WM_RBUTTONDOWN:
+	{
+		if (!Input::Valid()) return 0;
+		Mouse& mouse = Input::getInput().GetMouse();
+		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
+		mouse.m_mouseState.RMBClicked = true;
+		mouse.m_mouseState.RMBHeld = true;
+		//print("MousePos:  \n");
+		break;
+	}
+
+	case WM_RBUTTONUP:
+	{
+		if (!Input::Valid()) return 0;
+		Mouse& mouse = Input::getInput().GetMouse();
+		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
+		mouse.m_mouseState.RMBReleased = true;
+		mouse.m_mouseState.RMBHeld = false;
+		break;
 	}
 
 	case WM_INPUT:

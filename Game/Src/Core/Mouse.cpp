@@ -1,7 +1,7 @@
 #include "pch.hpp"
 #include "Mouse.hpp"
 #include <assert.h>
-
+#include "FrameTimer.hpp"
 
 Mouse::Mouse(std::function<Resolution()> getSizeCallback, std::function<HWND()> getHWNDCallback)
 {
@@ -11,19 +11,19 @@ Mouse::Mouse(std::function<Resolution()> getSizeCallback, std::function<HWND()> 
 
 void Mouse::update()
 {
-
-	if (m_mouseState.LMBClicked || m_mouseState.LMBHeld || m_mouseState.LMBReleased || m_mouseState.RMBClicked || m_mouseState.RMBHeld || m_mouseState.RMBReleased)
+	auto [w, h] = m_getWindowSize();
+	/*if (m_mouseState.LMBClicked || m_mouseState.LMBHeld || m_mouseState.LMBReleased || m_mouseState.RMBClicked || m_mouseState.RMBHeld || m_mouseState.RMBReleased)
 	{
-		auto [w, h] = m_getWindowSize();
 		m_mouseState.windowWidth = w;
 		m_mouseState.windowHeight = h;
 	}
 	if (m_mouseState.deltaX != 0 || m_mouseState.deltaY != 0 || m_mouseState.deltaZ != 0)
 	{
-		auto [w, h] = m_getWindowSize();
 		m_mouseState.windowWidth = w;
 		m_mouseState.windowHeight = h;
-	}
+	}*/
+	m_mouseState.windowWidth = w;
+	m_mouseState.windowHeight = h;
 
 	m_mouseState.deltaX = 0;
 	m_mouseState.deltaY = 0;

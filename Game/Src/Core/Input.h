@@ -25,17 +25,17 @@ public:
 		F11 = DirectX::Keyboard::Keys::F11, F12 = DirectX::Keyboard::Keys::F12
 	};
 
-	enum MouseKeys
+	/*enum MouseKeys
 	{
 		LeftButton = 1, RightButton, MiddleButton
-	};
+	};*/
 
-	enum class MouseState
+	/*enum class MouseState
 	{
 		Absolute_Confined = 0,
 		Absolute_UnConfined,
 		Relative,
-	};
+	};*/
 
 	void operator=(Input const&) = delete;
 	~Input();
@@ -45,42 +45,39 @@ public:
 	static bool Valid();
 	void SetNewWidthAndHight(int width, int height);
 	
-	rfm::Vector2 mousePos();
-	void mouseMovement(float& m_pitch, float& m_yaw);
+	//rfm::Vector2 mousePos();
+	//void mouseMovement(float& m_pitch, float& m_yaw);
 	bool keyBeingPressed(Keys key);
 	bool keyPressed(Keys key);
 	bool keyReleased(Keys key);
-	bool mouseBeingPressed(MouseKeys key);
-	bool mousePressed(MouseKeys key);
-	bool mouseReleased(MouseKeys key);
-	void SetMouseState(int code = 0);
+	//bool mouseBeingPressed(MouseKeys key);
+	//bool mousePressed(MouseKeys key);
+	//bool mouseReleased(MouseKeys key);
+	//void SetMouseState(int code = 0);
 	void update(long double dt);
-	int getLatestCode();
+	//int getLatestCode();
 	long double getTime();
+	Mouse& GetMouse();
+	//void setModeAbsolute();
 
-	void setModeAbsolute();
-
-	void ShowMouseCursor(bool yn);
-	void ConfineCursor(bool yn);
+	/*void ShowMouseCursor(bool yn);
+	void ConfineCursor(bool yn);*/
 
 private:
 	static Input* instance;
-	float m_mouseY;
-	float m_mouseX;
+	/*float m_mouseY;
+	float m_mouseX;*/
 	int m_width;
 	int m_height;
-	int m_latestCode;
-	bool m_showCursor = true;
-	bool m_cursorIsConfined = false;
-	bool m_windowOutOfFocus = false;
+	//int m_latestCode;
 	HWND m_hwnd;
 	std::unique_ptr<DirectX::Keyboard> m_keyboard;
-	std::unique_ptr<DirectX::Mouse> m_xtkmouse;
+	//std::unique_ptr<DirectX::Mouse> m_xtkmouse;
 	std::unique_ptr<Mouse> m_myMouse;
 	DirectX::Keyboard::KeyboardStateTracker m_keys;
 	DirectX::Mouse::ButtonStateTracker m_mouseButtons;
-	bool m_mouseMode;
-	DirectX::Mouse::State mouse;
+	//bool m_mouseMode;
+	//DirectX::Mouse::State mouse;
 	long double m_frameTime;
 private:
 	Input(HWND wndHandle, int width, int height);

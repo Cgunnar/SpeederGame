@@ -7,17 +7,17 @@ Input* Input::instance = nullptr;
 Input::Input(HWND wndHandle, int width, int height)
 {
 	m_keyboard = std::make_unique<DirectX::Keyboard>();
-	m_xtkmouse = std::make_unique<DirectX::Mouse>();
-	m_xtkmouse->SetWindow(wndHandle);
-	m_xtkmouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
-	m_mouseX = 0.0f;
-	m_mouseY = 0.0f;
-	mouse = m_xtkmouse->GetState();
+	//m_xtkmouse = std::make_unique<DirectX::Mouse>();
+	//m_xtkmouse->SetWindow(wndHandle);
+	//m_xtkmouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
+	//m_mouseX = 0.0f;
+	//m_mouseY = 0.0f;
+	//mouse = m_xtkmouse->GetState();
 	m_frameTime = 0.0f;
 	m_width = width;
 	m_height = height;
 	m_hwnd = wndHandle;
-	SetCursorPos(width / 2, height / 2);
+	//SetCursorPos(width / 2, height / 2);
 }
 
 Input::~Input()
@@ -73,153 +73,153 @@ bool Input::keyReleased(Keys key)
 	return m_keys.IsKeyReleased(dxkey);
 }
 
-bool Input::mouseReleased(MouseKeys key)
-{
-	switch (key)
-	{
-	case Input::LeftButton:
-		if (m_mouseButtons.leftButton == DirectX::Mouse::ButtonStateTracker::RELEASED) {
-			return true;
-		}
-		break;
-	case Input::RightButton:
-		if (m_mouseButtons.rightButton == DirectX::Mouse::ButtonStateTracker::RELEASED) {
-			return true;
-		}
-		break;
-	case Input::MiddleButton:
-		if (m_mouseButtons.middleButton == DirectX::Mouse::ButtonStateTracker::RELEASED) {
-			return true;
-		}
-		break;
-	default:
-		return false;
-	}
-	return false;
-}
+//bool Input::mouseReleased(MouseKeys key)
+//{
+//	switch (key)
+//	{
+//	case Input::LeftButton:
+//		if (m_mouseButtons.leftButton == DirectX::Mouse::ButtonStateTracker::RELEASED) {
+//			return true;
+//		}
+//		break;
+//	case Input::RightButton:
+//		if (m_mouseButtons.rightButton == DirectX::Mouse::ButtonStateTracker::RELEASED) {
+//			return true;
+//		}
+//		break;
+//	case Input::MiddleButton:
+//		if (m_mouseButtons.middleButton == DirectX::Mouse::ButtonStateTracker::RELEASED) {
+//			return true;
+//		}
+//		break;
+//	default:
+//		return false;
+//	}
+//	return false;
+//}
 
-rfm::Vector2 Input::mousePos()
-{
-	mouse = m_xtkmouse->GetState();
-	rfm::Vector2 delta = rfm::Vector2(float(mouse.x), float(mouse.y));
-	return delta;
+//rfm::Vector2 Input::mousePos()
+//{
+//	mouse = m_xtkmouse->GetState();
+//	rfm::Vector2 delta = rfm::Vector2(float(mouse.x), float(mouse.y));
+//	return delta;
+//
+//}
 
-}
+//void Input::mouseMovement(float& m_pitch, float& m_yaw)
+//{
+//	if (mouse.positionMode == DirectX::Mouse::MODE_RELATIVE)
+//	{
+//
+//		m_pitch += m_mouseY * static_cast<float>(m_frameTime) * 1.0f;
+//		m_yaw += m_mouseX * static_cast<float>(m_frameTime) * 1.0f;
+//
+//		// limit pitch to straight up or straight down
+//		// with a little fudge-factor to avoid gimbal lock
+//		float limit = rfm::PI / 2.0f - 0.01f;
+//		m_pitch = std::max(-limit, m_pitch);
+//		m_pitch = std::min(+limit, m_pitch);
+//
+//		// keep longitude in sane range by wrapping
+//		if (m_yaw > rfm::PI)
+//		{
+//			m_yaw -= rfm::PI * 2.0f;
+//		}
+//		else if (m_yaw < -rfm::PI)
+//		{
+//			m_yaw += rfm::PI * 2.0f;
+//		}
+//	}
+//
+//}
 
-void Input::mouseMovement(float& m_pitch, float& m_yaw)
-{
-	if (mouse.positionMode == DirectX::Mouse::MODE_RELATIVE)
-	{
+//bool Input::mouseBeingPressed(MouseKeys key)
+//{
+//	switch (key)
+//	{
+//	case Input::LeftButton:
+//		if (m_mouseButtons.leftButton == DirectX::Mouse::ButtonStateTracker::HELD) {
+//			return true;
+//		}
+//		break;
+//	case Input::RightButton:
+//		if (m_mouseButtons.rightButton == DirectX::Mouse::ButtonStateTracker::HELD) {
+//			return true;
+//		}
+//		break;
+//	case Input::MiddleButton:
+//		if (m_mouseButtons.middleButton == DirectX::Mouse::ButtonStateTracker::HELD) {
+//			return true;
+//		}
+//		break;
+//	default:
+//		return false;
+//	}
+//	return false;
+//}
 
-		m_pitch += m_mouseY * static_cast<float>(m_frameTime) * 1.0f;
-		m_yaw += m_mouseX * static_cast<float>(m_frameTime) * 1.0f;
+//bool Input::mousePressed(MouseKeys key)
+//{
+//	switch (key)
+//	{
+//	case Input::LeftButton:
+//		if (m_mouseButtons.leftButton == DirectX::Mouse::ButtonStateTracker::PRESSED) {
+//			return true;
+//		}
+//		break;
+//	case Input::RightButton:
+//		if (m_mouseButtons.rightButton == DirectX::Mouse::ButtonStateTracker::PRESSED) {
+//			return true;
+//		}
+//		break;
+//	case Input::MiddleButton:
+//		if (m_mouseButtons.middleButton == DirectX::Mouse::ButtonStateTracker::PRESSED) {
+//			return true;
+//		}
+//		break;
+//	default:
+//		return false;
+//	}
+//	return false;
+//}
 
-		// limit pitch to straight up or straight down
-		// with a little fudge-factor to avoid gimbal lock
-		float limit = rfm::PI / 2.0f - 0.01f;
-		m_pitch = std::max(-limit, m_pitch);
-		m_pitch = std::min(+limit, m_pitch);
-
-		// keep longitude in sane range by wrapping
-		if (m_yaw > rfm::PI)
-		{
-			m_yaw -= rfm::PI * 2.0f;
-		}
-		else if (m_yaw < -rfm::PI)
-		{
-			m_yaw += rfm::PI * 2.0f;
-		}
-	}
-
-}
-
-bool Input::mouseBeingPressed(MouseKeys key)
-{
-	switch (key)
-	{
-	case Input::LeftButton:
-		if (m_mouseButtons.leftButton == DirectX::Mouse::ButtonStateTracker::HELD) {
-			return true;
-		}
-		break;
-	case Input::RightButton:
-		if (m_mouseButtons.rightButton == DirectX::Mouse::ButtonStateTracker::HELD) {
-			return true;
-		}
-		break;
-	case Input::MiddleButton:
-		if (m_mouseButtons.middleButton == DirectX::Mouse::ButtonStateTracker::HELD) {
-			return true;
-		}
-		break;
-	default:
-		return false;
-	}
-	return false;
-}
-
-bool Input::mousePressed(MouseKeys key)
-{
-	switch (key)
-	{
-	case Input::LeftButton:
-		if (m_mouseButtons.leftButton == DirectX::Mouse::ButtonStateTracker::PRESSED) {
-			return true;
-		}
-		break;
-	case Input::RightButton:
-		if (m_mouseButtons.rightButton == DirectX::Mouse::ButtonStateTracker::PRESSED) {
-			return true;
-		}
-		break;
-	case Input::MiddleButton:
-		if (m_mouseButtons.middleButton == DirectX::Mouse::ButtonStateTracker::PRESSED) {
-			return true;
-		}
-		break;
-	default:
-		return false;
-	}
-	return false;
-}
-
-void Input::SetMouseState(int code)
-{
-	if (code == 0)
-	{
-		m_latestCode = code;
-		if (mouse.positionMode == DirectX::Mouse::MODE_ABSOLUTE)
-		{
-			m_xtkmouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
-			while (ShowCursor(0) > 0);
-		}
-		else
-		{
-			m_xtkmouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
-			ShowCursor(1);
-		}
-	}
-	else if (code == 1)
-	{
-		m_latestCode = code;
-
-		m_xtkmouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
-		while (ShowCursor(0) > 0);
-	}
-	else if (code == 2)
-	{
-		m_latestCode = code;
-
-		m_xtkmouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
-		ShowCursor(1);
-	}
-}
+//void Input::SetMouseState(int code)
+//{
+//	if (code == 0)
+//	{
+//		m_latestCode = code;
+//		if (mouse.positionMode == DirectX::Mouse::MODE_ABSOLUTE)
+//		{
+//			m_xtkmouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
+//			while (ShowCursor(0) > 0);
+//		}
+//		else
+//		{
+//			m_xtkmouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
+//			ShowCursor(1);
+//		}
+//	}
+//	else if (code == 1)
+//	{
+//		m_latestCode = code;
+//
+//		m_xtkmouse->SetMode(DirectX::Mouse::MODE_RELATIVE);
+//		while (ShowCursor(0) > 0);
+//	}
+//	else if (code == 2)
+//	{
+//		m_latestCode = code;
+//
+//		m_xtkmouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
+//		ShowCursor(1);
+//	}
+//}
 
 void Input::update(long double dt)
 {
 	m_frameTime = dt;
 	auto kb = m_keyboard->GetState();
-	mouse = m_xtkmouse->GetState();
+	/*mouse = m_xtkmouse->GetState();
 	if (mouse.positionMode == DirectX::Mouse::MODE_RELATIVE)
 	{
 		POINT ref_p;
@@ -229,45 +229,50 @@ void Input::update(long double dt)
 		SetCursorPos(ref_p.x, ref_p.y);
 	}
 	m_mouseY = static_cast<float>(mouse.y);
-	m_mouseX = static_cast<float>(mouse.x);
+	m_mouseX = static_cast<float>(mouse.x);*/
 
 	m_myMouse->update();
 	m_keys.Update(kb);
-	m_mouseButtons.Update(mouse);
+	//m_mouseButtons.Update(mouse);
 }
 
-int Input::getLatestCode()
-{
-	return m_latestCode;
-}
+//int Input::getLatestCode()
+//{
+//	return m_latestCode;
+//}
 
 long double Input::getTime() {
 	return m_frameTime;
 }
 
-void Input::setModeAbsolute()
+//void Input::setModeAbsolute()
+//{
+//	ShowCursor(1);
+//	m_xtkmouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
+//}
+
+Mouse& Input::GetMouse()
 {
-	ShowCursor(1);
-	m_xtkmouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
+	return *m_myMouse;
 }
 
-void Input::ShowMouseCursor(bool yn)
-{
-	m_showCursor = yn;
-	ShowCursor(yn);
-}
-void Input::ConfineCursor(bool yn)
-{
-	m_cursorIsConfined = yn;
-	if (m_cursorIsConfined && !m_windowOutOfFocus)
-	{
-		RECT r;
-		GetClientRect(m_hwnd, &r);
-		MapWindowPoints(m_hwnd, nullptr, (POINT*)&r, 2);
-		ClipCursor(&r);
-	}
-	else
-	{
-		ClipCursor(nullptr);
-	}
-}
+//void Input::ShowMouseCursor(bool yn)
+//{
+//	m_showCursor = yn;
+//	ShowCursor(yn);
+//}
+//void Input::ConfineCursor(bool yn)
+//{
+//	m_cursorIsConfined = yn;
+//	if (m_cursorIsConfined && !m_windowOutOfFocus)
+//	{
+//		RECT r;
+//		GetClientRect(m_hwnd, &r);
+//		MapWindowPoints(m_hwnd, nullptr, (POINT*)&r, 2);
+//		ClipCursor(&r);
+//	}
+//	else
+//	{
+//		ClipCursor(nullptr);
+//	}
+//}

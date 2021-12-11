@@ -42,7 +42,7 @@ Application::~Application()
 
 void Application::Run()
 {
-	//Input::getInput().ConfineCursor(true);
+	//Input::getInput().GetMouse().confineCursor(true);
 
 	bool running = true;
 	while (running)
@@ -55,6 +55,8 @@ void Application::Run()
 		}
 		LowLvlGfx::BeginFrame();
 		Input::getInput().update(FrameTimer::dt());
+
+		auto ms = Input::getInput().GetMouse().GetMouseState();
 
 		m_scene->Update(FrameTimer::dt());
 

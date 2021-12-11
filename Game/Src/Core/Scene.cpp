@@ -17,12 +17,12 @@ Scene::Scene()
 	m_nanosuit = EntityReg::createEntity();
 	m_nanosuit.addComponent(TransformComp())->transform.setTranslation(0, 0, 8);
 	m_nanosuit.getComponent<TransformComp>()->transform.setScale(0.05);
-	m_nanosuit.addComponent(RenderComp("Assets/Models/nanosuit/nanosuit.obj"));
+	m_nanosuit.addComponent(RenderModelComp("Assets/Models/nanosuit/nanosuit.obj"));
 
 
 	m_arrow = EntityReg::createEntity();
 	m_arrow.addComponent(TransformComp());
-	m_arrow.addComponent(RenderComp("Assets/Models/Arrows/DXRefSys.obj"));
+	m_arrow.addComponent(RenderModelComp("Assets/Models/Arrows/DXRefSys.obj"));
 
 
 	m_camera = EntityReg::createEntity();
@@ -44,8 +44,8 @@ Scene::Scene()
 
 	m_quad = EntityReg::createEntity();
 	m_quad.addComponent(TransformComp());
-	RenderComp* rendComp = m_quad.addComponent(RenderComp());
-	rendComp->renderPass = RenderComp::RenderPassEnum::phong;
+	RenderModelComp* rendComp = m_quad.addComponent(RenderModelComp());
+	rendComp->renderPass = RenderModelComp::RenderPassEnum::phong;
 	SubMesh quadMeshCopy = AssetManager::Get().GetMesh(SimpleMesh::Quad);
 	
 	rendComp->renderUnitID = AssetManager::Get().AddRenderUnit(quadMeshCopy, quadMat);

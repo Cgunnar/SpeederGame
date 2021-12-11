@@ -7,15 +7,15 @@
 
 
 
-struct RenderComp : rfe::Component<RenderComp>
+struct RenderModelComp : rfe::Component<RenderModelComp>
 {
-	RenderComp(const std::string& filePath = "")
+	RenderModelComp(const std::string& filePath = "")
 	{
 		if (!filePath.empty())
 		{
 			auto modelID = AssetManager::Get().LoadModel(filePath);
 			Model& model = AssetManager::Get().GetModel(modelID);
-			renderPass = RenderComp::RenderPassEnum::phong;
+			renderPass = RenderModelComp::RenderPassEnum::phong;
 			renderUnitID = model.renderUnitIDs[0];
 			renderUnitBegin = model.RenderUnitBegin;
 			renderUnitEnd = model.RenderUnitEnd;

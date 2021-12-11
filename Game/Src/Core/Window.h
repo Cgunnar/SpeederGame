@@ -19,7 +19,7 @@ public:
 	Resolution GetClientSize() const;
 private:
 	LRESULT CALLBACK HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
+	bool m_firstActivate = false;
 	static Window* s_windowInstance;
 	const wchar_t* m_wndClassName{ L"wcName" };
 	HINSTANCE m_hInst;

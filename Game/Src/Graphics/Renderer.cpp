@@ -60,11 +60,11 @@ void Renderer::Render(rfe::Entity& camera)
 void Renderer::SubmitToRender(rfe::Entity& camera)
 {
 	AssetManager& assetMan = AssetManager::Get();
-	for (const auto& rendComp : rfe::EntityReg::getComponentArray<RenderComp>())
+	for (const auto& rendComp : rfe::EntityReg::getComponentArray<RenderModelComp>())
 	{
 		EntityID entID = rendComp.getEntityID();
 		Transform worldMatrix = EntityReg::getComponent<TransformComp>(entID)->transform;
-		if (rendComp.renderPass == RenderComp::RenderPassEnum::phong)
+		if (rendComp.renderPass == RenderModelComp::RenderPassEnum::phong)
 		{
 			RenderUnitID b = rendComp.renderUnitBegin;
 			RenderUnitID e = rendComp.renderUnitEnd;

@@ -2,6 +2,7 @@
 
 #include "Window.h"
 #include "LowLvlGfx.h"
+#include "Input.h"
 #include <imgui.h>
 #include <backends\imgui_impl_win32.h>
 
@@ -121,6 +122,7 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_CLOSE:
 	{
 		std::cout << "WM_CLOSE" << std::endl;
+		Input::getInput().lockMouse(2);
 		DestroyWindow(hwnd);
 		return 0;
 	}
@@ -128,17 +130,6 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		std::cout << "WM_DESTROY" << std::endl;
 		PostQuitMessage(0);
-		return 0;
-	}
-	case WM_KEYDOWN:
-	{
-		if (wParam == VK_F11 && LowLvlGfx::IsValid())
-		{
-			if (LowLvlGfx::IsFullScreen())
-				LowLvlGfx::LeaveFullScreen();
-			else
-				LowLvlGfx::EnterFullScreen();
-		}
 		return 0;
 	}
 	case WM_SIZE:
@@ -150,7 +141,80 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		assert(width == res.width && height == res.height);
 
 		LowLvlGfx::OnResize(res);
+		if (Input::Valid()) Input::getInput().SetNewWidthAndHight(width, height);
+		return 0;
+	}
+	case WM_ACTIVATEAPP:
+	{
+		DirectX::Keyboard::ProcessMessage(uMsg, wParam, lParam);
+		DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
+		return 0;
+	}
+	case WM_KEYDOWN:
+	case WM_SYSKEYDOWN:
+	{
+		if (wParam == VK_F11 && LowLvlGfx::IsValid())
+		{
+			if (LowLvlGfx::IsFullScreen())
+				LowLvlGfx::LeaveFullScreen();
+			else
+				LowLvlGfx::EnterFullScreen();
+		}
+		if (wParam == VK_ESCAPE && Input::Valid())
+		{
+			Input::getInput().lockMouse();
+		}
+		DirectX::Keyboard::ProcessMessage(uMsg, wParam, lParam);
+		return 0;
+	}
+	case WM_KEYUP:
+	case WM_SYSKEYUP:
+	{
+		DirectX::Keyboard::ProcessMessage(uMsg, wParam, lParam);
+		return 0;
+	}
+	case WM_ACTIVATE:
+	{
+		if (!m_firstActivate)
+		{
+			m_firstActivate = true;
+			break;
+		}
+		if (wParam == WA_INACTIVE)
+		{
+			// Changes to absolute WITHOUT changing internal 'code'.
+			// This handles the case where the player alt+tabs without opening the menu
+			// Internal state --> relative but we purposefully set the mode to absolute
+			// So when we get back into the game, it returns back to relative.
+			Input::getInput().setModeAbsolute();
+			break;
+		}
+		if (wParam == WA_ACTIVE)
+		{
+			// If alt+tabbed with relative --> get back in relative
+			if (Input::getInput().getLatestCode() == 2)
+				Input::getInput().lockMouse(2);
+			else // If alt+tabbed with absolute --> get back in absolute
+				Input::getInput().lockMouse(1);
 
+			break;
+		}
+		break;
+	}
+	case WM_INPUT:
+	case WM_MOUSEMOVE:
+	case WM_LBUTTONDOWN:
+	case WM_LBUTTONUP:
+	case WM_RBUTTONDOWN:
+	case WM_RBUTTONUP:
+	case WM_MBUTTONDOWN:
+	case WM_MBUTTONUP:
+	case WM_MOUSEWHEEL:
+	case WM_XBUTTONDOWN:
+	case WM_XBUTTONUP:
+	case WM_MOUSEHOVER:
+	{
+		DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
 		return 0;
 	}
 

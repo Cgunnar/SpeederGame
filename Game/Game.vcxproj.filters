@@ -19,6 +19,9 @@
     <Filter Include="Src\Math">
       <UniqueIdentifier>{0678E746-F244-4252-1B5E-30FA078A77E0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\NativeScripts">
+      <UniqueIdentifier>{8B5E2726-F774-25BC-40EC-B0DDAC41F643}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Src\Shaders">
       <UniqueIdentifier>{E6043150-52BA-A945-DBAE-A31C4763A049}</UniqueIdentifier>
     </Filter>
@@ -49,6 +52,12 @@
       <Filter>Src\Core</Filter>
     </ClInclude>
     <ClInclude Include="Src\Core\AssetManager.h">
+      <Filter>Src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Core\Input.h">
+      <Filter>Src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Core\Mouse.hpp">
       <Filter>Src\Core</Filter>
     </ClInclude>
     <ClInclude Include="Src\Core\Scene.h">
@@ -90,7 +99,13 @@
     <ClInclude Include="Src\Graphics\MeshStructures.hpp">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Graphics\PhongRenderer.h">
+      <Filter>Src\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Graphics\Renderer.h">
+      <Filter>Src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\SharedRendererResources.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Matrix.hpp">
@@ -107,6 +122,9 @@
     </ClInclude>
     <ClInclude Include="Src\Math\Vector.hpp">
       <Filter>Src\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\NativeScripts\CameraControllerScript.h">
+      <Filter>Src\NativeScripts</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\FileUtility.hpp">
       <Filter>Src\Utility</Filter>
@@ -141,16 +159,18 @@
     <ClInclude Include="vendor\singleHeaders\stb_image.h">
       <Filter>vendor\singleHeaders</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Graphics\PhongRenderer.h" />
-    <ClInclude Include="Src\Graphics\SharedRendererResources.h" />
-    <ClInclude Include="Src\Core\Input.h" />
-    <ClInclude Include="Src\Core\Mouse.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">
       <Filter>Src\Core</Filter>
     </ClCompile>
     <ClCompile Include="Src\Core\AssetManager.cpp">
+      <Filter>Src\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Core\Input.cpp">
+      <Filter>Src\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Core\Mouse.cpp">
       <Filter>Src\Core</Filter>
     </ClCompile>
     <ClCompile Include="Src\Core\Scene.cpp">
@@ -181,6 +201,9 @@
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\Material.cpp">
+      <Filter>Src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\PhongRenderer.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\Renderer.cpp">
@@ -216,9 +239,7 @@
     <ClCompile Include="vendor\imgui\backends\imgui_impl_win32.cpp">
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Graphics\PhongRenderer.cpp" />
-    <ClCompile Include="Src\Core\Input.cpp" />
-    <ClCompile Include="Src\Core\Mouse.cpp" />
+    <ClCompile Include="Src\NativeScripts\CameraControllerScript.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\PS_FlatTexture.hlsl">
@@ -227,12 +248,14 @@
     <FxCompile Include="Src\Shaders\PS_Phong_DiffTexture_singleLight.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Src\Shaders\PS_Phong_color_singleLight.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
     <FxCompile Include="Src\Shaders\PixelShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\VertexShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\PS_Phong_color_singleLight.hlsl" />
   </ItemGroup>
 </Project>

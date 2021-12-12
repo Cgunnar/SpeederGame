@@ -24,7 +24,7 @@ Input::~Input()
 {
 }
 
-Input& Input::getInput()
+Input& Input::Get()
 {
 	return *instance;
 }

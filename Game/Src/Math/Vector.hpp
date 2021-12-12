@@ -45,6 +45,7 @@ namespace rfm
 
 		float& operator[] (int index) noexcept;
 		Vector3& operator +=(const Vector3& other);
+		Vector3& operator *=(const float& other);
 		//operator DirectX::XMVECTOR() const { return { x, y, z, 0 }; };
 		float length() const;
 		void normalize();
@@ -58,6 +59,7 @@ namespace rfm
 	Vector3 operator -(const Vector3& l, const Vector3& r);
 	Vector3 operator *(const Vector3& l, const Vector3& r);
 	Vector3 operator *(float scale, const Vector3& v);
+	Vector3 operator *(const Vector3& v, float scale);
 	Vector3 operator /(const Vector3& v, float scale);
 
 

@@ -54,9 +54,9 @@ void Application::Run()
 			break;
 		}
 		LowLvlGfx::BeginFrame();
-		Input::getInput().update(FrameTimer::dt());
+		Input::Get().update(FrameTimer::dt());
 
-		auto ms = Input::getInput().GetMouse().GetMouseState();
+		auto ms = Input::Get().GetMouse().GetMouseState();
 
 		m_scene->Update(FrameTimer::dt());
 

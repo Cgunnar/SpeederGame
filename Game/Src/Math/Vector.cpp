@@ -114,6 +114,13 @@ namespace rfm
 		this->z = this->z + other.z;
 		return *this;
 	}
+	Vector3& Vector3::operator*=(const float& other)
+	{
+		this->x = this->x * other;
+		this->y = this->y * other;
+		this->z = this->z * other;
+		return *this;
+	}
 	float Vector3::length() const
 	{
 		return sqrt(x * x + y * y + z * z);
@@ -182,6 +189,11 @@ namespace rfm
 	}
 
 	Vector3 operator*(float scale, const Vector3& v)
+	{
+		return Vector3(scale * v.x, scale * v.y, scale * v.z);
+	}
+
+	Vector3 operator*(const Vector3& v, float scale)
 	{
 		return Vector3(scale * v.x, scale * v.y, scale * v.z);
 	}

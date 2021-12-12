@@ -39,7 +39,7 @@ public:
 
 	void operator=(Input const&) = delete;
 	~Input();
-	static Input& getInput();
+	static Input& Get();
 	static void Init(HWND wndHandle, int width, int height);
 	static void Destroy();
 	static bool Valid();

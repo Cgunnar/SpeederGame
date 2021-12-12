@@ -67,7 +67,7 @@ Window::Window()
 	if (!RegisterRawInputDevices(&rid, 1, sizeof(RAWINPUTDEVICE))) assert(false); //failed to register device
 
 	Input::Init(GetHwnd(), GetClientSize().width, GetClientSize().width);
-	Input::getInput().m_myMouse = std::make_unique<Mouse>(
+	Input::Get().m_myMouse = std::make_unique<Mouse>(
 		[this]()->Resolution { return this->GetClientSize(); },
 		[this]()->HWND { return this->GetHwnd(); });
 
@@ -157,7 +157,7 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		LowLvlGfx::OnResize(res);
 		if (Input::Valid())
 		{
-			Mouse& mouse = Input::getInput().GetMouse();
+			Mouse& mouse = Input::Get().GetMouse();
 			mouse.confineCursor(mouse.m_cursorIsConfined);
 		}
 		return 0;
@@ -168,7 +168,7 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		//DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
 
 		if (!Input::Valid()) return 0;
-		Mouse& mouse = Input::getInput().GetMouse();
+		Mouse& mouse = Input::Get().GetMouse();
 		if (wParam)
 		{
 			//this->GetGraphics().SetFullScreen(this->GetGraphics().ShouldBeFullScreen());
@@ -185,7 +185,7 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEMOVE:
 	{
 		if (!Input::Valid()) return 0;
-		Mouse& mouse = Input::getInput().GetMouse();
+		Mouse& mouse = Input::Get().GetMouse();
 		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) break;
 		
 		POINTS p = MAKEPOINTS(lParam);
@@ -196,7 +196,7 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_MOUSEWHEEL:
 	{
 		if (!Input::Valid()) return 0;
-		Mouse& mouse = Input::getInput().GetMouse();
+		Mouse& mouse = Input::Get().GetMouse();
 		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
 		mouse.m_mouseState.z += GET_WHEEL_DELTA_WPARAM(wParam);
 		break;
@@ -204,7 +204,7 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_LBUTTONDOWN:
 	{
 		if (!Input::Valid()) return 0;
-		Mouse& mouse = Input::getInput().GetMouse();
+		Mouse& mouse = Input::Get().GetMouse();
 		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
 		mouse.m_mouseState.LMBClicked = true;
 		mouse.m_mouseState.LMBHeld = true;
@@ -215,7 +215,7 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_LBUTTONUP:
 	{
 		if (!Input::Valid()) return 0;
-		Mouse& mouse = Input::getInput().GetMouse();
+		Mouse& mouse = Input::Get().GetMouse();
 		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
 		mouse.m_mouseState.LMBReleased = true;
 		mouse.m_mouseState.LMBHeld = false;
@@ -224,7 +224,7 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_RBUTTONDOWN:
 	{
 		if (!Input::Valid()) return 0;
-		Mouse& mouse = Input::getInput().GetMouse();
+		Mouse& mouse = Input::Get().GetMouse();
 		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
 		mouse.m_mouseState.RMBClicked = true;
 		mouse.m_mouseState.RMBHeld = true;
@@ -235,7 +235,7 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_RBUTTONUP:
 	{
 		if (!Input::Valid()) return 0;
-		Mouse& mouse = Input::getInput().GetMouse();
+		Mouse& mouse = Input::Get().GetMouse();
 		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
 		mouse.m_mouseState.RMBReleased = true;
 		mouse.m_mouseState.RMBHeld = false;
@@ -244,7 +244,7 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_INPUT:
 	{
-		if (!m_isStarting && !m_isClosed && Input::getInput().m_myMouse->m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
+		if (!m_isStarting && !m_isClosed && Input::Get().m_myMouse->m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
 		UINT bufferSize{};
 		UINT errorCode = GetRawInputData((HRAWINPUT)lParam, RID_INPUT, nullptr, &bufferSize, sizeof(RAWINPUTHEADER));
 		assert(errorCode != -1);
@@ -256,7 +256,7 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (errorCode == -1) return 0;
 
 
-		auto& myMouse = Input::getInput().m_myMouse;
+		auto& myMouse = Input::Get().m_myMouse;
 		RAWINPUT& rawMouseInput = (RAWINPUT&)(*m_ridData.data());
 		if (rawMouseInput.header.dwType == RIM_TYPEMOUSE)
 		{

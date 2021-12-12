@@ -7,6 +7,7 @@
 #include "AssimpLoader.h"
 #include "GraphicsHelperFunctions.h"
 #include "GraphicsResources.h"
+#include "CameraControllerScript.h"
 
 using namespace rfm;
 using namespace rfe;
@@ -54,7 +55,7 @@ Scene::Scene()
 	m_camera.addComponent(TransformComp());
 	m_camera.getComponent<TransformComp>()->transform.setTranslation(0, 0, -5);
 	m_camera.getComponent<TransformComp>()->transform.setRotationDeg(0, 0, 0);
-	m_camera.addScript(MyScript());
+	m_camera.addScript(CameraControllerScript());
 
 	m_pointLight = EntityReg::createEntity();
 	m_pointLight.addComponent(TransformComp());
@@ -90,7 +91,7 @@ Scene::~Scene()
 
 void Scene::Update(float dt)
 {
-	EntityReg::RunScripts<MyScript, MyScript2>(dt);
+	EntityReg::RunScripts<MyScript, CameraControllerScript>(dt);
 
 	m_quadContr.Show();
 	m_lightContr.Show();
@@ -99,8 +100,8 @@ void Scene::Update(float dt)
 	m_quad.getComponent<TransformComp>()->transform.setTranslation(m_quadContr.slider1.value);
 	m_quad.getComponent<TransformComp>()->transform.setRotation(m_quadContr.slider2.value.x, m_quadContr.slider2.value.y, m_quadContr.slider2.value.z);
 
-	m_camera.getComponent<TransformComp>()->transform.setTranslation(m_cameraContr.slider1.value);
-	m_camera.getComponent<TransformComp>()->transform.setRotation(m_cameraContr.slider2.value.x, m_cameraContr.slider2.value.y, m_cameraContr.slider2.value.z);
+	//m_camera.getComponent<TransformComp>()->transform.setTranslation(m_cameraContr.slider1.value);
+	//m_camera.getComponent<TransformComp>()->transform.setRotation(m_cameraContr.slider2.value.x, m_cameraContr.slider2.value.y, m_cameraContr.slider2.value.z);
 
 	m_pointLight.getComponent<PointLightComp>()->pointLight.position = m_lightContr.slider1.value;
 	m_pointLight.getComponent<PointLightComp>()->pointLight.color = m_lightContr.slider2.value;

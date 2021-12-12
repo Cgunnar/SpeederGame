@@ -12,6 +12,29 @@ using namespace rfm;
 using namespace rfe;
 
 
+struct MyScript : rfe::NativeScriptComponent<MyScript>
+{
+	std::string name = "hej";
+	void OnUpdate(float dt)
+	{
+		std::cout << name << name << std::endl;
+	}
+};
+
+struct MyScript2 : rfe::NativeScriptComponent<MyScript2>
+{
+	std::string name = "okok";
+	void OnUpdate(float dt)
+	{
+		std::cout << name << name << std::endl;
+	}
+	void OnUpdateLate(float dt)
+	{
+		std::cout << "2312" << std::endl;
+	}
+};
+
+
 Scene::Scene()
 {
 	m_nanosuit = EntityReg::createEntity();
@@ -23,12 +46,15 @@ Scene::Scene()
 	m_arrow = EntityReg::createEntity();
 	m_arrow.addComponent(TransformComp());
 	m_arrow.addComponent(RenderModelComp("Assets/Models/Arrows/DXRefSys.obj"));
+	m_arrow.addScript(MyScript2());
 
 
 	m_camera = EntityReg::createEntity();
 	m_camera.addComponent(TransformComp());
 	m_camera.getComponent<TransformComp>()->transform.setTranslation(0, 0, -5);
 	m_camera.getComponent<TransformComp>()->transform.setRotationDeg(0, 0, 0);
+	//m_camera.addComponent(NativeScriptComponent<MyScript>());
+	m_camera.addScript(MyScript());
 
 	m_pointLight = EntityReg::createEntity();
 	m_pointLight.addComponent(TransformComp());
@@ -64,6 +90,8 @@ Scene::~Scene()
 
 void Scene::Update(float dt)
 {
+	EntityReg::RunScripts<MyScript, MyScript2>(dt);
+
 	m_quadContr.Show();
 	m_lightContr.Show();
 	m_cameraContr.Show();

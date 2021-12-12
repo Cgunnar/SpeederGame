@@ -6,11 +6,8 @@ class CameraControllerScript : public rfe::NativeScriptComponent<CameraControlle
 {
 public:
 	void OnUpdate(float dt);
-
-
 private:
-
-
-
 	float m_moveSpeed = 1;
+	float m_pitch = 0;
+	float m_yaw = 0;
 };

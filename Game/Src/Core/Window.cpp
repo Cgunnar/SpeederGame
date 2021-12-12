@@ -189,8 +189,8 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) break;
 		
 		POINTS p = MAKEPOINTS(lParam);
-		mouse.m_mouseState.x = p.x;
-		mouse.m_mouseState.y = p.y;
+		mouse.m_mouseState0.x = p.x;
+		mouse.m_mouseState0.y = p.y;
 		break;
 	}
 	case WM_MOUSEWHEEL:
@@ -198,7 +198,7 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (!Input::Valid()) return 0;
 		Mouse& mouse = Input::Get().GetMouse();
 		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
-		mouse.m_mouseState.z += GET_WHEEL_DELTA_WPARAM(wParam);
+		mouse.m_mouseState0.z += GET_WHEEL_DELTA_WPARAM(wParam);
 		break;
 	}
 	case WM_LBUTTONDOWN:
@@ -206,8 +206,8 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (!Input::Valid()) return 0;
 		Mouse& mouse = Input::Get().GetMouse();
 		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
-		mouse.m_mouseState.LMBClicked = true;
-		mouse.m_mouseState.LMBHeld = true;
+		mouse.m_mouseState0.LMBClicked = true;
+		mouse.m_mouseState0.LMBHeld = true;
 		//print("MousePos:  \n");
 		break;
 	}
@@ -217,8 +217,8 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (!Input::Valid()) return 0;
 		Mouse& mouse = Input::Get().GetMouse();
 		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
-		mouse.m_mouseState.LMBReleased = true;
-		mouse.m_mouseState.LMBHeld = false;
+		mouse.m_mouseState0.LMBReleased = true;
+		mouse.m_mouseState0.LMBHeld = false;
 		break;
 	}
 	case WM_RBUTTONDOWN:
@@ -226,8 +226,8 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (!Input::Valid()) return 0;
 		Mouse& mouse = Input::Get().GetMouse();
 		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
-		mouse.m_mouseState.RMBClicked = true;
-		mouse.m_mouseState.RMBHeld = true;
+		mouse.m_mouseState0.RMBClicked = true;
+		mouse.m_mouseState0.RMBHeld = true;
 		//print("MousePos:  \n");
 		break;
 	}
@@ -237,8 +237,8 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (!Input::Valid()) return 0;
 		Mouse& mouse = Input::Get().GetMouse();
 		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
-		mouse.m_mouseState.RMBReleased = true;
-		mouse.m_mouseState.RMBHeld = false;
+		mouse.m_mouseState0.RMBReleased = true;
+		mouse.m_mouseState0.RMBHeld = false;
 		break;
 	}
 
@@ -264,8 +264,8 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 				/*myMouse->m_mouseState.deltaX = static_cast<float>(rawMouseInput.data.mouse.lLastX);
 				myMouse->m_mouseState.deltaY = static_cast<float>(rawMouseInput.data.mouse.lLastY);*/
-				myMouse->m_mouseState.deltaX += static_cast<float>(rawMouseInput.data.mouse.lLastX);
-				myMouse->m_mouseState.deltaY += static_cast<float>(rawMouseInput.data.mouse.lLastY);
+				myMouse->m_mouseState0.deltaX += static_cast<float>(rawMouseInput.data.mouse.lLastX);
+				myMouse->m_mouseState0.deltaY += static_cast<float>(rawMouseInput.data.mouse.lLastY);
 			}
 		}
 

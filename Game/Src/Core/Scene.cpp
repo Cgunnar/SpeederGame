@@ -13,30 +13,6 @@ using namespace rfm;
 using namespace rfe;
 
 
-struct MyScript : rfe::NativeScriptComponent<MyScript>
-{
-	std::string name = "hej";
-	void OnUpdate(float dt)
-	{
-		Transform t = getComponent<TransformComp>()->transform;
-		std::cout << name << name << std::endl;
-	}
-};
-
-struct MyScript2 : rfe::NativeScriptComponent<MyScript2>
-{
-	std::string name = "okok";
-	void OnUpdate(float dt)
-	{
-		std::cout << name << name << std::endl;
-	}
-	void OnUpdateLate(float dt)
-	{
-		std::cout << "2312" << std::endl;
-	}
-};
-
-
 Scene::Scene()
 {
 	m_nanosuit = EntityReg::createEntity();
@@ -48,13 +24,13 @@ Scene::Scene()
 	m_arrow = EntityReg::createEntity();
 	m_arrow.addComponent(TransformComp());
 	m_arrow.addComponent(RenderModelComp("Assets/Models/Arrows/DXRefSys.obj"));
-	m_arrow.addScript(MyScript2());
 
 
 	m_camera = EntityReg::createEntity();
 	m_camera.addComponent(TransformComp());
 	m_camera.getComponent<TransformComp>()->transform.setTranslation(0, 0, -5);
 	m_camera.getComponent<TransformComp>()->transform.setRotationDeg(0, 0, 0);
+
 	m_camera.addScript(CameraControllerScript());
 
 	m_pointLight = EntityReg::createEntity();
@@ -91,17 +67,13 @@ Scene::~Scene()
 
 void Scene::Update(float dt)
 {
-	EntityReg::RunScripts<MyScript, CameraControllerScript>(dt);
+	EntityReg::RunScripts<CameraControllerScript>(dt);
 
 	m_quadContr.Show();
 	m_lightContr.Show();
-	m_cameraContr.Show();
 
 	m_quad.getComponent<TransformComp>()->transform.setTranslation(m_quadContr.slider1.value);
 	m_quad.getComponent<TransformComp>()->transform.setRotation(m_quadContr.slider2.value.x, m_quadContr.slider2.value.y, m_quadContr.slider2.value.z);
-
-	//m_camera.getComponent<TransformComp>()->transform.setTranslation(m_cameraContr.slider1.value);
-	//m_camera.getComponent<TransformComp>()->transform.setRotation(m_cameraContr.slider2.value.x, m_cameraContr.slider2.value.y, m_cameraContr.slider2.value.z);
 
 	m_pointLight.getComponent<PointLightComp>()->pointLight.position = m_lightContr.slider1.value;
 	m_pointLight.getComponent<PointLightComp>()->pointLight.color = m_lightContr.slider2.value;

@@ -9,8 +9,16 @@ Mouse::Mouse(std::function<Resolution()> getSizeCallback, std::function<HWND()> 
 	m_getHWND = getHWNDCallback;
 }
 
+void Mouse::SetMode(Mode mode)
+{
+	m_mode = mode;
+	confineCursor((mode & Mode::Confined) != (Mode)0);
+	showCursor((mode & Mode::Visible) != (Mode)0);
+}
+
 void Mouse::update()
 {
+	m_mouseState1 = m_mouseState0;
 	auto [w, h] = m_getWindowSize();
 	/*if (m_mouseState.LMBClicked || m_mouseState.LMBHeld || m_mouseState.LMBReleased || m_mouseState.RMBClicked || m_mouseState.RMBHeld || m_mouseState.RMBReleased)
 	{
@@ -22,22 +30,22 @@ void Mouse::update()
 		m_mouseState.windowWidth = w;
 		m_mouseState.windowHeight = h;
 	}*/
-	m_mouseState.windowWidth = w;
-	m_mouseState.windowHeight = h;
+	m_mouseState0.windowWidth = w;
+	m_mouseState0.windowHeight = h;
 
-	m_mouseState.deltaX = 0;
-	m_mouseState.deltaY = 0;
+	m_mouseState0.deltaX = 0;
+	m_mouseState0.deltaY = 0;
 
-	m_mouseState.LMBReleased = false;
-	m_mouseState.LMBClicked = false;
+	m_mouseState0.LMBReleased = false;
+	m_mouseState0.LMBClicked = false;
 
-	m_mouseState.RMBReleased = false;
-	m_mouseState.RMBClicked = false;
+	m_mouseState0.RMBReleased = false;
+	m_mouseState0.RMBClicked = false;
 }
 
 MouseState Mouse::GetMouseState() const
 {
-	return this->m_mouseState;
+	return this->m_mouseState1;
 }
 void Mouse::showCursor(bool yn)
 {

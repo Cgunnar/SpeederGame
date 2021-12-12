@@ -12,7 +12,7 @@ using namespace rfm;
 using namespace rfe;
 
 
-struct MyScript : public rfe::NativeScriptComponent<MyScript>
+struct MyScript : rfe::NativeScriptComponent<MyScript>
 {
 	std::string name = "hej";
 	void OnUpdate(float dt)
@@ -54,7 +54,6 @@ Scene::Scene()
 	m_camera.addComponent(TransformComp());
 	m_camera.getComponent<TransformComp>()->transform.setTranslation(0, 0, -5);
 	m_camera.getComponent<TransformComp>()->transform.setRotationDeg(0, 0, 0);
-	//m_camera.addComponent(NativeScriptComponent<MyScript>());
 	m_camera.addScript(MyScript());
 
 	m_pointLight = EntityReg::createEntity();

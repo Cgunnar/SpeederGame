@@ -130,10 +130,16 @@ namespace rfe
 
 
 	template<typename T>
-	struct Component : public BaseComponent
+	class Component : public BaseComponent
 	{
 		friend EntityComponentManager;
 		friend EntityReg;
+
+	private:
+		using BaseComponent::entityIndex;
+		using BaseComponent::registerComponent;
+
+	public:
 		static const ComponentTypeID typeID;
 		static const size_t size;
 		static const std::string componentName;
@@ -686,13 +692,20 @@ namespace rfe
 	}
 
 	template<typename T>
-	struct NativeScriptComponent : public Component<T>
+	class NativeScriptComponent : public Component<T>
 	{
+		/*friend EntityComponentManager;
+		friend Component<T>;
+	private:
+		using BaseComponent::entityIndex;
+		using BaseComponent::registerComponent;*/
+
+	public:
 		//helpers functions
 		template<typename T>
 		T* getComponent()
 		{
-			return EntityReg::getComponent<T>(this->entityIndex);
+			return EntityReg::getComponent<T>(this->getEntityID());
 		}
 
 		//On update functions
@@ -794,16 +807,4 @@ namespace rfe
 	{
 		return s_componentRegister[id];
 	}
-
-
-	//scripting
-
-
-	
-
-	//template <typename T>
-	//requires std::is_base_of_v<BaseScript, T>
-	
-
-
 }

@@ -12,11 +12,12 @@ using namespace rfm;
 using namespace rfe;
 
 
-struct MyScript : rfe::NativeScriptComponent<MyScript>
+struct MyScript : public rfe::NativeScriptComponent<MyScript>
 {
 	std::string name = "hej";
 	void OnUpdate(float dt)
 	{
+		Transform t = getComponent<TransformComp>()->transform;
 		std::cout << name << name << std::endl;
 	}
 };

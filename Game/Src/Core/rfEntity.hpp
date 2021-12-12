@@ -230,8 +230,11 @@ namespace rfe
 		T* getComponent(EntityID entityID);
 
 	private:
+		template<typename... T>
+		void RunScripts(float dt);
+
 		template<typename T>
-		int RunScripts(float dt);
+		void RunScript(float dt);
 
 		void removeComponent(ComponentTypeID type, EntityID entityID);
 		void removeInternalEntity(Entity& entity);
@@ -312,8 +315,8 @@ namespace rfe
 	template<typename ...Args>
 	inline void EntityReg::RunScripts(float dt)
 	{
-		//using expander = ;
-		int e[]{ 0, (m_entCompManInstance.RunScripts<Args>(dt), 0)... };
+		//int e[]{ 0, (m_entCompManInstance.RunScripts<Args>(dt), 0)... };
+		m_entCompManInstance.RunScripts<Args...>(dt);
 	}
 
 
@@ -670,9 +673,8 @@ namespace rfe
 		index = comp.componentArray.size();
 		T::componentArray.emplace_back(comp);
 
-		T* compPtr = (T*)&T::componentArray[index];
+		T* compPtr = &T::componentArray[index];
 		compPtr->entityIndex = entityID;
-		//comp.scriptPtr
 		m_entitiesComponentHandles[entityID].emplace_back(typeID, index, entityID, true);
 		return compPtr;
 	}
@@ -686,25 +688,30 @@ namespace rfe
 	template<typename T>
 	struct NativeScriptComponent : public Component<T>
 	{
-		void OnUpdate(float dt) {};
-		void OnUpdateLate(float dt) {};
-	};
-	template<typename T>
-	inline int EntityComponentManager::RunScripts(float dt)
-	{
-		for (auto& e : m_entitiesComponentHandles)
+		//helpers functions
+		template<typename T>
+		T* getComponent()
 		{
-			for (auto& c : e)
-			{
-				if (c.isScript)
-				{
-					T comp = *(T*)BaseComponent::getComponentUtility(c.typeID).fetchComponentAsBase(c.index);
-					comp.OnUpdate(dt);
-					comp.OnUpdateLate(dt);
-				}
-			}
+			return EntityReg::getComponent<T>(this->entityIndex);
 		}
-		return 0;
+
+		//On update functions
+		void OnUpdate(float dt) {};
+	};
+
+	template<typename... T>
+	inline void EntityComponentManager::RunScripts(float dt)
+	{
+		int e[]{ 0, (RunScript<T>(dt), 0)... };
+	}
+
+	template<typename T>
+	inline void EntityComponentManager::RunScript(float dt)
+	{
+		for (auto& script : T::componentArray)
+		{
+			script.OnUpdate(dt);
+		}
 	}
 
 	inline void EntityComponentManager::removeComponent(ComponentTypeID type, EntityID entityID)

@@ -18,8 +18,10 @@ void Mouse::SetMode(Mode mode)
 
 void Mouse::update()
 {
-	m_mouseState1 = m_mouseState0;
 	auto [w, h] = m_getWindowSize();
+	m_mouseState0.windowWidth = w;
+	m_mouseState0.windowHeight = h;
+	m_mouseState1 = m_mouseState0;
 	/*if (m_mouseState.LMBClicked || m_mouseState.LMBHeld || m_mouseState.LMBReleased || m_mouseState.RMBClicked || m_mouseState.RMBHeld || m_mouseState.RMBReleased)
 	{
 		m_mouseState.windowWidth = w;
@@ -30,8 +32,7 @@ void Mouse::update()
 		m_mouseState.windowWidth = w;
 		m_mouseState.windowHeight = h;
 	}*/
-	m_mouseState0.windowWidth = w;
-	m_mouseState0.windowHeight = h;
+	
 
 	m_mouseState0.deltaX = 0;
 	m_mouseState0.deltaY = 0;

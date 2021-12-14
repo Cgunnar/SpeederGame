@@ -7,7 +7,7 @@ struct MouseState
 	int y = 0;
 	int z = 0;
 
-	float mouseCof = 0.15f;
+	float mouseCof = 0.001f;
 	float deltaX = 0;
 	float deltaY = 0;
 	float deltaZ = 0;

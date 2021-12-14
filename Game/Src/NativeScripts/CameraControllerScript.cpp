@@ -11,8 +11,8 @@ void CameraControllerScript::OnUpdate(float dt)
 	Input& in = Input::Get();
 	MouseState ms = in.GetMouse().GetMouseState();
 
-	m_pitch += ms.deltaY * ms.mouseCof * dt;
-	m_yaw += ms.deltaX * ms.mouseCof * dt;
+	m_pitch += ms.deltaY * ms.mouseCof;
+	m_yaw += ms.deltaX * ms.mouseCof;
 	m_pitch = std::clamp(m_pitch, -PIDIV2, PIDIV2);
 	m_yaw = fmod(m_yaw, PI2);
 

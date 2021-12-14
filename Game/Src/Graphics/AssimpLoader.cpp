@@ -175,70 +175,90 @@ EngineMeshSubset AssimpLoader::processMesh(aiMesh* mesh, const aiScene* scene, c
 
 	}
 
-	//Rimfrost::Material newMat;
+	EngineMaterial newMat;
 	aiReturn errorCheck;
 
 	// Get material
 	auto mtl = scene->mMaterials[mesh->mMaterialIndex];
 	aiString diffName, normName, specName;
-	errorCheck = mtl->GetTexture(aiTextureType_DIFFUSE, 0, &diffName);
 	//mtl->GetTexture(aiTextureType_HEIGHT, 0, &normName);
-	errorCheck = mtl->GetTexture(aiTextureType_NORMALS, 0, &normName);
-	errorCheck = mtl->GetTexture(aiTextureType_SPECULAR, 0, &specName);
+	if (!mtl->GetTexture(aiTextureType_DIFFUSE, 0, &diffName))
+	{
+		newMat.properties = newMat.properties | MaterialProperties::DIFFUSE_MAP;
+		newMat.diffuseMapPath = path + diffName.C_Str();
+	}
+	if (!mtl->GetTexture(aiTextureType_NORMALS, 0, &normName))
+	{
+		newMat.properties = newMat.properties | MaterialProperties::NORMAL_MAP;
+		newMat.normalMapPath = path + normName.C_Str();
+		m_hasNormalMap = true;
+	}
+	if(!mtl->GetTexture(aiTextureType_SPECULAR, 0, &specName))
+	{
+		newMat.properties = newMat.properties | MaterialProperties::SPECULAR_MAP;
+		newMat.specularMapPath = path + specName.C_Str();
+	}
 
 	aiString materialName;
-	errorCheck = mtl->Get(AI_MATKEY_NAME, materialName);
+	if (!mtl->Get(AI_MATKEY_NAME, materialName))
+	{
+		newMat.name = materialName.C_Str();
+	}
 
 	aiColor3D colorDiff(0.f, 0.f, 0.f);
-	errorCheck = mtl->Get(AI_MATKEY_COLOR_DIFFUSE, colorDiff);
+	if (!mtl->Get(AI_MATKEY_COLOR_DIFFUSE, colorDiff))
+	{
+		newMat.properties = newMat.properties | MaterialProperties::DIFFUSE_COLOR;
+		newMat.colorDiffuse = rfm::Vector3(colorDiff[0], colorDiff[1], colorDiff[2]);
+	}
 
 	aiColor3D colorSpec(0.f, 0.f, 0.f);
-	errorCheck = mtl->Get(AI_MATKEY_COLOR_SPECULAR, colorSpec);
+	if (!mtl->Get(AI_MATKEY_COLOR_SPECULAR, colorSpec))
+	{
+		newMat.properties = newMat.properties | MaterialProperties::SPECULAR_COLOR;
+		newMat.colorSpecular = rfm::Vector3(colorSpec[0], colorSpec[1], colorSpec[2]);
+	}
+
+	aiColor3D colorAmbi(0.f, 0.f, 0.f);
+	if (!mtl->Get(AI_MATKEY_COLOR_AMBIENT, colorAmbi))
+	{
+		newMat.properties = newMat.properties | MaterialProperties::AMBIENT_COLOR;
+		newMat.colorAmbient = rfm::Vector3(colorAmbi[0], colorAmbi[1], colorAmbi[2]);
+	}
+
 
 	float shininess;
-	errorCheck = mtl->Get(AI_MATKEY_SHININESS, shininess);
+	if (!mtl->Get(AI_MATKEY_SHININESS, shininess))
+	{
+		newMat.properties = newMat.properties | MaterialProperties::SHININESS;
+		newMat.shininess = shininess;
+	}
 
 	float opacity;
-	errorCheck = mtl->Get(AI_MATKEY_OPACITY, opacity);
-
-	//newMat.setDiffuseColor(colorDiff.r, colorDiff.g, colorDiff.b);
-	//newMat.setSpecular(shininess, 1.0f, colorSpec.r, colorSpec.g, colorSpec.b);
-	//newMat.setOpacity(opacity);
-
-	TextureTypes texTypes = TextureTypes::NONE;
-	if (normName.length > 0)
+	if (!mtl->Get(AI_MATKEY_OPACITY, opacity))
 	{
-		texTypes = texTypes | TextureTypes::NORMAL;
-		//newMat.setNormalTexure(path + normName.C_Str());
+		newMat.opacity = 1;
+		if (opacity < 1)
+		{
+			newMat.properties = newMat.properties | MaterialProperties::ALPHA_BLENDING_CONSTANS_OPACITY;
+			newMat.opacity = opacity;
+		}
 	}
-	if (specName.length > 0)
-	{
-		texTypes = texTypes | TextureTypes::SPECULAR;
-		//newMat.setSpecularTexure(path + specName.C_Str());
-	}
-	if (diffName.length > 0)
-	{
-		texTypes = texTypes | TextureTypes::DIFFUSE;
-		//newMat.setDiffuseTexure(path + diffName.C_Str());
-	}
-
-	if ((texTypes & TextureTypes::NORMAL) == TextureTypes::NORMAL) m_hasNormalMap = true;
 
 	// Subset data
 	EngineMeshSubset subsetData = { };
 	//subsetData.material = newMat;
 
 	subsetData.name = materialName.C_Str();
-
-	subsetData.texTypes = texTypes;
-	subsetData.specularFileName = specName.C_Str();
+	subsetData.material = newMat;
+	/*subsetData.specularFileName = specName.C_Str();
 	subsetData.diffuseFileName = diffName.C_Str();
 	subsetData.color[0] = colorDiff[0];
 	subsetData.color[1] = colorDiff[1];
 	subsetData.color[2] = colorDiff[2];
-	subsetData.normalFileName = normName.C_Str();
+	subsetData.normalFileName = normName.C_Str();*/
 
-	subsetData.filePath = path;
+	//subsetData.filePath = path;
 
 	subsetData.vertexCount = mesh->mNumVertices;
 	subsetData.vertexStart = m_meshVertexCount;

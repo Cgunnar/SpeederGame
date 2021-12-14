@@ -8,5 +8,6 @@ struct SharedRenderResources : public std::enable_shared_from_this<SharedRenderR
 	ConstantBuffer m_worldMatrixCB;
 	ConstantBuffer m_vpCB;
 	Shader m_vertexShader;
+	Shader m_vertexShaderNormalMap;
 	ConstantBuffer m_pointLightCB;
 };

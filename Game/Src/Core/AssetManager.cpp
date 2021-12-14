@@ -101,19 +101,44 @@ void AssetManager::TraverseSubMeshTree(std::vector<SubMeshTree>& subMeshTrees, S
 		for (auto m : subMeshTree.subMeshes)
 		{
 			RenderUnit ru;
-			if (!m.diffuseFileName.empty())
+			MaterialProperties p = m.material.properties;
+
+			if (((p & MaterialProperties::DIFFUSE_MAP) != 0) &&
+				((p & MaterialProperties::NORMAL_MAP) != 0) &&
+				((p & MaterialProperties::SPECULAR_COLOR) != 0) &&
+				((p & MaterialProperties::SHININESS) != 0))
+			{
+				PhongMaterial_DiffTex_NormTex mat;
+				mat.diffuseTextureID = this->LoadTex2D(m.material.diffuseMapPath, LoadTexFlag::GenerateMips);
+				mat.normalTextureID = this->LoadTex2D(m.material.normalMapPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
+				mat.specularColor = m.material.colorSpecular;
+				mat.shininess = m.material.shininess;
+
+				ru.material.materialVariant = mat;
+				ru.material.type = MaterialType::PhongMaterial_DiffTex_NormTex;
+			}
+			else if (((p & MaterialProperties::DIFFUSE_MAP) != 0) &&
+				((p & MaterialProperties::SPECULAR_COLOR) != 0) &&
+				((p & MaterialProperties::SHININESS) != 0))
 			{
 				PhongMaterial_DiffTex mat;
-				mat.diffuseTextureID = this->LoadTex2D(m.filePath + m.diffuseFileName, true, true);
+				mat.diffuseTextureID = this->LoadTex2D(m.material.diffuseMapPath, LoadTexFlag::GenerateMips);
+				mat.specularColor = m.material.colorSpecular;
+				mat.shininess = m.material.shininess;
 
 				ru.material.materialVariant = mat;
 				ru.material.type = MaterialType::PhongMaterial_DiffTex;
 			}
-			else
+			else if (((p & MaterialProperties::DIFFUSE_COLOR) != 0) &&
+				((p & MaterialProperties::SPECULAR_COLOR) != 0) &&
+				((p & MaterialProperties::SHININESS) != 0))
 			{
 				PhongMaterial_Color mat;
-				mat.diffuseColor = rfm::Vector3(m.color[0], m.color[1], m.color[2]);
-				mat.ambientColor = rfm::Vector3(m.color[0], m.color[1], m.color[2]);
+				mat.ambientColor = m.material.colorDiffuse;
+				mat.diffuseColor = m.material.colorDiffuse;
+				mat.specularColor = m.material.colorSpecular;
+				mat.shininess = m.material.shininess;
+
 				ru.material.materialVariant = mat;
 				ru.material.type = MaterialType::PhongMaterial_Color;
 			}
@@ -173,8 +198,12 @@ Model& AssetManager::GetModel(GID modelID)
 
 
 
-GID AssetManager::LoadTex2D(const std::string& path, bool srgb, bool generateMips)
+GID AssetManager::LoadTex2D(const std::string& path, LoadTexFlag flags)
 {
+	bool srgb = (flags & LoadTexFlag::LinearColorSpace) == 0;
+	bool generateMips = (flags & LoadTexFlag::GenerateMips) != 0;
+
+
 	if (m_filePathMap.contains(path))
 	{
 		return m_filePathMap[path];

@@ -20,14 +20,24 @@ struct PhongMaterial_DiffTex
 	float shininess = 800;
 };
 
+struct PhongMaterial_DiffTex_NormTex
+{
+	GID diffuseTextureID;
+	GID normalTextureID;
+	rfm::Vector3 specularColor{ 1, 1, 1 };
+	float shininess = 800;
+};
+
 
 enum class MaterialType
 {
 	none = 0,
 	PhongMaterial_Color = 1 << 0,
 	PhongMaterial_DiffTex = 1 << 1,
-	wireframe = 1 << 2,
-	transparent = 1 << 3,
+	PhongMaterial_DiffTex_NormTex = 1 << 2,
+	NormalMap = 1 << 3,
+	wireframe = 1 << 4,
+	transparent = 1 << 5,
 };
 inline MaterialType operator &(MaterialType l, MaterialType r)
 {
@@ -44,7 +54,7 @@ struct Material
 	MaterialType type;
 
 	std::variant <
-		PhongMaterial_Color, PhongMaterial_DiffTex
+		PhongMaterial_Color, PhongMaterial_DiffTex, PhongMaterial_DiffTex_NormTex
 	> materialVariant;
 };
 

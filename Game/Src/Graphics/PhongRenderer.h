@@ -19,14 +19,16 @@ public:
 private:
 	void RenderWithColorOnly();
 	void RenderWithDiffuseTexture();
+	void RenderPhongMaterial_DiffTex_NormTex();
 
 
 	bool m_prePocessed = false;
 
 	std::weak_ptr<SharedRenderResources> m_sharedRenderResources;
 
-	Shader m_PS_Phong_color_singleLight;
+	Shader m_PS_Phong_singlePointLight;
 	Shader m_PS_Phong_DiffTexture_singleLight;
+	Shader m_PS_Phong_DiffTex_NorTex_singleLight;
 	ConstantBuffer m_phongMaterialCB;
 
 
@@ -40,5 +42,6 @@ private:
 	//std::vector<RendUnitIDAndTransform> m_unitsToRender;
 	std::vector<RendUnitIDAndTransform> m_colorUnits;
 	std::vector<RendUnitIDAndTransform> m_diffTextureUnits;
+	std::vector<RendUnitIDAndTransform> m_PhongMaterial_DiffTex_NormTex;
 };
 

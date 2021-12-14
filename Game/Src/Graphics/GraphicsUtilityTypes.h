@@ -33,6 +33,7 @@ enum class TextureTypes
 
 };
 
+
 inline TextureTypes operator &(TextureTypes l, TextureTypes r)
 {
 	return (TextureTypes)((int)l & (int)r);

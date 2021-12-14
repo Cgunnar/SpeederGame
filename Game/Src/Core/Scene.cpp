@@ -16,8 +16,8 @@ using namespace rfe;
 Scene::Scene()
 {
 	m_nanosuit = EntityReg::createEntity();
-	m_nanosuit.addComponent(TransformComp())->transform.setTranslation(0, 0, 8);
-	m_nanosuit.getComponent<TransformComp>()->transform.setScale(0.05);
+	m_nanosuit.addComponent(TransformComp())->transform.setTranslation(0, 0, 5);
+	m_nanosuit.getComponent<TransformComp>()->transform.setScale(0.1);
 	m_nanosuit.addComponent(RenderModelComp("Assets/Models/nanosuit/nanosuit.obj"));
 
 
@@ -42,7 +42,7 @@ Scene::Scene()
 	quadMat.type = MaterialType::PhongMaterial_DiffTex;
 	PhongMaterial_DiffTex mat;
 	mat.specularColor = { 1,0,0 };
-	mat.diffuseTextureID = AssetManager::Get().LoadTex2D("Assets/Hej.png", true, true);
+	mat.diffuseTextureID = AssetManager::Get().LoadTex2D("Assets/Hej.png", LoadTexFlag::GenerateMips);
 	quadMat.materialVariant = mat;
 
 	m_quad = EntityReg::createEntity();

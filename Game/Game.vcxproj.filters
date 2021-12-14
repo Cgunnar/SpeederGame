@@ -257,5 +257,8 @@
     <FxCompile Include="Src\Shaders\VertexShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Src\Shaders\PS_Phong_DiffTex_NorTex_singleLight.hlsl" />
+    <FxCompile Include="Src\Shaders\PS_Phong_singlePointLight.hlsl" />
+    <FxCompile Include="Src\Shaders\VS_NormalMap.hlsl" />
   </ItemGroup>
 </Project>

@@ -8,7 +8,29 @@ enum class SimpleMesh
 	Quad = 1,
 };
 
+enum class LoadTexFlag
+{
+	none = 0,
+	GenerateMips = 1,
+	LinearColorSpace = 2,
+};
 
+inline LoadTexFlag operator &(LoadTexFlag l, LoadTexFlag r)
+{
+	return (LoadTexFlag)((int)l & (int)r);
+}
+inline LoadTexFlag operator |(LoadTexFlag l, LoadTexFlag r)
+{
+	return (LoadTexFlag)((int)l | (int)r);
+}
+inline bool operator != (LoadTexFlag l, int r)
+{
+	return (bool)((int)l != r);
+}
+inline bool operator == (LoadTexFlag l, int r)
+{
+	return (bool)((int)l == r);
+}
 
 class AssetManager
 {
@@ -27,7 +49,7 @@ public:
 
 	GID LoadModel(const std::string& filePath);
 	Model& GetModel(GID modelID);
-	GID LoadTex2D(const std::string& path, bool srgb, bool generateMips);
+	GID LoadTex2D(const std::string& path, LoadTexFlag flags);
 private:
 	AssetManager();
 	~AssetManager();

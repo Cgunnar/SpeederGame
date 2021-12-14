@@ -25,10 +25,14 @@ Scene::Scene()
 	m_arrow.addComponent(TransformComp());
 	m_arrow.addComponent(RenderModelComp("Assets/Models/Arrows/DXRefSys.obj"));
 
+	m_brickWallFloor = EntityReg::createEntity();
+	m_brickWallFloor.addComponent(TransformComp())->transform.setRotationDeg(90, 0, 0);
+	m_brickWallFloor.getComponent<TransformComp>()->transform.setScale(10);
+	m_brickWallFloor.addComponent(RenderModelComp("Assets/Models/brick_wall/brick_wall.obj"));
 
 	m_camera = EntityReg::createEntity();
 	m_camera.addComponent(TransformComp());
-	m_camera.getComponent<TransformComp>()->transform.setTranslation(0, 0, -5);
+	m_camera.getComponent<TransformComp>()->transform.setTranslation(0, 1, -5);
 	m_camera.getComponent<TransformComp>()->transform.setRotationDeg(0, 0, 0);
 
 	m_camera.addScript(CameraControllerScript());
@@ -36,6 +40,7 @@ Scene::Scene()
 	m_pointLight = EntityReg::createEntity();
 	m_pointLight.addComponent(TransformComp());
 	m_pointLight.addComponent(PointLightComp());
+	m_pointLight.getComponent<PointLightComp>()->pointLight.lightStrength = 5;
 
 	
 	Material quadMat;

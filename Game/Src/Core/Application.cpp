@@ -12,6 +12,7 @@
 #include "RenderComponents.h"
 #include "AssetManager.h"
 #include "Input.h"
+#include "CameraControllerScript.h"
 
 
 using namespace rfe;
@@ -60,6 +61,7 @@ void Application::Run()
 		{
 			Mouse& mouse = Input::Get().GetMouse();
 			mouse.SetMode(~mouse.GetMode());
+			m_scene->GetCamera().getComponent<CameraControllerScript>()->ToggleCameraLock();
 		}
 
 		auto ms = Input::Get().GetMouse().GetMouseState();

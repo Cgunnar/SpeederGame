@@ -8,6 +8,7 @@ using namespace rfm;
 
 void CameraControllerScript::OnUpdate(float dt)
 {
+	if (m_lock) return;
 	Input& in = Input::Get();
 	MouseState ms = in.GetMouse().GetMouseState();
 
@@ -36,4 +37,9 @@ void CameraControllerScript::OnUpdate(float dt)
 	moveDir *= m_moveSpeed;
 	cameraTransform.translate(moveDir * dt);
 	
+}
+
+void CameraControllerScript::ToggleCameraLock()
+{
+	m_lock = !m_lock;
 }

@@ -5,7 +5,8 @@
 struct alignas(16) PhongMaterial
 {
 	rfm::Vector4 ka;
-	rfm::Vector4 kd;
+	rfm::Vector3 kd;
+	float opacity;
 	rfm::Vector3 ks;
 	float shininess;
 };

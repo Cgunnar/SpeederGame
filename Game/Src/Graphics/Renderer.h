@@ -21,6 +21,7 @@ private:
 	std::shared_ptr<SharedRenderResources> m_sharedRenderResources;
 
 	void SubmitToRender(rfe::Entity& camera);
+	void SetUpHdrRTV();
 	std::vector<RendUnitIDAndTransform> m_transparentRenderUnits;
 
 	PhongRenderer m_phongRenderer;

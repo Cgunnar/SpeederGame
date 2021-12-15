@@ -10,4 +10,5 @@ struct SharedRenderResources : public std::enable_shared_from_this<SharedRenderR
 	Shader m_vertexShader;
 	Shader m_vertexShaderNormalMap;
 	ConstantBuffer m_pointLightCB;
+	std::shared_ptr<Texture2D> m_hdrRenderTarget;
 };

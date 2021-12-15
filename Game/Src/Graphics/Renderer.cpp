@@ -32,6 +32,7 @@ Renderer::Renderer()
 	
 	m_sharedRenderResources->m_linearWrapSampler = LowLvlGfx::CreateSampler(standardSamplers::g_linear_wrap);
 
+	SetUpHdrRTV();
 
 	m_phongRenderer = PhongRenderer(m_sharedRenderResources->weak_from_this());
 }
@@ -98,4 +99,34 @@ void Renderer::SubmitToRender(rfe::Entity& camera)
 			}
 		}
 	}
+}
+
+void Renderer::SetUpHdrRTV()
+{
+	Resolution res = LowLvlGfx::GetResolution();
+	
+	D3D11_TEXTURE2D_DESC desc2d;
+	desc2d.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+	desc2d.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	desc2d.Usage = D3D11_USAGE_DEFAULT;
+	desc2d.CPUAccessFlags = 0;
+	desc2d.MiscFlags = 0;
+	desc2d.SampleDesc.Count = 1;
+	desc2d.SampleDesc.Quality = 0;
+	desc2d.ArraySize = 1;
+	desc2d.Width = res.width;
+	desc2d.Height = res.height;
+	desc2d.MipLevels = 0;
+
+	m_sharedRenderResources->m_hdrRenderTarget = LowLvlGfx::CreateTexture2D(desc2d, nullptr, false);
+
+	LowLvlGfx::CreateSRV(m_sharedRenderResources->m_hdrRenderTarget);
+
+	D3D11_RENDER_TARGET_VIEW_DESC desc = {};
+	desc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	desc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+	desc.Texture2D.MipSlice = 0;
+	LowLvlGfx::CreateRTV(m_sharedRenderResources->m_hdrRenderTarget);
+
+
 }

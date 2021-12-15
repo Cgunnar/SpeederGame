@@ -46,6 +46,7 @@ public:
 	//create
 	static std::shared_ptr<Texture2D> CreateTexture2D(D3D11_TEXTURE2D_DESC desc, D3D11_SUBRESOURCE_DATA* data = nullptr, bool fixedRes = true);
 	static void CreateSRV(std::shared_ptr<Texture2D> tex2d, D3D11_SHADER_RESOURCE_VIEW_DESC* desc = nullptr);
+	static void CreateRTV(std::shared_ptr<Texture2D> tex2d, D3D11_RENDER_TARGET_VIEW_DESC* desc = nullptr);
 	static Shader CreateShader(const std::string& path, ShaderType type);
 	static VertexBuffer CreateVertexBuffer(const float* data, uint32_t byteWidth, uint32_t stride, uint32_t offset = 0);
 	static IndexBuffer CreateIndexBuffer(const uint32_t* data, uint32_t indexCount, uint32_t offset = 0);

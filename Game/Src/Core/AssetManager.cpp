@@ -96,6 +96,7 @@ RenderUnitID AssetManager::AddRenderUnit(RenderUnit renderUnit)
 void AssetManager::TraverseSubMeshTree(std::vector<SubMeshTree>& subMeshTrees, SubModel& subModel, VertexBuffer vb, IndexBuffer ib)
 {
 	static RenderUnitID largestIDinSubTree = 0;
+	RenderUnitID lowestIDinSubTree = m_renderUnits.size() + 1;
 	for (auto& subMeshTree : subMeshTrees)
 	{
 		for (auto m : subMeshTree.subMeshes)
@@ -142,6 +143,19 @@ void AssetManager::TraverseSubMeshTree(std::vector<SubMeshTree>& subMeshTrees, S
 				ru.material.materialVariant = mat;
 				ru.material.type = MaterialType::PhongMaterial_Color;
 			}
+			else if (((p & MaterialProperties::ALBEDO) != 0) &&
+				((p & MaterialProperties::NORMAL_MAP) != 0) &&
+				((p & MaterialProperties::METALLICROUGHNESS) != 0))
+			{
+				PBR_ALBEDO_METROUG_NOR mat;
+				mat.albedoTextureID = this->LoadTex2D(m.material.diffuseMapPath, LoadTexFlag::GenerateMips);
+				mat.normalTextureID = this->LoadTex2D(m.material.normalMapPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
+				mat.matallicRoughnessTextureID = this->LoadTex2D(m.material.normalMapPath, LoadTexFlag::GenerateMips);
+
+				ru.material.materialVariant = mat;
+				ru.material.type = MaterialType::PBR_ALBEDO_METROUG_NOR;
+			}
+			assert(ru.material.type != MaterialType::none);
 			
 			ru.subMesh.ib = ib;
 			ru.subMesh.vb = vb;
@@ -153,13 +167,13 @@ void AssetManager::TraverseSubMeshTree(std::vector<SubMeshTree>& subMeshTrees, S
 			subModel.renderUnitIDs.push_back(ID);
 
 		}
-		for (auto n : subMeshTree.nodes)
+		if(!subMeshTree.nodes.empty())
 		{
 			SubModel newSubModel;
-			TraverseSubMeshTree(n.nodes, newSubModel, vb, ib);
+			TraverseSubMeshTree(subMeshTree.nodes, newSubModel, vb, ib);
 			subModel.subModels.push_back(newSubModel);
 		}
-		subModel.RenderUnitBegin = subModel.renderUnitIDs.front();	// hope this works
+		subModel.RenderUnitBegin = subModel.renderUnitIDs.empty() ? lowestIDinSubTree : subModel.renderUnitIDs.front();	// hope this works
 		subModel.RenderUnitEnd = largestIDinSubTree;				// hope this works
 	}
 }

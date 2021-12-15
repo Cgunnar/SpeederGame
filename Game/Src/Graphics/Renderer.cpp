@@ -70,6 +70,7 @@ void Renderer::SubmitToRender(rfe::Entity& camera)
 		{
 			RenderUnitID b = rendComp.renderUnitBegin;
 			RenderUnitID e = rendComp.renderUnitEnd;
+			assert(b <= e);
 			if (b | e)
 			{
 				for (RenderUnitID i = b; i < e; i++)

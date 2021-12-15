@@ -15,11 +15,17 @@ using namespace rfe;
 
 Scene::Scene()
 {
+	m_pistol = EntityReg::createEntity();
+	m_pistol.addComponent(TransformComp())->transform.setTranslation(2, 1, 5);
+	m_pistol.getComponent<TransformComp>()->transform.setScale(0.01);
+	m_pistol.getComponent<TransformComp>()->transform.setRotationDeg(90, 90, 0);
+	m_pistol.addComponent(RenderModelComp("Assets/Models/cerberus/scene.gltf"));
+
+
 	m_nanosuit = EntityReg::createEntity();
 	m_nanosuit.addComponent(TransformComp())->transform.setTranslation(0, 0, 5);
 	m_nanosuit.getComponent<TransformComp>()->transform.setScale(0.1);
 	m_nanosuit.addComponent(RenderModelComp("Assets/Models/nanosuit/nanosuit.obj"));
-
 
 	m_arrow = EntityReg::createEntity();
 	m_arrow.addComponent(TransformComp());

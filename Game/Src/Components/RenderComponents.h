@@ -16,7 +16,6 @@ struct RenderModelComp : rfe::Component<RenderModelComp>
 			auto modelID = AssetManager::Get().LoadModel(filePath);
 			Model& model = AssetManager::Get().GetModel(modelID);
 			renderPass = RenderModelComp::RenderPassEnum::phong;
-			renderUnitID = model.renderUnitIDs[0];
 			renderUnitBegin = model.RenderUnitBegin;
 			renderUnitEnd = model.RenderUnitEnd;
 			ModelID = modelID;

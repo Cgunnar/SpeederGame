@@ -21,9 +21,11 @@ enum class MaterialProperties
 	ALPHA_TESTING = 1 << 9,
 
 	IS_EMISSIVE = 1 << 10,
+	METALLICROUGHNESS = 1 << 11,
+	ALBEDO = 1 << 12,
 
-	NO_BACKFACE_CULLING = 1 << 11,
-	WIREFRAME = 1 << 12,
+	NO_BACKFACE_CULLING = 1 << 13,
+	WIREFRAME = 1 << 14,
 
 };
 
@@ -56,6 +58,7 @@ struct EngineMaterial
 	std::string diffuseMapPath = "";
 	std::string specularMapPath = "";
 	std::string normalMapPath = "";
+	std::string metallicroughnessPath = "";
 };
 
 

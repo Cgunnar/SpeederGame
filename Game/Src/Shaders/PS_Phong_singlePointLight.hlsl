@@ -127,4 +127,5 @@ float4 main(vs_out input) : SV_TARGET
     
     float3 finalColor = la + (ld + ls) * att * lightStrength;
     return float4(finalColor, 1.0f);
+    return float4(normal, 1.0f);
 }

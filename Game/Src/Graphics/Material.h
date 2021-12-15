@@ -28,6 +28,13 @@ struct PhongMaterial_DiffTex_NormTex
 	float shininess = 800;
 };
 
+struct PBR_ALBEDO_METROUG_NOR
+{
+	GID albedoTextureID;
+	GID normalTextureID;
+	GID matallicRoughnessTextureID;
+};
+
 
 enum class MaterialType
 {
@@ -35,9 +42,10 @@ enum class MaterialType
 	PhongMaterial_Color = 1 << 0,
 	PhongMaterial_DiffTex = 1 << 1,
 	PhongMaterial_DiffTex_NormTex = 1 << 2,
-	NormalMap = 1 << 3,
-	wireframe = 1 << 4,
-	transparent = 1 << 5,
+	PBR_ALBEDO_METROUG_NOR = 1 << 3,
+	NormalMap = 1 << 4,
+	wireframe = 1 << 5,
+	transparent = 1 << 6,
 };
 inline MaterialType operator &(MaterialType l, MaterialType r)
 {
@@ -51,10 +59,10 @@ inline MaterialType operator |(MaterialType l, MaterialType r)
 struct Material
 {
 	std::string name;
-	MaterialType type;
+	MaterialType type = MaterialType::none;
 
 	std::variant <
-		PhongMaterial_Color, PhongMaterial_DiffTex, PhongMaterial_DiffTex_NormTex
+		PhongMaterial_Color, PhongMaterial_DiffTex, PhongMaterial_DiffTex_NormTex, PBR_ALBEDO_METROUG_NOR
 	> materialVariant;
 };
 

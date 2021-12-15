@@ -1,5 +1,6 @@
 #include "pch.hpp"
 #include "AssimpLoader.h"
+#include <assimp/pbrmaterial.h>
 
 #ifdef DEBUG
     #pragma comment(lib, "assimp-vc142-mtd.lib")
@@ -180,7 +181,7 @@ EngineMeshSubset AssimpLoader::processMesh(aiMesh* mesh, const aiScene* scene, c
 
 	// Get material
 	auto mtl = scene->mMaterials[mesh->mMaterialIndex];
-	aiString diffName, normName, specName;
+	aiString diffName, normName, specName, metalRougName, albedoName;
 	//mtl->GetTexture(aiTextureType_HEIGHT, 0, &normName);
 	if (!mtl->GetTexture(aiTextureType_DIFFUSE, 0, &diffName))
 	{
@@ -197,6 +198,19 @@ EngineMeshSubset AssimpLoader::processMesh(aiMesh* mesh, const aiScene* scene, c
 	{
 		newMat.properties = newMat.properties | MaterialProperties::SPECULAR_MAP;
 		newMat.specularMapPath = path + specName.C_Str();
+	}
+
+	
+	if (!mtl->GetTexture(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_METALLICROUGHNESS_TEXTURE, &metalRougName))
+	{
+		newMat.properties = newMat.properties | MaterialProperties::METALLICROUGHNESS;
+		newMat.metallicroughnessPath = path + metalRougName.C_Str();
+	}
+
+	if (!mtl->GetTexture(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_BASE_COLOR_TEXTURE, &albedoName))
+	{
+		newMat.properties = newMat.properties | MaterialProperties::ALBEDO;
+		newMat.metallicroughnessPath = path + albedoName.C_Str();
 	}
 
 	aiString materialName;

@@ -58,7 +58,7 @@ private:
 
 	static AssetManager* s_instance;
 
-	void TraverseSubMeshTree(std::vector<SubMeshTree>& subMeshTrees, SubModel& subModel, VertexBuffer vb, IndexBuffer ib);
+	void TraverseSubMeshTree(SubMeshTree& subMeshTrees, SubModel& subModel, VertexBuffer vb, IndexBuffer ib);
 	
 
 	AssimpLoader m_assimpLoader;

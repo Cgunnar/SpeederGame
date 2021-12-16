@@ -57,7 +57,7 @@ std::shared_ptr<Texture2D> AssetManager::GetTexture2D(GID guid) const
 
 const SubMesh& AssetManager::GetMesh(RenderUnitID id) const
 {
-	assert(id > 0 && id-1 < m_renderUnits.size());
+	assert(id > 0 && id - 1 < m_renderUnits.size());
 	return m_renderUnits[id - 1].subMesh;
 }
 
@@ -93,103 +93,100 @@ RenderUnitID AssetManager::AddRenderUnit(RenderUnit renderUnit)
 	return m_renderUnits.size(); // RenderUnitID will always be index + 1
 }
 
-void AssetManager::TraverseSubMeshTree(std::vector<SubMeshTree>& subMeshTrees, SubModel& subModel, VertexBuffer vb, IndexBuffer ib)
+void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subModel, VertexBuffer vb, IndexBuffer ib)
 {
 	static RenderUnitID largestIDinSubTree = 0;
 	RenderUnitID lowestIDinSubTree = m_renderUnits.size() + 1;
-	for (auto& subMeshTree : subMeshTrees)
+	for (auto m : subMeshTree.subMeshes)
 	{
-		for (auto m : subMeshTree.subMeshes)
+		RenderUnit ru;
+		MaterialProperties p = m.material.properties;
+
+		if (((p & MaterialProperties::DIFFUSE_MAP) != 0) &&
+			((p & MaterialProperties::NORMAL_MAP) != 0) &&
+			((p & MaterialProperties::SPECULAR_MAP) != 0) &&
+			((p & MaterialProperties::SHININESS) != 0))
 		{
-			RenderUnit ru;
-			MaterialProperties p = m.material.properties;
+			PhongMaterial_DiffTex_NormTex_SpecTex mat;
+			mat.diffuseTextureID = this->LoadTex2D(m.material.diffuseMapPath, LoadTexFlag::GenerateMips);
+			mat.normalTextureID = this->LoadTex2D(m.material.normalMapPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
+			mat.specularTextureID = this->LoadTex2D(m.material.specularMapPath, LoadTexFlag::GenerateMips);
+			mat.shininess = m.material.shininess;
 
-			if (((p & MaterialProperties::DIFFUSE_MAP) != 0) &&
-				((p & MaterialProperties::NORMAL_MAP) != 0) &&
-				((p & MaterialProperties::SPECULAR_MAP) != 0) &&
-				((p & MaterialProperties::SHININESS) != 0))
-			{
-				PhongMaterial_DiffTex_NormTex_SpecTex mat;
-				mat.diffuseTextureID = this->LoadTex2D(m.material.diffuseMapPath, LoadTexFlag::GenerateMips);
-				mat.normalTextureID = this->LoadTex2D(m.material.normalMapPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
-				mat.specularTextureID = this->LoadTex2D(m.material.specularMapPath, LoadTexFlag::GenerateMips);
-				mat.shininess = m.material.shininess;
-
-				ru.material.materialVariant = mat;
-				ru.material.type = MaterialType::PhongMaterial_DiffTex_NormTex_SpecTex;
-			}
-			else if (((p & MaterialProperties::DIFFUSE_MAP) != 0) &&
-				((p & MaterialProperties::NORMAL_MAP) != 0) &&
-				((p & MaterialProperties::SPECULAR_COLOR) != 0) &&
-				((p & MaterialProperties::SHININESS) != 0))
-			{
-				PhongMaterial_DiffTex_NormTex mat;
-				mat.diffuseTextureID = this->LoadTex2D(m.material.diffuseMapPath, LoadTexFlag::GenerateMips);
-				mat.normalTextureID = this->LoadTex2D(m.material.normalMapPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
-				mat.specularColor = m.material.colorSpecular;
-				mat.shininess = m.material.shininess;
-
-				ru.material.materialVariant = mat;
-				ru.material.type = MaterialType::PhongMaterial_DiffTex_NormTex;
-			}
-			else if (((p & MaterialProperties::DIFFUSE_MAP) != 0) &&
-				((p & MaterialProperties::SPECULAR_COLOR) != 0) &&
-				((p & MaterialProperties::SHININESS) != 0))
-			{
-				PhongMaterial_DiffTex mat;
-				mat.diffuseTextureID = this->LoadTex2D(m.material.diffuseMapPath, LoadTexFlag::GenerateMips);
-				mat.specularColor = m.material.colorSpecular;
-				mat.shininess = m.material.shininess;
-
-				ru.material.materialVariant = mat;
-				ru.material.type = MaterialType::PhongMaterial_DiffTex;
-			}
-			else if (((p & MaterialProperties::DIFFUSE_COLOR) != 0) &&
-				((p & MaterialProperties::SPECULAR_COLOR) != 0) &&
-				((p & MaterialProperties::SHININESS) != 0))
-			{
-				PhongMaterial_Color mat;
-				mat.ambientColor = m.material.colorDiffuse;
-				mat.diffuseColor = m.material.colorDiffuse;
-				mat.specularColor = m.material.colorSpecular;
-				mat.shininess = m.material.shininess;
-
-				ru.material.materialVariant = mat;
-				ru.material.type = MaterialType::PhongMaterial_Color;
-			}
-			else if (((p & MaterialProperties::ALBEDO) != 0) &&
-				((p & MaterialProperties::NORMAL_MAP) != 0) &&
-				((p & MaterialProperties::METALLICROUGHNESS) != 0))
-			{
-				PBR_ALBEDO_METROUG_NOR mat;
-				mat.albedoTextureID = this->LoadTex2D(m.material.diffuseMapPath, LoadTexFlag::GenerateMips);
-				mat.normalTextureID = this->LoadTex2D(m.material.normalMapPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
-				mat.matallicRoughnessTextureID = this->LoadTex2D(m.material.metallicroughnessPath, LoadTexFlag::GenerateMips);
-
-				ru.material.materialVariant = mat;
-				ru.material.type = MaterialType::PBR_ALBEDO_METROUG_NOR;
-			}
-			assert(ru.material.type != MaterialType::none);
-			
-			ru.subMesh.ib = ib;
-			ru.subMesh.vb = vb;
-			ru.subMesh.baseVertexLocation = m.vertexStart;
-			ru.subMesh.startIndexLocation = m.indexStart;
-			ru.subMesh.indexCount = m.indexCount;
-			RenderUnitID ID = AddRenderUnit(ru);
-			largestIDinSubTree = ID + 1;
-			subModel.renderUnitIDs.push_back(ID);
-
+			ru.material.materialVariant = mat;
+			ru.material.type = MaterialType::PhongMaterial_DiffTex_NormTex_SpecTex;
 		}
-		if(!subMeshTree.nodes.empty())
+		else if (((p & MaterialProperties::DIFFUSE_MAP) != 0) &&
+			((p & MaterialProperties::NORMAL_MAP) != 0) &&
+			((p & MaterialProperties::SPECULAR_COLOR) != 0) &&
+			((p & MaterialProperties::SHININESS) != 0))
 		{
-			SubModel newSubModel;
-			TraverseSubMeshTree(subMeshTree.nodes, newSubModel, vb, ib);
-			subModel.subModels.push_back(newSubModel);
+			PhongMaterial_DiffTex_NormTex mat;
+			mat.diffuseTextureID = this->LoadTex2D(m.material.diffuseMapPath, LoadTexFlag::GenerateMips);
+			mat.normalTextureID = this->LoadTex2D(m.material.normalMapPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
+			mat.specularColor = m.material.colorSpecular;
+			mat.shininess = m.material.shininess;
+
+			ru.material.materialVariant = mat;
+			ru.material.type = MaterialType::PhongMaterial_DiffTex_NormTex;
 		}
-		subModel.RenderUnitBegin = subModel.renderUnitIDs.empty() ? lowestIDinSubTree : subModel.renderUnitIDs.front();	// hope this works
-		subModel.RenderUnitEnd = largestIDinSubTree;				// hope this works
+		else if (((p & MaterialProperties::DIFFUSE_MAP) != 0) &&
+			((p & MaterialProperties::SPECULAR_COLOR) != 0) &&
+			((p & MaterialProperties::SHININESS) != 0))
+		{
+			PhongMaterial_DiffTex mat;
+			mat.diffuseTextureID = this->LoadTex2D(m.material.diffuseMapPath, LoadTexFlag::GenerateMips);
+			mat.specularColor = m.material.colorSpecular;
+			mat.shininess = m.material.shininess;
+
+			ru.material.materialVariant = mat;
+			ru.material.type = MaterialType::PhongMaterial_DiffTex;
+		}
+		else if (((p & MaterialProperties::DIFFUSE_COLOR) != 0) &&
+			((p & MaterialProperties::SPECULAR_COLOR) != 0) &&
+			((p & MaterialProperties::SHININESS) != 0))
+		{
+			PhongMaterial_Color mat;
+			mat.ambientColor = m.material.colorDiffuse;
+			mat.diffuseColor = m.material.colorDiffuse;
+			mat.specularColor = m.material.colorSpecular;
+			mat.shininess = m.material.shininess;
+
+			ru.material.materialVariant = mat;
+			ru.material.type = MaterialType::PhongMaterial_Color;
+		}
+		else if (((p & MaterialProperties::ALBEDO) != 0) &&
+			((p & MaterialProperties::NORMAL_MAP) != 0) &&
+			((p & MaterialProperties::METALLICROUGHNESS) != 0))
+		{
+			PBR_ALBEDO_METROUG_NOR mat;
+			mat.albedoTextureID = this->LoadTex2D(m.material.diffuseMapPath, LoadTexFlag::GenerateMips);
+			mat.normalTextureID = this->LoadTex2D(m.material.normalMapPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
+			mat.matallicRoughnessTextureID = this->LoadTex2D(m.material.metallicroughnessPath, LoadTexFlag::GenerateMips);
+
+			ru.material.materialVariant = mat;
+			ru.material.type = MaterialType::PBR_ALBEDO_METROUG_NOR;
+		}
+		assert(ru.material.type != MaterialType::none); //some material is missing
+
+		ru.subMesh.ib = ib;
+		ru.subMesh.vb = vb;
+		ru.subMesh.baseVertexLocation = m.vertexStart;
+		ru.subMesh.startIndexLocation = m.indexStart;
+		ru.subMesh.indexCount = m.indexCount;
+		RenderUnitID ID = AddRenderUnit(ru);
+		largestIDinSubTree = ID + 1;
+		subModel.renderUnitIDs.push_back(ID);
+
 	}
+	for (int i = 0; i < subMeshTree.nodes.size(); i++)
+	{
+		SubModel newSubModel;
+		TraverseSubMeshTree(subMeshTree.nodes[i], newSubModel, vb, ib);
+		subModel.subModels.push_back(newSubModel);
+	}
+	subModel.RenderUnitBegin = subModel.renderUnitIDs.empty() ? lowestIDinSubTree : subModel.renderUnitIDs.front();	// hope this works
+	subModel.RenderUnitEnd = largestIDinSubTree;				// hope this works
 }
 
 GID AssetManager::LoadModel(const std::string& filePath)
@@ -209,9 +206,7 @@ GID AssetManager::LoadModel(const std::string& filePath)
 	model.vb = LowLvlGfx::CreateVertexBuffer(engineMeshData.getVertextBuffer(), engineMeshData.getVertexCount() * engineMeshData.getVertexSize(), engineMeshData.getVertexSize());
 
 
-	
-	assert(engineMeshData.subsetsInfo.subMeshes.empty() && engineMeshData.subsetsInfo.subMeshesIndex.empty());
-	TraverseSubMeshTree(engineMeshData.subsetsInfo.nodes, model, model.vb, model.ib);
+	TraverseSubMeshTree(engineMeshData.subsetsInfo, model, model.vb, model.ib);
 
 	m_models[newID] = model;
 
@@ -257,7 +252,7 @@ GID AssetManager::LoadTex2D(const std::string& path, LoadTexFlag flags)
 		desc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 		desc.MipLevels = im.mipNumber;
 	}
-		
+
 	else
 	{
 		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;

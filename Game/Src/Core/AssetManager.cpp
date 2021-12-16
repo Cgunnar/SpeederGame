@@ -106,6 +106,20 @@ void AssetManager::TraverseSubMeshTree(std::vector<SubMeshTree>& subMeshTrees, S
 
 			if (((p & MaterialProperties::DIFFUSE_MAP) != 0) &&
 				((p & MaterialProperties::NORMAL_MAP) != 0) &&
+				((p & MaterialProperties::SPECULAR_MAP) != 0) &&
+				((p & MaterialProperties::SHININESS) != 0))
+			{
+				PhongMaterial_DiffTex_NormTex_SpecTex mat;
+				mat.diffuseTextureID = this->LoadTex2D(m.material.diffuseMapPath, LoadTexFlag::GenerateMips);
+				mat.normalTextureID = this->LoadTex2D(m.material.normalMapPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
+				mat.specularTextureID = this->LoadTex2D(m.material.specularMapPath, LoadTexFlag::GenerateMips);
+				mat.shininess = m.material.shininess;
+
+				ru.material.materialVariant = mat;
+				ru.material.type = MaterialType::PhongMaterial_DiffTex_NormTex_SpecTex;
+			}
+			else if (((p & MaterialProperties::DIFFUSE_MAP) != 0) &&
+				((p & MaterialProperties::NORMAL_MAP) != 0) &&
 				((p & MaterialProperties::SPECULAR_COLOR) != 0) &&
 				((p & MaterialProperties::SHININESS) != 0))
 			{

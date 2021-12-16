@@ -16,6 +16,7 @@ PhongRenderer::PhongRenderer(std::weak_ptr<SharedRenderResources> sharedRes) : m
 	m_PS_Phong_DiffTexture_singleLight = LowLvlGfx::CreateShader("Src/Shaders/PS_Phong_DiffTexture_singleLight.hlsl", ShaderType::PIXELSHADER);
 	m_PS_Phong_singlePointLight = LowLvlGfx::CreateShader("Src/Shaders/PS_Phong_singlePointLight.hlsl", ShaderType::PIXELSHADER);
 	m_PS_Phong_DiffTex_NorTex_singleLight = LowLvlGfx::CreateShader("Src/Shaders/PS_Phong_DiffTex_NorTex_singleLight.hlsl", ShaderType::PIXELSHADER);
+	m_PS_Phong_DiffTex_NorTex_SpecTex_pointLight = LowLvlGfx::CreateShader("Src/Shaders/PS_Phong_DiffTex_NorTex_SpecTex_pointLight.hlsl", ShaderType::PIXELSHADER);
 	m_phongMaterialCB = LowLvlGfx::CreateConstantBuffer({ sizeof(PhongMaterial), BufferDesc::USAGE::DYNAMIC });
 }
 
@@ -38,6 +39,10 @@ void PhongRenderer::Submit(RenderUnitID unitID, const rfm::Transform& worlMatrix
 	else if ((type & MaterialType::PhongMaterial_DiffTex_NormTex) == MaterialType::PhongMaterial_DiffTex_NormTex)
 	{
 		m_PhongMaterial_DiffTex_NormTex.emplace_back(unitID, worlMatrix, type);
+	}
+	else if ((type & MaterialType::PhongMaterial_DiffTex_NormTex_SpecTex) == MaterialType::PhongMaterial_DiffTex_NormTex_SpecTex)
+	{
+		m_PhongMaterial_DiffTex_NormTex_SpecTex.emplace_back(unitID, worlMatrix, type);
 	}
 }
 
@@ -64,6 +69,7 @@ void PhongRenderer::Render(const VP& viewAndProjMatrix)
 	RenderWithColorOnly();
 	RenderWithDiffuseTexture();
 	RenderPhongMaterial_DiffTex_NormTex();
+	RenderPhongMaterial_DiffTex_NormTex_SpecTex();
 
 	m_prePocessed = false;
 }
@@ -160,4 +166,38 @@ void PhongRenderer::RenderPhongMaterial_DiffTex_NormTex()
 	m_PhongMaterial_DiffTex_NormTex.clear();
 
 
+}
+
+void PhongRenderer::RenderPhongMaterial_DiffTex_NormTex_SpecTex()
+{
+	auto rendRes = m_sharedRenderResources.lock();
+	const AssetManager& assetMan = AssetManager::Get();
+	PhongMaterial mat;
+
+	LowLvlGfx::Bind(rendRes->m_vertexShaderNormalMap);
+	LowLvlGfx::Bind(m_PS_Phong_DiffTex_NorTex_SpecTex_pointLight);
+
+	for (auto& unit : m_PhongMaterial_DiffTex_NormTex_SpecTex)
+	{
+		const RenderUnit& rendUnit = assetMan.GetRenderUnit(unit.id);
+		assert((rendUnit.material.type & MaterialType::PhongMaterial_DiffTex_NormTex_SpecTex) == MaterialType::PhongMaterial_DiffTex_NormTex_SpecTex);
+		const PhongMaterial_DiffTex_NormTex_SpecTex& matVariant = std::get<PhongMaterial_DiffTex_NormTex_SpecTex>(rendUnit.material.materialVariant);
+		mat.shininess = matVariant.shininess;
+		auto diffTex = assetMan.GetTexture2D(matVariant.diffuseTextureID);
+		auto normTex = assetMan.GetTexture2D(matVariant.normalTextureID);
+		auto specTex = assetMan.GetTexture2D(matVariant.specularTextureID);
+
+		LowLvlGfx::BindSRV(diffTex, ShaderType::PIXELSHADER, 0);
+		LowLvlGfx::BindSRV(specTex, ShaderType::PIXELSHADER, 1);
+		LowLvlGfx::BindSRV(normTex, ShaderType::PIXELSHADER, 2);
+
+		LowLvlGfx::UpdateBuffer(m_phongMaterialCB, &mat);
+		LowLvlGfx::UpdateBuffer(rendRes->m_worldMatrixCB, &unit.worldMatrix);
+		LowLvlGfx::Bind(m_phongMaterialCB, ShaderType::PIXELSHADER, 2);
+		LowLvlGfx::Bind(rendRes->m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
+		LowLvlGfx::Bind(rendUnit.subMesh.vb);
+		LowLvlGfx::Bind(rendUnit.subMesh.ib);
+		LowLvlGfx::DrawIndexed(rendUnit.subMesh.indexCount, rendUnit.subMesh.startIndexLocation, rendUnit.subMesh.baseVertexLocation);
+	}
+	m_PhongMaterial_DiffTex_NormTex_SpecTex.clear();
 }

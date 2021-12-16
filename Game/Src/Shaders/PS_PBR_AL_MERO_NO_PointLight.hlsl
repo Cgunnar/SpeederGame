@@ -120,7 +120,7 @@ float4 main(vs_out input) : SV_TARGET
     float3 normalTanSpace = normalMap.Sample(mySampler, input.textureUV).xyz;
     float3 normal = NormalMap(normalTanSpace, input.tangent_world, input.biTangent_world, input.normal_world.xyz);
     
-    float3 cameraPos = -float3(viewMatrix[0][3], viewMatrix[1][3], viewMatrix[2][3]);
+    float3 cameraPos = -mul((float3x3) transpose(viewMatrix), float3(viewMatrix[0][3], viewMatrix[1][3], viewMatrix[2][3]));
     float3 vDir = normalize(cameraPos - input.position_world.xyz);
     float3 l = lightPosition - input.position_world.xyz;
     float3 lDir = normalize(l);

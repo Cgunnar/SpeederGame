@@ -28,6 +28,14 @@ struct PhongMaterial_DiffTex_NormTex
 	float shininess = 800;
 };
 
+struct PhongMaterial_DiffTex_NormTex_SpecTex
+{
+	GID diffuseTextureID;
+	GID normalTextureID;
+	GID specularTextureID;
+	float shininess = 800;
+};
+
 struct PBR_ALBEDO_METROUG_NOR
 {
 	GID albedoTextureID;
@@ -42,8 +50,8 @@ enum class MaterialType
 	PhongMaterial_Color = 1 << 0,
 	PhongMaterial_DiffTex = 1 << 1,
 	PhongMaterial_DiffTex_NormTex = 1 << 2,
-	PBR_ALBEDO_METROUG_NOR = 1 << 3,
-	NormalMap = 1 << 4,
+	PhongMaterial_DiffTex_NormTex_SpecTex = 1 << 3,
+	PBR_ALBEDO_METROUG_NOR = 1 << 4,
 	wireframe = 1 << 5,
 	transparent = 1 << 6,
 };
@@ -62,7 +70,7 @@ struct Material
 	MaterialType type = MaterialType::none;
 
 	std::variant <
-		PhongMaterial_Color, PhongMaterial_DiffTex, PhongMaterial_DiffTex_NormTex, PBR_ALBEDO_METROUG_NOR
+		PhongMaterial_Color, PhongMaterial_DiffTex, PhongMaterial_DiffTex_NormTex, PhongMaterial_DiffTex_NormTex_SpecTex,  PBR_ALBEDO_METROUG_NOR
 	> materialVariant;
 };
 

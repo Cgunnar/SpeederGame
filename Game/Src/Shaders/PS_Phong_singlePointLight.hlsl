@@ -10,15 +10,7 @@
 #ifdef NORMAL_MAP
     Texture2D normalMap : register(t2);
 #endif
-
-//#if  defined(DIFFUSE_TEXTURE) || defined(SPECULAR_MAP) || defined(NORMAL_MAP)
-//    SamplerState mySampler : register(s0);
-//#endif
-
 SamplerState mySampler : register(s0);
-
-
-
 
 
 cbuffer PointLight : register(b0)
@@ -103,6 +95,11 @@ float4 main(vs_out input) : SV_TARGET
     alpha = texColor.w;
 #endif
     
+#ifdef SPECULAR_MAP
+    float4 texSpec = specTex.Sample(mySampler, input.textureUV);
+    ks = texSpec.xyz;
+#endif
+    
     float3 ia = 0.2 * float3(1, 1, 1);
     float3 id = lightColor;
     float3 is = lightColor;
@@ -120,7 +117,7 @@ float4 main(vs_out input) : SV_TARGET
     
     
     float3 dirToLight = normalize(lightPosition - input.position_world.xyz);
-    float3 cameraPos = -float3(viewMatrix[0][3], viewMatrix[1][3], viewMatrix[2][3]);
+    float3 cameraPos = -mul((float3x3) transpose(viewMatrix), float3(viewMatrix[0][3], viewMatrix[1][3], viewMatrix[2][3]));
     float3 V = normalize(cameraPos - input.position_world.xyz);
     float3 R = normalize(reflect(-dirToLight, normal));
     

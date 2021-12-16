@@ -264,5 +264,6 @@
     <FxCompile Include="Src\Shaders\VS_NormalMap.hlsl" />
     <FxCompile Include="Src\Shaders\PS_PBR_AL_MERO_NO_PointLight.hlsl" />
     <FxCompile Include="Src\Shaders\PS_Phong_DiffTex_NorTex_SpecTex_pointLight.hlsl" />
+    <FxCompile Include="Src\Shaders\PS_PBR_ALB_METROU_PointLight.hlsl" />
   </ItemGroup>
 </Project>

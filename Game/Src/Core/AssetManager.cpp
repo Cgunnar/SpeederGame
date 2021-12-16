@@ -167,6 +167,16 @@ void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subMo
 			ru.material.materialVariant = mat;
 			ru.material.type = MaterialType::PBR_ALBEDO_METROUG_NOR;
 		}
+		else if (((p & MaterialProperties::ALBEDO) != 0) &&
+			((p & MaterialProperties::METALLICROUGHNESS) != 0))
+		{
+			PBR_ALBEDO_METROUG mat;
+			mat.albedoTextureID = this->LoadTex2D(m.material.diffuseMapPath, LoadTexFlag::GenerateMips);
+			mat.matallicRoughnessTextureID = this->LoadTex2D(m.material.metallicroughnessPath, LoadTexFlag::GenerateMips);
+
+			ru.material.materialVariant = mat;
+			ru.material.type = MaterialType::PBR_ALBEDO_METROUG;
+		}
 		assert(ru.material.type != MaterialType::none); //some material is missing
 
 		ru.subMesh.ib = ib;

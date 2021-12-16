@@ -43,6 +43,12 @@ struct PBR_ALBEDO_METROUG_NOR
 	GID matallicRoughnessTextureID;
 };
 
+struct PBR_ALBEDO_METROUG
+{
+	GID albedoTextureID;
+	GID matallicRoughnessTextureID;
+};
+
 
 enum class MaterialType
 {
@@ -52,8 +58,9 @@ enum class MaterialType
 	PhongMaterial_DiffTex_NormTex = 1 << 2,
 	PhongMaterial_DiffTex_NormTex_SpecTex = 1 << 3,
 	PBR_ALBEDO_METROUG_NOR = 1 << 4,
-	wireframe = 1 << 5,
-	transparent = 1 << 6,
+	PBR_ALBEDO_METROUG = 1 << 5,
+	wireframe = 1 << 6,
+	transparent = 1 << 7,
 };
 inline MaterialType operator &(MaterialType l, MaterialType r)
 {
@@ -70,7 +77,8 @@ struct Material
 	MaterialType type = MaterialType::none;
 
 	std::variant <
-		PhongMaterial_Color, PhongMaterial_DiffTex, PhongMaterial_DiffTex_NormTex, PhongMaterial_DiffTex_NormTex_SpecTex,  PBR_ALBEDO_METROUG_NOR
+		PhongMaterial_Color, PhongMaterial_DiffTex, PhongMaterial_DiffTex_NormTex, PhongMaterial_DiffTex_NormTex_SpecTex,
+		PBR_ALBEDO_METROUG_NOR, PBR_ALBEDO_METROUG
 	> materialVariant;
 };
 

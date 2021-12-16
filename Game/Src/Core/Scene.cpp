@@ -19,7 +19,8 @@ Scene::Scene()
 	m_pistol.addComponent(TransformComp())->transform.setTranslation(2, 1, 5);
 	m_pistol.getComponent<TransformComp>()->transform.setScale(0.01);
 	m_pistol.getComponent<TransformComp>()->transform.setRotationDeg(90, 90, 0);
-	m_pistol.addComponent(RenderModelComp("Assets/Models/cerberus/scene.gltf", RenderPassEnum::pbr));
+	m_pistol.addComponent(RenderModelComp("Assets/Models/MetalRoughSpheres/glTF/MetalRoughSpheres.gltf", RenderPassEnum::pbr));
+	//m_pistol.addComponent(RenderModelComp("Assets/Models/cerberus/scene.gltf", RenderPassEnum::pbr));
 	//m_pistol.addComponent(RenderModelComp("Assets/Models/DamagedHelmet/glTF/DamagedHelmet.gltf", RenderPassEnum::pbr));
 	//m_pistol.addComponent(RenderModelComp("Assets/Models/material_ball/scene.gltf", RenderPassEnum::pbr));
 

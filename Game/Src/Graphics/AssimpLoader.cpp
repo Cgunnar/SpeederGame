@@ -210,7 +210,7 @@ EngineMeshSubset AssimpLoader::processMesh(aiMesh* mesh, const aiScene* scene, c
 	if (!mtl->GetTexture(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_BASE_COLOR_TEXTURE, &albedoName))
 	{
 		newMat.properties = newMat.properties | MaterialProperties::ALBEDO;
-		newMat.metallicroughnessPath = path + albedoName.C_Str();
+		newMat.diffuseMapPath = path + albedoName.C_Str();
 	}
 
 	aiString materialName;

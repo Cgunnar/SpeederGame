@@ -150,7 +150,7 @@ void AssetManager::TraverseSubMeshTree(std::vector<SubMeshTree>& subMeshTrees, S
 				PBR_ALBEDO_METROUG_NOR mat;
 				mat.albedoTextureID = this->LoadTex2D(m.material.diffuseMapPath, LoadTexFlag::GenerateMips);
 				mat.normalTextureID = this->LoadTex2D(m.material.normalMapPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
-				mat.matallicRoughnessTextureID = this->LoadTex2D(m.material.normalMapPath, LoadTexFlag::GenerateMips);
+				mat.matallicRoughnessTextureID = this->LoadTex2D(m.material.metallicroughnessPath, LoadTexFlag::GenerateMips);
 
 				ru.material.materialVariant = mat;
 				ru.material.type = MaterialType::PBR_ALBEDO_METROUG_NOR;

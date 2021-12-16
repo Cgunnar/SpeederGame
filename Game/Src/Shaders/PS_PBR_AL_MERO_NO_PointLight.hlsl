@@ -64,11 +64,14 @@ float3 NormalMap(float3 valueFromNomalMap ,float3 tangent, float3 biTangent, flo
 
 float4 main(vs_out input) : SV_TARGET
 {
-    float3 albedo = albedoTexture.Sample(mySampler, input.textureUV).xyz;
+    float4 albedoTextureVal = albedoTexture.Sample(mySampler, input.textureUV);
+    float3 albedo = albedoTextureVal.rgb;
+    float alpha = albedoTextureVal.a;
+    //metallic is stored in the blue and roughness is stored in green
+    float4 metallicRoughnessTextureVal = metallicRoughnessTexture.Sample(mySampler, input.textureUV);
+    float metallic = metallicRoughnessTextureVal.b;
+    float roughness = metallicRoughnessTextureVal.g;
     
-    float3 ia = 0.2 * float3(1, 1, 1);
-    float3 id = lightColor;
-    float3 is = lightColor;
 
     
     float3 normalTanSpace = normalMap.Sample(mySampler, input.textureUV).xyz;

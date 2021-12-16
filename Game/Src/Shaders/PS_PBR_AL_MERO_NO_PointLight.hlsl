@@ -155,9 +155,11 @@ float4 main(vs_out input) : SV_TARGET
     
     
     //fix ambient
+    float3 ambient = 0.03 * albedo;
     
+    float3 finalColor = LightOutPut + ambient;
     
-    float3 finalColor = LightOutPut;//+ ambient;
+    finalColor = finalColor / (finalColor + float3(1, 1, 1));
     return float4(finalColor, 1.0f);
     return float4(normal, 1.0f);
 }

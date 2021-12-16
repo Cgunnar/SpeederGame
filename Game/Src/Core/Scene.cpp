@@ -46,7 +46,7 @@ Scene::Scene()
 	m_pointLight = EntityReg::createEntity();
 	m_pointLight.addComponent(TransformComp());
 	m_pointLight.addComponent(PointLightComp());
-	m_pointLight.getComponent<PointLightComp>()->pointLight.lightStrength = 5;
+	m_pointLight.getComponent<PointLightComp>()->pointLight.lightStrength = 10;
 
 	
 	Material quadMat;

@@ -23,6 +23,13 @@ struct alignas(16) VP
 	rfm::Matrix P;
 };
 
+enum class RenderPassEnum
+{
+	none = 0,
+	phong,
+	pbr,
+};
+
 enum class TextureTypes
 {
 	NONE = 0,

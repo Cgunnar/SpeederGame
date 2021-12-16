@@ -9,27 +9,22 @@
 
 struct RenderModelComp : rfe::Component<RenderModelComp>
 {
-	RenderModelComp(const std::string& filePath = "")
+	
+	RenderModelComp(const std::string& filePath = "", RenderPassEnum renderPass = RenderPassEnum::none)
 	{
 		if (!filePath.empty())
 		{
 			auto modelID = AssetManager::Get().LoadModel(filePath);
 			Model& model = AssetManager::Get().GetModel(modelID);
-			renderPass = RenderModelComp::RenderPassEnum::phong;
+			this->renderPass = renderPass;
 			renderUnitBegin = model.RenderUnitBegin;
 			renderUnitEnd = model.RenderUnitEnd;
 			ModelID = modelID;
 		}
 	}
-	enum class RenderPassEnum
-	{
-		phong = 0,
-		mixed,
-		phong_transparent,
-		end,
-	};
+	
 
-	RenderPassEnum renderPass = RenderPassEnum::end;
+	RenderPassEnum renderPass = RenderPassEnum::none;
 	GID ModelID;
 	RenderUnitID renderUnitID = 0;
 	RenderUnitID renderUnitBegin = 0, renderUnitEnd = 0;

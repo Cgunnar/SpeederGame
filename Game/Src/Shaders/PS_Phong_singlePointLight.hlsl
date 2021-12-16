@@ -71,6 +71,21 @@ float Attenuate(float attConst, float attLin, float attExp, float distance)
     return 1.0f / (attConst + attLin * distance + attExp * (distance * distance));
 }
 
+float3 NormalMap(float3 valueFromNomalMap, float3 tangent, float3 biTangent, float3 normal)
+{
+    
+    float3 normalTanSpace = 2 * valueFromNomalMap - float3(1, 1, 1);
+    normalTanSpace = normalize(normalTanSpace);
+    
+    float3 T = normalize(tangent);
+    float3 B = normalize(biTangent);
+    float3 N = normalize(normal);
+    
+    float3x3 TBN = float3x3(T, B, N);
+    TBN = transpose(TBN); //so i can use mul the right way :/
+    return normalize(mul(TBN, normalTanSpace));
+}
+
 
 float4 main(vs_out input) : SV_TARGET
 {   
@@ -99,18 +114,8 @@ float4 main(vs_out input) : SV_TARGET
     float3 normal = normalize(input.normal_world.xyz);
     
 #ifdef NORMAL_MAP
-    float3 normalTanSpace = /*normalize*/(normalMap.Sample(mySampler, input.textureUV).xyz); //normalization fucks up sponza and brickwall but fixes crysis
-    normalTanSpace = 2 * normalTanSpace - float3(1, 1, 1);
-    normalTanSpace = normalize(normalTanSpace);
-    
-    float3 T = normalize(input.tangent_world);
-    float3 B = normalize(input.biTangent_world);
-    float3 N = normal;
-    
-    float3x3 TBN = float3x3(T, B, N);
-    TBN = transpose(TBN); //so i can use mul the right way :/
-    normal = normalize(mul(TBN, normalTanSpace));
-    
+    float3 normalTanSpace = normalMap.Sample(mySampler, input.textureUV).xyz; //normalization fucks up sponza and brickwall but fixes crysis
+    normal = NormalMap(normalTanSpace, input.tangent_world, input.biTangent_world, input.normal_world.xyz);
 #endif
     
     

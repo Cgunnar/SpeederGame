@@ -135,7 +135,6 @@ void PhongRenderer::RenderPhongMaterial_DiffTex_NormTex()
 
 	LowLvlGfx::Bind(rendRes->m_vertexShaderNormalMap);
 	LowLvlGfx::Bind(m_PS_Phong_DiffTex_NorTex_singleLight);
-	//LowLvlGfx::BindRTVs({ rendRes->m_hdrRenderTarget }, LowLvlGfx::GetDepthBuffer());
 
 	for (auto& unit : m_PhongMaterial_DiffTex_NormTex)
 	{

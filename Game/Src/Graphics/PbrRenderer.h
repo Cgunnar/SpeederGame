@@ -4,6 +4,7 @@ class PbrRenderer
 {
 public:
 	PbrRenderer(std::weak_ptr<SharedRenderResources> sharedRes);
+	PbrRenderer() = default;
 
 
 	void Submit(RenderUnitID unitID, const rfm::Transform& worlMatrix, MaterialType type);
@@ -12,8 +13,10 @@ public:
 private:
 	std::weak_ptr<SharedRenderResources> m_sharedRenderResources;
 
-	bool m_prePocessed = false;
+	Shader m_PS_PBR_AL_MERO_NO_PointLight;
 
+	bool m_prePocessed = false;
+	void RenderPBR_ALBEDO_METROUG_NOR();
 
 	std::vector<RendUnitIDAndTransform> m_PBR_ALBEDO_METROUG_NOR;
 };

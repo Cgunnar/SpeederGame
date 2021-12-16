@@ -19,22 +19,22 @@ Scene::Scene()
 	m_pistol.addComponent(TransformComp())->transform.setTranslation(2, 1, 5);
 	m_pistol.getComponent<TransformComp>()->transform.setScale(0.01);
 	m_pistol.getComponent<TransformComp>()->transform.setRotationDeg(90, 90, 0);
-	m_pistol.addComponent(RenderModelComp("Assets/Models/cerberus/scene.gltf"));
+	m_pistol.addComponent(RenderModelComp("Assets/Models/cerberus/scene.gltf", RenderPassEnum::pbr));
 
 
 	m_nanosuit = EntityReg::createEntity();
 	m_nanosuit.addComponent(TransformComp())->transform.setTranslation(0, 0, 5);
 	m_nanosuit.getComponent<TransformComp>()->transform.setScale(0.1);
-	m_nanosuit.addComponent(RenderModelComp("Assets/Models/nanosuit/nanosuit.obj"));
+	m_nanosuit.addComponent(RenderModelComp("Assets/Models/nanosuit/nanosuit.obj", RenderPassEnum::phong));
 
 	m_arrow = EntityReg::createEntity();
 	m_arrow.addComponent(TransformComp());
-	m_arrow.addComponent(RenderModelComp("Assets/Models/Arrows/DXRefSys.obj"));
+	m_arrow.addComponent(RenderModelComp("Assets/Models/Arrows/DXRefSys.obj", RenderPassEnum::phong));
 
 	m_brickWallFloor = EntityReg::createEntity();
 	m_brickWallFloor.addComponent(TransformComp())->transform.setRotationDeg(90, 0, 0);
 	m_brickWallFloor.getComponent<TransformComp>()->transform.setScale(10);
-	m_brickWallFloor.addComponent(RenderModelComp("Assets/Models/brick_wall/brick_wall.obj"));
+	m_brickWallFloor.addComponent(RenderModelComp("Assets/Models/brick_wall/brick_wall.obj", RenderPassEnum::phong));
 
 	m_camera = EntityReg::createEntity();
 	m_camera.addComponent(TransformComp());
@@ -59,7 +59,7 @@ Scene::Scene()
 	m_quad = EntityReg::createEntity();
 	m_quad.addComponent(TransformComp());
 	RenderModelComp* rendComp = m_quad.addComponent(RenderModelComp());
-	rendComp->renderPass = RenderModelComp::RenderPassEnum::phong;
+	rendComp->renderPass = RenderPassEnum::phong;
 	SubMesh quadMeshCopy = AssetManager::Get().GetMesh(SimpleMesh::Quad);
 	
 	rendComp->renderUnitID = AssetManager::Get().AddRenderUnit(quadMeshCopy, quadMat);
@@ -68,7 +68,7 @@ Scene::Scene()
 
 	m_quadContr.slider1.ChangeDefaultValues({ 0,0,8 });
 
-	m_lightContr.slider1.ChangeDefaultValues({ 0,0,5 });
+	m_lightContr.slider1.ChangeDefaultValues({ 0,1,4 });
 	m_lightContr.slider2.ChangeDefaultValues({ 1,1,1 }, 0, 1);
 }
 

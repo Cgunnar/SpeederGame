@@ -177,17 +177,18 @@ void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subMo
 			ru.material.materialVariant = mat;
 			ru.material.type = MaterialType::PBR_ALBEDO_METROUG;
 		}
-		assert(ru.material.type != MaterialType::none); //some material is missing
-
-		ru.subMesh.ib = ib;
-		ru.subMesh.vb = vb;
-		ru.subMesh.baseVertexLocation = m.vertexStart;
-		ru.subMesh.startIndexLocation = m.indexStart;
-		ru.subMesh.indexCount = m.indexCount;
-		RenderUnitID ID = AddRenderUnit(ru);
-		largestIDinSubTree = ID + 1;
-		subModel.renderUnitIDs.push_back(ID);
-
+		//assert(ru.material.type != MaterialType::none); //some material is missing
+		if (ru.material.type != MaterialType::none) //some material is missing
+		{
+			ru.subMesh.ib = ib;
+			ru.subMesh.vb = vb;
+			ru.subMesh.baseVertexLocation = m.vertexStart;
+			ru.subMesh.startIndexLocation = m.indexStart;
+			ru.subMesh.indexCount = m.indexCount;
+			RenderUnitID ID = AddRenderUnit(ru);
+			largestIDinSubTree = ID + 1;
+			subModel.renderUnitIDs.push_back(ID);
+		}
 	}
 	for (int i = 0; i < subMeshTree.nodes.size(); i++)
 	{

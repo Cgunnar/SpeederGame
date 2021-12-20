@@ -113,11 +113,11 @@ float4 main(vs_out input) : SV_TARGET
     float4 albedoTextureVal = albedoTexture.Sample(mySampler, input.textureUV);
     float3 albedo = albedoTextureVal.rgb;
     float alpha = albedoTextureVal.a;
-    //metallic is stored in the blue and roughness is stored in green
+    //metallic is stored in the blue and roughness is stored in green on some models and in r and g on others...
     float4 metallicRoughnessTextureVal = metallicRoughnessTexture.Sample(mySampler, input.textureUV);
-    float metallic = metallicRoughnessTextureVal.b;
+    float metallic = metallicRoughnessTextureVal.r;
     float roughness = metallicRoughnessTextureVal.g;
-     
+    
     float3 normal = normalize(input.normal_world.xyz);
     
 #ifdef NORMAL_MAP
@@ -135,7 +135,7 @@ float4 main(vs_out input) : SV_TARGET
     float iOmega = saturate(dot(normal, lDir));
     float oOmega = saturate(dot(normal, vDir));
     
-    float att = 1.0f / dot(l, l);
+    float att = lightStrength / dot(l, l);
     
     float3 lightRadiance = lightStrength * lightColor * att;
     
@@ -152,7 +152,7 @@ float4 main(vs_out input) : SV_TARGET
     kd = lerp(kd, float3(0, 0, 0), metallic * float3(1, 1, 1));
     
     float3 brdfSpec = D * G * F;
-    brdfSpec /= max(0.00001, 4 * iOmega * oOmega);
+    brdfSpec /= max(0.0001, 4 * iOmega * oOmega);
     
     float3 brdfDiff = kd * albedo; // /3.1415; //should i use pi ??
     

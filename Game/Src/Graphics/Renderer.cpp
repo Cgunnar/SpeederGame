@@ -100,9 +100,9 @@ void Renderer::SubmitToInternalRenderers(RenderPassEnum renderPass, RenderUnitID
 		m_transparentRenderUnits.push_back({ renderPass, RendUnitIDAndTransform(unitID, worldMatrix, type) });
 		return;
 	}
-	
-
-	switch (renderPass)
+	m_phongRenderer.Submit(unitID, worldMatrix, type);
+	m_pbrRenderer.Submit(unitID, worldMatrix, type);
+	/*switch (renderPass)
 	{
 	case RenderPassEnum::none:
 		assert(false);
@@ -113,7 +113,7 @@ void Renderer::SubmitToInternalRenderers(RenderPassEnum renderPass, RenderUnitID
 	case RenderPassEnum::pbr:
 		m_pbrRenderer.Submit(unitID, worldMatrix, type);
 		break;
-	}
+	}*/
 }
 
 

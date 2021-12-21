@@ -5,7 +5,6 @@
 #include "ReadImg.hpp"
 #include "GraphicsHelperFunctions.h"
 #include "Material.h"
-
 AssetManager* AssetManager::s_instance = nullptr;
 
 
@@ -101,8 +100,44 @@ void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subMo
 	{
 		RenderUnit ru;
 		MaterialProperties p = m.material.properties;
+		MaterialProperties pbrP = m.pbrMaterial.properties;
+		if (((pbrP & MaterialProperties::NORMAL_MAP) != 0) &&
+			((pbrP & MaterialProperties::ALBEDO_MAP) != 0) &&
+			((pbrP & MaterialProperties::METALLICROUGHNESS) != 0) &&
+			((pbrP & MaterialProperties::IS_EMISSIVE) != 0))
+		{
+			PBR_ALBEDO_METROUG_NOR_EMIS mat;
+			mat.albedoTextureID = this->LoadTex2D(m.pbrMaterial.baseColorPath, LoadTexFlag::GenerateMips);
+			mat.normalTextureID = this->LoadTex2D(m.pbrMaterial.normalPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
+			mat.emissiveTextureID = this->LoadTex2D(m.pbrMaterial.emissivePath, LoadTexFlag::GenerateMips);
+			mat.matallicRoughnessTextureID = this->LoadTex2D(m.pbrMaterial.metallicRoughnessPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
 
-		if (((p & MaterialProperties::DIFFUSE_MAP) != 0) &&
+			ru.material.materialVariant = mat;
+			ru.material.type = MaterialType::PBR_ALBEDO_METROUG_NOR_EMIS;
+		}
+		else if (((pbrP & MaterialProperties::NORMAL_MAP) != 0) &&
+			((pbrP & MaterialProperties::ALBEDO_MAP) != 0) &&
+			((pbrP & MaterialProperties::METALLICROUGHNESS) != 0))
+		{
+			PBR_ALBEDO_METROUG_NOR mat;
+			mat.albedoTextureID = this->LoadTex2D(m.pbrMaterial.baseColorPath, LoadTexFlag::GenerateMips);
+			mat.normalTextureID = this->LoadTex2D(m.pbrMaterial.normalPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
+			mat.matallicRoughnessTextureID = this->LoadTex2D(m.pbrMaterial.metallicRoughnessPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
+
+			ru.material.materialVariant = mat;
+			ru.material.type = MaterialType::PBR_ALBEDO_METROUG_NOR;
+		}
+		else if (((pbrP & MaterialProperties::ALBEDO_MAP) != 0) &&
+			((pbrP & MaterialProperties::METALLICROUGHNESS) != 0))
+		{
+			PBR_ALBEDO_METROUG mat;
+			mat.albedoTextureID = this->LoadTex2D(m.pbrMaterial.baseColorPath, LoadTexFlag::GenerateMips);
+			mat.matallicRoughnessTextureID = this->LoadTex2D(m.pbrMaterial.metallicRoughnessPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
+
+			ru.material.materialVariant = mat;
+			ru.material.type = MaterialType::PBR_ALBEDO_METROUG;
+		}
+		else if (((p & MaterialProperties::DIFFUSE_MAP) != 0) &&
 			((p & MaterialProperties::NORMAL_MAP) != 0) &&
 			((p & MaterialProperties::SPECULAR_MAP) != 0) &&
 			((p & MaterialProperties::SHININESS) != 0))
@@ -155,28 +190,7 @@ void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subMo
 			ru.material.materialVariant = mat;
 			ru.material.type = MaterialType::PhongMaterial_Color;
 		}
-		else if (((p & MaterialProperties::ALBEDO) != 0) &&
-			((p & MaterialProperties::NORMAL_MAP) != 0) &&
-			((p & MaterialProperties::METALLICROUGHNESS) != 0))
-		{
-			PBR_ALBEDO_METROUG_NOR mat;
-			mat.albedoTextureID = this->LoadTex2D(m.material.diffuseMapPath, LoadTexFlag::GenerateMips);
-			mat.normalTextureID = this->LoadTex2D(m.material.normalMapPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
-			mat.matallicRoughnessTextureID = this->LoadTex2D(m.material.metallicroughnessPath, LoadTexFlag::GenerateMips);
 
-			ru.material.materialVariant = mat;
-			ru.material.type = MaterialType::PBR_ALBEDO_METROUG_NOR;
-		}
-		else if (((p & MaterialProperties::ALBEDO) != 0) &&
-			((p & MaterialProperties::METALLICROUGHNESS) != 0))
-		{
-			PBR_ALBEDO_METROUG mat;
-			mat.albedoTextureID = this->LoadTex2D(m.material.diffuseMapPath, LoadTexFlag::GenerateMips);
-			mat.matallicRoughnessTextureID = this->LoadTex2D(m.material.metallicroughnessPath, LoadTexFlag::GenerateMips);
-
-			ru.material.materialVariant = mat;
-			ru.material.type = MaterialType::PBR_ALBEDO_METROUG;
-		}
 		//assert(ru.material.type != MaterialType::none); //some material is missing
 		if (ru.material.type == MaterialType::none) //some material is missing
 		{

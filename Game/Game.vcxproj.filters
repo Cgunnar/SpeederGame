@@ -96,9 +96,6 @@
     <ClInclude Include="Src\Graphics\Material.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Graphics\MeshStructures.hpp">
-      <Filter>Src\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Graphics\PhongRenderer.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>

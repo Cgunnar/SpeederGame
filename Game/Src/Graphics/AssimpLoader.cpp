@@ -213,7 +213,7 @@ EngineMeshSubset AssimpLoader::processMesh(aiMesh* mesh, const aiScene* scene, c
 
 	if (!mtl->GetTexture(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_BASE_COLOR_TEXTURE, &albedoName))
 	{
-		newMat.properties = newMat.properties | MaterialProperties::ALBEDO;
+		newMat.properties = newMat.properties | MaterialProperties::ALBEDO_MAP;
 		newMat.diffuseMapPath = path + albedoName.C_Str();
 	}
 
@@ -306,6 +306,7 @@ MetallicRoughnessMaterial AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const
 	if (!aiMat->Get(AI_MATKEY_TWOSIDED, twoSided))
 	{
 		pbrMat.twoSided = twoSided;
+		pbrMat.properties = pbrMat.properties | MaterialProperties::NO_BACKFACE_CULLING;
 	}
 
 	float metallicFactor;
@@ -329,10 +330,12 @@ MetallicRoughnessMaterial AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const
 			float cutOf = 1;
 			if (!aiMat->Get(AI_MATKEY_GLTF_ALPHACUTOFF, cutOf))
 				pbrMat.maskCutOfValue = cutOf;
+			pbrMat.properties = pbrMat.properties | MaterialProperties::ALPHA_TESTING;
 		}
 		else if(alphaMode == aiString("BLEND"))
 		{
 			pbrMat.blendMode = BlendMode::blend;
+			pbrMat.properties = pbrMat.properties | MaterialProperties::ALPHA_BLENDING;
 		}
 		else if (alphaMode == aiString("OPAQUE"))
 		{
@@ -368,22 +371,26 @@ MetallicRoughnessMaterial AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const
 	if (!aiMat->GetTexture(AI_MATKEY_BASE_COLOR_TEXTURE, &baseColorName))
 	{
 		pbrMat.baseColorPath = path + baseColorName.C_Str();
+		pbrMat.properties = pbrMat.properties | MaterialProperties::ALBEDO_MAP;
 	}
 	
 	if (!aiMat->GetTexture(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_METALLICROUGHNESS_TEXTURE, &metallicRoughnessName))
 	{
 		pbrMat.metallicRoughnessPath = path + metallicRoughnessName.C_Str();
+		pbrMat.properties = pbrMat.properties | MaterialProperties::METALLICROUGHNESS;
 	}
 	
 	if (!aiMat->GetTexture(aiTextureType::aiTextureType_EMISSIVE, 0, &emissiveName))
 	{
 		pbrMat.emissivePath = path + emissiveName.C_Str();
+		pbrMat.properties = pbrMat.properties | MaterialProperties::IS_EMISSIVE;
 	}
 
 	if (!aiMat->GetTexture(aiTextureType_NORMALS, 0, &normName))
 	{
 		pbrMat.normalPath = path + normName.C_Str();
 		m_hasNormalMap = true; // to use tangent and bitangent vertexbuffer
+		pbrMat.properties = pbrMat.properties | MaterialProperties::NORMAL_MAP;
 	}
 
 	if (!aiMat->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &aoName))

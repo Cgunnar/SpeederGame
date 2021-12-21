@@ -122,7 +122,6 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClInclude Include="Src\Graphics\GraphicsUtilityTypes.h" />
     <ClInclude Include="Src\Graphics\LowLvlGfx.h" />
     <ClInclude Include="Src\Graphics\Material.h" />
-    <ClInclude Include="Src\Graphics\MeshStructures.hpp" />
     <ClInclude Include="Src\Graphics\PhongRenderer.h" />
     <ClInclude Include="Src\Graphics\Renderer.h" />
     <ClInclude Include="Src\Graphics\SharedRendererResources.h" />

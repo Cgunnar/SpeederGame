@@ -22,8 +22,9 @@ Scene::Scene()
 	//m_pistol.addComponent(RenderModelComp("Assets/Models/MetalRoughSpheres/glTF/MetalRoughSpheres.gltf", RenderPassEnum::pbr));
 	//m_pistol.addComponent(RenderModelComp("Assets/Models/cerberus/scene.gltf", RenderPassEnum::pbr));
 	//m_pistol.addComponent(RenderModelComp("Assets/Models/DamagedHelmet/glTF/DamagedHelmet.gltf", RenderPassEnum::pbr));
-	//m_pistol.addComponent(RenderModelComp("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", RenderPassEnum::pbr));
-	m_pistol.addComponent(RenderModelComp("Assets/Models/pbr/wasteland_hunters_-_vehicule/scene.gltf", RenderPassEnum::pbr));
+	m_pistol.addComponent(RenderModelComp("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", RenderPassEnum::pbr));
+	//m_pistol.addComponent(RenderModelComp("Assets/Models/pbr/wasteland_hunters_-_vehicule/scene.gltf", RenderPassEnum::pbr));
+	//.addComponent(RenderModelComp("Assets/Models/pbr/razor_crest/scene.gltf", RenderPassEnum::pbr));
 
 
 	m_nanosuit = EntityReg::createEntity();

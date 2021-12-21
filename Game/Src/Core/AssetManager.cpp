@@ -112,6 +112,11 @@ void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subMo
 			mat.emissiveTextureID = this->LoadTex2D(m.pbrMaterial.emissivePath, LoadTexFlag::GenerateMips);
 			mat.matallicRoughnessTextureID = this->LoadTex2D(m.pbrMaterial.metallicRoughnessPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
 
+			mat.emissiveFactor = m.pbrMaterial.emissiveFactor;
+			mat.rgba = m.pbrMaterial.baseColorFactor;
+			mat.metallic = m.pbrMaterial.metallicFactor;
+			mat.roughness = m.pbrMaterial.roughnessFactor;
+
 			ru.material.materialVariant = mat;
 			ru.material.type = MaterialType::PBR_ALBEDO_METROUG_NOR_EMIS;
 		}
@@ -124,6 +129,11 @@ void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subMo
 			mat.normalTextureID = this->LoadTex2D(m.pbrMaterial.normalPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
 			mat.matallicRoughnessTextureID = this->LoadTex2D(m.pbrMaterial.metallicRoughnessPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
 
+			mat.emissiveFactor = m.pbrMaterial.emissiveFactor;
+			mat.rgba = m.pbrMaterial.baseColorFactor;
+			mat.metallic = m.pbrMaterial.metallicFactor;
+			mat.roughness = m.pbrMaterial.roughnessFactor;
+
 			ru.material.materialVariant = mat;
 			ru.material.type = MaterialType::PBR_ALBEDO_METROUG_NOR;
 		}
@@ -133,6 +143,11 @@ void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subMo
 			PBR_ALBEDO_METROUG mat;
 			mat.albedoTextureID = this->LoadTex2D(m.pbrMaterial.baseColorPath, LoadTexFlag::GenerateMips);
 			mat.matallicRoughnessTextureID = this->LoadTex2D(m.pbrMaterial.metallicRoughnessPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
+
+			mat.emissiveFactor = m.pbrMaterial.emissiveFactor;
+			mat.rgba = m.pbrMaterial.baseColorFactor;
+			mat.metallic = m.pbrMaterial.metallicFactor;
+			mat.roughness = m.pbrMaterial.roughnessFactor;
 
 			ru.material.materialVariant = mat;
 			ru.material.type = MaterialType::PBR_ALBEDO_METROUG;

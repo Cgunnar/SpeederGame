@@ -26,6 +26,14 @@ cbuffer VP : register(b1)
     matrix projectionMatrix;
 };
 
+cbuffer pbrMats : register(b2)
+{
+    float4 albedoFactor;
+    float3 emissiveFactor;
+    float metallicFactor;
+    float roughnessFactor;
+};
+
 #ifdef NORMAL_MAP
 struct vs_out
 {
@@ -112,19 +120,20 @@ float3 fresnelSchlick(float cosTheta, float3 F0)
 float4 main(vs_out input) : SV_TARGET
 {
     float4 albedoTextureVal = albedoTexture.Sample(mySampler, input.textureUV);
+    albedoTextureVal *= albedoFactor;
     float3 albedo = albedoTextureVal.rgb;
     float alpha = albedoTextureVal.a;
     
     float4 metallicRoughnessTextureVal = metallicRoughnessTexture.Sample(mySampler, input.textureUV);
     
-    float3 emissive = float3(0, 0, 0);
-#ifdef EMISSIVE
-    emissive = emissiveTexture.Sample(mySampler, input.textureUV).xyz;
-#endif
-    
     float ambientOcclusion = metallicRoughnessTextureVal.r;
-    float metallic = metallicRoughnessTextureVal.b;
-    float roughness = metallicRoughnessTextureVal.g;
+    float metallic = metallicRoughnessTextureVal.b * metallicFactor;
+    float roughness = metallicRoughnessTextureVal.g * roughnessFactor;
+    
+    float3 emissive = emissiveFactor;
+#ifdef EMISSIVE
+    emissive *= emissiveTexture.Sample(mySampler, input.textureUV).xyz;
+#endif
     
     float3 normal = normalize(input.normal_world.xyz);
     

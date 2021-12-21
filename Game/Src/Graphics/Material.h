@@ -44,6 +44,7 @@ struct PBR_ALBEDO_METROUG_NOR
 	float metallic = 0;
 	float roughness = 1;
 	rfm::Vector4 rgba = rfm::Vector4(1, 1, 1, 1);
+	rfm::Vector3 emissiveFactor = rfm::Vector3(1, 1, 1);
 };
 
 struct PBR_ALBEDO_METROUG_NOR_EMIS
@@ -65,6 +66,7 @@ struct PBR_ALBEDO_METROUG
 	float metallic = 0;
 	float roughness = 1;
 	rfm::Vector4 rgba = rfm::Vector4(1, 1, 1, 1);
+	rfm::Vector3 emissiveFactor = rfm::Vector3(1, 1, 1);
 };
 
 

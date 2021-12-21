@@ -13,6 +13,8 @@ public:
 private:
 	std::weak_ptr<SharedRenderResources> m_sharedRenderResources;
 
+
+	ConstantBuffer m_pbrCB;
 	Shader m_PS_PBR_AL_MERO_NO_PointLight;
 	Shader m_PS_PBR_ALB_METROU_PointLight;
 	Shader m_PS_PBR_NOR_EMIS_PointLight;

@@ -3,12 +3,26 @@
 #include "LowLvlGfx.h"
 #include "AssetManager.h"
 
+
+struct alignas(16) PbrMaterial
+{
+	rfm::Vector4 albedoFactor;
+	rfm::Vector3 emissiveFactor;
+	float metallicFactor;
+	float roughnessFactor;
+};
+
+
 PbrRenderer::PbrRenderer(std::weak_ptr<SharedRenderResources> sharedRes) : m_sharedRenderResources(sharedRes)
 {
 	m_PS_PBR_AL_MERO_NO_PointLight = LowLvlGfx::CreateShader("Src/Shaders/PS_PBR_AL_MERO_NO_PointLight.hlsl", ShaderType::PIXELSHADER);
 	m_PS_PBR_ALB_METROU_PointLight = LowLvlGfx::CreateShader("Src/Shaders/PS_PBR_ALB_METROU_PointLight.hlsl", ShaderType::PIXELSHADER);
 	m_PS_PBR_NOR_EMIS_PointLight = LowLvlGfx::CreateShader("Src/Shaders/PS_PBR_NOR_EMIS_PointLight.hlsl", ShaderType::PIXELSHADER);
 
+	BufferDesc desc;
+	desc.size = sizeof(PbrMaterial);
+	desc.usage = BufferDesc::USAGE::DYNAMIC;
+	m_pbrCB = LowLvlGfx::CreateConstantBuffer(desc);
 }
 
 void PbrRenderer::Submit(RenderUnitID unitID, const rfm::Transform& worlMatrix, MaterialType type)
@@ -44,7 +58,7 @@ void PbrRenderer::Render(const VP& viewAndProjMatrix)
 {
 	if (!m_prePocessed) PreProcess(viewAndProjMatrix);
 
-
+	
 
 	auto rendRes = m_sharedRenderResources.lock();
 
@@ -87,6 +101,14 @@ void PbrRenderer::RenderPBR_ALBEDO_METROUG_NOR()
 		LowLvlGfx::BindSRV(matallicRoughnessText, ShaderType::PIXELSHADER, 1);
 		LowLvlGfx::BindSRV(normalTex, ShaderType::PIXELSHADER, 2);
 
+		PbrMaterial cMat;
+		cMat.albedoFactor = matVariant.rgba;
+		cMat.roughnessFactor = matVariant.roughness;
+		cMat.metallicFactor = matVariant.metallic;
+		cMat.emissiveFactor = matVariant.emissiveFactor;
+		LowLvlGfx::UpdateBuffer(m_pbrCB, &cMat);
+		LowLvlGfx::Bind(m_pbrCB, ShaderType::PIXELSHADER, 2);
+
 		LowLvlGfx::UpdateBuffer(rendRes->m_worldMatrixCB, &unit.worldMatrix);
 		LowLvlGfx::Bind(rendRes->m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
 		LowLvlGfx::Bind(rendUnit.subMesh.vb);
@@ -115,6 +137,14 @@ void PbrRenderer::RenderPBR_ALBEDO_METROUG()
 
 		LowLvlGfx::BindSRV(albedoTex, ShaderType::PIXELSHADER, 0);
 		LowLvlGfx::BindSRV(matallicRoughnessText, ShaderType::PIXELSHADER, 1);
+
+		PbrMaterial cMat;
+		cMat.albedoFactor = matVariant.rgba;
+		cMat.roughnessFactor = matVariant.roughness;
+		cMat.metallicFactor = matVariant.metallic;
+		cMat.emissiveFactor = matVariant.emissiveFactor;
+		LowLvlGfx::UpdateBuffer(m_pbrCB, &cMat);
+		LowLvlGfx::Bind(m_pbrCB, ShaderType::PIXELSHADER, 2);
 
 		LowLvlGfx::UpdateBuffer(rendRes->m_worldMatrixCB, &unit.worldMatrix);
 		LowLvlGfx::Bind(rendRes->m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
@@ -148,6 +178,14 @@ void PbrRenderer::RendererPBR_ALBEDO_METROUG_NOR_EMIS()
 		LowLvlGfx::BindSRV(matallicRoughnessText, ShaderType::PIXELSHADER, 1);
 		LowLvlGfx::BindSRV(normalTex, ShaderType::PIXELSHADER, 2);
 		LowLvlGfx::BindSRV(emissiveText, ShaderType::PIXELSHADER, 3);
+
+		PbrMaterial cMat;
+		cMat.albedoFactor = matVariant.rgba;
+		cMat.roughnessFactor = matVariant.roughness;
+		cMat.metallicFactor = matVariant.metallic;
+		cMat.emissiveFactor = matVariant.emissiveFactor;
+		LowLvlGfx::UpdateBuffer(m_pbrCB, &cMat);
+		LowLvlGfx::Bind(m_pbrCB, ShaderType::PIXELSHADER, 2);
 
 		LowLvlGfx::UpdateBuffer(rendRes->m_worldMatrixCB, &unit.worldMatrix);
 		LowLvlGfx::Bind(rendRes->m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);

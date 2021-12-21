@@ -205,19 +205,6 @@ EngineMeshSubset AssimpLoader::processMesh(aiMesh* mesh, const aiScene* scene, c
 	}
 
 	
-	if (!mtl->GetTexture(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_METALLICROUGHNESS_TEXTURE, &metalRougName))
-	{
-		newMat.properties = newMat.properties | MaterialProperties::METALLICROUGHNESS;
-		newMat.metallicroughnessPath = path + metalRougName.C_Str();
-	}
-
-	if (!mtl->GetTexture(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_BASE_COLOR_TEXTURE, &albedoName))
-	{
-		newMat.properties = newMat.properties | MaterialProperties::ALBEDO_MAP;
-		newMat.diffuseMapPath = path + albedoName.C_Str();
-	}
-
-	
 
 	aiString materialName;
 	if (!mtl->Get(AI_MATKEY_NAME, materialName))
@@ -237,13 +224,6 @@ EngineMeshSubset AssimpLoader::processMesh(aiMesh* mesh, const aiScene* scene, c
 	{
 		newMat.properties = newMat.properties | MaterialProperties::SPECULAR_COLOR;
 		newMat.colorSpecular = rfm::Vector3(colorSpec[0], colorSpec[1], colorSpec[2]);
-	}
-
-	aiColor3D colorAmbi(0.f, 0.f, 0.f);
-	if (!mtl->Get(AI_MATKEY_COLOR_AMBIENT, colorAmbi))
-	{
-		newMat.properties = newMat.properties | MaterialProperties::AMBIENT_COLOR;
-		newMat.colorAmbient = rfm::Vector3(colorAmbi[0], colorAmbi[1], colorAmbi[2]);
 	}
 
 
@@ -267,18 +247,10 @@ EngineMeshSubset AssimpLoader::processMesh(aiMesh* mesh, const aiScene* scene, c
 
 	// Subset data
 	EngineMeshSubset subsetData = { };
-	//subsetData.material = newMat;
 
 	subsetData.name = materialName.C_Str();
 	subsetData.material = newMat;
-	/*subsetData.specularFileName = specName.C_Str();
-	subsetData.diffuseFileName = diffName.C_Str();
-	subsetData.color[0] = colorDiff[0];
-	subsetData.color[1] = colorDiff[1];
-	subsetData.color[2] = colorDiff[2];
-	subsetData.normalFileName = normName.C_Str();*/
-
-	//subsetData.filePath = path;
+	subsetData.pbrMaterial = pbrMaterial;
 
 	subsetData.vertexCount = mesh->mNumVertices;
 	subsetData.vertexStart = m_meshVertexCount;

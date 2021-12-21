@@ -16,17 +16,18 @@ using namespace rfe;
 Scene::Scene()
 {
 	m_pistol = EntityReg::createEntity();
-	m_pistol.addComponent(TransformComp())->transform.setTranslation(2, 1, 5);
+	m_pistol.addComponent(TransformComp())->transform.setTranslation(0, 1, 3);
 	//m_pistol.getComponent<TransformComp>()->transform.setScale(0.01);
-	//m_pistol.getComponent<TransformComp>()->transform.setRotationDeg(90, 90, 0);
+	m_pistol.getComponent<TransformComp>()->transform.setRotationDeg(0, -20, 0);
 	//m_pistol.addComponent(RenderModelComp("Assets/Models/MetalRoughSpheres/glTF/MetalRoughSpheres.gltf", RenderPassEnum::pbr));
 	//m_pistol.addComponent(RenderModelComp("Assets/Models/cerberus/scene.gltf", RenderPassEnum::pbr));
 	//m_pistol.addComponent(RenderModelComp("Assets/Models/DamagedHelmet/glTF/DamagedHelmet.gltf", RenderPassEnum::pbr));
-	m_pistol.addComponent(RenderModelComp("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", RenderPassEnum::pbr));
+	//m_pistol.addComponent(RenderModelComp("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", RenderPassEnum::pbr));
+	m_pistol.addComponent(RenderModelComp("Assets/Models/pbr/wasteland_hunters_-_vehicule/scene.gltf", RenderPassEnum::pbr));
 
 
 	m_nanosuit = EntityReg::createEntity();
-	m_nanosuit.addComponent(TransformComp())->transform.setTranslation(0, 0, 5);
+	m_nanosuit.addComponent(TransformComp())->transform.setTranslation(2, 1, 5);
 	m_nanosuit.getComponent<TransformComp>()->transform.setScale(0.1);
 	m_nanosuit.addComponent(RenderModelComp("Assets/Models/nanosuit/nanosuit.obj", RenderPassEnum::phong));
 
@@ -41,8 +42,8 @@ Scene::Scene()
 
 	m_camera = EntityReg::createEntity();
 	m_camera.addComponent(TransformComp());
-	m_camera.getComponent<TransformComp>()->transform.setTranslation(0, 1, -5);
-	m_camera.getComponent<TransformComp>()->transform.setRotationDeg(0, 0, 0);
+	m_camera.getComponent<TransformComp>()->transform.setTranslation(0, 1, 2);
+	m_camera.getComponent<TransformComp>()->transform.setRotationDeg(15, 0, 0);
 
 	m_camera.addScript(CameraControllerScript());
 
@@ -71,7 +72,7 @@ Scene::Scene()
 
 	m_quadContr.slider1.ChangeDefaultValues({ 0,0,8 });
 
-	m_lightContr.slider1.ChangeDefaultValues({ 0,1,4 });
+	m_lightContr.slider1.ChangeDefaultValues({ -4,6,3 });
 	m_lightContr.slider2.ChangeDefaultValues({ 1,1,1 }, 0, 1);
 }
 

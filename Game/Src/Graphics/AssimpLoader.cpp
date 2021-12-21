@@ -364,7 +364,7 @@ MetallicRoughnessMaterial AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const
 		pbrMat.emissiveFactor = rfm::Vector3(ai_matkey_emissive[0], ai_matkey_emissive[1], ai_matkey_emissive[2]);
 	}
 
-	aiString baseColorName, normName, metallicRoughnessName, emissiveName;
+	aiString baseColorName, normName, metallicRoughnessName, emissiveName, aoName;
 	if (!aiMat->GetTexture(AI_MATKEY_BASE_COLOR_TEXTURE, &baseColorName))
 	{
 		pbrMat.baseColorPath = path + baseColorName.C_Str();
@@ -385,6 +385,14 @@ MetallicRoughnessMaterial AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const
 		pbrMat.normalPath = path + normName.C_Str();
 		m_hasNormalMap = true; // to use tangent and bitangent vertexbuffer
 	}
+
+	if (!aiMat->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &aoName))
+	{
+		pbrMat.aoPath = path + aoName.C_Str();
+		assert(false);// want to know if this is used
+	}
+
+	
 
 	return pbrMat;
 }

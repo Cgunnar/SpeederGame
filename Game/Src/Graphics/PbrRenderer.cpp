@@ -7,6 +7,7 @@ PbrRenderer::PbrRenderer(std::weak_ptr<SharedRenderResources> sharedRes) : m_sha
 {
 	m_PS_PBR_AL_MERO_NO_PointLight = LowLvlGfx::CreateShader("Src/Shaders/PS_PBR_AL_MERO_NO_PointLight.hlsl", ShaderType::PIXELSHADER);
 	m_PS_PBR_ALB_METROU_PointLight = LowLvlGfx::CreateShader("Src/Shaders/PS_PBR_ALB_METROU_PointLight.hlsl", ShaderType::PIXELSHADER);
+	m_PS_PBR_NOR_EMIS_PointLight = LowLvlGfx::CreateShader("Src/Shaders/PS_PBR_NOR_EMIS_PointLight.hlsl", ShaderType::PIXELSHADER);
 
 }
 
@@ -24,6 +25,10 @@ void PbrRenderer::Submit(RenderUnitID unitID, const rfm::Transform& worlMatrix, 
 	else if ((type & MaterialType::PBR_ALBEDO_METROUG) == MaterialType::PBR_ALBEDO_METROUG)
 	{
 		m_PBR_ALBEDO_METROUG.emplace_back(unitID, worlMatrix, type);
+	}
+	else if ((type & MaterialType::PBR_ALBEDO_METROUG_NOR_EMIS) == MaterialType::PBR_ALBEDO_METROUG_NOR_EMIS)
+	{
+		m_PBR_ALBEDO_METROUG_NOR_EMIS.emplace_back(unitID, worlMatrix, type);
 	}
 
 
@@ -51,6 +56,7 @@ void PbrRenderer::Render(const VP& viewAndProjMatrix)
 
 
 
+	RendererPBR_ALBEDO_METROUG_NOR_EMIS();
 	RenderPBR_ALBEDO_METROUG_NOR();
 	RenderPBR_ALBEDO_METROUG();
 
@@ -118,4 +124,37 @@ void PbrRenderer::RenderPBR_ALBEDO_METROUG()
 	}
 
 	m_PBR_ALBEDO_METROUG.clear();
+}
+
+void PbrRenderer::RendererPBR_ALBEDO_METROUG_NOR_EMIS()
+{
+	auto rendRes = m_sharedRenderResources.lock();
+	const AssetManager& assetMan = AssetManager::Get();
+	LowLvlGfx::Bind(rendRes->m_vertexShaderNormalMap);
+	LowLvlGfx::Bind(m_PS_PBR_NOR_EMIS_PointLight);
+	//LowLvlGfx::BindRTVs({ rendRes->m_hdrRenderTarget }, LowLvlGfx::GetDepthBuffer());
+
+	for (auto& unit : m_PBR_ALBEDO_METROUG_NOR_EMIS)
+	{
+		const RenderUnit& rendUnit = assetMan.GetRenderUnit(unit.id);
+		assert((rendUnit.material.type & MaterialType::PBR_ALBEDO_METROUG_NOR_EMIS) == MaterialType::PBR_ALBEDO_METROUG_NOR_EMIS);
+		const PBR_ALBEDO_METROUG_NOR_EMIS& matVariant = std::get<PBR_ALBEDO_METROUG_NOR_EMIS>(rendUnit.material.materialVariant);
+		auto albedoTex = assetMan.GetTexture2D(matVariant.albedoTextureID);
+		auto normalTex = assetMan.GetTexture2D(matVariant.normalTextureID);
+		auto matallicRoughnessText = assetMan.GetTexture2D(matVariant.matallicRoughnessTextureID);
+		auto emissiveText = assetMan.GetTexture2D(matVariant.emissiveTextureID);
+
+		LowLvlGfx::BindSRV(albedoTex, ShaderType::PIXELSHADER, 0);
+		LowLvlGfx::BindSRV(matallicRoughnessText, ShaderType::PIXELSHADER, 1);
+		LowLvlGfx::BindSRV(normalTex, ShaderType::PIXELSHADER, 2);
+		LowLvlGfx::BindSRV(emissiveText, ShaderType::PIXELSHADER, 3);
+
+		LowLvlGfx::UpdateBuffer(rendRes->m_worldMatrixCB, &unit.worldMatrix);
+		LowLvlGfx::Bind(rendRes->m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
+		LowLvlGfx::Bind(rendUnit.subMesh.vb);
+		LowLvlGfx::Bind(rendUnit.subMesh.ib);
+		LowLvlGfx::DrawIndexed(rendUnit.subMesh.indexCount, rendUnit.subMesh.startIndexLocation, rendUnit.subMesh.baseVertexLocation);
+	}
+
+	m_PBR_ALBEDO_METROUG_NOR_EMIS.clear();
 }

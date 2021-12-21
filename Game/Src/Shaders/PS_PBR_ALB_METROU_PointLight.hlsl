@@ -2,6 +2,7 @@
 Texture2D albedoTexture : register(t0);
 Texture2D metallicRoughnessTexture : register(t1);
 Texture2D normalMap : register(t2);
+Texture2D emissiveTexture : register(t3);
 
 SamplerState mySampler : register(s0);
 
@@ -116,6 +117,11 @@ float4 main(vs_out input) : SV_TARGET
     
     float4 metallicRoughnessTextureVal = metallicRoughnessTexture.Sample(mySampler, input.textureUV);
     
+    float3 emissive = float3(0, 0, 0);
+#ifdef EMISSIVE
+    emissive = emissiveTexture.Sample(mySampler, input.textureUV).xyz;
+#endif
+    
     float ambientOcclusion = metallicRoughnessTextureVal.r;
     float metallic = metallicRoughnessTextureVal.b;
     float roughness = metallicRoughnessTextureVal.g;
@@ -165,6 +171,8 @@ float4 main(vs_out input) : SV_TARGET
     float3 ambient = 0.03 * albedo * ambientOcclusion;
     
     float3 finalColor = LightOutPut + ambient;
+    
+    finalColor += emissive;
     
     finalColor = finalColor / (finalColor + float3(1, 1, 1));
     return float4(finalColor, 1.0f);

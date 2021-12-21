@@ -15,12 +15,15 @@ private:
 
 	Shader m_PS_PBR_AL_MERO_NO_PointLight;
 	Shader m_PS_PBR_ALB_METROU_PointLight;
+	Shader m_PS_PBR_NOR_EMIS_PointLight;
 
 	bool m_prePocessed = false;
 	void RenderPBR_ALBEDO_METROUG_NOR();
 	void RenderPBR_ALBEDO_METROUG();
+	void RendererPBR_ALBEDO_METROUG_NOR_EMIS();
 
 	std::vector<RendUnitIDAndTransform> m_PBR_ALBEDO_METROUG_NOR;
+	std::vector<RendUnitIDAndTransform> m_PBR_ALBEDO_METROUG_NOR_EMIS;
 	std::vector<RendUnitIDAndTransform> m_PBR_ALBEDO_METROUG;
 };
 

@@ -9,6 +9,19 @@
 #include "MeshStructures.hpp"
 #include "GraphicsUtilityTypes.h"
 
+struct MetallicRoughnessMaterial
+{
+	std::string name = "";
+	std::string baseColorPath = "";
+	std::string normalPath = "";
+	std::string metallicRoughnessPath = "";
+	std::string emissivePath = "";
+	std::string aoPath = "";
+
+	float metallicFactor = 0;
+	float roughnessFactor = 1;
+	rfm::Vector4 baseColorFactor = rfm::Vector4(1, 1, 1, 1);
+};
 
 class AssimpLoader
 {
@@ -32,5 +45,6 @@ private:
 
 	SubMeshTree processNode(aiNode* node, const aiScene* scene, const std::string& path);
 	EngineMeshSubset processMesh(aiMesh* mesh, const aiScene* scene, const std::string& path);
+	MetallicRoughnessMaterial GetPbrMaterials(aiMaterial* aiMat, const std::string& path);
 };
 

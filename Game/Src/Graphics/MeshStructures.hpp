@@ -59,6 +59,12 @@ struct EngineMaterial
 	std::string specularMapPath = "";
 	std::string normalMapPath = "";
 	std::string metallicroughnessPath = "";
+	std::string emissivePath = "";
+	std::string aoPath = "";
+
+	float metallicFactor = 0;
+	float roughnessFactor = 1;
+	rfm::Vector4 rgba = rfm::Vector4(1, 1, 1, 1);
 };
 
 

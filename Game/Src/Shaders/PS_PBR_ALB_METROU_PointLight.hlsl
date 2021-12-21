@@ -113,9 +113,11 @@ float4 main(vs_out input) : SV_TARGET
     float4 albedoTextureVal = albedoTexture.Sample(mySampler, input.textureUV);
     float3 albedo = albedoTextureVal.rgb;
     float alpha = albedoTextureVal.a;
-    //metallic is stored in the blue and roughness is stored in green on some models and in r and g on others...
+    
     float4 metallicRoughnessTextureVal = metallicRoughnessTexture.Sample(mySampler, input.textureUV);
-    float metallic = metallicRoughnessTextureVal.r;
+    
+    float ambientOcclusion = metallicRoughnessTextureVal.r;
+    float metallic = metallicRoughnessTextureVal.b;
     float roughness = metallicRoughnessTextureVal.g;
     
     float3 normal = normalize(input.normal_world.xyz);
@@ -160,7 +162,7 @@ float4 main(vs_out input) : SV_TARGET
     
     
     //fix ambient
-    float3 ambient = 0.03 * albedo;
+    float3 ambient = 0.03 * albedo * ambientOcclusion;
     
     float3 finalColor = LightOutPut + ambient;
     

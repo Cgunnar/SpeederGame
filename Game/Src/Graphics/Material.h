@@ -41,12 +41,18 @@ struct PBR_ALBEDO_METROUG_NOR
 	GID albedoTextureID;
 	GID normalTextureID;
 	GID matallicRoughnessTextureID;
+	float metallic = 0;
+	float roughness = 1;
+	rfm::Vector4 rgba = rfm::Vector4(1, 1, 1, 1);
 };
 
 struct PBR_ALBEDO_METROUG
 {
 	GID albedoTextureID;
 	GID matallicRoughnessTextureID;
+	float metallic = 0;
+	float roughness = 1;
+	rfm::Vector4 rgba = rfm::Vector4(1, 1, 1, 1);
 };
 
 

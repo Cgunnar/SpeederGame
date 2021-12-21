@@ -9,6 +9,7 @@
 #endif // DEBUG
 
 
+
 AssimpLoader::AssimpLoader() :
 	m_meshVertexCount(0),
 	m_meshIndexCount(0),
@@ -181,6 +182,9 @@ EngineMeshSubset AssimpLoader::processMesh(aiMesh* mesh, const aiScene* scene, c
 
 	// Get material
 	auto mtl = scene->mMaterials[mesh->mMaterialIndex];
+
+	MetallicRoughnessMaterial pbrMaterial = GetPbrMaterials(mtl, path);
+
 	aiString diffName, normName, specName, metalRougName, albedoName;
 	//mtl->GetTexture(aiTextureType_HEIGHT, 0, &normName);
 	if (!mtl->GetTexture(aiTextureType_DIFFUSE, 0, &diffName))
@@ -212,6 +216,8 @@ EngineMeshSubset AssimpLoader::processMesh(aiMesh* mesh, const aiScene* scene, c
 		newMat.properties = newMat.properties | MaterialProperties::ALBEDO;
 		newMat.diffuseMapPath = path + albedoName.C_Str();
 	}
+
+	
 
 	aiString materialName;
 	if (!mtl->Get(AI_MATKEY_NAME, materialName))
@@ -284,4 +290,71 @@ EngineMeshSubset AssimpLoader::processMesh(aiMesh* mesh, const aiScene* scene, c
 
 	/*m_subsets.push_back(subsetData);*/
 	return subsetData;
+}
+
+MetallicRoughnessMaterial AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const std::string& path)
+{
+	MetallicRoughnessMaterial pbrMat;
+
+	aiString materialName;
+	if (!aiMat->Get(AI_MATKEY_NAME, materialName))
+	{
+		pbrMat.name = materialName.C_Str();
+	}
+
+	float metallicFactor;
+	if (!aiMat->Get(AI_MATKEY_METALLIC_FACTOR, metallicFactor))
+	{
+		pbrMat.metallicFactor = metallicFactor;
+	}
+
+	float roughnessFactor;
+	if (!aiMat->Get(AI_MATKEY_ROUGHNESS_FACTOR, roughnessFactor))
+	{
+		pbrMat.roughnessFactor = roughnessFactor;
+	}
+
+	aiColor4D baseColorFactor(0.0f, 0.0f, 0.0f, 0.0f);
+	if (!aiMat->Get(AI_MATKEY_BASE_COLOR, baseColorFactor))
+	{
+		pbrMat.baseColorFactor = rfm::Vector4(baseColorFactor[0], baseColorFactor[1], baseColorFactor[2], baseColorFactor[3]);
+	}
+
+	bool use_metallic_map;
+	if (!aiMat->Get(AI_MATKEY_USE_METALLIC_MAP, use_metallic_map))
+	{
+		assert(false); // is this used?
+	}
+	bool use_roughness_map;
+	if (!aiMat->Get(AI_MATKEY_USE_ROUGHNESS_MAP, use_roughness_map))
+	{
+		assert(false); // is this used?
+	}
+
+	aiString baseColorName, normName, metallicName, roughnessName;
+	if (!aiMat->GetTexture(AI_MATKEY_BASE_COLOR_TEXTURE, &baseColorName))
+	{
+		pbrMat.baseColorPath = path + baseColorName.C_Str();
+	}
+	
+	if (!aiMat->GetTexture(AI_MATKEY_METALLIC_TEXTURE, &metallicName))
+	{
+		pbrMat.metallicRoughnessPath = path + metallicName.C_Str();
+	}
+
+	if (!aiMat->GetTexture(AI_MATKEY_ROUGHNESS_TEXTURE, &roughnessName))
+	{
+		assert(pbrMat.metallicRoughnessPath == path + roughnessName.C_Str());
+		//pbrMat.metallicRoughnessPath = path + roughnessName.C_Str();
+	}
+	
+	if (!aiMat->GetTexture(aiTextureType_NORMALS, 0, &normName))
+	{
+		pbrMat.normalPath = path + normName.C_Str();
+		m_hasNormalMap = true; // to use tangent and bitangent vertexbuffer
+	}
+
+
+
+	return pbrMat;
 }

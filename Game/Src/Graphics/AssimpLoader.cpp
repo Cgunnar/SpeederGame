@@ -302,6 +302,12 @@ MetallicRoughnessMaterial AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const
 		pbrMat.name = materialName.C_Str();
 	}
 
+	bool twoSided = false;
+	if (!aiMat->Get(AI_MATKEY_TWOSIDED, twoSided))
+	{
+		pbrMat.twoSided = twoSided;
+	}
+
 	float metallicFactor;
 	if (!aiMat->Get(AI_MATKEY_METALLIC_FACTOR, metallicFactor))
 	{
@@ -314,6 +320,27 @@ MetallicRoughnessMaterial AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const
 		pbrMat.roughnessFactor = roughnessFactor;
 	}
 
+	aiString alphaMode;
+	if (!aiMat->Get(AI_MATKEY_GLTF_ALPHAMODE, alphaMode))
+	{
+		if (alphaMode == aiString("MASK"))
+		{
+			pbrMat.blendMode = BlendMode::mask;
+			float cutOf = 1;
+			if (!aiMat->Get(AI_MATKEY_GLTF_ALPHACUTOFF, cutOf))
+				pbrMat.maskCutOfValue = cutOf;
+		}
+		else if(alphaMode == aiString("BLEND"))
+		{
+			pbrMat.blendMode = BlendMode::blend;
+		}
+		else if (alphaMode == aiString("OPAQUE"))
+		{
+			pbrMat.blendMode = BlendMode::opaque;
+		}
+	}
+
+	
 	aiColor4D baseColorFactor(0.0f, 0.0f, 0.0f, 0.0f);
 	if (!aiMat->Get(AI_MATKEY_BASE_COLOR, baseColorFactor))
 	{
@@ -331,30 +358,33 @@ MetallicRoughnessMaterial AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const
 		assert(false); // is this used?
 	}
 
-	aiString baseColorName, normName, metallicName, roughnessName;
+	aiColor3D ai_matkey_emissive(0.0f, 0.0f, 0.0f);
+	if (!aiMat->Get(AI_MATKEY_COLOR_EMISSIVE, ai_matkey_emissive))
+	{
+		pbrMat.emissiveFactor = rfm::Vector3(ai_matkey_emissive[0], ai_matkey_emissive[1], ai_matkey_emissive[2]);
+	}
+
+	aiString baseColorName, normName, metallicRoughnessName, emissiveName;
 	if (!aiMat->GetTexture(AI_MATKEY_BASE_COLOR_TEXTURE, &baseColorName))
 	{
 		pbrMat.baseColorPath = path + baseColorName.C_Str();
 	}
 	
-	if (!aiMat->GetTexture(AI_MATKEY_METALLIC_TEXTURE, &metallicName))
+	if (!aiMat->GetTexture(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_METALLICROUGHNESS_TEXTURE, &metallicRoughnessName))
 	{
-		pbrMat.metallicRoughnessPath = path + metallicName.C_Str();
-	}
-
-	if (!aiMat->GetTexture(AI_MATKEY_ROUGHNESS_TEXTURE, &roughnessName))
-	{
-		assert(pbrMat.metallicRoughnessPath == path + roughnessName.C_Str());
-		//pbrMat.metallicRoughnessPath = path + roughnessName.C_Str();
+		pbrMat.metallicRoughnessPath = path + metallicRoughnessName.C_Str();
 	}
 	
+	if (!aiMat->GetTexture(aiTextureType::aiTextureType_EMISSIVE, 0, &emissiveName))
+	{
+		pbrMat.emissivePath = path + emissiveName.C_Str();
+	}
+
 	if (!aiMat->GetTexture(aiTextureType_NORMALS, 0, &normName))
 	{
 		pbrMat.normalPath = path + normName.C_Str();
 		m_hasNormalMap = true; // to use tangent and bitangent vertexbuffer
 	}
-
-
 
 	return pbrMat;
 }

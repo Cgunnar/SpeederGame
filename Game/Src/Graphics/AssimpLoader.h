@@ -9,8 +9,19 @@
 #include "MeshStructures.hpp"
 #include "GraphicsUtilityTypes.h"
 
+enum class BlendMode
+{
+	opaque = 0,
+	blend,
+	mask,
+};
+
 struct MetallicRoughnessMaterial
 {
+	
+	BlendMode blendMode = BlendMode::opaque;
+	float maskCutOfValue = 0;
+	bool twoSided = false;
 	std::string name = "";
 	std::string baseColorPath = "";
 	std::string normalPath = "";
@@ -21,6 +32,7 @@ struct MetallicRoughnessMaterial
 	float metallicFactor = 0;
 	float roughnessFactor = 1;
 	rfm::Vector4 baseColorFactor = rfm::Vector4(1, 1, 1, 1);
+	rfm::Vector3 emissiveFactor = rfm::Vector4(1, 1, 1);
 };
 
 class AssimpLoader

@@ -101,6 +101,7 @@ void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subMo
 		RenderUnit ru;
 		MaterialProperties p = m.material.properties;
 		MaterialProperties pbrP = m.pbrMaterial.properties;
+
 		if (((pbrP & MaterialProperties::NORMAL_MAP) != 0) &&
 			((pbrP & MaterialProperties::ALBEDO_MAP) != 0) &&
 			((pbrP & MaterialProperties::METALLICROUGHNESS) != 0) &&
@@ -227,6 +228,23 @@ void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subMo
 
 			ru.material.materialVariant = mat;
 			ru.material.type = MaterialType::PhongMaterial_Color;
+		}
+
+		if (m.pbrMaterial.blendMode == BlendMode::blend || 
+			m.material.properties == MaterialProperties::ALPHA_BLENDING ||
+			m.material.properties == MaterialProperties::ALPHA_BLENDING_CONSTANS_OPACITY)
+		{
+			ru.material.renderFlag |= RenderFlag::alphaBlend;
+		}
+		else if (m.pbrMaterial.blendMode == BlendMode::mask ||
+			m.material.properties == MaterialProperties::ALPHA_TESTING)
+		{
+			ru.material.renderFlag |= RenderFlag::alphaToCov;
+		}
+
+		if (m.pbrMaterial.twoSided || m.material.properties == MaterialProperties::NO_BACKFACE_CULLING)
+		{
+			ru.material.renderFlag |= RenderFlag::noBackFaceCull;
 		}
 
 		ru.subMesh.ib = ib;

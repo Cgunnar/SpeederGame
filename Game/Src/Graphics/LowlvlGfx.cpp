@@ -210,7 +210,7 @@ void LowLvlGfx::Bind(const Rasterizer& rz)
 	s_dx11->m_context->RSSetState(rz.rasterState.Get());
 }
 
-void LowLvlGfx::UnBind(const Rasterizer& rz)
+void LowLvlGfx::UnBindRasterizer()
 {
 	s_dx11->m_context->RSSetState(nullptr);
 }
@@ -220,7 +220,7 @@ void LowLvlGfx::Bind(const BlendState& bl)
 	s_dx11->m_context->OMSetBlendState(bl.blendState.Get(), nullptr, 0xFFFFFFFFu);
 }
 
-void LowLvlGfx::UnBind(const BlendState& bl)
+void LowLvlGfx::UnBindBlendState()
 {
 	s_dx11->m_context->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFFu);
 }

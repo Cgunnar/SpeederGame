@@ -4,6 +4,7 @@
 #include "LowLvlGfx.h"
 #include "GraphicsResources.h"
 #include "SharedRendererResources.h"
+#include "rfEntity.hpp"
 
 class PhongRenderer
 {
@@ -13,14 +14,14 @@ public:
 	~PhongRenderer() = default;
 
 	void Submit(RenderUnitID unitID, const rfm::Transform& worlMatrix, MaterialType type);
-	void PreProcess(const VP& viewAndProjMatrix);
-	void Render(const VP& viewAndProjMatrix);
+	void PreProcess(const VP& viewAndProjMatrix, rfe::Entity& camera, RenderFlag flag);
+	void Render(const VP& viewAndProjMatrix, rfe::Entity& camera, RenderFlag flag);
 
 private:
-	void RenderWithColorOnly();
-	void RenderWithDiffuseTexture();
-	void RenderPhongMaterial_DiffTex_NormTex();
-	void RenderPhongMaterial_DiffTex_NormTex_SpecTex();
+	void RenderWithColorOnly(RenderFlag flag);
+	void RenderWithDiffuseTexture(RenderFlag flag);
+	void RenderPhongMaterial_DiffTex_NormTex(RenderFlag flag);
+	void RenderPhongMaterial_DiffTex_NormTex_SpecTex(RenderFlag flag);
 
 
 	bool m_prePocessed = false;

@@ -22,12 +22,6 @@ PhongRenderer::PhongRenderer(std::weak_ptr<SharedRenderResources> sharedRes) : m
 
 void PhongRenderer::Submit(RenderUnitID unitID, const rfm::Transform& worlMatrix, MaterialType type)
 {
-	if ((type & MaterialType::transparent) == MaterialType::transparent)
-	{
-		assert(false); // fix
-	}
-
-
 	if ((type & MaterialType::PhongMaterial_Color) == MaterialType::PhongMaterial_Color)
 	{
 		m_colorUnits.emplace_back(unitID, worlMatrix, type);
@@ -46,16 +40,16 @@ void PhongRenderer::Submit(RenderUnitID unitID, const rfm::Transform& worlMatrix
 	}
 }
 
-void PhongRenderer::PreProcess(const VP& viewAndProjMatrix)
+void PhongRenderer::PreProcess(const VP& viewAndProjMatrix, rfe::Entity& camera, RenderFlag flag)
 {
 	m_prePocessed = true;
 
 
 }
 
-void PhongRenderer::Render(const VP& viewAndProjMatrix)
+void PhongRenderer::Render(const VP& viewAndProjMatrix, rfe::Entity& camera, RenderFlag flag)
 {
-	if (!m_prePocessed) PreProcess(viewAndProjMatrix);
+	if (!m_prePocessed) PreProcess(viewAndProjMatrix, camera, flag);
 
 	auto rendRes = m_sharedRenderResources.lock();
 	LowLvlGfx::Bind(rendRes->m_vertexShader);
@@ -66,15 +60,15 @@ void PhongRenderer::Render(const VP& viewAndProjMatrix)
 
 	LowLvlGfx::Bind(rendRes->m_linearWrapSampler, ShaderType::PIXELSHADER, 0);
 
-	RenderWithColorOnly();
-	RenderWithDiffuseTexture();
-	RenderPhongMaterial_DiffTex_NormTex();
-	RenderPhongMaterial_DiffTex_NormTex_SpecTex();
+	RenderWithColorOnly(flag);
+	RenderWithDiffuseTexture(flag);
+	RenderPhongMaterial_DiffTex_NormTex(flag);
+	RenderPhongMaterial_DiffTex_NormTex_SpecTex(flag);
 
 	m_prePocessed = false;
 }
 
-void PhongRenderer::RenderWithColorOnly()
+void PhongRenderer::RenderWithColorOnly(RenderFlag flag)
 {
 	auto rendRes = m_sharedRenderResources.lock();
 	AssetManager& assetMan = AssetManager::Get();
@@ -103,7 +97,7 @@ void PhongRenderer::RenderWithColorOnly()
 	m_colorUnits.clear();
 }
 
-void PhongRenderer::RenderWithDiffuseTexture()
+void PhongRenderer::RenderWithDiffuseTexture(RenderFlag flag)
 {
 	auto rendRes = m_sharedRenderResources.lock();
 	const AssetManager& assetMan = AssetManager::Get();
@@ -133,7 +127,7 @@ void PhongRenderer::RenderWithDiffuseTexture()
 	m_diffTextureUnits.clear();
 }
 
-void PhongRenderer::RenderPhongMaterial_DiffTex_NormTex()
+void PhongRenderer::RenderPhongMaterial_DiffTex_NormTex(RenderFlag flag)
 {
 	auto rendRes = m_sharedRenderResources.lock();
 	const AssetManager& assetMan = AssetManager::Get();
@@ -168,7 +162,7 @@ void PhongRenderer::RenderPhongMaterial_DiffTex_NormTex()
 
 }
 
-void PhongRenderer::RenderPhongMaterial_DiffTex_NormTex_SpecTex()
+void PhongRenderer::RenderPhongMaterial_DiffTex_NormTex_SpecTex(RenderFlag flag)
 {
 	auto rendRes = m_sharedRenderResources.lock();
 	const AssetManager& assetMan = AssetManager::Get();

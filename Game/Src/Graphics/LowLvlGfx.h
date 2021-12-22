@@ -58,9 +58,9 @@ public:
 	//bind
 	static void Bind(const Shader& shader);
 	static void Bind(const Rasterizer& rz);
-	static void UnBind(const Rasterizer& rz);
+	static void UnBindRasterizer();
 	static void Bind(const BlendState& bl);
-	static void UnBind(const BlendState& bl);
+	static void UnBindBlendState();
 	static void Bind(const Sampler& sampler, ShaderType shaderType, uint32_t bindSlot);
 	static void Bind(const VertexBuffer& vertexBuffer);
 	static void Bind(const IndexBuffer& indexBuffer);

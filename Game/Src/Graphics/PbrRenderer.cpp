@@ -2,6 +2,9 @@
 #include "PbrRenderer.h"
 #include "LowLvlGfx.h"
 #include "AssetManager.h"
+#include "StandardComponents.h"
+
+using namespace rfm;
 
 
 struct alignas(16) PbrMaterial
@@ -63,11 +66,6 @@ PbrRenderer::PbrRenderer(std::weak_ptr<SharedRenderResources> sharedRes) : m_sha
 
 void PbrRenderer::Submit(RenderUnitID unitID, const rfm::Transform& worlMatrix, MaterialType type)
 {
-	if ((type & MaterialType::transparent) == MaterialType::transparent)
-	{
-		assert(false); // fix
-	}
-
 	if ((type & MaterialType::PBR_ALBEDO_METROUG_NOR) == MaterialType::PBR_ALBEDO_METROUG_NOR)
 	{
 		m_PBR_ALBEDO_METROUG_NOR.emplace_back(unitID, worlMatrix, type);
@@ -84,19 +82,17 @@ void PbrRenderer::Submit(RenderUnitID unitID, const rfm::Transform& worlMatrix, 
 	{
 		m_PBR_NO_TEXTURES.emplace_back(unitID, worlMatrix, type);
 	}
-
-
-	
 }
 
-void PbrRenderer::PreProcess(const VP& viewAndProjMatrix)
+void PbrRenderer::PreProcess(const VP& viewAndProjMatrix, rfe::Entity& camera, RenderFlag flag)
 {
 	m_prePocessed = true;
+
 }
 
-void PbrRenderer::Render(const VP& viewAndProjMatrix)
+void PbrRenderer::Render(const VP& viewAndProjMatrix, rfe::Entity& camera, RenderFlag flag)
 {
-	if (!m_prePocessed) PreProcess(viewAndProjMatrix);
+	if (!m_prePocessed) PreProcess(viewAndProjMatrix, camera, flag);
 
 	
 
@@ -109,19 +105,21 @@ void PbrRenderer::Render(const VP& viewAndProjMatrix)
 	LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 
+	HandleRenderFlag(flag);
 
-	RendererPBR_ALBEDO_METROUG_NOR_EMIS();
-	RenderPBR_ALBEDO_METROUG_NOR();
-	RenderPBR_ALBEDO_METROUG();
-	RendererPBR_NO_TEXTURES();
+	RenderPBR_ALBEDO_METROUG_NOR_EMIS(flag);
+	RenderPBR_ALBEDO_METROUG_NOR(flag);
+	RenderPBR_ALBEDO_METROUG(flag);
+	RenderPBR_NO_TEXTURES(flag);
 
 
 
 	m_prePocessed = false;
 }
 
-void PbrRenderer::RenderPBR_ALBEDO_METROUG_NOR()
+void PbrRenderer::RenderPBR_ALBEDO_METROUG_NOR(RenderFlag flag)
 {
+	if (m_PBR_ALBEDO_METROUG_NOR.empty()) return;
 
 	auto rendRes = m_sharedRenderResources.lock();
 	const AssetManager& assetMan = AssetManager::Get();
@@ -129,7 +127,7 @@ void PbrRenderer::RenderPBR_ALBEDO_METROUG_NOR()
 	LowLvlGfx::Bind(m_PS_PBR_AL_MERO_NO_PointLight);
 	//LowLvlGfx::BindRTVs({ rendRes->m_hdrRenderTarget }, LowLvlGfx::GetDepthBuffer());
 
-	//LowLvlGfx::Bind(m_BlendState);
+	
 
 	for (auto& unit : m_PBR_ALBEDO_METROUG_NOR)
 	{
@@ -162,8 +160,10 @@ void PbrRenderer::RenderPBR_ALBEDO_METROUG_NOR()
 	m_PBR_ALBEDO_METROUG_NOR.clear();
 }
 
-void PbrRenderer::RenderPBR_ALBEDO_METROUG()
+void PbrRenderer::RenderPBR_ALBEDO_METROUG(RenderFlag flag)
 {
+	if (m_PBR_ALBEDO_METROUG.empty()) return;
+
 	auto rendRes = m_sharedRenderResources.lock();
 	const AssetManager& assetMan = AssetManager::Get();
 	LowLvlGfx::Bind(rendRes->m_vertexShader);
@@ -199,13 +199,15 @@ void PbrRenderer::RenderPBR_ALBEDO_METROUG()
 	m_PBR_ALBEDO_METROUG.clear();
 }
 
-void PbrRenderer::RendererPBR_ALBEDO_METROUG_NOR_EMIS()
+void PbrRenderer::RenderPBR_ALBEDO_METROUG_NOR_EMIS(RenderFlag flag)
 {
+	if (m_PBR_ALBEDO_METROUG_NOR_EMIS.empty()) return;
+
 	auto rendRes = m_sharedRenderResources.lock();
 	const AssetManager& assetMan = AssetManager::Get();
 	LowLvlGfx::Bind(rendRes->m_vertexShaderNormalMap);
 	LowLvlGfx::Bind(m_PS_PBR_NOR_EMIS_PointLight);
-	
+
 	//LowLvlGfx::BindRTVs({ rendRes->m_hdrRenderTarget }, LowLvlGfx::GetDepthBuffer());
 
 	for (auto& unit : m_PBR_ALBEDO_METROUG_NOR_EMIS)
@@ -241,16 +243,16 @@ void PbrRenderer::RendererPBR_ALBEDO_METROUG_NOR_EMIS()
 	m_PBR_ALBEDO_METROUG_NOR_EMIS.clear();
 }
 
-void PbrRenderer::RendererPBR_NO_TEXTURES()
+void PbrRenderer::RenderPBR_NO_TEXTURES(RenderFlag flag)
 {
+	if (m_PBR_NO_TEXTURES.empty()) return;
+
 	auto rendRes = m_sharedRenderResources.lock();
 	const AssetManager& assetMan = AssetManager::Get();
 	LowLvlGfx::Bind(rendRes->m_vertexShader);
 	LowLvlGfx::Bind(m_PS_PBR);
 	//LowLvlGfx::BindRTVs({ rendRes->m_hdrRenderTarget }, LowLvlGfx::GetDepthBuffer());
 
-	//temp blend pass
-	LowLvlGfx::Bind(m_BlendState);
 
 	for (auto& unit : m_PBR_NO_TEXTURES)
 	{
@@ -274,4 +276,26 @@ void PbrRenderer::RendererPBR_NO_TEXTURES()
 	}
 
 	m_PBR_NO_TEXTURES.clear();
+}
+
+void PbrRenderer::HandleRenderFlag(RenderFlag flag)
+{
+	if (RenderFlag::none == flag)
+	{
+		LowLvlGfx::UnBindBlendState();
+		LowLvlGfx::UnBindRasterizer();
+	}
+	if ((flag & RenderFlag::alphaToCov) != 0)
+	{
+		LowLvlGfx::Bind(m_alphaToCovBlend);
+	}
+	else if ((flag & RenderFlag::alphaBlend) != 0)
+	{
+		LowLvlGfx::Bind(m_BlendState);
+	}
+
+	if ((flag & RenderFlag::noBackFaceCull) != 0)
+	{
+		LowLvlGfx::Bind(m_noBackFaceCullRasterizer);
+	}
 }

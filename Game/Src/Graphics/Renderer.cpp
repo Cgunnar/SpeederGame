@@ -57,11 +57,16 @@ void Renderer::Render(rfe::Entity& camera)
 
 	SubmitToRender(camera);
 
-	m_phongRenderer.PreProcess(m_vp);
-	m_phongRenderer.Render(m_vp);
+	RenderAllPasses(m_vp, camera);
 
-	m_pbrRenderer.PreProcess(m_vp);
-	m_pbrRenderer.Render(m_vp);
+	/*m_phongRenderer.PreProcess(m_vp, camera, RenderFlag::none);
+	m_phongRenderer.Render(m_vp, camera, RenderFlag::none);
+
+	m_pbrRenderer.PreProcess(m_vp, camera, RenderFlag::none);
+	m_pbrRenderer.Render(m_vp, camera, RenderFlag::none);*/
+
+	SubmitAndRenderTransparentToInternalRenderers(m_vp, camera);
+
 }
 
 
@@ -81,41 +86,83 @@ void Renderer::SubmitToRender(rfe::Entity& camera)
 		{
 			for (RenderUnitID i = b; i < e; i++)
 			{
-				MaterialType matType = assetMan.GetRenderUnit(i).material.type;
-				SubmitToInternalRenderers(rendComp.renderPass, i, worldMatrix, matType);
+				SubmitToInternalRenderers(assetMan, rendComp.renderPass, i, worldMatrix);
 			}
 		}
 		else
 		{
-			MaterialType matType = assetMan.GetRenderUnit(rendComp.renderUnitID).material.type;
-			SubmitToInternalRenderers(rendComp.renderPass, rendComp.renderUnitID, worldMatrix, matType);
+			SubmitToInternalRenderers(assetMan, rendComp.renderPass, rendComp.renderUnitID, worldMatrix);
 		}
 	}
 }
 
-void Renderer::SubmitToInternalRenderers(RenderPassEnum renderPass, RenderUnitID unitID, const rfm::Transform& worldMatrix, MaterialType type)
+void Renderer::SubmitToInternalRenderers(AssetManager& am, RenderPassEnum renderPass, RenderUnitID unitID, const rfm::Transform& worldMatrix)
 {
-	if ((type & MaterialType::transparent) == MaterialType::transparent)
+	auto ru = am.GetRenderUnit(unitID);
+
+	if ((ru.material.renderFlag & RenderFlag::alphaBlend) != 0)
 	{
-		m_transparentRenderUnits.push_back({ renderPass, RendUnitIDAndTransform(unitID, worldMatrix, type) });
-		return;
+		m_transparentRenderUnits.push_back({ ru.material.renderFlag, renderPass, RendUnitIDAndTransform(unitID, worldMatrix, ru.material.type) });
 	}
-	m_phongRenderer.Submit(unitID, worldMatrix, type);
-	m_pbrRenderer.Submit(unitID, worldMatrix, type);
-	/*switch (renderPass)
+	else
 	{
-	case RenderPassEnum::none:
-		assert(false);
-		break;
-	case RenderPassEnum::phong:
-		m_phongRenderer.Submit(unitID, worldMatrix, type);
-		break;
-	case RenderPassEnum::pbr:
-		m_pbrRenderer.Submit(unitID, worldMatrix, type);
-		break;
-	}*/
+		m_renderPassesFlagged[ru.material.renderFlag].emplace_back(unitID, worldMatrix, ru.material.type);
+	}
 }
 
+
+void Renderer::SubmitAndRenderTransparentToInternalRenderers(const VP& viewAndProjMatrix, rfe::Entity& camera)
+{
+	if (m_transparentRenderUnits.empty()) return;
+
+	auto camTransform = camera.getComponent<TransformComp>()->transform;
+	Vector3 forward = camTransform.forward();
+	auto&& backToFront = [&forward](PassForTransparentUnits a, PassForTransparentUnits b)
+	{
+		const auto& posA = a.unit.worldMatrix.getTranslation();
+		const auto& posB = b.unit.worldMatrix.getTranslation();
+		return dot(posA, forward) < dot(posB, forward);
+	};
+	std::sort(m_transparentRenderUnits.begin(), m_transparentRenderUnits.end(), backToFront);
+
+	MaterialType previusType = m_transparentRenderUnits[0].unit.type;
+	RenderFlag previusRenderFlag = m_transparentRenderUnits[0].rendFlag;
+
+	for (int i = 0; i < m_transparentRenderUnits.size(); i++)
+	{
+		auto& traUnit = m_transparentRenderUnits[i];
+		if (traUnit.unit.type != previusType || previusRenderFlag != traUnit.rendFlag)
+		{
+			m_phongRenderer.Render(viewAndProjMatrix, camera, previusRenderFlag);
+			m_pbrRenderer.Render(viewAndProjMatrix, camera, previusRenderFlag);
+		}
+		m_phongRenderer.Submit(traUnit.unit.id, traUnit.unit.worldMatrix, traUnit.unit.type);
+		m_pbrRenderer.Submit(traUnit.unit.id, traUnit.unit.worldMatrix, traUnit.unit.type);
+		previusType = traUnit.unit.type;
+		previusRenderFlag = traUnit.rendFlag;
+	}
+	m_phongRenderer.Render(viewAndProjMatrix, camera, previusRenderFlag);
+	m_pbrRenderer.Render(viewAndProjMatrix, camera, previusRenderFlag);
+
+	m_transparentRenderUnits.clear();
+}
+
+
+void Renderer::RenderAllPasses(const VP& viewAndProjMatrix, rfe::Entity& camera)
+{
+	for (auto& it : m_renderPassesFlagged)
+	{
+		if (it.second.empty()) continue;
+		for(auto& unit : it.second)
+		{
+			m_phongRenderer.Submit(unit.id, unit.worldMatrix, unit.type);
+			m_pbrRenderer.Submit(unit.id, unit.worldMatrix, unit.type);
+		}
+		it.second.clear();
+		m_phongRenderer.Render(viewAndProjMatrix, camera, it.first);
+		m_pbrRenderer.Render(viewAndProjMatrix, camera, it.first);
+	}
+}
 
 void Renderer::SetUpHdrRTV()
 {

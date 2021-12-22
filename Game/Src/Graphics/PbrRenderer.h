@@ -1,5 +1,6 @@
 #pragma once
 #include "SharedRendererResources.h"
+#include "rfEntity.hpp"
 class PbrRenderer
 {
 public:
@@ -8,8 +9,8 @@ public:
 
 
 	void Submit(RenderUnitID unitID, const rfm::Transform& worlMatrix, MaterialType type);
-	void PreProcess(const VP& viewAndProjMatrix);
-	void Render(const VP& viewAndProjMatrix);
+	void PreProcess(const VP& viewAndProjMatrix, rfe::Entity& camera, RenderFlag flag);
+	void Render(const VP& viewAndProjMatrix, rfe::Entity& camera, RenderFlag flag);
 private:
 	std::weak_ptr<SharedRenderResources> m_sharedRenderResources;
 
@@ -24,10 +25,12 @@ private:
 	Shader m_PS_PBR;
 
 	bool m_prePocessed = false;
-	void RenderPBR_ALBEDO_METROUG_NOR();
-	void RenderPBR_ALBEDO_METROUG();
-	void RendererPBR_ALBEDO_METROUG_NOR_EMIS();
-	void RendererPBR_NO_TEXTURES();
+	void RenderPBR_ALBEDO_METROUG_NOR(RenderFlag flag);
+	void RenderPBR_ALBEDO_METROUG(RenderFlag flag);
+	void RenderPBR_ALBEDO_METROUG_NOR_EMIS(RenderFlag flag);
+	void RenderPBR_NO_TEXTURES(RenderFlag flag);
+
+	void HandleRenderFlag(RenderFlag flag);
 
 	std::vector<RendUnitIDAndTransform> m_PBR_ALBEDO_METROUG_NOR;
 	std::vector<RendUnitIDAndTransform> m_PBR_ALBEDO_METROUG_NOR_EMIS;

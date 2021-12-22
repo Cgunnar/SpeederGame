@@ -152,6 +152,18 @@ void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subMo
 			ru.material.materialVariant = mat;
 			ru.material.type = MaterialType::PBR_ALBEDO_METROUG;
 		}
+		else if ((pbrP & MaterialProperties::PBR) != 0)
+		{
+			PBR_NO_TEXTURES mat;
+
+			mat.emissiveFactor = m.pbrMaterial.emissiveFactor;
+			mat.rgba = m.pbrMaterial.baseColorFactor;
+			mat.metallic = m.pbrMaterial.metallicFactor;
+			mat.roughness = m.pbrMaterial.roughnessFactor;
+
+			ru.material.materialVariant = mat;
+			ru.material.type = MaterialType::PBR_NO_TEXTURES;
+		}
 		else if (((p & MaterialProperties::DIFFUSE_MAP) != 0) &&
 			((p & MaterialProperties::NORMAL_MAP) != 0) &&
 			((p & MaterialProperties::SPECULAR_MAP) != 0) &&

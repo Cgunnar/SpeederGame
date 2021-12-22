@@ -30,7 +30,7 @@ Renderer::Renderer()
 
 
 
-	m_sharedRenderResources->m_linearWrapSampler = LowLvlGfx::CreateSampler(standardSamplers::g_linear_wrap);
+	m_sharedRenderResources->m_linearWrapSampler = LowLvlGfx::Create(standardDescriptors::g_linear_wrap);
 
 	SetUpHdrRTV();
 

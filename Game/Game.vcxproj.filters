@@ -263,5 +263,6 @@
     <FxCompile Include="Src\Shaders\PS_Phong_DiffTex_NorTex_SpecTex_pointLight.hlsl" />
     <FxCompile Include="Src\Shaders\PS_PBR_ALB_METROU_PointLight.hlsl" />
     <FxCompile Include="Src\Shaders\PS_PBR_NOR_EMIS_PointLight.hlsl" />
+    <FxCompile Include="Src\Shaders\PS_PBR.hlsl" />
   </ItemGroup>
 </Project>

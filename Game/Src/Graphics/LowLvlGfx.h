@@ -51,10 +51,16 @@ public:
 	static VertexBuffer CreateVertexBuffer(const float* data, uint32_t byteWidth, uint32_t stride, uint32_t offset = 0);
 	static IndexBuffer CreateIndexBuffer(const uint32_t* data, uint32_t indexCount, uint32_t offset = 0);
 	static ConstantBuffer CreateConstantBuffer(BufferDesc desc, void* data = nullptr);
-	static Sampler CreateSampler(D3D11_SAMPLER_DESC desc);
+	static Sampler Create(D3D11_SAMPLER_DESC desc);
+	static BlendState Create(D3D11_BLEND_DESC desc);
+	static Rasterizer Create(D3D11_RASTERIZER_DESC desc);
 
 	//bind
 	static void Bind(const Shader& shader);
+	static void Bind(const Rasterizer& rz);
+	static void UnBind(const Rasterizer& rz);
+	static void Bind(const BlendState& bl);
+	static void UnBind(const BlendState& bl);
 	static void Bind(const Sampler& sampler, ShaderType shaderType, uint32_t bindSlot);
 	static void Bind(const VertexBuffer& vertexBuffer);
 	static void Bind(const IndexBuffer& indexBuffer);

@@ -33,9 +33,9 @@ enum class MaterialProperties
 	IS_EMISSIVE = 1 << 10,
 	METALLICROUGHNESS = 1 << 11,
 	ALBEDO_MAP = 1 << 12,
-
+	PBR = 1 << 13,
 	NO_BACKFACE_CULLING = 1 << 13,
-	WIREFRAME = 1 << 14,
+	WIREFRAME = 1 << 15,
 
 };
 

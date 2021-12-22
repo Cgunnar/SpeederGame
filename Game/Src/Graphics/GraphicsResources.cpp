@@ -1,7 +1,7 @@
 #include "pch.hpp"
 #include "GraphicsResources.h"
 
-namespace standardSamplers
+namespace standardDescriptors
 {
 	const D3D11_SAMPLER_DESC g_linear_wrap = {
 		D3D11_FILTER_MIN_MAG_MIP_LINEAR,

@@ -18,11 +18,47 @@ PbrRenderer::PbrRenderer(std::weak_ptr<SharedRenderResources> sharedRes) : m_sha
 	m_PS_PBR_AL_MERO_NO_PointLight = LowLvlGfx::CreateShader("Src/Shaders/PS_PBR_AL_MERO_NO_PointLight.hlsl", ShaderType::PIXELSHADER);
 	m_PS_PBR_ALB_METROU_PointLight = LowLvlGfx::CreateShader("Src/Shaders/PS_PBR_ALB_METROU_PointLight.hlsl", ShaderType::PIXELSHADER);
 	m_PS_PBR_NOR_EMIS_PointLight = LowLvlGfx::CreateShader("Src/Shaders/PS_PBR_NOR_EMIS_PointLight.hlsl", ShaderType::PIXELSHADER);
+	m_PS_PBR = LowLvlGfx::CreateShader("Src/Shaders/PS_PBR.hlsl", ShaderType::PIXELSHADER);
 
 	BufferDesc desc;
 	desc.size = sizeof(PbrMaterial);
 	desc.usage = BufferDesc::USAGE::DYNAMIC;
 	m_pbrCB = LowLvlGfx::CreateConstantBuffer(desc);
+
+
+	//create blendstate
+	D3D11_BLEND_DESC blendDesc = {};
+	blendDesc.IndependentBlendEnable = TRUE;
+	auto& b = blendDesc.RenderTarget[0];
+	b.BlendEnable = TRUE;
+	b.BlendOp = D3D11_BLEND_OP_ADD;
+	b.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	b.DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	b.DestBlendAlpha = D3D11_BLEND_ZERO;
+	b.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	b.SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	b.SrcBlendAlpha = D3D11_BLEND_ZERO;
+	//fix default for rest
+	blendDesc.RenderTarget[1].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	blendDesc.RenderTarget[2].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	blendDesc.RenderTarget[3].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	blendDesc.RenderTarget[4].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	blendDesc.RenderTarget[5].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	blendDesc.RenderTarget[6].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	blendDesc.RenderTarget[7].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+
+	m_BlendState = LowLvlGfx::Create(blendDesc);
+
+	blendDesc.AlphaToCoverageEnable = TRUE;
+	blendDesc.RenderTarget[0].BlendEnable = FALSE;
+
+	m_alphaToCovBlend = LowLvlGfx::Create(blendDesc);
+
+	//create rasterizers
+	D3D11_RASTERIZER_DESC rzDesc = {};
+	rzDesc.CullMode = D3D11_CULL_NONE;
+	rzDesc.FillMode = D3D11_FILL_SOLID;
+	m_noBackFaceCullRasterizer = LowLvlGfx::Create(rzDesc);
 }
 
 void PbrRenderer::Submit(RenderUnitID unitID, const rfm::Transform& worlMatrix, MaterialType type)
@@ -43,6 +79,10 @@ void PbrRenderer::Submit(RenderUnitID unitID, const rfm::Transform& worlMatrix, 
 	else if ((type & MaterialType::PBR_ALBEDO_METROUG_NOR_EMIS) == MaterialType::PBR_ALBEDO_METROUG_NOR_EMIS)
 	{
 		m_PBR_ALBEDO_METROUG_NOR_EMIS.emplace_back(unitID, worlMatrix, type);
+	}
+	else if ((type & MaterialType::PBR_NO_TEXTURES) == MaterialType::PBR_NO_TEXTURES)
+	{
+		m_PBR_NO_TEXTURES.emplace_back(unitID, worlMatrix, type);
 	}
 
 
@@ -73,6 +113,7 @@ void PbrRenderer::Render(const VP& viewAndProjMatrix)
 	RendererPBR_ALBEDO_METROUG_NOR_EMIS();
 	RenderPBR_ALBEDO_METROUG_NOR();
 	RenderPBR_ALBEDO_METROUG();
+	RendererPBR_NO_TEXTURES();
 
 
 
@@ -87,6 +128,8 @@ void PbrRenderer::RenderPBR_ALBEDO_METROUG_NOR()
 	LowLvlGfx::Bind(rendRes->m_vertexShaderNormalMap);
 	LowLvlGfx::Bind(m_PS_PBR_AL_MERO_NO_PointLight);
 	//LowLvlGfx::BindRTVs({ rendRes->m_hdrRenderTarget }, LowLvlGfx::GetDepthBuffer());
+
+	//LowLvlGfx::Bind(m_BlendState);
 
 	for (auto& unit : m_PBR_ALBEDO_METROUG_NOR)
 	{
@@ -162,6 +205,7 @@ void PbrRenderer::RendererPBR_ALBEDO_METROUG_NOR_EMIS()
 	const AssetManager& assetMan = AssetManager::Get();
 	LowLvlGfx::Bind(rendRes->m_vertexShaderNormalMap);
 	LowLvlGfx::Bind(m_PS_PBR_NOR_EMIS_PointLight);
+	
 	//LowLvlGfx::BindRTVs({ rendRes->m_hdrRenderTarget }, LowLvlGfx::GetDepthBuffer());
 
 	for (auto& unit : m_PBR_ALBEDO_METROUG_NOR_EMIS)
@@ -195,4 +239,39 @@ void PbrRenderer::RendererPBR_ALBEDO_METROUG_NOR_EMIS()
 	}
 
 	m_PBR_ALBEDO_METROUG_NOR_EMIS.clear();
+}
+
+void PbrRenderer::RendererPBR_NO_TEXTURES()
+{
+	auto rendRes = m_sharedRenderResources.lock();
+	const AssetManager& assetMan = AssetManager::Get();
+	LowLvlGfx::Bind(rendRes->m_vertexShader);
+	LowLvlGfx::Bind(m_PS_PBR);
+	//LowLvlGfx::BindRTVs({ rendRes->m_hdrRenderTarget }, LowLvlGfx::GetDepthBuffer());
+
+	//temp blend pass
+	LowLvlGfx::Bind(m_BlendState);
+
+	for (auto& unit : m_PBR_NO_TEXTURES)
+	{
+		const RenderUnit& rendUnit = assetMan.GetRenderUnit(unit.id);
+		assert((rendUnit.material.type & MaterialType::PBR_NO_TEXTURES) == MaterialType::PBR_NO_TEXTURES);
+		const PBR_NO_TEXTURES& matVariant = std::get<PBR_NO_TEXTURES>(rendUnit.material.materialVariant);
+
+		PbrMaterial cMat;
+		cMat.albedoFactor = matVariant.rgba;
+		cMat.roughnessFactor = matVariant.roughness;
+		cMat.metallicFactor = matVariant.metallic;
+		cMat.emissiveFactor = matVariant.emissiveFactor;
+		LowLvlGfx::UpdateBuffer(m_pbrCB, &cMat);
+		LowLvlGfx::Bind(m_pbrCB, ShaderType::PIXELSHADER, 2);
+
+		LowLvlGfx::UpdateBuffer(rendRes->m_worldMatrixCB, &unit.worldMatrix);
+		LowLvlGfx::Bind(rendRes->m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
+		LowLvlGfx::Bind(rendUnit.subMesh.vb);
+		LowLvlGfx::Bind(rendUnit.subMesh.ib);
+		LowLvlGfx::DrawIndexed(rendUnit.subMesh.indexCount, rendUnit.subMesh.startIndexLocation, rendUnit.subMesh.baseVertexLocation);
+	}
+
+	m_PBR_NO_TEXTURES.clear();
 }

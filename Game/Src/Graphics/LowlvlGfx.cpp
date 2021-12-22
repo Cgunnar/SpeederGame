@@ -205,6 +205,26 @@ void LowLvlGfx::Bind(const Shader& shader)
 	}
 }
 
+void LowLvlGfx::Bind(const Rasterizer& rz)
+{
+	s_dx11->m_context->RSSetState(rz.rasterState.Get());
+}
+
+void LowLvlGfx::UnBind(const Rasterizer& rz)
+{
+	s_dx11->m_context->RSSetState(nullptr);
+}
+
+void LowLvlGfx::Bind(const BlendState& bl)
+{
+	s_dx11->m_context->OMSetBlendState(bl.blendState.Get(), nullptr, 0xFFFFFFFFu);
+}
+
+void LowLvlGfx::UnBind(const BlendState& bl)
+{
+	s_dx11->m_context->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFFu);
+}
+
 void LowLvlGfx::Bind(const Sampler& sampler, ShaderType shaderType, uint32_t bindSlot)
 {
 	switch (shaderType)
@@ -265,12 +285,28 @@ ConstantBuffer LowLvlGfx::CreateConstantBuffer(BufferDesc desc, void* data)
 	return buffer;
 }
 
-Sampler LowLvlGfx::CreateSampler(D3D11_SAMPLER_DESC desc)
+Sampler LowLvlGfx::Create(D3D11_SAMPLER_DESC desc)
 {
 	Sampler s;
 	HRESULT hr = s_dx11->m_device->CreateSamplerState(&desc, &s.m_sampleState);
 	assert(SUCCEEDED(hr));
 	return s;
+}
+
+BlendState LowLvlGfx::Create(D3D11_BLEND_DESC desc)
+{
+	BlendState s;
+	HRESULT hr = s_dx11->m_device->CreateBlendState(&desc, &s.blendState);
+	assert(SUCCEEDED(hr));
+	return s;
+}
+
+Rasterizer LowLvlGfx::Create(D3D11_RASTERIZER_DESC desc)
+{
+	Rasterizer s;
+	HRESULT hr = s_dx11->m_device->CreateRasterizerState(&desc, &s.rasterState);
+	return s;
+	assert(SUCCEEDED(hr));
 }
 
 void LowLvlGfx::Bind(ConstantBuffer cBuff, ShaderType shaderType, uint32_t bindSlot)

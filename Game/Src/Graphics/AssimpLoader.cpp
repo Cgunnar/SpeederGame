@@ -291,6 +291,7 @@ MetallicRoughnessMaterial AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const
 	if (!aiMat->Get(AI_MATKEY_ROUGHNESS_FACTOR, roughnessFactor))
 	{
 		pbrMat.roughnessFactor = roughnessFactor;
+		pbrMat.properties = pbrMat.properties | MaterialProperties::PBR;
 	}
 
 	aiString alphaMode;

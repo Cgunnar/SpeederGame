@@ -15,7 +15,7 @@ class DX11;
 
 
 
-namespace standardSamplers
+namespace standardDescriptors
 {
 	extern const D3D11_SAMPLER_DESC g_linear_wrap;
 }
@@ -105,7 +105,15 @@ class Sampler
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> m_sampleState;
 };
 
+struct BlendState
+{
+	Microsoft::WRL::ComPtr<ID3D11BlendState> blendState;
+};
 
+struct Rasterizer
+{
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> rasterState;
+};
 
 struct SubMesh
 {

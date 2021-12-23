@@ -2,12 +2,55 @@
 #include "SkyBox.h"
 #include "ReadImg.hpp"
 #include "LowLvlGfx.h"
+#include <stb_image.h>
 
 
 void SkyBox::Init(const std::string& path)
 {
-	//assert(path.substr(path.length() - 4, 4) == ".hdr");
+	if (path.substr(path.length() - 4, 4) == ".hdr")
+		InitCubeMapHDR(path);
+	else
+		InitCubeMapLDR(path);
 
+	
+}
+
+bool SkyBox::Hdr() const
+{
+	return m_hdr;
+}
+
+bool SkyBox::Ldr() const
+{
+	return m_ldr;
+}
+
+void SkyBox::Bind(SharedRenderResources& rendRes)
+{
+	assert(m_hdr || m_ldr);
+	if (m_ldr)
+	{
+		LowLvlGfx::UpdateBuffer(rendRes.m_worldMatrixCB, &m_rotation);
+		LowLvlGfx::Bind(rendRes.m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
+		LowLvlGfx::Bind(rendRes.m_vpCB, ShaderType::VERTEXSHADER, 1);
+		LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }); // this should unbind the z-buffer
+		LowLvlGfx::Bind(m_skyBoxVS);
+		LowLvlGfx::Bind(m_skyBoxPS);
+		LowLvlGfx::BindSRV(m_skyBoxCubeMap, ShaderType::PIXELSHADER, 0);
+		LowLvlGfx::Bind(rendRes.m_linearWrapSampler, ShaderType::PIXELSHADER, 0);
+		LowLvlGfx::Bind(m_rasterizer);
+	}
+}
+
+void SkyBox::SetRotation(rfm::Matrix rot)
+{
+	m_rotation = rot;
+}
+
+void SkyBox::InitCubeMapLDR(const std::string& path)
+{
+	assert(!m_ldr && !m_hdr);
+	m_ldr = true;
 
 	MyImageStruct skyFacesData[6]{};
 	readImage(skyFacesData[0], path + "/posx.jpg");
@@ -60,15 +103,18 @@ void SkyBox::Init(const std::string& path)
 	m_rasterizer = LowLvlGfx::Create(rzDesc);
 }
 
-void SkyBox::Bind(SharedRenderResources& rendRes)
+void SkyBox::InitCubeMapHDR(const std::string& path)
 {
-	LowLvlGfx::UpdateBuffer(rendRes.m_worldMatrixCB, &m_rotation);
-	LowLvlGfx::Bind(rendRes.m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
-	LowLvlGfx::Bind(rendRes.m_vpCB, ShaderType::VERTEXSHADER, 1);
-	LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }); // this should unbind the z-buffer
-	LowLvlGfx::Bind(m_skyBoxVS);
-	LowLvlGfx::Bind(m_skyBoxPS);
-	LowLvlGfx::BindSRV(m_skyBoxCubeMap, ShaderType::PIXELSHADER, 0);
-	LowLvlGfx::Bind(rendRes.m_linearWrapSampler, ShaderType::PIXELSHADER, 0);
-	LowLvlGfx::Bind(m_rasterizer);
+	assert(std::filesystem::exists(path));
+	assert(!m_ldr && !m_hdr);
+	m_hdr = true;
+
+	int w, h, c;
+	float* hdrImage = stbi_loadf(path.c_str(), &w, &h, &c, STBI_rgb_alpha);
+	assert(hdrImage);
+
+
+
+
+	stbi_image_free(hdrImage);
 }

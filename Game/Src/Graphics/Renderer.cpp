@@ -57,12 +57,18 @@ void Renderer::RenderBegin(rfe::Entity& camera)
 
 void Renderer::RenderSkyBox(SkyBox& sky)
 {
-	sky.Bind(*s_sharedRenderResources);
-	
-	LowLvlGfx::Context()->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
-	LowLvlGfx::Context()->IASetInputLayout(nullptr);
-	LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	LowLvlGfx::Context()->Draw(36, 0);
+	if (sky.Ldr())
+	{
+		sky.Bind(*s_sharedRenderResources);
+		LowLvlGfx::Context()->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+		LowLvlGfx::Context()->IASetInputLayout(nullptr);
+		LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		LowLvlGfx::Context()->Draw(36, 0);
+	}
+	else if(sky.Hdr())
+	{
+
+	}
 }
 
 void Renderer::Render(rfe::Entity& camera)
@@ -76,7 +82,7 @@ void Renderer::Render(rfe::Entity& camera)
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_pointLightCB, &p);
 
 
-	
+
 
 	SubmitToRender(camera);
 
@@ -182,7 +188,7 @@ void Renderer::RenderAllPasses(const VP& viewAndProjMatrix, rfe::Entity& camera)
 	for (auto& it : m_renderPassesFlagged)
 	{
 		if (it.second.empty()) continue;
-		for(auto& unit : it.second)
+		for (auto& unit : it.second)
 		{
 			m_phongRenderer.Submit(unit.id, unit.worldMatrix, unit.type);
 			m_pbrRenderer.Submit(unit.id, unit.worldMatrix, unit.type);

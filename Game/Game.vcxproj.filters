@@ -157,6 +157,7 @@
       <Filter>vendor\singleHeaders</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\PbrRenderer.h" />
+    <ClInclude Include="Src\Graphics\SkyBox.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">
@@ -239,6 +240,7 @@
     </ClCompile>
     <ClCompile Include="Src\NativeScripts\CameraControllerScript.cpp" />
     <ClCompile Include="Src\Graphics\PbrRenderer.cpp" />
+    <ClCompile Include="Src\Graphics\SkyBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\PS_FlatTexture.hlsl">

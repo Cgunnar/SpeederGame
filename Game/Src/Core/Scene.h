@@ -5,6 +5,7 @@
 #include "StandardComponents.h"
 #include "RenderComponents.h"
 #include "GuiDebug.h"
+#include "SkyBox.h"
 
 class Scene
 {

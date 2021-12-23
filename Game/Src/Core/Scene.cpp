@@ -15,6 +15,9 @@ using namespace rfe;
 
 Scene::Scene()
 {
+	SkyBox sky;
+	sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr");
+
 	m_pistol = EntityReg::createEntity();
 	m_pistol.addComponent(TransformComp())->transform.setTranslation(0, 1, 3);
 	//m_pistol.getComponent<TransformComp>()->transform.setScale(0.01);

@@ -12,10 +12,11 @@ MyImageStruct::~MyImageStruct()
 	this->imagePtr = nullptr;
 }
 
-void readImage(MyImageStruct& pImageStruct, const std::string& fileName)
+void readImage(MyImageStruct& pImageStruct, const std::string& fileName, bool blendCheck)
 {
+	assert(std::filesystem::exists(fileName));
 	unsigned char* img = stbi_load(fileName.c_str(), &pImageStruct.width, &pImageStruct.height, &pImageStruct.bpp, STBI_rgb_alpha);
-	if (pImageStruct.bpp == 4)
+	if (pImageStruct.bpp == 4 && blendCheck)
 	{
 		int size = pImageStruct.height * pImageStruct.width * 4;
 		bool testing = false;

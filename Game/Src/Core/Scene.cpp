@@ -15,8 +15,9 @@ using namespace rfe;
 
 Scene::Scene()
 {
-	SkyBox sky;
-	sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr");
+	
+	//sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr");
+	sky.Init("Assets/Textures/BRIGHTBOX");
 
 	m_pistol = EntityReg::createEntity();
 	m_pistol.addComponent(TransformComp())->transform.setTranslation(0, 1, 3);
@@ -47,7 +48,7 @@ Scene::Scene()
 	m_camera = EntityReg::createEntity();
 	m_camera.addComponent(TransformComp());
 	m_camera.getComponent<TransformComp>()->transform.setTranslation(0, 1, 2);
-	m_camera.getComponent<TransformComp>()->transform.setRotationDeg(15, 0, 0);
+	//m_camera.getComponent<TransformComp>()->transform.setRotationDeg(15, 0, 0);
 
 	m_camera.addScript(CameraControllerScript());
 

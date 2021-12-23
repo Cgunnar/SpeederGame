@@ -68,9 +68,10 @@ void Application::Run()
 
 		m_scene->Update(FrameTimer::dt());
 
-		LowLvlGfx::ClearRTV(0.1f, 0.2f, 0.4f, 0.0f, LowLvlGfx::GetBackBuffer());
-		LowLvlGfx::ClearDSV(LowLvlGfx::GetDepthBuffer());
-		LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }, LowLvlGfx::GetDepthBuffer());
+		
+		
+		m_renderer->RenderBegin(m_scene->GetCamera());
+		m_renderer->RenderSkyBox(m_scene->sky);
 		m_renderer->Render(m_scene->GetCamera());
 
 		LowLvlGfx::EndFrame();

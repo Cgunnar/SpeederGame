@@ -18,4 +18,4 @@ struct MyImageStruct
 	void* imagePtr = nullptr;
 };
 
-void readImage(MyImageStruct& pImageStruct, const std::string& fileName);
+void readImage(MyImageStruct& pImageStruct, const std::string& fileName, bool blendCheck = false);

@@ -16,6 +16,7 @@ public:
 	void Update(float dt);
 	rfe::Entity& GetCamera();
 
+	SkyBox sky;
 private:
 	rfe::Entity m_camera;
 	rfe::Entity m_nanosuit;

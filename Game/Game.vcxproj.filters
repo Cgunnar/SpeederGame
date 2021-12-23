@@ -266,5 +266,7 @@
     <FxCompile Include="Src\Shaders\PS_PBR_ALB_METROU_PointLight.hlsl" />
     <FxCompile Include="Src\Shaders\PS_PBR_NOR_EMIS_PointLight.hlsl" />
     <FxCompile Include="Src\Shaders\PS_PBR.hlsl" />
+    <FxCompile Include="Src\Shaders\VS_SkyBox.hlsl" />
+    <FxCompile Include="Src\Shaders\PS_SkyBox.hlsl" />
   </ItemGroup>
 </Project>

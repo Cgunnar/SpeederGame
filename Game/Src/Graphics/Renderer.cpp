@@ -11,49 +11,72 @@
 using namespace rfm;
 using namespace rfe;
 
-
+std::shared_ptr<SharedRenderResources> Renderer::s_sharedRenderResources = nullptr;
 
 
 Renderer::Renderer()
 {
 	m_vp.P = Matrix(PIDIV4, 16.0f / 9.0f, 0.01f, 1000.0f);
-	m_sharedRenderResources = std::make_shared<SharedRenderResources>();
+	s_sharedRenderResources = std::make_shared<SharedRenderResources>();
 
-	m_sharedRenderResources->m_worldMatrixCB = LowLvlGfx::CreateConstantBuffer({ sizeof(Matrix), BufferDesc::USAGE::DYNAMIC });
-	m_sharedRenderResources->m_vpCB = LowLvlGfx::CreateConstantBuffer({ 2 * sizeof(Matrix), BufferDesc::USAGE::DYNAMIC });
+	s_sharedRenderResources->m_worldMatrixCB = LowLvlGfx::CreateConstantBuffer({ sizeof(Matrix), BufferDesc::USAGE::DYNAMIC });
+	s_sharedRenderResources->m_vpCB = LowLvlGfx::CreateConstantBuffer({ 2 * sizeof(Matrix), BufferDesc::USAGE::DYNAMIC });
 
-	m_sharedRenderResources->m_pointLightCB = LowLvlGfx::CreateConstantBuffer({ sizeof(PointLight), BufferDesc::USAGE::DYNAMIC });
-
-
-	m_sharedRenderResources->m_vertexShader = LowLvlGfx::CreateShader("Src/Shaders/VertexShader.hlsl", ShaderType::VERTEXSHADER);
-	m_sharedRenderResources->m_vertexShaderNormalMap = LowLvlGfx::CreateShader("Src/Shaders/VS_NormalMap.hlsl", ShaderType::VERTEXSHADER);
+	s_sharedRenderResources->m_pointLightCB = LowLvlGfx::CreateConstantBuffer({ sizeof(PointLight), BufferDesc::USAGE::DYNAMIC });
 
 
+	s_sharedRenderResources->m_vertexShader = LowLvlGfx::CreateShader("Src/Shaders/VertexShader.hlsl", ShaderType::VERTEXSHADER);
+	s_sharedRenderResources->m_vertexShaderNormalMap = LowLvlGfx::CreateShader("Src/Shaders/VS_NormalMap.hlsl", ShaderType::VERTEXSHADER);
 
-	m_sharedRenderResources->m_linearWrapSampler = LowLvlGfx::Create(standardDescriptors::g_linear_wrap);
+
+
+	s_sharedRenderResources->m_linearWrapSampler = LowLvlGfx::Create(standardDescriptors::g_linear_wrap);
 
 	SetUpHdrRTV();
 
-	m_phongRenderer = PhongRenderer(m_sharedRenderResources->weak_from_this());
-	m_pbrRenderer = PbrRenderer(m_sharedRenderResources->weak_from_this());
+	m_phongRenderer = PhongRenderer(s_sharedRenderResources->weak_from_this());
+	m_pbrRenderer = PbrRenderer(s_sharedRenderResources->weak_from_this());
 }
 
 Renderer::~Renderer()
 {
+	s_sharedRenderResources.reset();
+	s_sharedRenderResources = nullptr;
 }
 
 
-void Renderer::Render(rfe::Entity& camera)
+void Renderer::RenderBegin(rfe::Entity& camera)
 {
-	auto& pointLights = rfe::EntityReg::getComponentArray<PointLightComp>();
-	assert(!pointLights.empty());
-	PointLight p = pointLights[0].pointLight;
-	LowLvlGfx::UpdateBuffer(m_sharedRenderResources->m_pointLightCB, &p);
-
+	LowLvlGfx::ClearRTV(0.1f, 0.2f, 0.4f, 0.0f, LowLvlGfx::GetBackBuffer());
+	LowLvlGfx::ClearDSV(LowLvlGfx::GetDepthBuffer());
 
 	LowLvlGfx::SetViewPort(LowLvlGfx::GetResolution());
 	m_vp.V = inverse(*camera.getComponent<TransformComp>());
-	LowLvlGfx::UpdateBuffer(m_sharedRenderResources->m_vpCB, &m_vp);
+	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_vpCB, &m_vp);
+}
+
+void Renderer::RenderSkyBox(SkyBox& sky)
+{
+	sky.Bind(*s_sharedRenderResources);
+	
+	LowLvlGfx::Context()->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+	LowLvlGfx::Context()->IASetInputLayout(nullptr);
+	LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	LowLvlGfx::Context()->Draw(36, 0);
+}
+
+void Renderer::Render(rfe::Entity& camera)
+{
+	LowLvlGfx::UnBindRasterizer();
+	LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }, LowLvlGfx::GetDepthBuffer());
+
+	auto& pointLights = rfe::EntityReg::getComponentArray<PointLightComp>();
+	assert(!pointLights.empty());
+	PointLight p = pointLights[0].pointLight;
+	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_pointLightCB, &p);
+
+
+	
 
 	SubmitToRender(camera);
 
@@ -67,6 +90,12 @@ void Renderer::Render(rfe::Entity& camera)
 
 	SubmitAndRenderTransparentToInternalRenderers(m_vp, camera);
 
+}
+
+SharedRenderResources& Renderer::GetSharedRenderResources()
+{
+	assert(s_sharedRenderResources);
+	return *s_sharedRenderResources;
 }
 
 
@@ -181,15 +210,15 @@ void Renderer::SetUpHdrRTV()
 	desc2d.Height = res.height;
 	desc2d.MipLevels = 0;
 
-	m_sharedRenderResources->m_hdrRenderTarget = LowLvlGfx::CreateTexture2D(desc2d, nullptr, false);
+	s_sharedRenderResources->m_hdrRenderTarget = LowLvlGfx::CreateTexture2D(desc2d, nullptr, false);
 
-	LowLvlGfx::CreateSRV(m_sharedRenderResources->m_hdrRenderTarget);
+	LowLvlGfx::CreateSRV(s_sharedRenderResources->m_hdrRenderTarget);
 
 	D3D11_RENDER_TARGET_VIEW_DESC desc = {};
 	desc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 	desc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
 	desc.Texture2D.MipSlice = 0;
-	LowLvlGfx::CreateRTV(m_sharedRenderResources->m_hdrRenderTarget);
+	LowLvlGfx::CreateRTV(s_sharedRenderResources->m_hdrRenderTarget);
 
 
 }

@@ -139,7 +139,7 @@ void SkyBox::InitCubeMapHDR(const std::string& path, const std::string& irradian
 	{
 		assert(irradianceMapPath.substr(irradianceMapPath.length() - 4, 4) == ".hdr");
 
-		m_irradianceCubeMap = LoadEquirectangularMapToCubeMap(irradianceMapPath);
+		m_irradianceCubeMap = LoadEquirectangularMapToCubeMap(irradianceMapPath, 64);
 
 	}
 	

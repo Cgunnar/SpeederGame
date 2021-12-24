@@ -198,7 +198,7 @@ float4 main(vs_out input) : SV_TARGET
     
     kd = float3(1, 1, 1) - fresnelSchlickRoughness(oOmega, F0, roughness);
     float3 diffuseAmbient = skyIrradiance * albedo;
-    float3 ambient = kd * diffuseAmbient;// * ambientOcclusion;
+    float3 ambient = kd * diffuseAmbient /** ambientOcclusion*/;
     
     
     //return float4(kd, 1);

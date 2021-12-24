@@ -57,17 +57,13 @@ void Renderer::RenderBegin(rfe::Entity& camera)
 
 void Renderer::RenderSkyBox(SkyBox& sky)
 {
-	if (sky.Ldr())
+	if (sky.Ldr() != sky.Hdr())
 	{
 		sky.Bind(*s_sharedRenderResources);
 		LowLvlGfx::Context()->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
 		LowLvlGfx::Context()->IASetInputLayout(nullptr);
 		LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		LowLvlGfx::Context()->Draw(36, 0);
-	}
-	else if(sky.Hdr())
-	{
-
 	}
 }
 

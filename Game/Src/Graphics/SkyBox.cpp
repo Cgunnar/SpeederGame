@@ -7,12 +7,24 @@
 #include "GraphicsHelperFunctions.h"
 
 
+std::shared_ptr<Texture2D> LoadHdrTexture(const std::string& path);
+
 void SkyBox::Init(const std::string& path)
 {
 	if (path.substr(path.length() - 4, 4) == ".hdr")
 		InitCubeMapHDR(path);
 	else
 		InitCubeMapLDR(path);
+
+	m_skyBoxVS = LowLvlGfx::CreateShader("Src/Shaders/VS_SkyBox.hlsl", ShaderType::VERTEXSHADER);
+	m_skyBoxPS = LowLvlGfx::CreateShader("Src/Shaders/PS_SkyBox.hlsl", ShaderType::PIXELSHADER);
+
+
+	D3D11_RASTERIZER_DESC rzDesc = {};
+	rzDesc.CullMode = D3D11_CULL_BACK;
+	rzDesc.FillMode = D3D11_FILL_SOLID;
+	rzDesc.FrontCounterClockwise = true;
+	m_rasterizer = LowLvlGfx::Create(rzDesc);
 
 	D3D11_SAMPLER_DESC sampDesc = {
 		D3D11_FILTER_MIN_MAG_MIP_LINEAR,
@@ -44,8 +56,8 @@ bool SkyBox::Ldr() const
 void SkyBox::Bind(SharedRenderResources& rendRes)
 {
 	assert(m_hdr || m_ldr);
-	if (m_ldr)
-	{
+	//if (m_ldr)
+	//{
 		LowLvlGfx::UpdateBuffer(rendRes.m_worldMatrixCB, &m_rotation);
 		LowLvlGfx::Bind(rendRes.m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
 		LowLvlGfx::Bind(rendRes.m_vpCB, ShaderType::VERTEXSHADER, 1);
@@ -55,7 +67,7 @@ void SkyBox::Bind(SharedRenderResources& rendRes)
 		LowLvlGfx::BindSRV(m_skyBoxCubeMap, ShaderType::PIXELSHADER, 4);
 		LowLvlGfx::Bind(m_sampler, ShaderType::PIXELSHADER, 1);
 		LowLvlGfx::Bind(m_rasterizer);
-	}
+	//}
 }
 
 void SkyBox::SetRotation(rfm::Matrix rot)
@@ -108,15 +120,7 @@ void SkyBox::InitCubeMapLDR(const std::string& path)
 
 	LowLvlGfx::CreateSRV(m_skyBoxCubeMap, &viewDesc);
 
-	m_skyBoxVS = LowLvlGfx::CreateShader("Src/Shaders/VS_SkyBox.hlsl", ShaderType::VERTEXSHADER);
-	m_skyBoxPS = LowLvlGfx::CreateShader("Src/Shaders/PS_SkyBox.hlsl", ShaderType::PIXELSHADER);
-
-
-	D3D11_RASTERIZER_DESC rzDesc = {};
-	rzDesc.CullMode = D3D11_CULL_BACK;
-	rzDesc.FillMode = D3D11_FILL_SOLID;
-	rzDesc.FrontCounterClockwise = true;
-	m_rasterizer = LowLvlGfx::Create(rzDesc);
+	
 }
 
 void SkyBox::InitCubeMapHDR(const std::string& path)
@@ -125,30 +129,7 @@ void SkyBox::InitCubeMapHDR(const std::string& path)
 	assert(!m_ldr && !m_hdr);
 	m_hdr = true;
 
-	int w, h, c;
-	float* hdrImage = stbi_loadf(path.c_str(), &w, &h, &c, STBI_rgb_alpha);
-	assert(hdrImage);
-
-
-	D3D11_TEXTURE2D_DESC descEq = {};
-	descEq.Width = w;
-	descEq.Height = h;
-	descEq.MipLevels = 1;
-	descEq.ArraySize = 1;
-	descEq.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	descEq.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	descEq.Usage = D3D11_USAGE_IMMUTABLE;
-	descEq.MiscFlags = 0;
-	descEq.CPUAccessFlags = 0;
-	descEq.SampleDesc.Count = 1;
-	descEq.SampleDesc.Quality = 0;
-
-	D3D11_SUBRESOURCE_DATA subEq;
-	subEq.pSysMem = hdrImage;
-	subEq.SysMemPitch = w * 16; // rgba float
-	subEq.SysMemSlicePitch = 0;
-	std::shared_ptr<Texture2D> equirectTex = LowLvlGfx::CreateTexture2D(descEq, &subEq);
-	LowLvlGfx::CreateSRV(equirectTex);
+	std::shared_ptr<Texture2D> equirectTex = LoadHdrTexture(path);
 
 
 	UINT cubeSideLength = 1024;
@@ -192,9 +173,39 @@ void SkyBox::InitCubeMapHDR(const std::string& path)
 	LowLvlGfx::Bind(m_eq2cubeCS);
 
 	LowLvlGfx::Context()->Dispatch(cubeSideLength/32, cubeSideLength/32, 6);
-
-
 	LowLvlGfx::BindUAVs(); // unbind
+	LowLvlGfx::Context()->GenerateMips(m_skyBoxCubeMap->srv.Get());
+	
+}
+
+std::shared_ptr<Texture2D> LoadHdrTexture(const std::string& path)
+{
+	int w, h, c;
+	float* hdrImage = stbi_loadf(path.c_str(), &w, &h, &c, STBI_rgb_alpha);
+	assert(hdrImage);
+
+
+	D3D11_TEXTURE2D_DESC descEq = {};
+	descEq.Width = w;
+	descEq.Height = h;
+	descEq.MipLevels = 1;
+	descEq.ArraySize = 1;
+	descEq.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	descEq.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	descEq.Usage = D3D11_USAGE_IMMUTABLE;
+	descEq.MiscFlags = 0;
+	descEq.CPUAccessFlags = 0;
+	descEq.SampleDesc.Count = 1;
+	descEq.SampleDesc.Quality = 0;
+
+	D3D11_SUBRESOURCE_DATA subEq;
+	subEq.pSysMem = hdrImage;
+	subEq.SysMemPitch = w * 16; // rgba float
+	subEq.SysMemSlicePitch = 0;
+	std::shared_ptr<Texture2D> equirectTex = LowLvlGfx::CreateTexture2D(descEq, &subEq);
+	LowLvlGfx::CreateSRV(equirectTex);
 
 	stbi_image_free(hdrImage);
+
+	return equirectTex;
 }

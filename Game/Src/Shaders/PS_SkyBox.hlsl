@@ -10,5 +10,7 @@ struct vs_out
 
 float4 main(vs_out input) : SV_TARGET
 {
-    return float4(skyMap.Sample(skyMapSampler, input.samplePos).xyz, 1.0f);
+    float3 sky = skyMap.Sample(skyMapSampler, input.samplePos).xyz;
+    sky = sky / (sky + float3(1, 1, 1));
+    return float4(sky, 1.0f);
 }

@@ -299,5 +299,6 @@
       <Filter>Src\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\CS_equirect2cube.hlsl" />
+    <FxCompile Include="Src\Shaders\PS_SkyBox_toneMapped.hlsl" />
   </ItemGroup>
 </Project>

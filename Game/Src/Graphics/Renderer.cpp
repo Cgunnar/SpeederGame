@@ -64,6 +64,11 @@ void Renderer::RenderSkyBox(SkyBox& sky)
 		LowLvlGfx::Context()->IASetInputLayout(nullptr);
 		LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		LowLvlGfx::Context()->Draw(36, 0);
+
+		if (sky.m_irradianceCubeMap)
+		{
+			m_pbrRenderer.SetDiffuseIrradianceMap(sky.m_irradianceCubeMap);
+		}
 	}
 }
 

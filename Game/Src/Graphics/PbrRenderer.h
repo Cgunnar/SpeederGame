@@ -7,13 +7,13 @@ public:
 	PbrRenderer(std::weak_ptr<SharedRenderResources> sharedRes);
 	PbrRenderer() = default;
 
-
+	void SetDiffuseIrradianceMap(std::shared_ptr<Texture2D> irrMap);
 	void Submit(RenderUnitID unitID, const rfm::Transform& worlMatrix, MaterialType type);
 	void PreProcess(const VP& viewAndProjMatrix, rfe::Entity& camera, RenderFlag flag);
 	void Render(const VP& viewAndProjMatrix, rfe::Entity& camera, RenderFlag flag);
 private:
 	std::weak_ptr<SharedRenderResources> m_sharedRenderResources;
-
+	std::shared_ptr<Texture2D> m_irradSkyMap;
 
 	ConstantBuffer m_pbrCB;
 	Rasterizer m_noBackFaceCullRasterizer;

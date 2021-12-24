@@ -298,5 +298,6 @@
     <FxCompile Include="Src\Shaders\VertexShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Src\Shaders\CS_equirect2cube.hlsl" />
   </ItemGroup>
 </Project>

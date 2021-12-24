@@ -1,6 +1,30 @@
 #pragma once
 #include "RimfrostMath.hpp"
 
+enum class LoadTexFlag
+{
+	none = 0,
+	GenerateMips = 1,
+	LinearColorSpace = 2,
+};
+
+inline LoadTexFlag operator &(LoadTexFlag l, LoadTexFlag r)
+{
+	return (LoadTexFlag)((int)l & (int)r);
+}
+inline LoadTexFlag operator |(LoadTexFlag l, LoadTexFlag r)
+{
+	return (LoadTexFlag)((int)l | (int)r);
+}
+inline bool operator != (LoadTexFlag l, int r)
+{
+	return (bool)((int)l != r);
+}
+inline bool operator == (LoadTexFlag l, int r)
+{
+	return (bool)((int)l == r);
+}
+
 struct Vertex_POS_NOR_UV
 {
 	rfm::Vector3 position;

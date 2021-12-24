@@ -47,6 +47,7 @@ public:
 	static std::shared_ptr<Texture2D> CreateTexture2D(D3D11_TEXTURE2D_DESC desc, D3D11_SUBRESOURCE_DATA* data = nullptr, bool fixedRes = true);
 	static void CreateSRV(std::shared_ptr<Texture2D> tex2d, D3D11_SHADER_RESOURCE_VIEW_DESC* desc = nullptr);
 	static void CreateRTV(std::shared_ptr<Texture2D> tex2d, D3D11_RENDER_TARGET_VIEW_DESC* desc = nullptr);
+	static void CreateUAV(std::shared_ptr<Texture2D> tex2d, D3D11_UNORDERED_ACCESS_VIEW_DESC * desc = nullptr);
 	static Shader CreateShader(const std::string& path, ShaderType type);
 	static VertexBuffer CreateVertexBuffer(const float* data, uint32_t byteWidth, uint32_t stride, uint32_t offset = 0);
 	static IndexBuffer CreateIndexBuffer(const uint32_t* data, uint32_t indexCount, uint32_t offset = 0);
@@ -66,9 +67,10 @@ public:
 	static void Bind(const IndexBuffer& indexBuffer);
 	static void Bind(ConstantBuffer cBuff, ShaderType shaderType, uint32_t bindSlot);
 	static void BindRTVs(std::vector<std::shared_ptr<Texture2D>> rtvs = {}, std::shared_ptr<Texture2D> dsv = nullptr);
+	static void BindUAVs(std::vector<std::shared_ptr<Texture2D>> uavs = {}, const UINT* initCond = nullptr);
 	static void BindRTVsAndUAVs(std::vector<std::shared_ptr<Texture2D>> rtvs,
 		std::vector<std::shared_ptr<Texture2D>> uavs, std::shared_ptr<Texture2D> dsv = nullptr);
-	static void BindUAV(std::shared_ptr<Texture2D> uav, ShaderType shaderType, uint32_t bindSlot);
+	static void BindUAV(std::shared_ptr<Texture2D> uav, uint32_t bindSlot, const UINT* initCond = nullptr);
 	static void BindSRV(std::shared_ptr<Texture2D> srv, ShaderType shaderType, uint32_t bindSlot);
 
 	static void UpdateBuffer(ConstantBuffer cBuff, void* data);

@@ -22,6 +22,9 @@ private:
 	rfm::Matrix m_rotation;
 	Shader m_skyBoxVS;
 	Shader m_skyBoxPS;
+
+	Shader m_eq2cubeCS;
+
 	Rasterizer m_rasterizer;
 	Sampler m_sampler;
 };

@@ -16,8 +16,8 @@ using namespace rfe;
 Scene::Scene()
 {
 	
-	//sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr");
-	sky.Init("Assets/Textures/BRIGHTBOX");
+	sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr");
+	//sky.Init("Assets/Textures/BRIGHTBOX");
 
 	m_pistol = EntityReg::createEntity();
 	m_pistol.addComponent(TransformComp())->transform.setTranslation(0, 2, 3);

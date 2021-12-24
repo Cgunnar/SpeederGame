@@ -127,6 +127,12 @@ void LowLvlGfx::CreateRTV(std::shared_ptr<Texture2D> tex2d, D3D11_RENDER_TARGET_
 	assert(SUCCEEDED(hr));
 }
 
+void LowLvlGfx::CreateUAV(std::shared_ptr<Texture2D> tex2d, D3D11_UNORDERED_ACCESS_VIEW_DESC* desc)
+{
+	HRESULT hr = s_dx11->m_device->CreateUnorderedAccessView(tex2d->buffer.Get(), desc, &tex2d->uav);
+	assert(SUCCEEDED(hr));
+}
+
 Shader LowLvlGfx::CreateShader(const std::string& path, ShaderType type)
 {
 	std::string shaderModel;
@@ -340,15 +346,34 @@ void LowLvlGfx::BindRTVs(std::vector<std::shared_ptr<Texture2D>> rtvs, std::shar
 	s_dx11->m_context->OMSetRenderTargets((UINT)rtvs.size(), views, dsvPtr);
 }
 
+void LowLvlGfx::BindUAVs(std::vector<std::shared_ptr<Texture2D>> uavs, const UINT* initCond)
+{
+	ID3D11UnorderedAccessView* emptyUAV[D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT] = {};
+	assert(uavs.size() <= D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT);
+	if (uavs.empty())
+	{
+		s_dx11->m_context->CSSetUnorderedAccessViews(0, D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT, emptyUAV, nullptr);
+	}
+	else
+	{
+		ID3D11UnorderedAccessView* views[D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT];
+		for (int i = 0; i < uavs.size(); i++)
+		{
+			views[i] = uavs[i]->uav.Get();
+		}
+		s_dx11->m_context->CSSetUnorderedAccessViews(0, (UINT)uavs.size(), views, initCond);
+	}
+}
+
 void LowLvlGfx::BindRTVsAndUAVs(std::vector<std::shared_ptr<Texture2D>> rtvs, std::vector<std::shared_ptr<Texture2D>> uavs, std::shared_ptr<Texture2D> dsv)
 {
 	assert(rtvs.size() + uavs.size() <= D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT);
 	assert(false);
 }
 
-void LowLvlGfx::BindUAV(std::shared_ptr<Texture2D> uav, ShaderType shaderType, uint32_t bindSlot)
+void LowLvlGfx::BindUAV(std::shared_ptr<Texture2D> uav, uint32_t bindSlot, const UINT* initCond)
 {													
-	assert(false);
+	s_dx11->m_context->CSSetUnorderedAccessViews(bindSlot, 1, uav->uav.GetAddressOf(), initCond);
 }
 
 void LowLvlGfx::BindSRV(std::shared_ptr<Texture2D> srv, ShaderType shaderType, uint32_t bindSlot)

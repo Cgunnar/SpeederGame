@@ -12,7 +12,21 @@ void SkyBox::Init(const std::string& path)
 	else
 		InitCubeMapLDR(path);
 
+	D3D11_SAMPLER_DESC sampDesc = {
+		D3D11_FILTER_MIN_MAG_MIP_LINEAR,
+		D3D11_TEXTURE_ADDRESS_WRAP,
+		D3D11_TEXTURE_ADDRESS_WRAP,
+		D3D11_TEXTURE_ADDRESS_WRAP,
+		0.0f,
+		1,
+		D3D11_COMPARISON_LESS_EQUAL,
+		{0,0,0,0},
+		0,
+		D3D11_FLOAT32_MAX
+	};
 	
+	m_sampler = LowLvlGfx::Create(sampDesc);
+
 }
 
 bool SkyBox::Hdr() const
@@ -36,8 +50,8 @@ void SkyBox::Bind(SharedRenderResources& rendRes)
 		LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }); // this should unbind the z-buffer
 		LowLvlGfx::Bind(m_skyBoxVS);
 		LowLvlGfx::Bind(m_skyBoxPS);
-		LowLvlGfx::BindSRV(m_skyBoxCubeMap, ShaderType::PIXELSHADER, 0);
-		LowLvlGfx::Bind(rendRes.m_linearWrapSampler, ShaderType::PIXELSHADER, 0);
+		LowLvlGfx::BindSRV(m_skyBoxCubeMap, ShaderType::PIXELSHADER, 4);
+		LowLvlGfx::Bind(m_sampler, ShaderType::PIXELSHADER, 1);
 		LowLvlGfx::Bind(m_rasterizer);
 	}
 }

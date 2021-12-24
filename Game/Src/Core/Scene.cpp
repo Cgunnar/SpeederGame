@@ -16,17 +16,17 @@ using namespace rfe;
 Scene::Scene()
 {
 	
-	sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr");
-	//sky.Init("Assets/Textures/BRIGHTBOX");
+	//sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr");
+	sky.Init("Assets/Textures/BRIGHTBOX");
 
 	m_pistol = EntityReg::createEntity();
-	m_pistol.addComponent(TransformComp())->transform.setTranslation(0, 1, 3);
-	//m_pistol.getComponent<TransformComp>()->transform.setScale(0.01);
-	m_pistol.getComponent<TransformComp>()->transform.setRotationDeg(0, -20, 0);
-	//m_pistol.addComponent(RenderModelComp("Assets/Models/MetalRoughSpheres/glTF/MetalRoughSpheres.gltf", RenderPassEnum::pbr));
+	m_pistol.addComponent(TransformComp())->transform.setTranslation(0, 2, 3);
+	m_pistol.getComponent<TransformComp>()->transform.setScale(0.1);
+	m_pistol.getComponent<TransformComp>()->transform.setRotationDeg(-90, 0, 180);
+	m_pistol.addComponent(RenderModelComp("Assets/Models/MetalRoughSpheres/glTF/MetalRoughSpheres.gltf", RenderPassEnum::pbr));
 	//m_pistol.addComponent(RenderModelComp("Assets/Models/cerberus/scene.gltf", RenderPassEnum::pbr));
 	//m_pistol.addComponent(RenderModelComp("Assets/Models/DamagedHelmet/glTF/DamagedHelmet.gltf", RenderPassEnum::pbr));
-	m_pistol.addComponent(RenderModelComp("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", RenderPassEnum::pbr));
+	//m_pistol.addComponent(RenderModelComp("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", RenderPassEnum::pbr));
 	//m_pistol.addComponent(RenderModelComp("Assets/Models/pbr/wasteland_hunters_-_vehicule/scene.gltf", RenderPassEnum::pbr));
 	//.addComponent(RenderModelComp("Assets/Models/pbr/razor_crest/scene.gltf", RenderPassEnum::pbr));
 
@@ -47,7 +47,7 @@ Scene::Scene()
 
 	m_camera = EntityReg::createEntity();
 	m_camera.addComponent(TransformComp());
-	m_camera.getComponent<TransformComp>()->transform.setTranslation(0, 1, 2);
+	m_camera.getComponent<TransformComp>()->transform.setTranslation(0, 2, -1);
 	//m_camera.getComponent<TransformComp>()->transform.setRotationDeg(15, 0, 0);
 
 	m_camera.addScript(CameraControllerScript());
@@ -55,7 +55,7 @@ Scene::Scene()
 	m_pointLight = EntityReg::createEntity();
 	m_pointLight.addComponent(TransformComp());
 	m_pointLight.addComponent(PointLightComp());
-	m_pointLight.getComponent<PointLightComp>()->pointLight.lightStrength = 10;
+	m_pointLight.getComponent<PointLightComp>()->pointLight.lightStrength = 15;
 
 	
 	Material quadMat;
@@ -77,7 +77,7 @@ Scene::Scene()
 
 	m_quadContr.slider1.ChangeDefaultValues({ 0,0,8 });
 
-	m_lightContr.slider1.ChangeDefaultValues({ -4,6,3 });
+	m_lightContr.slider1.ChangeDefaultValues({ 0,2,-9 });
 	m_lightContr.slider2.ChangeDefaultValues({ 1,1,1 }, 0, 1);
 }
 

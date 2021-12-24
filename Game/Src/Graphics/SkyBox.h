@@ -23,5 +23,6 @@ private:
 	Shader m_skyBoxVS;
 	Shader m_skyBoxPS;
 	Rasterizer m_rasterizer;
+	Sampler m_sampler;
 };
 

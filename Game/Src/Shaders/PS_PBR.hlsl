@@ -3,8 +3,10 @@ Texture2D albedoTexture : register(t0);
 Texture2D metallicRoughnessTexture : register(t1);
 Texture2D normalMap : register(t2);
 Texture2D emissiveTexture : register(t3);
+TextureCube skyMap : register(t4);
 
 SamplerState mySampler : register(s0);
+SamplerState skyMapSampler : register(s1);
 
 
 
@@ -116,6 +118,11 @@ float3 fresnelSchlick(float cosTheta, float3 F0)
     return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
 }
 
+float3 fresnelSchlickRoughness(float cosTheta, float3 F0, float roughness)
+{
+    return F0 + (max(float3(1.0 - roughness, 1.0 - roughness, 1.0 - roughness), F0) - F0) * pow(saturate(1.0 - cosTheta), 5.0);
+}
+
 
 float4 main(vs_out input) : SV_TARGET
 {
@@ -133,6 +140,7 @@ float4 main(vs_out input) : SV_TARGET
     float ambientOcclusion = metallicRoughnessTextureVal.r;
     float metallic = metallicRoughnessTextureVal.b * metallicFactor;
     float roughness = metallicRoughnessTextureVal.g * roughnessFactor;
+    roughness = max(roughness, 0.05);
     
     float3 emissive = emissiveFactor;
 #ifdef EMISSIVE
@@ -173,17 +181,31 @@ float4 main(vs_out input) : SV_TARGET
     kd = lerp(kd, float3(0, 0, 0), metallic * float3(1, 1, 1));
     
     float3 brdfSpec = D * G * F;
-    brdfSpec /= max(0.0001, 4 * iOmega * oOmega);
+    brdfSpec /= max(0.001, 4 * iOmega * oOmega);
     
     float3 brdfDiff = kd * albedo; // /3.1415; //should i use pi ??
     
     float3 LightOutPut = (brdfDiff + brdfSpec) * lightRadiance * oOmega;
     
     
-    //fix ambient
-    float3 ambient = 0.03 * albedo * ambientOcclusion;
+    //return float4(roughness, roughness, roughness, 1);
+    //return float4(D, D, D, 1);
     
+    //fix ambient
+    
+    float3 skyIrradiance = skyMap.Sample(skyMapSampler, normal).rgb;
+    skyIrradiance = float3(0.8, 0.8, 0.8);
+    
+    kd = float3(1, 1, 1) - fresnelSchlickRoughness(oOmega, F0, roughness);
+    float3 diffuseAmbient = skyIrradiance * albedo;
+    float3 ambient = kd * diffuseAmbient;// * ambientOcclusion;
+    
+    
+    //return float4(kd, 1);
+    
+    //-------------------------
     float3 finalColor = LightOutPut + ambient;
+    //float3 finalColor =/* LightOutPut +*/ ambient;
     
     finalColor += emissive;
     

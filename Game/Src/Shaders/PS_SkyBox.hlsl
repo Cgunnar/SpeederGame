@@ -1,5 +1,5 @@
-TextureCube skyMap : register(t0);
-SamplerState skyMapSampler : register(s0);
+TextureCube skyMap : register(t4);
+SamplerState skyMapSampler : register(s1);
 
 struct vs_out
 {

@@ -96,6 +96,9 @@
     <ClInclude Include="Src\Graphics\Material.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Graphics\PbrRenderer.h">
+      <Filter>Src\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Graphics\PhongRenderer.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
@@ -103,6 +106,9 @@
       <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\SharedRendererResources.h">
+      <Filter>Src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\SkyBox.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Matrix.hpp">
@@ -156,8 +162,6 @@
     <ClInclude Include="vendor\singleHeaders\stb_image.h">
       <Filter>vendor\singleHeaders</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Graphics\PbrRenderer.h" />
-    <ClInclude Include="Src\Graphics\SkyBox.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">
@@ -202,10 +206,16 @@
     <ClCompile Include="Src\Graphics\Material.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Graphics\PbrRenderer.cpp">
+      <Filter>Src\Graphics</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Graphics\PhongRenderer.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\Renderer.cpp">
+      <Filter>Src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\SkyBox.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Math\Matrix.cpp">
@@ -219,6 +229,9 @@
     </ClCompile>
     <ClCompile Include="Src\Math\Vector.cpp">
       <Filter>Src\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\NativeScripts\CameraControllerScript.cpp">
+      <Filter>Src\NativeScripts</Filter>
     </ClCompile>
     <ClCompile Include="Src\Utility\FrameTimer.cpp">
       <Filter>Src\Utility</Filter>
@@ -238,12 +251,27 @@
     <ClCompile Include="vendor\imgui\backends\imgui_impl_win32.cpp">
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
-    <ClCompile Include="Src\NativeScripts\CameraControllerScript.cpp" />
-    <ClCompile Include="Src\Graphics\PbrRenderer.cpp" />
-    <ClCompile Include="Src\Graphics\SkyBox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\PS_FlatTexture.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\PS_PBR.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\PS_PBR_ALB_METROU_PointLight.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\PS_PBR_AL_MERO_NO_PointLight.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\PS_PBR_NOR_EMIS_PointLight.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\PS_Phong_DiffTex_NorTex_SpecTex_pointLight.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\PS_Phong_DiffTex_NorTex_singleLight.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\PS_Phong_DiffTexture_singleLight.hlsl">
@@ -252,21 +280,23 @@
     <FxCompile Include="Src\Shaders\PS_Phong_color_singleLight.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Src\Shaders\PS_Phong_singlePointLight.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\PS_SkyBox.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
     <FxCompile Include="Src\Shaders\PixelShader.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\VS_NormalMap.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\VS_SkyBox.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\VertexShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\PS_Phong_DiffTex_NorTex_singleLight.hlsl" />
-    <FxCompile Include="Src\Shaders\PS_Phong_singlePointLight.hlsl" />
-    <FxCompile Include="Src\Shaders\VS_NormalMap.hlsl" />
-    <FxCompile Include="Src\Shaders\PS_PBR_AL_MERO_NO_PointLight.hlsl" />
-    <FxCompile Include="Src\Shaders\PS_Phong_DiffTex_NorTex_SpecTex_pointLight.hlsl" />
-    <FxCompile Include="Src\Shaders\PS_PBR_ALB_METROU_PointLight.hlsl" />
-    <FxCompile Include="Src\Shaders\PS_PBR_NOR_EMIS_PointLight.hlsl" />
-    <FxCompile Include="Src\Shaders\PS_PBR.hlsl" />
-    <FxCompile Include="Src\Shaders\VS_SkyBox.hlsl" />
-    <FxCompile Include="Src\Shaders\PS_SkyBox.hlsl" />
   </ItemGroup>
 </Project>

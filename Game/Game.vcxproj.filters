@@ -301,5 +301,7 @@
     <FxCompile Include="Src\Shaders\CS_equirect2cube.hlsl" />
     <FxCompile Include="Src\Shaders\PS_SkyBox_toneMapped.hlsl" />
     <FxCompile Include="Src\Shaders\CS\CS_convolute_DiffIrrCube.hlsl" />
+    <FxCompile Include="Src\Shaders\CS\spmap.hlsl" />
+    <FxCompile Include="Src\Shaders\CS\spbrdf.hlsl" />
   </ItemGroup>
 </Project>

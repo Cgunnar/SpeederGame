@@ -132,19 +132,23 @@ void SkyBox::InitCubeMapHDR(const std::string& path, const std::string& irradian
 	assert(!m_ldr && !m_hdr);
 	m_hdr = true;
 
+	m_roughnessCB = LowLvlGfx::CreateConstantBuffer({ .size = 16, .usage = BufferDesc::USAGE::DYNAMIC });
 	m_skyBoxPS = LowLvlGfx::CreateShader("Src/Shaders/PS_SkyBox_toneMapped.hlsl", ShaderType::PIXELSHADER);
 	m_convolute_DiffIrrCubeCS = LowLvlGfx::CreateShader("Src/Shaders/CS/CS_convolute_DiffIrrCube.hlsl", ShaderType::COMPUTESHADER);
-	m_skyBoxCubeMap = LoadEquirectangularMapToCubeMap(path);
+	m_spbrdfCS = LowLvlGfx::CreateShader("Src/Shaders/CS/spbrdf.hlsl", ShaderType::COMPUTESHADER);
+	m_spmapCS = LowLvlGfx::CreateShader("Src/Shaders/CS/spmap.hlsl", ShaderType::COMPUTESHADER);
+	m_skyBoxCubeMap = LoadEquirectangularMapToCubeMap(path, 1024, true);
 
 	if (!irradianceMapPath.empty())
 	{
 		assert(irradianceMapPath.substr(irradianceMapPath.length() - 4, 4) == ".hdr");
 
-		m_irradianceCubeMap = LoadEquirectangularMapToCubeMap(irradianceMapPath, 32);
+		m_irradianceCubeMap = LoadEquirectangularMapToCubeMap(irradianceMapPath, 32, false);
 	}
 	else
 	{
 		m_irradianceCubeMap = ConvoluteDiffuseCubeMap(m_skyBoxCubeMap);
+		m_specularCubeMap = ConvoluteSpecularCubeMap(m_skyBoxCubeMap);
 	}
 	
 }
@@ -195,6 +199,70 @@ std::shared_ptr<Texture2D> SkyBox::ConvoluteDiffuseCubeMap(std::shared_ptr<Textu
 	return outPutCubeMap;
 }
 
+std::shared_ptr<Texture2D> SkyBox::ConvoluteSpecularCubeMap(std::shared_ptr<Texture2D> envMap)
+{
+	constexpr int cubeSideLength = 1024;
+	D3D11_TEXTURE2D_DESC descCube = {};
+	descCube.Width = cubeSideLength;
+	descCube.Height = cubeSideLength;
+	descCube.MipLevels = GfxHelpers::CalcMipNumber(cubeSideLength, cubeSideLength);
+	descCube.ArraySize = 6;
+	descCube.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+	descCube.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
+	descCube.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+	descCube.Usage = D3D11_USAGE_DEFAULT;
+	descCube.CPUAccessFlags = 0;
+	descCube.SampleDesc.Count = 1;
+	descCube.SampleDesc.Quality = 0;
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc = {};
+	viewDesc.Format = descCube.Format;
+	viewDesc.TextureCube.MostDetailedMip = 0;
+	viewDesc.TextureCube.MipLevels = -1;
+	viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+
+	D3D11_UNORDERED_ACCESS_VIEW_DESC uDesc = {};
+	uDesc.Format = descCube.Format;
+	uDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2DARRAY;
+	uDesc.Texture2DArray.ArraySize = descCube.ArraySize;
+	uDesc.Texture2DArray.MipSlice = 0;
+	uDesc.Texture2DArray.FirstArraySlice = 0;
+
+	std::shared_ptr<Texture2D> outPutCubeMap = LowLvlGfx::CreateTexture2D(descCube);
+	LowLvlGfx::CreateSRV(outPutCubeMap, &viewDesc);
+	
+
+
+
+
+
+	LowLvlGfx::BindSRV(envMap, ShaderType::COMPUTESHADER, 0);
+	LowLvlGfx::Bind(m_spmapCS);
+	LowLvlGfx::Bind(Renderer::GetSharedRenderResources().m_linearWrapSampler, ShaderType::COMPUTESHADER, 0);
+
+
+	
+	float deltaRoughness = 1.0f / (float)(descCube.MipLevels-1);
+	rfm::Vector4 roughness;
+	for (int i = 1; i < descCube.MipLevels; i++)
+	{
+		uDesc.Texture2DArray.MipSlice = i;
+		LowLvlGfx::CreateUAV(outPutCubeMap, &uDesc);
+		LowLvlGfx::BindUAV(outPutCubeMap, 0);
+		roughness.x = i * deltaRoughness;
+		LowLvlGfx::UpdateBuffer(m_roughnessCB, &roughness);
+		LowLvlGfx::Bind(m_roughnessCB, ShaderType::COMPUTESHADER, 5);
+
+		UINT thrdGrSize = std::max(1, cubeSideLength >> i);
+		LowLvlGfx::Context()->Dispatch(thrdGrSize, thrdGrSize, 6);
+
+	}
+	LowLvlGfx::BindUAVs(); //unbind
+
+
+	return outPutCubeMap;
+}
+
 std::shared_ptr<Texture2D> LoadHdrTexture(const std::string& path)
 {
 	int w, h, c;
@@ -219,6 +287,7 @@ std::shared_ptr<Texture2D> LoadHdrTexture(const std::string& path)
 	subEq.pSysMem = hdrImage;
 	subEq.SysMemPitch = w * 16; // rgba float
 	subEq.SysMemSlicePitch = 0;
+
 	std::shared_ptr<Texture2D> equirectTex = LowLvlGfx::CreateTexture2D(descEq, &subEq);
 	LowLvlGfx::CreateSRV(equirectTex);
 
@@ -227,18 +296,18 @@ std::shared_ptr<Texture2D> LoadHdrTexture(const std::string& path)
 	return equirectTex;
 }
 
-std::shared_ptr<Texture2D> SkyBox::LoadEquirectangularMapToCubeMap(const std::string& path, uint32_t cubeSideLength)
+std::shared_ptr<Texture2D> SkyBox::LoadEquirectangularMapToCubeMap(const std::string& path, uint32_t cubeSideLength, bool mipMapping)
 {
 	std::shared_ptr<Texture2D> equirectTex = LoadHdrTexture(path);
 
 	D3D11_TEXTURE2D_DESC descCube = {};
 	descCube.Width = cubeSideLength;
 	descCube.Height = cubeSideLength;
-	descCube.MipLevels = 1;// GfxHelpers::CalcMipNumber(cubeSideLength, cubeSideLength);
+	descCube.MipLevels = mipMapping ? GfxHelpers::CalcMipNumber(cubeSideLength, cubeSideLength) : 1;
 	descCube.ArraySize = 6;
 	descCube.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-	descCube.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;// | D3D11_BIND_RENDER_TARGET;
-	descCube.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;// | D3D11_RESOURCE_MISC_GENERATE_MIPS;
+	descCube.BindFlags = mipMapping ? D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_RENDER_TARGET : D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
+	descCube.MiscFlags = mipMapping ? D3D11_RESOURCE_MISC_TEXTURECUBE | D3D11_RESOURCE_MISC_GENERATE_MIPS : D3D11_RESOURCE_MISC_TEXTURECUBE;
 	descCube.Usage = D3D11_USAGE_DEFAULT;
 	descCube.CPUAccessFlags = 0;
 	descCube.SampleDesc.Count = 1;
@@ -272,7 +341,9 @@ std::shared_ptr<Texture2D> SkyBox::LoadEquirectangularMapToCubeMap(const std::st
 
 	LowLvlGfx::Context()->Dispatch(cubeSideLength / 32, cubeSideLength / 32, 6);
 	LowLvlGfx::BindUAVs(); // unbind
-	//LowLvlGfx::Context()->GenerateMips(cubeMap->srv.Get());
+
+	if(mipMapping)
+		LowLvlGfx::Context()->GenerateMips(cubeMap->srv.Get());
 
 	return cubeMap;
 }

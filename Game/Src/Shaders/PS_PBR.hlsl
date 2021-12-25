@@ -195,6 +195,7 @@ float4 main(vs_out input) : SV_TARGET
     
     float3 skyIrradiance = skyMap.Sample(skyMapSampler, normal).rgb;
     //skyIrradiance = float3(0.8, 0.8, 0.8);
+    //return float4(skyIrradiance / (skyIrradiance + float3(1, 1, 1)), 1);
     
     kd = float3(1, 1, 1) - fresnelSchlickRoughness(oOmega, F0, roughness);
     float3 diffuseAmbient = skyIrradiance * albedo;

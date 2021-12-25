@@ -18,6 +18,7 @@ public:
 private:
 	void InitCubeMapLDR(const std::string& path);
 	void InitCubeMapHDR(const std::string& path, const std::string& irradianceMapPath);
+	std::shared_ptr<Texture2D> ConvoluteDiffuseCubeMap(std::shared_ptr<Texture2D> envMap);
 	std::shared_ptr<Texture2D> LoadEquirectangularMapToCubeMap(const std::string& path, uint32_t cubeSideLength = 1024);
 	bool m_ldr = false;
 	bool m_hdr = false;
@@ -28,6 +29,7 @@ private:
 	Shader m_skyBoxPS;
 
 	Shader m_eq2cubeCS;
+	Shader m_convolute_DiffIrrCubeCS;
 
 	Rasterizer m_rasterizer;
 	Sampler m_sampler;

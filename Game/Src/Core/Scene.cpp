@@ -16,7 +16,8 @@ using namespace rfe;
 Scene::Scene()
 {
 	
-	sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr", "Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_Env.hdr");
+	//sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr", "Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_Env.hdr");
+	sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr");
 	//sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_Env.hdr");
 	//sky.Init("Assets/Textures/BRIGHTBOX");
 

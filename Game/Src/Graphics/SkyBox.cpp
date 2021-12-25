@@ -133,16 +133,66 @@ void SkyBox::InitCubeMapHDR(const std::string& path, const std::string& irradian
 	m_hdr = true;
 
 	m_skyBoxPS = LowLvlGfx::CreateShader("Src/Shaders/PS_SkyBox_toneMapped.hlsl", ShaderType::PIXELSHADER);
+	m_convolute_DiffIrrCubeCS = LowLvlGfx::CreateShader("Src/Shaders/CS/CS_convolute_DiffIrrCube.hlsl", ShaderType::COMPUTESHADER);
 	m_skyBoxCubeMap = LoadEquirectangularMapToCubeMap(path);
 
 	if (!irradianceMapPath.empty())
 	{
 		assert(irradianceMapPath.substr(irradianceMapPath.length() - 4, 4) == ".hdr");
 
-		m_irradianceCubeMap = LoadEquirectangularMapToCubeMap(irradianceMapPath, 64);
-
+		m_irradianceCubeMap = LoadEquirectangularMapToCubeMap(irradianceMapPath, 32);
+	}
+	else
+	{
+		m_irradianceCubeMap = ConvoluteDiffuseCubeMap(m_skyBoxCubeMap);
 	}
 	
+}
+
+std::shared_ptr<Texture2D> SkyBox::ConvoluteDiffuseCubeMap(std::shared_ptr<Texture2D> envMap)
+{
+	constexpr UINT cubeSideLength = 32;
+	D3D11_TEXTURE2D_DESC descCube = {};
+	descCube.Width = cubeSideLength;
+	descCube.Height = cubeSideLength;
+	descCube.MipLevels = 1;
+	descCube.ArraySize = 6;
+	descCube.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+	descCube.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
+	descCube.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+	descCube.Usage = D3D11_USAGE_DEFAULT;
+	descCube.CPUAccessFlags = 0;
+	descCube.SampleDesc.Count = 1;
+	descCube.SampleDesc.Quality = 0;
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc = {};
+	viewDesc.Format = descCube.Format;
+	viewDesc.TextureCube.MostDetailedMip = 0;
+	viewDesc.TextureCube.MipLevels = -1;
+	viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+
+	D3D11_UNORDERED_ACCESS_VIEW_DESC uDesc = {};
+	uDesc.Format = descCube.Format;
+	uDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2DARRAY;
+	uDesc.Texture2DArray.ArraySize = descCube.ArraySize;
+	uDesc.Texture2DArray.MipSlice = 0;
+	uDesc.Texture2DArray.FirstArraySlice = 0;
+
+	std::shared_ptr<Texture2D> outPutCubeMap = LowLvlGfx::CreateTexture2D(descCube);
+	LowLvlGfx::CreateSRV(outPutCubeMap, &viewDesc);
+	LowLvlGfx::CreateUAV(outPutCubeMap, &uDesc);
+
+	LowLvlGfx::BindSRV(envMap, ShaderType::COMPUTESHADER, 0);
+	LowLvlGfx::BindUAV(outPutCubeMap, 0);
+	LowLvlGfx::Bind(m_convolute_DiffIrrCubeCS);
+	LowLvlGfx::Bind(Renderer::GetSharedRenderResources().m_linearWrapSampler, ShaderType::COMPUTESHADER, 0);
+
+	LowLvlGfx::Context()->Dispatch(1, 1, 6);
+
+	LowLvlGfx::BindUAVs(); //unbind
+
+
+	return outPutCubeMap;
 }
 
 std::shared_ptr<Texture2D> LoadHdrTexture(const std::string& path)
@@ -184,11 +234,11 @@ std::shared_ptr<Texture2D> SkyBox::LoadEquirectangularMapToCubeMap(const std::st
 	D3D11_TEXTURE2D_DESC descCube = {};
 	descCube.Width = cubeSideLength;
 	descCube.Height = cubeSideLength;
-	descCube.MipLevels = GfxHelpers::CalcMipNumber(cubeSideLength, cubeSideLength);
+	descCube.MipLevels = 1;// GfxHelpers::CalcMipNumber(cubeSideLength, cubeSideLength);
 	descCube.ArraySize = 6;
 	descCube.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-	descCube.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_RENDER_TARGET;
-	descCube.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS | D3D11_RESOURCE_MISC_TEXTURECUBE;
+	descCube.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;// | D3D11_BIND_RENDER_TARGET;
+	descCube.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;// | D3D11_RESOURCE_MISC_GENERATE_MIPS;
 	descCube.Usage = D3D11_USAGE_DEFAULT;
 	descCube.CPUAccessFlags = 0;
 	descCube.SampleDesc.Count = 1;
@@ -222,7 +272,7 @@ std::shared_ptr<Texture2D> SkyBox::LoadEquirectangularMapToCubeMap(const std::st
 
 	LowLvlGfx::Context()->Dispatch(cubeSideLength / 32, cubeSideLength / 32, 6);
 	LowLvlGfx::BindUAVs(); // unbind
-	LowLvlGfx::Context()->GenerateMips(cubeMap->srv.Get());
+	//LowLvlGfx::Context()->GenerateMips(cubeMap->srv.Get());
 
 	return cubeMap;
 }

@@ -28,7 +28,7 @@ PbrRenderer::PbrRenderer(std::weak_ptr<SharedRenderResources> sharedRes) : m_sha
 	desc.usage = BufferDesc::USAGE::DYNAMIC;
 	m_pbrCB = LowLvlGfx::CreateConstantBuffer(desc);
 
-	m_samplerClamp = LowLvlGfx::Create(standardDescriptors::g_sample_linear_wrap);
+	m_samplerClamp = LowLvlGfx::Create(standardDescriptors::g_sample_linear_clamp);
 	//create blendstate
 	D3D11_BLEND_DESC blendDesc = {};
 	blendDesc.IndependentBlendEnable = TRUE;

@@ -22,11 +22,11 @@ Scene::Scene()
 	//sky.Init("Assets/Textures/BRIGHTBOX");
 
 	m_pistol = EntityReg::createEntity();
-	m_pistol.addComponent(TransformComp())->transform.setTranslation(0, 2, 3);
-	m_pistol.getComponent<TransformComp>()->transform.setScale(0.1);
-	m_pistol.getComponent<TransformComp>()->transform.setRotationDeg(-90, 0, 180);
-	m_pistol.addComponent(RenderModelComp("Assets/Models/MetalRoughSpheres/glTF/MetalRoughSpheres.gltf", RenderPassEnum::pbr));
-	//m_pistol.addComponent(RenderModelComp("Assets/Models/cerberus/scene.gltf", RenderPassEnum::pbr));
+	m_pistol.addComponent(TransformComp())->transform.setTranslation(3, 2, 4);
+	m_pistol.getComponent<TransformComp>()->transform.setScale(0.03);
+	m_pistol.getComponent<TransformComp>()->transform.setRotationDeg(90, -70, 0);
+	//m_pistol.addComponent(RenderModelComp("Assets/Models/MetalRoughSpheres/glTF/MetalRoughSpheres.gltf", RenderPassEnum::pbr));
+	m_pistol.addComponent(RenderModelComp("Assets/Models/cerberus/scene.gltf", RenderPassEnum::pbr));
 	//m_pistol.addComponent(RenderModelComp("Assets/Models/DamagedHelmet/glTF/DamagedHelmet.gltf", RenderPassEnum::pbr));
 	//m_pistol.addComponent(RenderModelComp("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", RenderPassEnum::pbr));
 	//m_pistol.addComponent(RenderModelComp("Assets/Models/pbr/wasteland_hunters_-_vehicule/scene.gltf", RenderPassEnum::pbr));

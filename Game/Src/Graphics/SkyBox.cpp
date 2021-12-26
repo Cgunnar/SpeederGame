@@ -185,7 +185,7 @@ std::shared_ptr<Texture2D> SkyBox::ConvoluteDiffuseCubeMap(std::shared_ptr<Textu
 	LowLvlGfx::Bind(m_convolute_DiffIrrCubeCS);
 	LowLvlGfx::Bind(Renderer::GetSharedRenderResources().m_linearWrapSampler, ShaderType::COMPUTESHADER, 0);
 
-	LowLvlGfx::Context()->Dispatch(1, 1, 6);
+	LowLvlGfx::Context()->Dispatch(cubeSideLength/32, cubeSideLength/32, 6);
 
 	LowLvlGfx::BindUAVs({}); //unbind
 
@@ -199,7 +199,7 @@ std::shared_ptr<Texture2D> SkyBox::ConvoluteSpecularCubeMap(std::shared_ptr<Text
 	D3D11_TEXTURE2D_DESC descCube = {};
 	descCube.Width = cubeSideLength;
 	descCube.Height = cubeSideLength;
-	descCube.MipLevels = GfxHelpers::CalcMipNumber(cubeSideLength, cubeSideLength);
+	descCube.MipLevels = 5;
 	descCube.ArraySize = 6;
 	descCube.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
 	descCube.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
@@ -226,10 +226,13 @@ std::shared_ptr<Texture2D> SkyBox::ConvoluteSpecularCubeMap(std::shared_ptr<Text
 	LowLvlGfx::CreateSRV(outPutCubeMap, &viewDesc);
 	
 	//copy skybox to output mipLevel 0
+	D3D11_TEXTURE2D_DESC envDesc;
+	envMap->buffer.Get()->GetDesc(&envDesc);
 	for (int i = 0; i < 6; i++)
 	{
-		UINT index = D3D11CalcSubresource(0, i, descCube.MipLevels);
-		LowLvlGfx::Context()->CopySubresourceRegion(outPutCubeMap->buffer.Get(), index, 0, 0, 0, envMap->buffer.Get(), index, nullptr);
+		UINT destIndex = D3D11CalcSubresource(0, i, descCube.MipLevels);
+		UINT srcIndex = D3D11CalcSubresource(0, i, envDesc.MipLevels);
+		LowLvlGfx::Context()->CopySubresourceRegion(outPutCubeMap->buffer.Get(), destIndex, 0, 0, 0, envMap->buffer.Get(), srcIndex, nullptr);
 	}
 
 	LowLvlGfx::BindSRV(envMap, ShaderType::COMPUTESHADER, 0);
@@ -261,7 +264,7 @@ void SkyBox::CreateSplitSumSpecMap()
 {
 	
 
-	constexpr int mapSize = 256; //512;
+	constexpr int mapSize = 512;
 	D3D11_TEXTURE2D_DESC desc = {};
 	desc.Width = mapSize;
 	desc.Height = mapSize;

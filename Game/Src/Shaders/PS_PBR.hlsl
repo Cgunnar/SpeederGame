@@ -213,7 +213,7 @@ float4 main(vs_out input) : SV_TARGET
     float3 specularAmbient = skySpecIrradiance * (F0 * specSplitSum.r + specSplitSum.g);
     
     
-    float3 ambient = (kd * diffuseAmbient + specularAmbient); /** ambientOcclusion*/;
+    float3 ambient = (kd * diffuseAmbient + specularAmbient) * ambientOcclusion;
     
     
     //-------------------------

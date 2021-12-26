@@ -17,7 +17,8 @@ class DX11;
 
 namespace standardDescriptors
 {
-	extern const D3D11_SAMPLER_DESC g_linear_wrap;
+	extern const D3D11_SAMPLER_DESC g_sample_linear_wrap;
+	extern const D3D11_SAMPLER_DESC g_sample_linear_clamp;
 }
 
 struct alignas(16) PointLight

@@ -142,6 +142,8 @@ void SkyBox::InitCubeMapHDR(const std::string& path)
 
 	m_irradianceCubeMap = ConvoluteDiffuseCubeMap(m_skyBoxCubeMap);
 	m_specularCubeMap = ConvoluteSpecularCubeMap(m_skyBoxCubeMap);
+
+	CreateSplitSumSpecMap();
 	
 }
 
@@ -253,6 +255,34 @@ std::shared_ptr<Texture2D> SkyBox::ConvoluteSpecularCubeMap(std::shared_ptr<Text
 	LowLvlGfx::BindSRVs({}, ShaderType::COMPUTESHADER); //unbind
 
 	return outPutCubeMap;
+}
+
+void SkyBox::CreateSplitSumSpecMap()
+{
+	
+
+	constexpr int mapSize = 256; //512;
+	D3D11_TEXTURE2D_DESC desc = {};
+	desc.Width = mapSize;
+	desc.Height = mapSize;
+	desc.MipLevels = 1;
+	desc.ArraySize = 1;
+	desc.Format = DXGI_FORMAT_R16G16_FLOAT;
+	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
+	desc.MiscFlags = 0;
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.CPUAccessFlags = 0;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+
+	m_splitSumMap = LowLvlGfx::CreateTexture2D(desc);
+	LowLvlGfx::CreateSRV(m_splitSumMap);
+	LowLvlGfx::CreateUAV(m_splitSumMap);
+
+	LowLvlGfx::BindUAV(m_splitSumMap, 0);
+	LowLvlGfx::Bind(m_splitSumAprxCS);
+	LowLvlGfx::Context()->Dispatch(mapSize / 32, mapSize / 32, 1);
+	LowLvlGfx::BindUAVs({}); // unbind
 }
 
 std::shared_ptr<Texture2D> LoadHdrTexture(const std::string& path)

@@ -28,7 +28,7 @@ PbrRenderer::PbrRenderer(std::weak_ptr<SharedRenderResources> sharedRes) : m_sha
 	desc.usage = BufferDesc::USAGE::DYNAMIC;
 	m_pbrCB = LowLvlGfx::CreateConstantBuffer(desc);
 
-
+	m_samplerClamp = LowLvlGfx::Create(standardDescriptors::g_sample_linear_wrap);
 	//create blendstate
 	D3D11_BLEND_DESC blendDesc = {};
 	blendDesc.IndependentBlendEnable = TRUE;
@@ -67,6 +67,11 @@ PbrRenderer::PbrRenderer(std::weak_ptr<SharedRenderResources> sharedRes) : m_sha
 void PbrRenderer::SetDiffuseIrradianceCubeMap(std::shared_ptr<Texture2D> irrMap)
 {
 	m_irradSkyMap = irrMap;
+}
+
+void PbrRenderer::SetSplitSumAproxLookUpMap(std::shared_ptr<Texture2D> splitSumLUMap)
+{
+	m_splitSumLookUpMap = splitSumLUMap;
 }
 
 void PbrRenderer::SetSpecularCubeMap(std::shared_ptr<Texture2D> specMap)
@@ -108,20 +113,20 @@ void PbrRenderer::Render(const VP& viewAndProjMatrix, rfe::Entity& camera, Rende
 
 	auto rendRes = m_sharedRenderResources.lock();
 
+	//move binds to some other function that will not be called multiple times per frame
+	LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	LowLvlGfx::Bind(rendRes->m_pointLightCB, ShaderType::PIXELSHADER, 0);
 	LowLvlGfx::Bind(rendRes->m_vpCB, ShaderType::VERTEXSHADER, 1);
 	LowLvlGfx::Bind(rendRes->m_vpCB, ShaderType::PIXELSHADER, 1);
 	LowLvlGfx::Bind(rendRes->m_linearWrapSampler, ShaderType::PIXELSHADER, 0);
-	LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	LowLvlGfx::Bind(m_samplerClamp, ShaderType::PIXELSHADER, 2);
 
+	LowLvlGfx::BindSRV(m_splitSumLookUpMap, ShaderType::PIXELSHADER, 4);
+	LowLvlGfx::BindSRV(m_specCubeMap, ShaderType::PIXELSHADER, 5);
+	LowLvlGfx::BindSRV(m_irradSkyMap, ShaderType::PIXELSHADER, 6);
 
-	HandleRenderFlag(flag);
-
-	if (m_specCubeMap)
-		LowLvlGfx::BindSRV(m_specCubeMap, ShaderType::PIXELSHADER, 4);
-	if(m_irradSkyMap)
-		LowLvlGfx::BindSRV(m_irradSkyMap, ShaderType::PIXELSHADER, 5);
 	
+	HandleRenderFlag(flag);
 
 	RenderPBR_ALBEDO_METROUG_NOR_EMIS(flag);
 	RenderPBR_ALBEDO_METROUG_NOR(flag);

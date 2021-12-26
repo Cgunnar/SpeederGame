@@ -30,7 +30,7 @@ Renderer::Renderer()
 
 
 
-	s_sharedRenderResources->m_linearWrapSampler = LowLvlGfx::Create(standardDescriptors::g_linear_wrap);
+	s_sharedRenderResources->m_linearWrapSampler = LowLvlGfx::Create(standardDescriptors::g_sample_linear_wrap);
 
 	SetUpHdrRTV();
 
@@ -72,6 +72,10 @@ void Renderer::RenderSkyBox(SkyBox& sky)
 		if (sky.m_specularCubeMap)
 		{
 			m_pbrRenderer.SetSpecularCubeMap(sky.m_specularCubeMap);
+		}
+		if (sky.m_splitSumMap)
+		{
+			m_pbrRenderer.SetSplitSumAproxLookUpMap(sky.m_splitSumMap);
 		}
 	}
 }

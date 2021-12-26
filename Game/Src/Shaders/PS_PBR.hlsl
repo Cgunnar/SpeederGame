@@ -3,11 +3,13 @@ Texture2D albedoTexture : register(t0);
 Texture2D metallicRoughnessTexture : register(t1);
 Texture2D normalMap : register(t2);
 Texture2D emissiveTexture : register(t3);
-TextureCube skyMap : register(t4);
-TextureCube skyIrrMap : register(t5);
+Texture2D splitSumBrdfLookUpMap : register(t4);
+TextureCube skyMap : register(t5);
+TextureCube skyIrrMap : register(t6);
 
 SamplerState mySampler : register(s0);
 SamplerState skyMapSampler : register(s1);
+SamplerState splitSumLookUpSampler : register(s2);
 
 
 

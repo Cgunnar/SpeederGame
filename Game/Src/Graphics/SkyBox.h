@@ -20,12 +20,14 @@ private:
 	void InitCubeMapHDR(const std::string& path);
 	std::shared_ptr<Texture2D> ConvoluteDiffuseCubeMap(std::shared_ptr<Texture2D> envMap);
 	std::shared_ptr<Texture2D> ConvoluteSpecularCubeMap(std::shared_ptr<Texture2D> envMap);
+	void CreateSplitSumSpecMap();
 	std::shared_ptr<Texture2D> LoadEquirectangularMapToCubeMap(const std::string& path, uint32_t cubeSideLength, bool mipMapping);
 	bool m_ldr = false;
 	bool m_hdr = false;
 	std::shared_ptr<Texture2D> m_skyBoxCubeMap;
 	std::shared_ptr<Texture2D> m_irradianceCubeMap;
 	std::shared_ptr<Texture2D> m_specularCubeMap;
+	std::shared_ptr<Texture2D> m_splitSumMap;
 	rfm::Matrix m_rotation;
 	Shader m_skyBoxVS;
 	Shader m_skyBoxPS;

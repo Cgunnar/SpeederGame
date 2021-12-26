@@ -10,10 +10,10 @@
 std::shared_ptr<Texture2D> LoadHdrTexture(const std::string& path);
 
 
-void SkyBox::Init(const std::string& path, const std::string& irradianceMapPath)
+void SkyBox::Init(const std::string& path)
 {
 	if (path.substr(path.length() - 4, 4) == ".hdr")
-		InitCubeMapHDR(path, irradianceMapPath);
+		InitCubeMapHDR(path);
 	else
 		InitCubeMapLDR(path);
 
@@ -126,7 +126,7 @@ void SkyBox::InitCubeMapLDR(const std::string& path)
 	
 }
 
-void SkyBox::InitCubeMapHDR(const std::string& path, const std::string& irradianceMapPath)
+void SkyBox::InitCubeMapHDR(const std::string& path)
 {
 	assert(std::filesystem::exists(path));
 	assert(!m_ldr && !m_hdr);
@@ -137,19 +137,11 @@ void SkyBox::InitCubeMapHDR(const std::string& path, const std::string& irradian
 	m_convolute_DiffIrrCubeCS = LowLvlGfx::CreateShader("Src/Shaders/CS/CS_convolute_DiffIrrCube.hlsl", ShaderType::COMPUTESHADER);
 	m_spbrdfCS = LowLvlGfx::CreateShader("Src/Shaders/CS/spbrdf.hlsl", ShaderType::COMPUTESHADER);
 	m_spmapCS = LowLvlGfx::CreateShader("Src/Shaders/CS/spmap.hlsl", ShaderType::COMPUTESHADER);
+	m_splitSumAprxCS = LowLvlGfx::CreateShader("Src/Shaders/CS/spbrdf.hlsl", ShaderType::COMPUTESHADER);
 	m_skyBoxCubeMap = LoadEquirectangularMapToCubeMap(path, 1024, true);
 
-	if (!irradianceMapPath.empty())
-	{
-		assert(irradianceMapPath.substr(irradianceMapPath.length() - 4, 4) == ".hdr");
-
-		m_irradianceCubeMap = LoadEquirectangularMapToCubeMap(irradianceMapPath, 32, false);
-	}
-	else
-	{
-		m_irradianceCubeMap = ConvoluteDiffuseCubeMap(m_skyBoxCubeMap);
-		m_specularCubeMap = ConvoluteSpecularCubeMap(m_skyBoxCubeMap);
-	}
+	m_irradianceCubeMap = ConvoluteDiffuseCubeMap(m_skyBoxCubeMap);
+	m_specularCubeMap = ConvoluteSpecularCubeMap(m_skyBoxCubeMap);
 	
 }
 

@@ -10,14 +10,14 @@ class SkyBox
 	friend Renderer;
 public:
 	SkyBox() = default;
-	void Init(const std::string& path, const std::string& irradianceMapPath = "");
+	void Init(const std::string& path);
 	bool Hdr() const;
 	bool Ldr() const;
 	void Bind(SharedRenderResources& rendRes);
 	void SetRotation(rfm::Matrix rot);
 private:
 	void InitCubeMapLDR(const std::string& path);
-	void InitCubeMapHDR(const std::string& path, const std::string& irradianceMapPath);
+	void InitCubeMapHDR(const std::string& path);
 	std::shared_ptr<Texture2D> ConvoluteDiffuseCubeMap(std::shared_ptr<Texture2D> envMap);
 	std::shared_ptr<Texture2D> ConvoluteSpecularCubeMap(std::shared_ptr<Texture2D> envMap);
 	std::shared_ptr<Texture2D> LoadEquirectangularMapToCubeMap(const std::string& path, uint32_t cubeSideLength, bool mipMapping);
@@ -34,6 +34,7 @@ private:
 	Shader m_convolute_DiffIrrCubeCS;
 	Shader m_spbrdfCS;
 	Shader m_spmapCS;
+	Shader m_splitSumAprxCS;
 
 	ConstantBuffer m_roughnessCB;
 	Rasterizer m_rasterizer;

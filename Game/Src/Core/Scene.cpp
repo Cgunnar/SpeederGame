@@ -33,6 +33,18 @@ Scene::Scene()
 	//m_pistol.addComponent(RenderModelComp("Assets/Models/pbr/razor_crest/scene.gltf", RenderPassEnum::pbr));
 
 
+	m_debugModel = EntityReg::createEntity();
+	m_debugModel.addComponent(TransformComp())->transform.setTranslation(0, 2, 3);
+	//m_debugModel.getComponent<TransformComp>()->transform.setScale(0.1);
+	//m_debugModel.getComponent<TransformComp>()->transform.setRotationDeg(-90, 90, 0);
+	//m_debugModel.addComponent(RenderModelComp("Assets/Models/pbr/wasteland_hunters_-_vehicule/scene.gltf", RenderPassEnum::pbr));
+	//m_debugModel.addComponent(RenderModelComp("Assets/Models/MetalRoughSpheres/glTF/MetalRoughSpheres.gltf", RenderPassEnum::pbr));
+	//m_debugModel.addComponent(RenderModelComp("Assets/Models/cerberus/scene.gltf", RenderPassEnum::pbr));
+	//m_debugModel.addComponent(RenderModelComp("Assets/Models/DamagedHelmet/glTF/DamagedHelmet.gltf", RenderPassEnum::pbr));
+	m_debugModel.addComponent(RenderModelComp("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", RenderPassEnum::pbr));
+	//m_debugModel.addComponent(RenderModelComp("Assets/Models/pbr/razor_crest/scene.gltf", RenderPassEnum::pbr));
+	//m_debugModel.addComponent(RenderModelComp("Assets/Models/pbr/pagani/scene.gltf", RenderPassEnum::pbr));
+
 	m_nanosuit = EntityReg::createEntity();
 	m_nanosuit.addComponent(TransformComp())->transform.setTranslation(2, 1, 5);
 	m_nanosuit.getComponent<TransformComp>()->transform.setScale(0.1);
@@ -57,7 +69,7 @@ Scene::Scene()
 	m_pointLight = EntityReg::createEntity();
 	m_pointLight.addComponent(TransformComp());
 	m_pointLight.addComponent(PointLightComp());
-	m_pointLight.getComponent<PointLightComp>()->pointLight.lightStrength = 15;
+	m_pointLight.getComponent<PointLightComp>()->pointLight.lightStrength = 5;
 
 	
 	Material quadMat;

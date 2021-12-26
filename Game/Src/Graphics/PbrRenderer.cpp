@@ -64,9 +64,14 @@ PbrRenderer::PbrRenderer(std::weak_ptr<SharedRenderResources> sharedRes) : m_sha
 	m_noBackFaceCullRasterizer = LowLvlGfx::Create(rzDesc);
 }
 
-void PbrRenderer::SetDiffuseIrradianceMap(std::shared_ptr<Texture2D> irrMap)
+void PbrRenderer::SetDiffuseIrradianceCubeMap(std::shared_ptr<Texture2D> irrMap)
 {
 	m_irradSkyMap = irrMap;
+}
+
+void PbrRenderer::SetSpecularCubeMap(std::shared_ptr<Texture2D> specMap)
+{
+	m_specCubeMap = specMap;
 }
 
 void PbrRenderer::Submit(RenderUnitID unitID, const rfm::Transform& worlMatrix, MaterialType type)
@@ -112,8 +117,11 @@ void PbrRenderer::Render(const VP& viewAndProjMatrix, rfe::Entity& camera, Rende
 
 	HandleRenderFlag(flag);
 
+	if (m_specCubeMap)
+		LowLvlGfx::BindSRV(m_specCubeMap, ShaderType::PIXELSHADER, 4);
 	if(m_irradSkyMap)
-		LowLvlGfx::BindSRV(m_irradSkyMap, ShaderType::PIXELSHADER, 4);
+		LowLvlGfx::BindSRV(m_irradSkyMap, ShaderType::PIXELSHADER, 5);
+	
 
 	RenderPBR_ALBEDO_METROUG_NOR_EMIS(flag);
 	RenderPBR_ALBEDO_METROUG_NOR(flag);

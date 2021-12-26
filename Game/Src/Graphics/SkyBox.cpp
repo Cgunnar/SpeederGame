@@ -193,7 +193,7 @@ std::shared_ptr<Texture2D> SkyBox::ConvoluteDiffuseCubeMap(std::shared_ptr<Textu
 
 	LowLvlGfx::Context()->Dispatch(1, 1, 6);
 
-	LowLvlGfx::BindUAVs(); //unbind
+	LowLvlGfx::BindUAVs({}); //unbind
 
 
 	return outPutCubeMap;
@@ -231,16 +231,16 @@ std::shared_ptr<Texture2D> SkyBox::ConvoluteSpecularCubeMap(std::shared_ptr<Text
 	std::shared_ptr<Texture2D> outPutCubeMap = LowLvlGfx::CreateTexture2D(descCube);
 	LowLvlGfx::CreateSRV(outPutCubeMap, &viewDesc);
 	
-
-
-
-
+	//copy skybox to output mipLevel 0
+	for (int i = 0; i < 6; i++)
+	{
+		UINT index = D3D11CalcSubresource(0, i, descCube.MipLevels);
+		LowLvlGfx::Context()->CopySubresourceRegion(outPutCubeMap->buffer.Get(), index, 0, 0, 0, envMap->buffer.Get(), index, nullptr);
+	}
 
 	LowLvlGfx::BindSRV(envMap, ShaderType::COMPUTESHADER, 0);
 	LowLvlGfx::Bind(m_spmapCS);
 	LowLvlGfx::Bind(Renderer::GetSharedRenderResources().m_linearWrapSampler, ShaderType::COMPUTESHADER, 0);
-
-
 	
 	float deltaRoughness = 1.0f / (float)(descCube.MipLevels-1);
 	rfm::Vector4 roughness;
@@ -257,8 +257,8 @@ std::shared_ptr<Texture2D> SkyBox::ConvoluteSpecularCubeMap(std::shared_ptr<Text
 		LowLvlGfx::Context()->Dispatch(thrdGrSize, thrdGrSize, 6);
 
 	}
-	LowLvlGfx::BindUAVs(); //unbind
-
+	LowLvlGfx::BindUAVs({}); //unbind
+	LowLvlGfx::BindSRVs({}, ShaderType::COMPUTESHADER); //unbind
 
 	return outPutCubeMap;
 }
@@ -340,7 +340,7 @@ std::shared_ptr<Texture2D> SkyBox::LoadEquirectangularMapToCubeMap(const std::st
 	LowLvlGfx::Bind(m_eq2cubeCS);
 
 	LowLvlGfx::Context()->Dispatch(cubeSideLength / 32, cubeSideLength / 32, 6);
-	LowLvlGfx::BindUAVs(); // unbind
+	LowLvlGfx::BindUAVs({}); // unbind
 
 	if(mipMapping)
 		LowLvlGfx::Context()->GenerateMips(cubeMap->srv.Get());

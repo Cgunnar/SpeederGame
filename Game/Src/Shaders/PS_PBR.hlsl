@@ -4,6 +4,7 @@ Texture2D metallicRoughnessTexture : register(t1);
 Texture2D normalMap : register(t2);
 Texture2D emissiveTexture : register(t3);
 TextureCube skyMap : register(t4);
+TextureCube skyIrrMap : register(t5);
 
 SamplerState mySampler : register(s0);
 SamplerState skyMapSampler : register(s1);
@@ -193,7 +194,7 @@ float4 main(vs_out input) : SV_TARGET
     
     //fix ambient
     
-    float3 skyIrradiance = skyMap.Sample(skyMapSampler, normal).rgb;
+    float3 skyIrradiance = skyIrrMap.Sample(skyMapSampler, normal).rgb;
     //skyIrradiance = float3(0.8, 0.8, 0.8);
     //return float4(skyIrradiance / (skyIrradiance + float3(1, 1, 1)), 1);
     

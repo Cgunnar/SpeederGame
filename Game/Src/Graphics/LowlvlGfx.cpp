@@ -365,6 +365,42 @@ void LowLvlGfx::BindUAVs(std::vector<std::shared_ptr<Texture2D>> uavs, const UIN
 	}
 }
 
+void LowLvlGfx::BindSRVs(std::vector<std::shared_ptr<Texture2D>> srvs, ShaderType shaderType)
+{
+	ID3D11ShaderResourceView* emptySRV[D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT] = {};
+	assert(srvs.size() <= D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT);
+	if (srvs.empty())
+	{
+		switch (shaderType)
+		{
+		case ShaderType::VERTEXSHADER: s_dx11->m_context->VSSetShaderResources(0, D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT, emptySRV); break;
+		case ShaderType::HULLSHADER: s_dx11->m_context->HSSetShaderResources(0, D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT, emptySRV); break;
+		case ShaderType::DOMAINSHADER: s_dx11->m_context->DSSetShaderResources(0, D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT, emptySRV); break;
+		case ShaderType::GEOMETRYSHADER: s_dx11->m_context->GSSetShaderResources(0, D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT, emptySRV); break;
+		case ShaderType::PIXELSHADER: s_dx11->m_context->PSSetShaderResources(0, D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT, emptySRV); break;
+		case ShaderType::COMPUTESHADER: s_dx11->m_context->CSSetShaderResources(0, D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT, emptySRV); break;
+		}
+	}
+	else
+	{
+		ID3D11ShaderResourceView* views[D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT];
+		for (int i = 0; i < srvs.size(); i++)
+		{
+			views[i] = srvs[i]->srv.Get();
+		}
+
+		switch (shaderType)
+		{
+		case ShaderType::VERTEXSHADER: s_dx11->m_context->VSSetShaderResources(0, (UINT)srvs.size(), views); break;
+		case ShaderType::HULLSHADER: s_dx11->m_context->HSSetShaderResources(0, (UINT)srvs.size(), views); break;
+		case ShaderType::DOMAINSHADER: s_dx11->m_context->DSSetShaderResources(0, (UINT)srvs.size(), views); break;
+		case ShaderType::GEOMETRYSHADER: s_dx11->m_context->GSSetShaderResources(0, (UINT)srvs.size(), views); break;
+		case ShaderType::PIXELSHADER: s_dx11->m_context->PSSetShaderResources(0, (UINT)srvs.size(), views); break;
+		case ShaderType::COMPUTESHADER: s_dx11->m_context->CSSetShaderResources(0, (UINT)srvs.size(), views); break;
+		}
+	}
+}
+
 void LowLvlGfx::BindRTVsAndUAVs(std::vector<std::shared_ptr<Texture2D>> rtvs, std::vector<std::shared_ptr<Texture2D>> uavs, std::shared_ptr<Texture2D> dsv)
 {
 	assert(rtvs.size() + uavs.size() <= D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT);
@@ -386,6 +422,20 @@ void LowLvlGfx::BindSRV(std::shared_ptr<Texture2D> srv, ShaderType shaderType, u
 	case ShaderType::GEOMETRYSHADER: s_dx11->m_context->GSSetShaderResources(bindSlot, 1, srv->srv.GetAddressOf()); break;
 	case ShaderType::PIXELSHADER: s_dx11->m_context->PSSetShaderResources(bindSlot, 1, srv->srv.GetAddressOf()); break;
 	case ShaderType::COMPUTESHADER: s_dx11->m_context->CSSetShaderResources(bindSlot, 1, srv->srv.GetAddressOf()); break;
+	}
+}
+
+void LowLvlGfx::UnBindSRV(ShaderType shaderType, uint32_t bindSlot)
+{
+	ID3D11ShaderResourceView* emptySRV[1] = {};
+	switch (shaderType)
+	{
+	case ShaderType::VERTEXSHADER: s_dx11->m_context->VSSetShaderResources(bindSlot, 1, emptySRV); break;
+	case ShaderType::HULLSHADER: s_dx11->m_context->HSSetShaderResources(bindSlot, 1, emptySRV); break;
+	case ShaderType::DOMAINSHADER: s_dx11->m_context->DSSetShaderResources(bindSlot, 1, emptySRV); break;
+	case ShaderType::GEOMETRYSHADER: s_dx11->m_context->GSSetShaderResources(bindSlot, 1, emptySRV); break;
+	case ShaderType::PIXELSHADER: s_dx11->m_context->PSSetShaderResources(bindSlot, 1, emptySRV); break;
+	case ShaderType::COMPUTESHADER: s_dx11->m_context->CSSetShaderResources(bindSlot, 1, emptySRV); break;
 	}
 }
 

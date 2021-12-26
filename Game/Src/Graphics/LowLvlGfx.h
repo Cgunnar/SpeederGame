@@ -67,11 +67,13 @@ public:
 	static void Bind(const IndexBuffer& indexBuffer);
 	static void Bind(ConstantBuffer cBuff, ShaderType shaderType, uint32_t bindSlot);
 	static void BindRTVs(std::vector<std::shared_ptr<Texture2D>> rtvs = {}, std::shared_ptr<Texture2D> dsv = nullptr);
-	static void BindUAVs(std::vector<std::shared_ptr<Texture2D>> uavs = {}, const UINT* initCond = nullptr);
+	static void BindUAVs(std::vector<std::shared_ptr<Texture2D>> uavs, const UINT* initCond = nullptr);
+	static void BindSRVs(std::vector<std::shared_ptr<Texture2D>> srvs, ShaderType shaderType);
 	static void BindRTVsAndUAVs(std::vector<std::shared_ptr<Texture2D>> rtvs,
 		std::vector<std::shared_ptr<Texture2D>> uavs, std::shared_ptr<Texture2D> dsv = nullptr);
 	static void BindUAV(std::shared_ptr<Texture2D> uav, uint32_t bindSlot, const UINT* initCond = nullptr);
 	static void BindSRV(std::shared_ptr<Texture2D> srv, ShaderType shaderType, uint32_t bindSlot);
+	static void UnBindSRV(ShaderType shaderType, uint32_t bindSlot);
 
 	static void UpdateBuffer(ConstantBuffer cBuff, void* data);
 	static void ClearRTV(float rgba[4], std::shared_ptr<Texture2D> rtv);

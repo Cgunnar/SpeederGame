@@ -67,7 +67,11 @@ void Renderer::RenderSkyBox(SkyBox& sky)
 
 		if (sky.m_irradianceCubeMap)
 		{
-			m_pbrRenderer.SetDiffuseIrradianceMap(sky.m_irradianceCubeMap);
+			m_pbrRenderer.SetDiffuseIrradianceCubeMap(sky.m_irradianceCubeMap);
+		}
+		if (sky.m_specularCubeMap)
+		{
+			m_pbrRenderer.SetSpecularCubeMap(sky.m_specularCubeMap);
 		}
 	}
 }

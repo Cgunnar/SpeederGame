@@ -190,30 +190,37 @@ float4 main(vs_out input) : SV_TARGET
     
     float3 LightOutPut = (brdfDiff + brdfSpec) * lightRadiance * oOmega;
     
-    
-    //return float4(roughness, roughness, roughness, 1);
-    //return float4(D, D, D, 1);
-    
     //fix ambient
     
-    float3 skyIrradiance = skyIrrMap.Sample(skyMapSampler, normal).rgb;
-    //skyIrradiance = float3(0.8, 0.8, 0.8);
-    //return float4(skyIrradiance / (skyIrradiance + float3(1, 1, 1)), 1);
-    
-    kd = float3(1, 1, 1) - fresnelSchlickRoughness(oOmega, F0, roughness);
-    float3 diffuseAmbient = skyIrradiance * albedo;
-    float3 ambient = kd * diffuseAmbient /** ambientOcclusion*/;
+    float3 skyDiffIrradiance = skyIrrMap.Sample(skyMapSampler, normal).rgb;
     
     
-    //return float4(kd, 1);
+    F = fresnelSchlickRoughness(oOmega, F0, roughness);
+    kd = 1 - F;
+    kd *= 1 - metallic;
+    
+    float3 diffuseAmbient = skyDiffIrradiance * albedo;
+    
+    
+    
+    
+    float2 specSplitSum = splitSumBrdfLookUpMap.Sample(splitSumLookUpSampler, float2(oOmega, roughness)).rg;
+    
+    uint width, height, mipLevels;
+    skyMap.GetDimensions(0, width, height, mipLevels);
+    float3 skySpecIrradiance = skyMap.SampleLevel(mySampler, reflect(-vDir, normal), roughness * mipLevels);
+    
+    float3 specularAmbient = skySpecIrradiance * (F0 * specSplitSum.r + specSplitSum.g);
+    
+    
+    float3 ambient = (kd * diffuseAmbient + specularAmbient); /** ambientOcclusion*/;
+    
     
     //-------------------------
     float3 finalColor = LightOutPut + ambient;
-    //float3 finalColor =/* LightOutPut +*/ ambient;
     
     finalColor += emissive;
     
-    finalColor = finalColor / (finalColor + float3(1, 1, 1));
+    finalColor = finalColor / (finalColor + 1);
     return float4(finalColor, alpha);
-    return float4(normal, 1.0f);
 }

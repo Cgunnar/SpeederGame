@@ -2,6 +2,19 @@
 
 #include <fstream>
 #include <assert.h>
+
+inline std::string RemoveIllegalChars(const std::string& str)
+{
+	std::string illegalChars = "\\/:?\"<>|";
+	std::string legalString = "";
+	for (int i = 0; i < str.length(); i++)
+	{
+		if (illegalChars.find(str[i]) == std::string::npos) {
+			legalString += str[i];
+		}
+	}
+	return legalString;
+}
 inline void writefileBin(char* src, size_t numElemts, size_t elementSize, const std::string& path)
 {
 	std::ofstream output(path, std::ios::binary);

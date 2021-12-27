@@ -26,16 +26,26 @@ namespace rfm
 		assert(abs(m_matrix[3].w - 1.0f) < 0.00001f);
 	}
 
-	void Transform::translate(float x, float y, float z)
+	void Transform::translateW(float x, float y, float z)
 	{
 		m_matrix[3].x += x;
 		m_matrix[3].y += y;
 		m_matrix[3].z += z;
 	}
 
-	void Transform::translate(const Vector3& position)
+	void Transform::translateW(const Vector3& position)
 	{
 		m_matrix[3] = m_matrix[3] + position;
+	}
+
+	void Transform::translateL(float x, float y, float z)
+	{
+		translateL({ x, y, z });
+	}
+
+	void Transform::translateL(const Vector3& position)
+	{
+		translateW(this->getRotationMatrix() * Vector4(position, 0));
 	}
 
 	void Transform::setRotation(float x, float y, float z)
@@ -56,7 +66,7 @@ namespace rfm
 		setRotation(DirectX::XMConvertToRadians(x), DirectX::XMConvertToRadians(y), DirectX::XMConvertToRadians(z));
 	}
 
-	void Transform::rotate(float x, float y, float z)
+	void Transform::rotateW(float x, float y, float z)
 	{
 		auto [T, R, S] = decomposeToTRS(m_matrix);
 		R = rotationFromAngles(x, y, z) * R;
@@ -64,7 +74,15 @@ namespace rfm
 		m_matrix = T * R * S;
 	}
 
-	void Transform::rotate(const Matrix& rotationMatrix)
+	void Transform::rotateL(float x, float y, float z)
+	{
+		auto [T, R, S] = decomposeToTRS(m_matrix);
+		R = R * rotationFromAngles(x, y, z);
+
+		m_matrix = T * R * S;
+	}
+
+	void Transform::rotateW(const Matrix& rotationMatrix)
 	{
 		auto [T, R, S] = decomposeToTRS(m_matrix);
 		R = rotationMatrix * R;
@@ -72,9 +90,14 @@ namespace rfm
 		m_matrix = T * R * S;
 	}
 
-	void Transform::rotateDeg(float x, float y, float z)
+	void Transform::rotateDegW(float x, float y, float z)
 	{
-		rotate(DirectX::XMConvertToRadians(x), DirectX::XMConvertToRadians(y), DirectX::XMConvertToRadians(z));
+		rotateW(DirectX::XMConvertToRadians(x), DirectX::XMConvertToRadians(y), DirectX::XMConvertToRadians(z));
+	}
+
+	void Transform::rotateDegL(float x, float y, float z)
+	{
+		rotateL(DirectX::XMConvertToRadians(x), DirectX::XMConvertToRadians(y), DirectX::XMConvertToRadians(z));
 	}
 
 	void Transform::setScale(float x, float y, float z)

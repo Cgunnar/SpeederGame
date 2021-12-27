@@ -7,6 +7,7 @@ Input* Input::instance = nullptr;
 Input::Input(HWND wndHandle, int width, int height)
 {
 	m_keyboard = std::make_unique<DirectX::Keyboard>();
+	m_gamePad = std::make_unique<DirectX::GamePad>();
 	//m_xtkmouse = std::make_unique<DirectX::Mouse>();
 	//m_xtkmouse->SetWindow(wndHandle);
 	//m_xtkmouse->SetMode(DirectX::Mouse::MODE_ABSOLUTE);
@@ -254,6 +255,11 @@ long double Input::getTime() {
 Mouse& Input::GetMouse()
 {
 	return *m_myMouse;
+}
+
+DirectX::GamePad& Input::GamePad()
+{
+	return *m_gamePad;
 }
 
 //void Input::ShowMouseCursor(bool yn)

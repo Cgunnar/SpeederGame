@@ -35,7 +35,7 @@ void CameraControllerScript::OnUpdate(float dt)
 
 	if (in.keyBeingPressed(Input::Shift)) moveDir *= 2;
 	moveDir *= m_moveSpeed;
-	cameraTransform.translate(moveDir * dt);
+	cameraTransform.translateW(moveDir * dt);
 	
 }
 

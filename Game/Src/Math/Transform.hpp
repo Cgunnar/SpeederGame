@@ -17,15 +17,19 @@ namespace rfm
 
 		void setTranslation(float x, float y, float z);
 		void setTranslation(const Vector3& position);
-		void translate(float x, float y, float z);
-		void translate(const Vector3& position);
+		void translateW(float x, float y, float z);
+		void translateW(const Vector3& position);
+		void translateL(float x, float y, float z);
+		void translateL(const Vector3& position);
 
 		void setRotation(float x, float y, float z);
 		void setRotation(const Matrix& rotationMatrix);
 		void setRotationDeg(float x, float y, float z);
-		void rotate(float x, float y, float z);
-		void rotate(const Matrix& rotationMatrix);
-		void rotateDeg(float x, float y, float z);
+		void rotateW(float x, float y, float z);
+		void rotateL(float x, float y, float z);
+		void rotateW(const Matrix& rotationMatrix);
+		void rotateDegW(float x, float y, float z);
+		void rotateDegL(float x, float y, float z);
 
 		void setScale(float x, float y, float z);
 		void setScale(float scale);

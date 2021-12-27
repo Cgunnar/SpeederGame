@@ -103,6 +103,8 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Src\NativeScripts\NativeScript.h" />
+    <ClInclude Include="Src\NativeScripts\ShipContollerScript.h" />
     <ClInclude Include="Src\Components\RenderComponents.h" />
     <ClInclude Include="Src\Components\StandardComponents.h" />
     <ClInclude Include="Src\Core\Application.h" />
@@ -145,6 +147,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClInclude Include="vendor\singleHeaders\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\NativeScripts\ShipContollerScript.cpp" />
     <ClCompile Include="Src\Core\Application.cpp" />
     <ClCompile Include="Src\Core\AssetManager.cpp" />
     <ClCompile Include="Src\Core\Input.cpp" />

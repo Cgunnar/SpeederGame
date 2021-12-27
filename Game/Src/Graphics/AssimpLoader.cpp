@@ -32,8 +32,8 @@ EngineMeshData AssimpLoader::loadStaticModel(const std::string& filePath)
 		aiProcess_Triangulate |
 		aiProcess_ConvertToLeftHanded |
 		aiProcess_GenNormals |
-		aiProcess_CalcTangentSpace
-		//|
+		aiProcess_CalcTangentSpace |
+		aiProcess_PreTransformVertices
 		//aiProcess_DropNormals		// Added 15/03/2021
 	);
 

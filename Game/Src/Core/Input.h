@@ -5,6 +5,7 @@
 //#include <SimpleMath.h>
 #include "RimfrostMath.hpp"
 #include "Mouse.hpp"
+#include <Inc\GamePad.h>
 
 //this code is taken from a game project i was part of and it is not written by me, but i might poke around a little to make it work for this project
 //Gunnar Cerne
@@ -44,6 +45,7 @@ public:
 	static void Destroy();
 	static bool Valid();
 	void SetNewWidthAndHight(int width, int height);
+
 	
 	//rfm::Vector2 mousePos();
 	//void mouseMovement(float& m_pitch, float& m_yaw);
@@ -58,6 +60,7 @@ public:
 	//int getLatestCode();
 	long double getTime();
 	Mouse& GetMouse();
+	DirectX::GamePad& GamePad();
 	//void setModeAbsolute();
 
 	/*void ShowMouseCursor(bool yn);
@@ -74,6 +77,7 @@ private:
 	std::unique_ptr<DirectX::Keyboard> m_keyboard;
 	//std::unique_ptr<DirectX::Mouse> m_xtkmouse;
 	std::unique_ptr<Mouse> m_myMouse;
+	std::unique_ptr<DirectX::GamePad> m_gamePad;
 	DirectX::Keyboard::KeyboardStateTracker m_keys;
 	DirectX::Mouse::ButtonStateTracker m_mouseButtons;
 	//bool m_mouseMode;

@@ -8,6 +8,8 @@
 #include "GraphicsHelperFunctions.h"
 #include "GraphicsResources.h"
 #include "CameraControllerScript.h"
+#include "ShipContollerScript.h"
+#include "Input.h"
 
 using namespace rfm;
 using namespace rfe;
@@ -24,7 +26,7 @@ Scene::Scene()
 	m_pistol = EntityReg::createEntity();
 	m_pistol.addComponent(TransformComp())->transform.setTranslation(3, 2, 4);
 	m_pistol.getComponent<TransformComp>()->transform.setScale(0.03);
-	m_pistol.getComponent<TransformComp>()->transform.setRotationDeg(90, -70, 0);
+	//m_pistol.getComponent<TransformComp>()->transform.setRotationDeg(90, -70, 0);
 	//m_pistol.addComponent(RenderModelComp("Assets/Models/MetalRoughSpheres/glTF/MetalRoughSpheres.gltf", RenderPassEnum::pbr));
 	m_pistol.addComponent(RenderModelComp("Assets/Models/cerberus/scene.gltf", RenderPassEnum::pbr));
 	//m_pistol.addComponent(RenderModelComp("Assets/Models/DamagedHelmet/glTF/DamagedHelmet.gltf", RenderPassEnum::pbr));
@@ -33,17 +35,12 @@ Scene::Scene()
 	//m_pistol.addComponent(RenderModelComp("Assets/Models/pbr/razor_crest/scene.gltf", RenderPassEnum::pbr));
 
 
-	m_debugModel = EntityReg::createEntity();
-	m_debugModel.addComponent(TransformComp())->transform.setTranslation(0, 2, 3);
-	//m_debugModel.getComponent<TransformComp>()->transform.setScale(0.1);
-	//m_debugModel.getComponent<TransformComp>()->transform.setRotationDeg(-90, 90, 0);
-	//m_debugModel.addComponent(RenderModelComp("Assets/Models/pbr/wasteland_hunters_-_vehicule/scene.gltf", RenderPassEnum::pbr));
-	//m_debugModel.addComponent(RenderModelComp("Assets/Models/MetalRoughSpheres/glTF/MetalRoughSpheres.gltf", RenderPassEnum::pbr));
-	//m_debugModel.addComponent(RenderModelComp("Assets/Models/cerberus/scene.gltf", RenderPassEnum::pbr));
-	//m_debugModel.addComponent(RenderModelComp("Assets/Models/DamagedHelmet/glTF/DamagedHelmet.gltf", RenderPassEnum::pbr));
-	m_debugModel.addComponent(RenderModelComp("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", RenderPassEnum::pbr));
-	//m_debugModel.addComponent(RenderModelComp("Assets/Models/pbr/razor_crest/scene.gltf", RenderPassEnum::pbr));
-	//m_debugModel.addComponent(RenderModelComp("Assets/Models/pbr/pagani/scene.gltf", RenderPassEnum::pbr));
+	m_ship = EntityReg::createEntity();
+	m_ship.addComponent(TransformComp())->transform.setTranslation(0, 2, 3);
+	//m_ship.getComponent<TransformComp>()->transform.setRotationDeg(0, 180, 0);
+	m_ship.addScript(ShipContollerScript());
+	m_ship.addComponent(RenderModelComp("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", RenderPassEnum::pbr));
+	//m_ship.addComponent(RenderModelComp("Assets/Models/ajf12test/scene.gltf", RenderPassEnum::pbr));
 
 	m_nanosuit = EntityReg::createEntity();
 	m_nanosuit.addComponent(TransformComp())->transform.setTranslation(2, 1, 5);
@@ -101,7 +98,17 @@ Scene::~Scene()
 
 void Scene::Update(float dt)
 {
-	EntityReg::RunScripts<CameraControllerScript>(dt);
+
+	
+
+
+
+	EntityReg::RunScripts<CameraControllerScript, ShipContollerScript>(dt);
+
+	Transform followShip = m_ship.getComponent<TransformComp>()->transform;
+	followShip.translateL(0, 1, -4);
+	m_camera.getComponent<TransformComp>()->transform = followShip;
+
 
 	m_quadContr.Show();
 	m_lightContr.Show();

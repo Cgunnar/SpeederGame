@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{466708E4-B2D1-BC5A-FB0F-6E0067B99AAF}</ProjectGuid>
+    <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>ImageTool</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>.\</OutDir>
+    <IntDir>bin-int\Debug\</IntDir>
+    <TargetName>ImageTool</TargetName>
+    <TargetExt>.exe</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>.\</OutDir>
+    <IntDir>bin-int\Release\</IntDir>
+    <TargetName>ImageTool</TargetName>
+    <TargetExt>.exe</TargetExt>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;_DEBUG;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>Src;..\Game\vendor\assimp;..\Game\vendor\directxtk;..\Game\vendor\imgui;..\Game\vendor\singleHeaders;..\Game\vendor\vld;..\Game\vendor\assimp\Debug;..\Game\vendor\assimp\include;..\Game\vendor\assimp\Release;..\Game\vendor\assimp\Debug\dll;..\Game\vendor\assimp\Debug\lib;..\Game\vendor\assimp\include\assimp;..\Game\vendor\assimp\include\assimp\Compiler;..\Game\vendor\assimp\include\assimp\port;..\Game\vendor\assimp\include\assimp\port\AndroidJNI;..\Game\vendor\assimp\Release\dll;..\Game\vendor\assimp\Release\lib;..\Game\vendor\directxtk\Audio;..\Game\vendor\directxtk\bin;..\Game\vendor\directxtk\bin-int;..\Game\vendor\directxtk\DirectXTK;..\Game\vendor\directxtk\Inc;..\Game\vendor\directxtk\Src;..\Game\vendor\directxtk\bin\Debug;..\Game\vendor\directxtk\bin\Debug-x86_64;..\Game\vendor\directxtk\bin\Release-x86_64;..\Game\vendor\directxtk\bin\Debug\DirectXTK;..\Game\vendor\directxtk\bin\Debug-x86_64\DirectXTK;..\Game\vendor\directxtk\bin\Release-x86_64\DirectXTK;..\Game\vendor\directxtk\bin-int\Debug;..\Game\vendor\directxtk\bin-int\Debug-x86_64;..\Game\vendor\directxtk\bin-int\Release-x86_64;..\Game\vendor\directxtk\bin-int\Debug\DirectXTK;..\Game\vendor\directxtk\bin-int\Debug\DirectXTK\DirectXTK.tlog;..\Game\vendor\directxtk\bin-int\Debug-x86_64\DirectXTK;..\Game\vendor\directxtk\bin-int\Debug-x86_64\DirectXTK\DirectXTK.tlog;..\Game\vendor\directxtk\bin-int\Release-x86_64\DirectXTK;..\Game\vendor\directxtk\bin-int\Release-x86_64\DirectXTK\DirectXTK.tlog;..\Game\vendor\directxtk\Src\Shaders;..\Game\vendor\directxtk\Src\Shaders\Compiled;..\Game\vendor\imgui\backends;..\Game\vendor\imgui\bin;..\Game\vendor\imgui\bin-int;..\Game\vendor\imgui\docs;..\Game\vendor\imgui\examples;..\Game\vendor\imgui\ImGui;..\Game\vendor\imgui\misc;..\Game\vendor\imgui\backends\vulkan;..\Game\vendor\imgui\bin\Debug;..\Game\vendor\imgui\bin\Debug-x86_64;..\Game\vendor\imgui\bin\Release-x86_64;..\Game\vendor\imgui\bin\Debug\ImGui;..\Game\vendor\imgui\bin\Debug-x86_64\ImGui;..\Game\vendor\imgui\bin\Release-x86_64\ImGui;..\Game\vendor\imgui\bin-int\Debug;..\Game\vendor\imgui\bin-int\Debug-x86_64;..\Game\vendor\imgui\bin-int\Release-x86_64;..\Game\vendor\imgui\bin-int\Debug\ImGui;..\Game\vendor\imgui\bin-int\Debug\ImGui\ImGui.tlog;..\Game\vendor\imgui\bin-int\Debug-x86_64\ImGui;..\Game\vendor\imgui\bin-int\Debug-x86_64\ImGui\ImGui.tlog;..\Game\vendor\imgui\bin-int\Release-x86_64\ImGui;..\Game\vendor\imgui\bin-int\Release-x86_64\ImGui\ImGui.tlog;..\Game\vendor\imgui\examples\example_allegro5;..\Game\vendor\imgui\examples\example_android_opengl3;..\Game\vendor\imgui\examples\example_apple_metal;..\Game\vendor\imgui\examples\example_apple_opengl2;..\Game\vendor\imgui\examples\example_emscripten_opengl3;..\Game\vendor\imgui\examples\example_emscripten_wgpu;..\Game\vendor\imgui\examples\example_glfw_metal;..\Game\vendor\imgui\examples\example_glfw_opengl2;..\Game\vendor\imgui\examples\example_glfw_opengl3;..\Game\vendor\imgui\examples\example_glfw_vulkan;..\Game\vendor\imgui\examples\example_glut_opengl2;..\Game\vendor\imgui\examples\example_marmalade;..\Game\vendor\imgui\examples\example_null;..\Game\vendor\imgui\examples\example_sdl_directx11;..\Game\vendor\imgui\examples\example_sdl_metal;..\Game\vendor\imgui\examples\example_sdl_opengl2;..\Game\vendor\imgui\examples\example_sdl_opengl3;..\Game\vendor\imgui\examples\example_sdl_vulkan;..\Game\vendor\imgui\examples\example_win32_directx10;..\Game\vendor\imgui\examples\example_win32_directx11;..\Game\vendor\imgui\examples\example_win32_directx12;..\Game\vendor\imgui\examples\example_win32_directx9;..\Game\vendor\imgui\examples\libs;..\Game\vendor\imgui\examples\example_android_opengl3\android;..\Game\vendor\imgui\examples\example_android_opengl3\android\app;..\Game\vendor\imgui\examples\example_android_opengl3\android\app\src;..\Game\vendor\imgui\examples\example_android_opengl3\android\app\src\main;..\Game\vendor\imgui\examples\example_android_opengl3\android\app\src\main\java;..\Game\vendor\imgui\examples\example_apple_metal\example_apple_metal.xcodeproj;..\Game\vendor\imgui\examples\example_apple_metal\iOS;..\Game\vendor\imgui\examples\example_apple_metal\macOS;..\Game\vendor\imgui\examples\example_apple_opengl2\example_apple_opengl2.xcodeproj;..\Game\vendor\imgui\examples\example_marmalade\data;..\Game\vendor\imgui\examples\libs\gl3w;..\Game\vendor\imgui\examples\libs\glfw;..\Game\vendor\imgui\examples\libs\usynergy;..\Game\vendor\imgui\examples\libs\gl3w\GL;..\Game\vendor\imgui\examples\libs\glfw\include;..\Game\vendor\imgui\examples\libs\glfw\lib-vc2010-32;..\Game\vendor\imgui\examples\libs\glfw\lib-vc2010-64;..\Game\vendor\imgui\examples\libs\glfw\include\GLFW;..\Game\vendor\imgui\misc\cpp;..\Game\vendor\imgui\misc\debuggers;..\Game\vendor\imgui\misc\fonts;..\Game\vendor\imgui\misc\freetype;..\Game\vendor\imgui\misc\single_file;..\Game\vendor\vld\dlls;..\Game\vendor\vld\include;..\Game\vendor\vld\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\Game\vendor\vld\lib;..\Game\vendor\assimp\Debug\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>_UNICODE;UNICODE;_NDEBUG;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>Src;..\Game\vendor\assimp;..\Game\vendor\directxtk;..\Game\vendor\imgui;..\Game\vendor\singleHeaders;..\Game\vendor\vld;..\Game\vendor\assimp\Debug;..\Game\vendor\assimp\include;..\Game\vendor\assimp\Release;..\Game\vendor\assimp\Debug\dll;..\Game\vendor\assimp\Debug\lib;..\Game\vendor\assimp\include\assimp;..\Game\vendor\assimp\include\assimp\Compiler;..\Game\vendor\assimp\include\assimp\port;..\Game\vendor\assimp\include\assimp\port\AndroidJNI;..\Game\vendor\assimp\Release\dll;..\Game\vendor\assimp\Release\lib;..\Game\vendor\directxtk\Audio;..\Game\vendor\directxtk\bin;..\Game\vendor\directxtk\bin-int;..\Game\vendor\directxtk\DirectXTK;..\Game\vendor\directxtk\Inc;..\Game\vendor\directxtk\Src;..\Game\vendor\directxtk\bin\Debug;..\Game\vendor\directxtk\bin\Debug-x86_64;..\Game\vendor\directxtk\bin\Release-x86_64;..\Game\vendor\directxtk\bin\Debug\DirectXTK;..\Game\vendor\directxtk\bin\Debug-x86_64\DirectXTK;..\Game\vendor\directxtk\bin\Release-x86_64\DirectXTK;..\Game\vendor\directxtk\bin-int\Debug;..\Game\vendor\directxtk\bin-int\Debug-x86_64;..\Game\vendor\directxtk\bin-int\Release-x86_64;..\Game\vendor\directxtk\bin-int\Debug\DirectXTK;..\Game\vendor\directxtk\bin-int\Debug\DirectXTK\DirectXTK.tlog;..\Game\vendor\directxtk\bin-int\Debug-x86_64\DirectXTK;..\Game\vendor\directxtk\bin-int\Debug-x86_64\DirectXTK\DirectXTK.tlog;..\Game\vendor\directxtk\bin-int\Release-x86_64\DirectXTK;..\Game\vendor\directxtk\bin-int\Release-x86_64\DirectXTK\DirectXTK.tlog;..\Game\vendor\directxtk\Src\Shaders;..\Game\vendor\directxtk\Src\Shaders\Compiled;..\Game\vendor\imgui\backends;..\Game\vendor\imgui\bin;..\Game\vendor\imgui\bin-int;..\Game\vendor\imgui\docs;..\Game\vendor\imgui\examples;..\Game\vendor\imgui\ImGui;..\Game\vendor\imgui\misc;..\Game\vendor\imgui\backends\vulkan;..\Game\vendor\imgui\bin\Debug;..\Game\vendor\imgui\bin\Debug-x86_64;..\Game\vendor\imgui\bin\Release-x86_64;..\Game\vendor\imgui\bin\Debug\ImGui;..\Game\vendor\imgui\bin\Debug-x86_64\ImGui;..\Game\vendor\imgui\bin\Release-x86_64\ImGui;..\Game\vendor\imgui\bin-int\Debug;..\Game\vendor\imgui\bin-int\Debug-x86_64;..\Game\vendor\imgui\bin-int\Release-x86_64;..\Game\vendor\imgui\bin-int\Debug\ImGui;..\Game\vendor\imgui\bin-int\Debug\ImGui\ImGui.tlog;..\Game\vendor\imgui\bin-int\Debug-x86_64\ImGui;..\Game\vendor\imgui\bin-int\Debug-x86_64\ImGui\ImGui.tlog;..\Game\vendor\imgui\bin-int\Release-x86_64\ImGui;..\Game\vendor\imgui\bin-int\Release-x86_64\ImGui\ImGui.tlog;..\Game\vendor\imgui\examples\example_allegro5;..\Game\vendor\imgui\examples\example_android_opengl3;..\Game\vendor\imgui\examples\example_apple_metal;..\Game\vendor\imgui\examples\example_apple_opengl2;..\Game\vendor\imgui\examples\example_emscripten_opengl3;..\Game\vendor\imgui\examples\example_emscripten_wgpu;..\Game\vendor\imgui\examples\example_glfw_metal;..\Game\vendor\imgui\examples\example_glfw_opengl2;..\Game\vendor\imgui\examples\example_glfw_opengl3;..\Game\vendor\imgui\examples\example_glfw_vulkan;..\Game\vendor\imgui\examples\example_glut_opengl2;..\Game\vendor\imgui\examples\example_marmalade;..\Game\vendor\imgui\examples\example_null;..\Game\vendor\imgui\examples\example_sdl_directx11;..\Game\vendor\imgui\examples\example_sdl_metal;..\Game\vendor\imgui\examples\example_sdl_opengl2;..\Game\vendor\imgui\examples\example_sdl_opengl3;..\Game\vendor\imgui\examples\example_sdl_vulkan;..\Game\vendor\imgui\examples\example_win32_directx10;..\Game\vendor\imgui\examples\example_win32_directx11;..\Game\vendor\imgui\examples\example_win32_directx12;..\Game\vendor\imgui\examples\example_win32_directx9;..\Game\vendor\imgui\examples\libs;..\Game\vendor\imgui\examples\example_android_opengl3\android;..\Game\vendor\imgui\examples\example_android_opengl3\android\app;..\Game\vendor\imgui\examples\example_android_opengl3\android\app\src;..\Game\vendor\imgui\examples\example_android_opengl3\android\app\src\main;..\Game\vendor\imgui\examples\example_android_opengl3\android\app\src\main\java;..\Game\vendor\imgui\examples\example_apple_metal\example_apple_metal.xcodeproj;..\Game\vendor\imgui\examples\example_apple_metal\iOS;..\Game\vendor\imgui\examples\example_apple_metal\macOS;..\Game\vendor\imgui\examples\example_apple_opengl2\example_apple_opengl2.xcodeproj;..\Game\vendor\imgui\examples\example_marmalade\data;..\Game\vendor\imgui\examples\libs\gl3w;..\Game\vendor\imgui\examples\libs\glfw;..\Game\vendor\imgui\examples\libs\usynergy;..\Game\vendor\imgui\examples\libs\gl3w\GL;..\Game\vendor\imgui\examples\libs\glfw\include;..\Game\vendor\imgui\examples\libs\glfw\lib-vc2010-32;..\Game\vendor\imgui\examples\libs\glfw\lib-vc2010-64;..\Game\vendor\imgui\examples\libs\glfw\include\GLFW;..\Game\vendor\imgui\misc\cpp;..\Game\vendor\imgui\misc\debuggers;..\Game\vendor\imgui\misc\fonts;..\Game\vendor\imgui\misc\freetype;..\Game\vendor\imgui\misc\single_file;..\Game\vendor\vld\dlls;..\Game\vendor\vld\include;..\Game\vendor\vld\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>..\Game\vendor\vld\lib;..\Game\vendor\assimp\Release\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Src\Source.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Game\vendor\directxtk\DirectXTK\DirectXTK.vcxproj">
+      <Project>{F78B7304-63F6-277B-AC34-D92018DE05D0}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

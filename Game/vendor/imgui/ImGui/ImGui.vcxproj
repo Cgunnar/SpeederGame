@@ -41,14 +41,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\bin\Debug-x86_64\ImGui\</OutDir>
-    <IntDir>..\bin-int\Debug-x86_64\ImGui\</IntDir>
+    <OutDir>..\bin\Debug\ImGui\</OutDir>
+    <IntDir>..\bin-int\Debug\ImGui\</IntDir>
     <TargetName>ImGui</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\bin\Release-x86_64\ImGui\</OutDir>
-    <IntDir>..\bin-int\Release-x86_64\ImGui\</IntDir>
+    <OutDir>..\bin\Release\ImGui\</OutDir>
+    <IntDir>..\bin-int\Release\ImGui\</IntDir>
     <TargetName>ImGui</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>

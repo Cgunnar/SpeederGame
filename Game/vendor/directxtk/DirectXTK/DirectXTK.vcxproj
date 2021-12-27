@@ -41,14 +41,14 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>..\bin\Debug-x86_64\DirectXTK\</OutDir>
-    <IntDir>..\bin-int\Debug-x86_64\DirectXTK\</IntDir>
+    <OutDir>..\bin\Debug\DirectXTK\</OutDir>
+    <IntDir>..\bin-int\Debug\DirectXTK\</IntDir>
     <TargetName>DirectXTK</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\bin\Release-x86_64\DirectXTK\</OutDir>
-    <IntDir>..\bin-int\Release-x86_64\DirectXTK\</IntDir>
+    <OutDir>..\bin\Release\DirectXTK\</OutDir>
+    <IntDir>..\bin-int\Release\DirectXTK\</IntDir>
     <TargetName>DirectXTK</TargetName>
     <TargetExt>.lib</TargetExt>
   </PropertyGroup>

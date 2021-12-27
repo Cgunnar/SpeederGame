@@ -25,6 +25,9 @@
     <Filter Include="Src\Shaders">
       <UniqueIdentifier>{E6043150-52BA-A945-DBAE-A31C4763A049}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Shaders\CS">
+      <UniqueIdentifier>{0B744131-F741-3537-E0D5-A55DCC42119C}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Src\Utility">
       <UniqueIdentifier>{509EB806-BC53-31FC-4548-2BD3B1FC2700}</UniqueIdentifier>
     </Filter>
@@ -129,6 +132,12 @@
     <ClInclude Include="Src\NativeScripts\CameraControllerScript.h">
       <Filter>Src\NativeScripts</Filter>
     </ClInclude>
+    <ClInclude Include="Src\NativeScripts\NativeScript.h">
+      <Filter>Src\NativeScripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\NativeScripts\ShipContollerScript.h">
+      <Filter>Src\NativeScripts</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Utility\FileUtility.hpp">
       <Filter>Src\Utility</Filter>
     </ClInclude>
@@ -162,8 +171,6 @@
     <ClInclude Include="vendor\singleHeaders\stb_image.h">
       <Filter>vendor\singleHeaders</Filter>
     </ClInclude>
-    <ClInclude Include="Src\NativeScripts\ShipContollerScript.h" />
-    <ClInclude Include="Src\NativeScripts\NativeScript.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">
@@ -235,6 +242,9 @@
     <ClCompile Include="Src\NativeScripts\CameraControllerScript.cpp">
       <Filter>Src\NativeScripts</Filter>
     </ClCompile>
+    <ClCompile Include="Src\NativeScripts\ShipContollerScript.cpp">
+      <Filter>Src\NativeScripts</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Utility\FrameTimer.cpp">
       <Filter>Src\Utility</Filter>
     </ClCompile>
@@ -253,9 +263,20 @@
     <ClCompile Include="vendor\imgui\backends\imgui_impl_win32.cpp">
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
-    <ClCompile Include="Src\NativeScripts\ShipContollerScript.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Src\Shaders\CS\CS_convolute_DiffIrrCube.hlsl">
+      <Filter>Src\Shaders\CS</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\CS\spbrdf.hlsl">
+      <Filter>Src\Shaders\CS</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\CS\spmap.hlsl">
+      <Filter>Src\Shaders\CS</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\CS_equirect2cube.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
     <FxCompile Include="Src\Shaders\PS_FlatTexture.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
@@ -289,6 +310,9 @@
     <FxCompile Include="Src\Shaders\PS_SkyBox.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Src\Shaders\PS_SkyBox_toneMapped.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
     <FxCompile Include="Src\Shaders\PixelShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
@@ -301,10 +325,5 @@
     <FxCompile Include="Src\Shaders\VertexShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\CS_equirect2cube.hlsl" />
-    <FxCompile Include="Src\Shaders\PS_SkyBox_toneMapped.hlsl" />
-    <FxCompile Include="Src\Shaders\CS\CS_convolute_DiffIrrCube.hlsl" />
-    <FxCompile Include="Src\Shaders\CS\spmap.hlsl" />
-    <FxCompile Include="Src\Shaders\CS\spbrdf.hlsl" />
   </ItemGroup>
 </Project>

@@ -104,12 +104,13 @@ string ChannelToString(Channel c)
 	case Channel::a: return "a";
 	case Channel::none: return "";
 	}
+	return "";
 }
 
 Channel SelectChannel()
 {
-	string inputSelectedChannel = "";
-	while (inputSelectedChannel.empty())
+	string inputSelectedChannel;
+	while (true)
 	{
 		cout << endl << "select channel r, g, b, or a" << endl;
 		cin >> inputSelectedChannel;

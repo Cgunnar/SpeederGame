@@ -66,7 +66,7 @@ void Application::Run()
 
 		auto ms = Input::Get().GetMouse().GetMouseState();
 
-		m_scene->Update(FrameTimer::dt());
+		m_scene->Update(static_cast<float>(FrameTimer::dt()));
 
 		
 		

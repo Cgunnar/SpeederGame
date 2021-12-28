@@ -25,7 +25,7 @@ Scene::Scene()
 
 	m_pistol = EntityReg::createEntity();
 	m_pistol.addComponent(TransformComp())->transform.setTranslation(3, 2, 4);
-	m_pistol.getComponent<TransformComp>()->transform.setScale(0.03);
+	m_pistol.getComponent<TransformComp>()->transform.setScale(0.03f);
 	//m_pistol.getComponent<TransformComp>()->transform.setRotationDeg(90, -70, 0);
 	//m_pistol.addComponent(RenderModelComp("Assets/Models/MetalRoughSpheres/glTF/MetalRoughSpheres.gltf", RenderPassEnum::pbr));
 	m_pistol.addComponent(RenderModelComp("Assets/Models/cerberus/scene.gltf", RenderPassEnum::pbr));
@@ -44,7 +44,7 @@ Scene::Scene()
 
 	m_nanosuit = EntityReg::createEntity();
 	m_nanosuit.addComponent(TransformComp())->transform.setTranslation(2, 1, 5);
-	m_nanosuit.getComponent<TransformComp>()->transform.setScale(0.1);
+	m_nanosuit.getComponent<TransformComp>()->transform.setScale(0.1f);
 	m_nanosuit.addComponent(RenderModelComp("Assets/Models/nanosuit/nanosuit.obj", RenderPassEnum::phong));
 
 	m_arrow = EntityReg::createEntity();

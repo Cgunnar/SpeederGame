@@ -178,7 +178,6 @@ EngineMeshSubset AssimpLoader::processMesh(aiMesh* mesh, const aiScene* scene, c
 	}
 
 	EngineMaterial newMat;
-	aiReturn errorCheck;
 
 	// Get material
 	auto mtl = scene->mMaterials[mesh->mMaterialIndex];

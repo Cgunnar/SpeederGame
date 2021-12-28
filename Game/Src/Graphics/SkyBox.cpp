@@ -241,7 +241,7 @@ std::shared_ptr<Texture2D> SkyBox::ConvoluteSpecularCubeMap(std::shared_ptr<Text
 	
 	float deltaRoughness = 1.0f / (float)(descCube.MipLevels-1);
 	rfm::Vector4 roughness;
-	for (int i = 1; i < descCube.MipLevels; i++)
+	for (unsigned int i = 1; i < descCube.MipLevels; i++)
 	{
 		uDesc.Texture2DArray.MipSlice = i;
 		LowLvlGfx::CreateUAV(outPutCubeMap, &uDesc);

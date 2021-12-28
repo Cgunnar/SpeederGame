@@ -88,46 +88,49 @@ public:
 		case MeshFormat::POS_NOR_UV_TAN_BITAN:
 			return (float*)this->verticesTBN.data();
 		}
+		return nullptr;
 	}
 
-	size_t getVertexSize() const
+	uint32_t getVertexSize() const
 	{
 		if (hasNormalMap)
-			return sizeof(Vertex_POS_NOR_UV_TAN_BITAN);
+			return (uint32_t)sizeof(Vertex_POS_NOR_UV_TAN_BITAN);
 		else
-			return sizeof(Vertex_POS_NOR_UV);
+			return (uint32_t)sizeof(Vertex_POS_NOR_UV);
 	}
 
-	size_t getVertexSize(MeshFormat format) const
+	uint32_t getVertexSize(MeshFormat format) const
 	{
 		switch (format)
 		{
 		case MeshFormat::POS_NOR_UV:
-			return sizeof(Vertex_POS_NOR_UV);
+			return (uint32_t)sizeof(Vertex_POS_NOR_UV);
 		case MeshFormat::POS_NOR_UV_TAN_BITAN:
-			return sizeof(Vertex_POS_NOR_UV_TAN_BITAN);
+			return (uint32_t)sizeof(Vertex_POS_NOR_UV_TAN_BITAN);
 		}	
+		return 0;
 	}
-	size_t getVertexCount() const
+	uint32_t getVertexCount() const
 	{
 		if (hasNormalMap)
-			return verticesTBN.size();
+			return (uint32_t)verticesTBN.size();
 		else
-			return vertices.size();
+			return (uint32_t)vertices.size();
 	}
-	size_t getVertexCount(MeshFormat format) const
+	uint32_t getVertexCount(MeshFormat format) const
 	{
 		switch (format)
 		{
 		case MeshFormat::POS_NOR_UV:
-			return vertices.size();
+			return (uint32_t)vertices.size();
 		case MeshFormat::POS_NOR_UV_TAN_BITAN:
-			return verticesTBN.size();
+			return (uint32_t)verticesTBN.size();
 		}
+		return 0;
 	}
-	size_t getIndicesCount() const
+	uint32_t getIndicesCount() const
 	{
-		return indices.size();
+		return (uint32_t)indices.size();
 	}
 	const unsigned int* getIndicesData() const
 	{

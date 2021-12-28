@@ -51,8 +51,8 @@ namespace Geometry
 	{
 	public:
 		Sphere_POS_NOR_UV(int tessellation = 16, float radius = 1);
-		const uint32_t IndexCount() const { return indices.size(); }
-		const uint32_t ArraySize() const { return vertices.size() * vertexStride; }
+		const uint32_t IndexCount() const { return static_cast<uint32_t>(indices.size()); }
+		const uint32_t ArraySize() const { return static_cast<uint32_t>(vertices.size() * vertexStride); }
 		float* VertexData() { return (float*)vertices.data(); }
 		uint32_t* IndexData() { return (uint32_t*)indices.data(); }
 
@@ -68,8 +68,8 @@ namespace Geometry
 	{
 	public:
 		Sphere_POS_NOR_UV_TAN_BITAN(int tessellation = 16, float radius = 1);
-		const uint32_t IndexCount() const { return indices.size(); }
-		const uint32_t ArraySize() const { return vertices.size() * vertexStride; }
+		const uint32_t IndexCount() const { return static_cast<uint32_t>(indices.size()); }
+		const uint32_t ArraySize() const { return static_cast<uint32_t>(vertices.size() * vertexStride); }
 		float* VertexData() { return (float*)vertices.data(); }
 		uint32_t* IndexData() { return (uint32_t*)indices.data(); }
 

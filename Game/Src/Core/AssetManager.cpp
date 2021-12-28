@@ -122,10 +122,10 @@ GID AssetManager::LoadMesh(const std::string& path, MeshFormat format)
 	AssimpLoader a;
 	EngineMeshData engineMeshData = a.loadStaticModel(path);
 	
-	mesh.ib = LowLvlGfx::CreateIndexBuffer(engineMeshData.getIndicesData(), engineMeshData.getIndicesCount());
+	mesh.ib = LowLvlGfx::CreateIndexBuffer(engineMeshData.getIndicesData(), (uint32_t)engineMeshData.getIndicesCount());
 	mesh.vb = LowLvlGfx::CreateVertexBuffer(engineMeshData.getVertextBuffer(format),
 		engineMeshData.getVertexCount(format) * engineMeshData.getVertexSize(format),
-		engineMeshData.getVertexSize(format));
+		(uint32_t)engineMeshData.getVertexSize(format));
 
 	mesh.baseVertexLocation = 0;
 	mesh.startIndexLocation = 0;
@@ -324,7 +324,7 @@ GID AssetManager::LoadModel(const std::string& filePath)
 	EngineMeshData engineMeshData = a.loadStaticModel(filePath);
 
 	Model model;
-	model.ib = LowLvlGfx::CreateIndexBuffer(engineMeshData.getIndicesData(), engineMeshData.getIndicesCount());
+	model.ib = LowLvlGfx::CreateIndexBuffer(engineMeshData.getIndicesData(), (uint32_t)engineMeshData.getIndicesCount());
 	model.vb = LowLvlGfx::CreateVertexBuffer(engineMeshData.getVertextBuffer(), engineMeshData.getVertexCount() * engineMeshData.getVertexSize(), engineMeshData.getVertexSize());
 
 

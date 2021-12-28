@@ -120,9 +120,9 @@ struct SubMesh
 {
 	VertexBuffer vb;
 	IndexBuffer ib;
-	uint32_t indexCount;
-	uint32_t startIndexLocation;
-	int32_t baseVertexLocation;
+	uint32_t indexCount = 0;
+	uint32_t startIndexLocation = 0;
+	int32_t baseVertexLocation = 0;
 	GID GetGID() const { return guid; }
 private:
 	GID guid = GID::GenerateNew();

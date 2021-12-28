@@ -1,6 +1,12 @@
 #pragma once
 #include "RimfrostMath.hpp"
 
+enum class MeshFormat
+{
+	POS_NOR_UV = 0,
+	POS_NOR_UV_TAN_BITAN,
+};
+
 enum class LoadTexFlag
 {
 	none = 0,

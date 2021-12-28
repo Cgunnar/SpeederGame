@@ -61,10 +61,23 @@ namespace Geometry
 		std::vector<Vertex_POS_NOR_UV> vertices;
 		std::vector<uint32_t> indices;
 		uint32_t indexCount = 0;
-		uint32_t arraySize  = 0;
+		uint32_t arraySize  = 0;		
+	};
 
+	class Sphere_POS_NOR_UV_TAN_BITAN
+	{
+	public:
+		Sphere_POS_NOR_UV_TAN_BITAN(int tessellation = 16, float radius = 1);
+		const uint32_t IndexCount() const { return indices.size(); }
+		const uint32_t ArraySize() const { return vertices.size() * vertexStride; }
+		float* VertexData() { return (float*)vertices.data(); }
+		uint32_t* IndexData() { return (uint32_t*)indices.data(); }
 
-
-		
+		static constexpr uint32_t vertexStride = sizeof(Vertex_POS_NOR_UV_TAN_BITAN);
+	private:
+		std::vector<Vertex_POS_NOR_UV_TAN_BITAN> vertices;
+		std::vector<uint32_t> indices;
+		uint32_t indexCount = 0;
+		uint32_t arraySize = 0;
 	};
 }

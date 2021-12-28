@@ -35,7 +35,7 @@ AssetManager::AssetManager()
 
 	//-----------------------
 
-	Geometry::Sphere_POS_NOR_UV sphere;
+	Geometry::Sphere_POS_NOR_UV_TAN_BITAN sphere(16);
 	m_renderUnits.push_back(RenderUnit());
 	SubMesh& sphereMesh = m_renderUnits.back().subMesh;
 	sphereMesh.ib = LowLvlGfx::CreateIndexBuffer(sphere.IndexData(), sphere.IndexCount());
@@ -78,6 +78,12 @@ const SubMesh& AssetManager::GetMesh(SimpleMesh mesh) const
 	return m_renderUnits[id - 1].subMesh;
 }
 
+const SubMesh& AssetManager::GetMesh(GID id) const
+{
+	assert(m_meshes.contains(id));
+	return m_meshes.at(id);
+}
+
 const RenderUnit& AssetManager::GetRenderUnit(RenderUnitID id) const
 {
 	assert(id > 0 && id - 1 < m_renderUnits.size());
@@ -101,6 +107,34 @@ RenderUnitID AssetManager::AddRenderUnit(RenderUnit renderUnit)
 {
 	m_renderUnits.push_back(renderUnit);
 	return m_renderUnits.size(); // RenderUnitID will always be index + 1
+}
+
+GID AssetManager::LoadMesh(const std::string& path, MeshFormat format)
+{
+	if (m_meshFilePathMap.contains(path))
+	{
+		return m_meshFilePathMap[path];
+	}
+	SubMesh mesh;
+
+	m_meshFilePathMap[path] = mesh.GetGID();
+
+	AssimpLoader a;
+	EngineMeshData engineMeshData = a.loadStaticModel(path);
+	
+	mesh.ib = LowLvlGfx::CreateIndexBuffer(engineMeshData.getIndicesData(), engineMeshData.getIndicesCount());
+	mesh.vb = LowLvlGfx::CreateVertexBuffer(engineMeshData.getVertextBuffer(format),
+		engineMeshData.getVertexCount(format) * engineMeshData.getVertexSize(format),
+		engineMeshData.getVertexSize(format));
+
+	mesh.baseVertexLocation = 0;
+	mesh.startIndexLocation = 0;
+	mesh.indexCount = mesh.ib.GetIndexCount();
+	
+	assert(!m_meshes.contains(mesh.GetGID()));
+	m_meshes[mesh.GetGID()] = mesh;
+
+	return mesh.GetGID();
 }
 
 void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subModel, VertexBuffer vb, IndexBuffer ib)

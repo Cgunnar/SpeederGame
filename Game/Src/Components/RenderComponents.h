@@ -22,7 +22,20 @@ struct RenderModelComp : rfe::Component<RenderModelComp>
 			ModelID = modelID;
 		}
 	}
-	
+
+	void SetMode(GID modelID)
+	{
+		ModelID = modelID;
+		Model& model = AssetManager::Get().GetModel(modelID);
+		renderUnitBegin = model.RenderUnitBegin;
+		renderUnitEnd = model.RenderUnitEnd;
+	}
+	void SetRenderUnit(RenderUnitID renderUnitID)
+	{
+		ModelID = 0; //invalid
+		renderUnitBegin = renderUnitID;
+		renderUnitEnd = renderUnitID + 1;
+	}
 
 	RenderPassEnum renderPass = RenderPassEnum::none;
 	GID ModelID;

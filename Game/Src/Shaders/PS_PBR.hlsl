@@ -217,10 +217,9 @@ float4 main(vs_out input) : SV_TARGET
     
     
     //-------------------------
-    float3 finalColor = LightOutPut + ambient;
-    
-    finalColor += emissive;
+    float3 finalColor = LightOutPut + ambient + emissive;
     
     finalColor = finalColor / (finalColor + 1);
     return float4(finalColor, alpha);
+    //return float4(normal, alpha);
 }

@@ -58,7 +58,7 @@ Scene::Scene()
 
 	m_camera = EntityReg::createEntity();
 	m_camera.addComponent(TransformComp());
-	m_camera.getComponent<TransformComp>()->transform.setTranslation(0, 2, -1);
+	m_camera.getComponent<TransformComp>()->transform.setTranslation(0, 2, -4);
 	//m_camera.getComponent<TransformComp>()->transform.setRotationDeg(15, 0, 0);
 
 	m_camera.addScript(CameraControllerScript());
@@ -95,13 +95,26 @@ Scene::Scene()
 	rusteIronMat.materialVariant = pbrMat;
 
 	m_ironSphere = EntityReg::createEntity();
-	m_ironSphere.addComponent(TransformComp());
+	m_ironSphere.addComponent(TransformComp())->transform.setTranslation(0, 2, 0);
 	rendComp = m_ironSphere.addComponent(RenderModelComp());
 	rendComp->renderPass = RenderPassEnum::pbr;
-	SubMesh quadMeshCopy2 = AssetManager::Get().GetMesh(SimpleMesh::UVSphere_POS_NOR_UV);
+	SubMesh quadMeshCopy2 = AssetManager::Get().GetMesh(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN);
 
 	rendComp->renderUnitID = AssetManager::Get().AddRenderUnit(quadMeshCopy2, rusteIronMat);
 	
+
+	AssetManager& am = AssetManager::Get();
+
+	m_debugSphere = EntityReg::createEntity();
+	m_debugSphere.addComponent(TransformComp())->transform.setTranslation({ -3, 2, 0 });
+	m_debugSphere.getComponent<TransformComp>()->transform.setRotationDeg(0, -90, 0);
+
+	RenderModelComp rc;
+	GID mID = am.LoadMesh("Assets/Models/UV_Sphere/sphere.obj", MeshFormat::POS_NOR_UV_TAN_BITAN);
+	SubMesh blendUVSphere = am.GetMesh(mID);
+	rc.SetRenderUnit(am.AddRenderUnit(blendUVSphere, rusteIronMat));
+	rc.renderPass = RenderPassEnum::pbr;
+	rendComp = m_debugSphere.addComponent(rc);
 
 
 	m_quadContr.slider1.ChangeDefaultValues({ 0,0,8 });

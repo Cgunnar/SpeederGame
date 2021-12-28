@@ -6,8 +6,10 @@
 enum class SimpleMesh
 {
 	Quad_POS_NOR_UV = 1,
-	UVSphere_POS_NOR_UV = 2,
+	UVSphere_POS_NOR_UV_TAN_BITAN = 2,
 };
+
+
 
 
 
@@ -23,10 +25,12 @@ public:
 	std::shared_ptr<Texture2D> GetTexture2D(GID guid) const;
 	const SubMesh& GetMesh(RenderUnitID id) const;
 	const SubMesh& GetMesh(SimpleMesh mesh) const;
+	const SubMesh& GetMesh(GID id) const;
 	const RenderUnit& GetRenderUnit(RenderUnitID id) const;
 	RenderUnitID AddMesh(SubMesh mesh);
 	RenderUnitID AddRenderUnit(const SubMesh& subMesh, const Material& material);
 	RenderUnitID AddRenderUnit(RenderUnit renderUnit);
+	GID LoadMesh(const std::string& path, MeshFormat format);
 
 	GID LoadModel(const std::string& filePath);
 	Model& GetModel(GID modelID);
@@ -46,7 +50,9 @@ private:
 	std::unordered_map<uint64_t, std::shared_ptr<Texture2D>> m_textures;
 	std::unordered_map<uint64_t, Model> m_models;
 	std::unordered_map<uint64_t, Material> m_materials;
+	std::unordered_map<uint64_t, SubMesh> m_meshes;
 	std::vector<RenderUnit> m_renderUnits;
 	std::unordered_map<std::string, GID> m_filePathMap;
+	std::unordered_map<std::string, GID> m_meshFilePathMap;
 };
 

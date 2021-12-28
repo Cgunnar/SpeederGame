@@ -57,6 +57,7 @@ namespace rfm
 	
 	Vector3 operator +(const Vector3& l, const Vector3& r);
 	Vector3 operator -(const Vector3& l, const Vector3& r);
+	Vector3 operator -(const Vector3& v);
 	Vector3 operator *(const Vector3& l, const Vector3& r);
 	Vector3 operator *(float scale, const Vector3& v);
 	Vector3 operator *(const Vector3& v, float scale);

@@ -183,6 +183,11 @@ namespace rfm
 		return Vector3(l.x - r.x, l.y - r.y, l.z - r.z);
 	}
 
+	Vector3 operator-(const Vector3& v)
+	{
+		return -1 * v;
+	}
+
 	Vector3 operator*(const Vector3& l, const Vector3& r)
 	{
 		return Vector3(l.x * r.x, l.y * r.y, l.z * r.z);

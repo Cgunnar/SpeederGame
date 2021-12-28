@@ -33,6 +33,17 @@ AssetManager::AssetManager()
 	mesh.startIndexLocation = 0;
 	mesh.indexCount = mesh.ib.GetIndexCount();
 
+	//-----------------------
+
+	Geometry::Sphere_POS_NOR_UV sphere;
+	m_renderUnits.push_back(RenderUnit());
+	SubMesh& sphereMesh = m_renderUnits.back().subMesh;
+	sphereMesh.ib = LowLvlGfx::CreateIndexBuffer(sphere.IndexData(), sphere.IndexCount());
+	sphereMesh.vb = LowLvlGfx::CreateVertexBuffer(sphere.VertexData(), sphere.ArraySize(), sphere.vertexStride);
+	sphereMesh.baseVertexLocation = 0;
+	sphereMesh.startIndexLocation = 0;
+	sphereMesh.indexCount = sphereMesh.ib.GetIndexCount();
+
 }
 
 AssetManager::~AssetManager()

@@ -5,7 +5,8 @@
 
 enum class SimpleMesh
 {
-	Quad = 1,
+	Quad_POS_NOR_UV = 1,
+	UVSphere_POS_NOR_UV = 2,
 };
 
 

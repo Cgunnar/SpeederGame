@@ -192,7 +192,7 @@ bool WriteValueToChannel(const Image& baseImage)
 		c = SelectChannel();
 		while (!(0 <= val && val <= 255))
 		{
-			cout << "Enter Value to write" << endl,
+			cout << "Enter Value in range of [0, 255] to write" << endl,
 			cin >> val;
 		}
 		cout << "working..." << endl;

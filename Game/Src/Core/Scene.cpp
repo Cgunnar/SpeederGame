@@ -80,9 +80,27 @@ Scene::Scene()
 	m_quad.addComponent(TransformComp());
 	RenderModelComp* rendComp = m_quad.addComponent(RenderModelComp());
 	rendComp->renderPass = RenderPassEnum::phong;
-	SubMesh quadMeshCopy = AssetManager::Get().GetMesh(SimpleMesh::Quad);
+	SubMesh quadMeshCopy = AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV);
 	
 	rendComp->renderUnitID = AssetManager::Get().AddRenderUnit(quadMeshCopy, quadMat);
+
+
+
+	Material rusteIronMat;
+	rusteIronMat.type = MaterialType::PBR_ALBEDO_METROUG_NOR;
+	PBR_ALBEDO_METROUG_NOR pbrMat;
+	pbrMat.matallicRoughnessTextureID = AssetManager::Get().LoadTex2D("Assets/Textures/rustediron/metallic_roughness.png", LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
+	pbrMat.normalTextureID = AssetManager::Get().LoadTex2D("Assets/Textures/rustediron/normal.png", LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
+	pbrMat.albedoTextureID = AssetManager::Get().LoadTex2D("Assets/Textures/rustediron/basecolor.png", LoadTexFlag::GenerateMips);
+	rusteIronMat.materialVariant = pbrMat;
+
+	m_ironSphere = EntityReg::createEntity();
+	m_ironSphere.addComponent(TransformComp());
+	rendComp = m_ironSphere.addComponent(RenderModelComp());
+	rendComp->renderPass = RenderPassEnum::pbr;
+	SubMesh quadMeshCopy2 = AssetManager::Get().GetMesh(SimpleMesh::UVSphere_POS_NOR_UV);
+
+	rendComp->renderUnitID = AssetManager::Get().AddRenderUnit(quadMeshCopy2, rusteIronMat);
 	
 
 
@@ -107,7 +125,7 @@ void Scene::Update(float dt)
 
 	Transform followShip = m_ship.getComponent<TransformComp>()->transform;
 	followShip.translateL(0, 1, -4);
-	m_camera.getComponent<TransformComp>()->transform = followShip;
+	//m_camera.getComponent<TransformComp>()->transform = followShip;
 
 
 	m_quadContr.Show();

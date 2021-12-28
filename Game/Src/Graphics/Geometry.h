@@ -46,4 +46,25 @@ namespace Geometry
 		float* VertexData() { return (float*)vertices.data(); }
 		uint32_t* IndexData() { return (uint32_t*)indices.data(); }
 	};
+
+	class Sphere_POS_NOR_UV
+	{
+	public:
+		Sphere_POS_NOR_UV(int tessellation = 16, float radius = 1);
+		const uint32_t IndexCount() const { return indices.size(); }
+		const uint32_t ArraySize() const { return vertices.size() * vertexStride; }
+		float* VertexData() { return (float*)vertices.data(); }
+		uint32_t* IndexData() { return (uint32_t*)indices.data(); }
+
+		static constexpr uint32_t vertexStride = sizeof(Vertex_POS_NOR_UV);
+	private:
+		std::vector<Vertex_POS_NOR_UV> vertices;
+		std::vector<uint32_t> indices;
+		uint32_t indexCount = 0;
+		uint32_t arraySize  = 0;
+
+
+
+		
+	};
 }

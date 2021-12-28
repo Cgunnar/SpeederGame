@@ -32,6 +32,12 @@ struct Vertex_POS_NOR_UV
 	rfm::Vector2 uv;
 };
 
+struct Vertex_POS_UV
+{
+	rfm::Vector3 position;
+	rfm::Vector2 uv;
+};
+
 struct Vertex_POS_NOR_UV_TAN_BITAN
 {
 	rfm::Vector3 position;

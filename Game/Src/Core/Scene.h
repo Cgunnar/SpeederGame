@@ -24,6 +24,7 @@ private:
 	rfe::Entity m_ship;
 	rfe::Entity m_arrow;
 	rfe::Entity m_quad;
+	rfe::Entity m_ironSphere;
 	rfe::Entity m_brickWallFloor;
 	rfe::Entity m_pointLight;
 	GuiTest m_quadContr = GuiTest("quad controller");

@@ -13,9 +13,6 @@
 
 using namespace std;
 
-
-std::filesystem::path TakeInputFile();
-
 enum class Channel
 {
 	r = 0,
@@ -25,107 +22,75 @@ enum class Channel
 	none = 4
 };
 
-string ChannelToString(Channel c);
-
-string RemoveIllegalChars(const string& str);
-
-Channel SelectChannel(Channel exlude = Channel::none)
+struct Image
 {
-	string inputSelectedChannel = "";
-	while (inputSelectedChannel.empty())
-	{
-		cout << endl << "select channel r, g, b, or a" << endl;
-		cin >> inputSelectedChannel;
-		Channel c = Channel::none;
-		if (inputSelectedChannel == "r") c = Channel::r;
-		if (inputSelectedChannel == "g") c = Channel::g;
-		if (inputSelectedChannel == "b") c = Channel::b;
-		if (inputSelectedChannel == "a") c = Channel::a;
+	int width = 0;
+	int height = 0;
+	int channels = 0;
+	Channel selectedInputChannel = Channel::none;
+	Channel selectedOutPutChannel = Channel::none;
+	unsigned char* data = nullptr;
+};
 
-		if (c != exlude && c != Channel::none)
-			return c;
-		else
-			cout << "can not select that channal" << endl;
-	}
-
-}
+filesystem::path TakeInputFile();
+string ChannelToString(Channel c);
+Channel SelectChannel();
+bool AddImage(const Image& baseImage, vector<Image>& images);
+bool WriteValueToChannel(const Image& baseImage);
 
 int main(int argc, char* argv[])
 {
+	std::vector<Image> inputImages;
+	cout << "Enter file, this will be used as a base to write to" << endl;
 
-	//output
-	string outOutFileName = "";
-	cin >> outOutFileName;
+	string baseFile = TakeInputFile().string();
+	Image baseImage;
 
+	cout << "load: " << baseFile << endl;
+	baseImage.data = stbi_load(baseFile.c_str(), &baseImage.width, &baseImage.height, &baseImage.channels, STBI_rgb_alpha);
+	assert(baseImage.data);
+	cout << "width:\t\t" << baseImage.width << endl;
+	cout << "height:\t\t" << baseImage.height << endl;
+	cout << "channels:\t" << baseImage.channels << endl;
 
-
-	//input file 1
-	cout << "Enter file1 to read from" << endl;
-
-	string input1 = TakeInputFile().string();
-	int input1Width = 0;
-	int input1Height = 0;
-	int input1Channels = 0;
-
-	cout << "load: " << input1 << endl;
-	unsigned char* input1ImagePtr = stbi_load(input1.c_str(), &input1Width, &input1Height, &input1Channels, STBI_rgb_alpha);
-	assert(input1ImagePtr);
-	cout << "width:\t\t" << input1Width << endl;
-	cout << "height:\t\t" << input1Height << endl;
-	cout << "channels:\t" << input1Channels << endl;
-
-	Channel input1SelectedChannel = SelectChannel(input1Channels < STBI_rgb_alpha ? Channel::a : Channel::none);
-
-	//input file 2
-	cout << "Enter file2 to read from" << endl;
-
-	string input2 = TakeInputFile().string();
-	int input2Width = 0;
-	int input2Height = 0;
-	int input2Channels = 0;
-
-	cout << "load: " << input2 << endl;
-	unsigned char* input2ImagePtr = stbi_load(input2.c_str(), &input2Width, &input2Height, &input2Channels, STBI_rgb_alpha);
-	assert(input2ImagePtr);
-	cout << "width:\t\t" << input2Width << endl;
-	cout << "height:\t\t" << input2Height << endl;
-	cout << "channels:\t" << input2Channels << endl;
-
-	if (input1Height != input2Height || input1Width != input1Width)
+	while (WriteValueToChannel(baseImage))
 	{
-		cout << "texture dimensions does not match" << endl;
-		stbi_image_free(input1ImagePtr);
-		stbi_image_free(input2ImagePtr);
-		return 0;
+		cout << "Value was written to image." << endl;
 	}
-
-	Channel input2SelectedChannel = SelectChannel(input2Channels < STBI_rgb_alpha ? Channel::a : Channel::none);
-
-	cout << "which channel should " << ChannelToString(input1SelectedChannel) <<" from file 1 be copied to ? " << endl;
-	Channel out1SelectedChannel = SelectChannel();
-	cout << "which channel should " << ChannelToString(input2SelectedChannel) <<" from file 2 be copied to ? " << endl;
-	Channel out2SelectedChannel = SelectChannel(out1SelectedChannel);
-
+	
+	
+	while (AddImage(baseImage, inputImages) && inputImages.size() < 5)
+	{
+		cout << "input image added" << endl;
+	}
 	
 
-
-
-	std::cout << "exit on input\n";
-	auto c = std::getchar();
-	return 0;
-}
-
-std::string RemoveIllegalChars(const std::string& str)
-{
-	std::string illegalChars = "\\/:?\"<>|";
-	std::string legalString = "";
-	for (int i = 0; i < str.length(); i++)
+	cout << "working..." << endl;
+	for (int i = 0; i < baseImage.width * baseImage.height * 4; i += 4)
 	{
-		if (illegalChars.find(str[i]) == std::string::npos) {
-			legalString += str[i];
+		for (const auto& img : inputImages)
+		{
+			baseImage.data[i + (int)img.selectedOutPutChannel] = img.data[i + (int)img.selectedInputChannel];
 		}
 	}
-	return legalString;
+	string outOutFileName = "";
+	cout << "enter name of output file" << endl;
+	cin >> outOutFileName;
+
+	if (filesystem::path(outOutFileName).extension().string() != ".png") outOutFileName += ".png";
+	if (!stbi_write_png(outOutFileName.c_str(), baseImage.width, baseImage.height, STBI_rgb_alpha, baseImage.data, baseImage.width * STBI_rgb_alpha))
+	{
+		cout << "write error" << endl;
+	}
+
+
+	stbi_image_free(baseImage.data);
+	for (auto& img : inputImages)
+	{
+		stbi_image_free(img.data);
+	}
+	cout << "done" << endl;
+	return 0;
 }
 
 string ChannelToString(Channel c)
@@ -141,7 +106,113 @@ string ChannelToString(Channel c)
 	}
 }
 
-std::filesystem::path TakeInputFile()
+Channel SelectChannel()
+{
+	string inputSelectedChannel = "";
+	while (inputSelectedChannel.empty())
+	{
+		cout << endl << "select channel r, g, b, or a" << endl;
+		cin >> inputSelectedChannel;
+		Channel c = Channel::none;
+		if (inputSelectedChannel == "r") c = Channel::r;
+		if (inputSelectedChannel == "g") c = Channel::g;
+		if (inputSelectedChannel == "b") c = Channel::b;
+		if (inputSelectedChannel == "a") c = Channel::a;
+
+		if (c != Channel::none)
+			return c;
+		else
+			cout << "can not select that channal" << endl;
+	}
+}
+
+
+bool AddImage(const Image& baseImage, vector<Image>& images)
+{
+	string yn = "";
+	while (yn != "y" && yn != "n")
+	{
+		cout << endl << "load file to read from y/n?" << endl;
+		cin >> yn;
+	}
+
+	if (yn == "y")
+	{
+		Image newImage;
+		cout << "Enter file" << endl;
+		string fileName = TakeInputFile().string();
+		cout << "load: " << fileName << endl;
+		newImage.data = stbi_load(fileName.c_str(), &newImage.width, &newImage.height, &newImage.channels, STBI_rgb_alpha);
+		assert(newImage.data);
+		cout << "width:\t\t" << newImage.width << endl;
+		cout << "height:\t\t" << newImage.height << endl;
+		cout << "channels:\t" << newImage.channels << endl;
+
+		if (baseImage.width != newImage.width || baseImage.height != newImage.height)
+		{
+			cout << "texture dimensions does not match" << endl;
+			stbi_image_free(newImage.data);
+			return false;
+		}
+
+		cout << "Select channel to copy from." << endl;
+		newImage.selectedInputChannel = SelectChannel();
+
+
+	retry:
+		cout << "which channel should " << ChannelToString(newImage.selectedInputChannel) << " from file be copied to ? " << endl;
+		newImage.selectedOutPutChannel = SelectChannel();
+		for (const auto& img : images)
+		{
+			if (newImage.selectedOutPutChannel == img.selectedOutPutChannel)
+			{
+				cout << "that channel can not be selected again" << endl;
+				goto retry;
+			}
+		}
+		images.push_back(newImage);
+		return true;
+	}
+	return false;
+}
+
+bool WriteValueToChannel(const Image& baseImage)
+{
+	unsigned int val = -1;
+	Channel c;
+	string yn = "";
+	while (yn != "y" && yn != "n")
+	{
+		cout << endl << "write value to image y/n?" << endl;
+		cin >> yn;
+	}
+
+	if (yn == "y")
+	{
+		c = SelectChannel();
+		while (!(0 <= val && val <= 255))
+		{
+			cout << "Enter Value to write" << endl,
+			cin >> val;
+		}
+		cout << "working..." << endl;
+		for (int i = 0; i < baseImage.width * baseImage.height * 4; i += 4)
+		{
+			baseImage.data[i + (int)c] = (unsigned char)val;
+		}
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+
+	
+}
+
+
+
+filesystem::path TakeInputFile()
 {
 	string input;
 	while (true)

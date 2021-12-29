@@ -10,6 +10,7 @@
 #include "CameraControllerScript.h"
 #include "ShipContollerScript.h"
 #include "Input.h"
+#include "TerrainLoader.h"
 
 using namespace rfm;
 using namespace rfe;
@@ -18,6 +19,15 @@ using namespace rfe;
 Scene::Scene()
 {
 	
+	TerrainLoader tl;
+	tl.CreateTerrainFromBMP("Assets/Textures/noiseTexture.bmp");
+	SubMesh terrainMesh;
+	const auto& iBuff = tl.GetIndices();
+	terrainMesh.ib = LowLvlGfx::CreateIndexBuffer(iBuff.data(), iBuff.size());
+	terrainMesh.indexCount = iBuff.size();
+	const auto& vBuff = tl.GetVertices();
+	terrainMesh.vb = LowLvlGfx::CreateVertexBuffer((float*)vBuff.data(), tl.vertexStride * vBuff.size(), tl.vertexStride);
+
 	//sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr", "Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_Env.hdr");
 	sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr");
 	//sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_Env.hdr");
@@ -82,7 +92,8 @@ Scene::Scene()
 	rendComp->renderPass = RenderPassEnum::phong;
 	SubMesh quadMeshCopy = AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV);
 	
-	rendComp->renderUnitID = AssetManager::Get().AddRenderUnit(quadMeshCopy, quadMat);
+	rendComp->renderUnitID = AssetManager::Get().AddRenderUnit(terrainMesh, quadMat);
+	//rendComp->renderUnitID = AssetManager::Get().AddRenderUnit(quadMeshCopy, quadMat);
 
 
 
@@ -144,8 +155,8 @@ void Scene::Update(float dt)
 	m_quadContr.Show();
 	m_lightContr.Show();
 
-	m_quad.getComponent<TransformComp>()->transform.setTranslation(m_quadContr.slider1.value);
-	m_quad.getComponent<TransformComp>()->transform.setRotation(m_quadContr.slider2.value.x, m_quadContr.slider2.value.y, m_quadContr.slider2.value.z);
+	//m_quad.getComponent<TransformComp>()->transform.setTranslation(m_quadContr.slider1.value);
+	//m_quad.getComponent<TransformComp>()->transform.setRotation(m_quadContr.slider2.value.x, m_quadContr.slider2.value.y, m_quadContr.slider2.value.z);
 
 	m_pointLight.getComponent<PointLightComp>()->pointLight.position = m_lightContr.slider1.value;
 	m_pointLight.getComponent<PointLightComp>()->pointLight.color = m_lightContr.slider2.value;

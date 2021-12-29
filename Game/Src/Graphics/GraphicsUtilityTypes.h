@@ -38,6 +38,13 @@ struct Vertex_POS_NOR_UV
 	rfm::Vector2 uv;
 };
 
+struct Triangle
+{
+	rfm::Vector3 position[3];
+	rfm::Vector3 normal;
+	rfm::Vector3& operator[](int index) { return position[index]; }
+};
+
 struct Vertex_POS_UV
 {
 	rfm::Vector3 position;

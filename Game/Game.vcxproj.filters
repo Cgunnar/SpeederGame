@@ -171,6 +171,7 @@
     <ClInclude Include="vendor\singleHeaders\stb_image.h">
       <Filter>vendor\singleHeaders</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Graphics\TerrainLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">
@@ -264,6 +265,7 @@
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\Geometry.cpp" />
+    <ClCompile Include="Src\Graphics\TerrainLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\CS\CS_convolute_DiffIrrCube.hlsl">

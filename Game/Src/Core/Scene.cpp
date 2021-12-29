@@ -18,7 +18,8 @@ using namespace rfe;
 
 Scene::Scene()
 {
-	
+	AssetManager& am = AssetManager::Get();
+
 	TerrainLoader tl;
 	tl.CreateTerrainFromBMP("Assets/Textures/noiseTexture.bmp");
 	SubMesh terrainMesh;
@@ -27,6 +28,20 @@ Scene::Scene()
 	terrainMesh.indexCount = iBuff.size();
 	const auto& vBuff = tl.GetVertices();
 	terrainMesh.vb = LowLvlGfx::CreateVertexBuffer((float*)vBuff.data(), tl.vertexStride * vBuff.size(), tl.vertexStride);
+
+	m_terrain = EntityReg::createEntity();
+	m_terrain.addComponent(TransformComp())->transform.setTranslation({ -64, -9, -64 });
+	Material terrainMat;
+	PBR_ALBEDO_METROUG desert_rocks;
+	desert_rocks.albedoTextureID = am.LoadTex2D("Assets/Textures/sand/basecolor.jpg", LoadTexFlag::GenerateMips);
+	desert_rocks.matallicRoughnessTextureID = am.LoadTex2D("Assets/Textures/sand/metallic_roughness.png", LoadTexFlag::LinearColorSpace | LoadTexFlag::GenerateMips);
+	terrainMat.materialVariant = desert_rocks;
+	terrainMat.type = MaterialType::PBR_ALBEDO_METROUG;
+	RenderModelComp renderComp;
+	renderComp.SetRenderUnit(am.AddRenderUnit(terrainMesh, terrainMat));
+	renderComp.renderPass = RenderPassEnum::pbr;
+	m_terrain.addComponent(renderComp);
+
 
 	//sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr", "Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_Env.hdr");
 	sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr");
@@ -92,8 +107,8 @@ Scene::Scene()
 	rendComp->renderPass = RenderPassEnum::phong;
 	SubMesh quadMeshCopy = AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV);
 	
-	rendComp->renderUnitID = AssetManager::Get().AddRenderUnit(terrainMesh, quadMat);
-	//rendComp->renderUnitID = AssetManager::Get().AddRenderUnit(quadMeshCopy, quadMat);
+	//rendComp->renderUnitID = AssetManager::Get().AddRenderUnit(terrainMesh, quadMat);
+	rendComp->renderUnitID = AssetManager::Get().AddRenderUnit(quadMeshCopy, quadMat);
 
 
 
@@ -114,7 +129,7 @@ Scene::Scene()
 	rendComp->renderUnitID = AssetManager::Get().AddRenderUnit(quadMeshCopy2, rusteIronMat);
 	
 
-	AssetManager& am = AssetManager::Get();
+	
 
 	m_debugSphere = EntityReg::createEntity();
 	m_debugSphere.addComponent(TransformComp())->transform.setTranslation({ -3, 2, 0 });
@@ -125,7 +140,7 @@ Scene::Scene()
 	SubMesh blendUVSphere = am.GetMesh(mID);
 	rc.SetRenderUnit(am.AddRenderUnit(blendUVSphere, rusteIronMat));
 	rc.renderPass = RenderPassEnum::pbr;
-	rendComp = m_debugSphere.addComponent(rc);
+	m_debugSphere.addComponent(rc);
 
 
 	m_quadContr.slider1.ChangeDefaultValues({ 0,0,8 });

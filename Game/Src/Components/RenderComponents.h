@@ -23,7 +23,7 @@ struct RenderModelComp : rfe::Component<RenderModelComp>
 		}
 	}
 
-	void SetMode(GID modelID)
+	void SetModel(GID modelID)
 	{
 		ModelID = modelID;
 		Model& model = AssetManager::Get().GetModel(modelID);

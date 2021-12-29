@@ -28,6 +28,7 @@ private:
 	rfe::Entity m_debugSphere;
 	rfe::Entity m_brickWallFloor;
 	rfe::Entity m_pointLight;
+	rfe::Entity m_terrain;
 	GuiTest m_quadContr = GuiTest("quad controller");
 	GuiTest m_lightContr = GuiTest("pointLight controller");
 

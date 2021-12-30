@@ -5,7 +5,7 @@
 #include "GraphicsUtilityTypes.h"
 namespace Geometry
 {
-
+	void CalcTanAndBiTan(std::vector<Vertex_POS_NOR_UV_TAN_BITAN>& vertices, const std::vector<uint32_t>& indices);
 	struct Quad_POS_UV
 	{
 		const float data[30] = {

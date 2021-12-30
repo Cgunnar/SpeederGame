@@ -18,47 +18,44 @@ using namespace rfe;
 
 Scene::Scene()
 {
+	m_camera = EntityReg::createEntity();
+	m_camera.addComponent(TransformComp());
+	m_camera.getComponent<TransformComp>()->transform.setTranslation(0, 2, -4);
+	m_camera.addScript(CameraControllerScript());
+
 	AssetManager& am = AssetManager::Get();
 
 	TerrainLoader tl;
 	tl.CreateTerrainFromBMP("Assets/Textures/noiseTexture.bmp");
-	SubMesh terrainMesh(tl.GetVertices(), tl.GetIndices());
+	SubMesh terrainMesh(tl.GetVerticesTBN(), tl.GetIndices());
 
 	m_terrain = EntityReg::createEntity();
 	m_terrain.addComponent(TransformComp())->transform.setTranslation({ -64, -9, -64 });
 	Material terrainMat;
-	PBR_ALBEDO_METROUG desert_rocks;
-	desert_rocks.albedoTextureID = am.LoadTex2D("Assets/Textures/sand/basecolor.jpg", LoadTexFlag::GenerateMips);
-	desert_rocks.matallicRoughnessTextureID = am.LoadTex2D("Assets/Textures/sand/metallic_roughness.png", LoadTexFlag::LinearColorSpace | LoadTexFlag::GenerateMips);
+	PBR_ALBEDO_METROUG_NOR desert_rocks;
+	//desert_rocks.albedoTextureID = am.LoadTex2D("Assets/Textures/sand/basecolor.jpg", LoadTexFlag::GenerateMips);
+	//desert_rocks.matallicRoughnessTextureID = am.LoadTex2D("Assets/Textures/sand/metallic_roughness.png", LoadTexFlag::LinearColorSpace | LoadTexFlag::GenerateMips);
+	//desert_rocks.normalTextureID = am.LoadTex2D("Assets/Textures/sand/normal.jpg", LoadTexFlag::LinearColorSpace | LoadTexFlag::GenerateMips);//desert_rocks.albedoTextureID = am.LoadTex2D("Assets/Textures/sand/basecolor.jpg", LoadTexFlag::GenerateMips);
+	desert_rocks.albedoTextureID = am.LoadTex2D("Assets/Textures/rock_slab_wall/basecolor.png", LoadTexFlag::GenerateMips);
+	desert_rocks.matallicRoughnessTextureID = am.LoadTex2D("Assets/Textures/rock_slab_wall/metallic_roughness.png", LoadTexFlag::LinearColorSpace | LoadTexFlag::GenerateMips);
+	desert_rocks.normalTextureID = am.LoadTex2D("Assets/Textures/rock_slab_wall/normal_ogl.png", LoadTexFlag::LinearColorSpace | LoadTexFlag::GenerateMips);
 	terrainMat.materialVariant = desert_rocks;
-	terrainMat.type = MaterialType::PBR_ALBEDO_METROUG;
+	terrainMat.type = MaterialType::PBR_ALBEDO_METROUG_NOR;
 	RenderModelComp renderComp;
 	renderComp.SetRenderUnit(am.AddRenderUnit(terrainMesh, terrainMat));
 	renderComp.renderPass = RenderPassEnum::pbr;
 	m_terrain.addComponent(renderComp);
 
 
-	//sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr", "Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_Env.hdr");
+	this->CreateEntityWithPBR("Assets/Models/MetalRoughSpheres/glTF/pbrSpheres.gltf", { -2, 3, 4 }, { 0, 0, 0 }, 0.2f);
+
 	sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr");
-	//sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_Env.hdr");
-	//sky.Init("Assets/Textures/BRIGHTBOX");
 
-	m_pistol = EntityReg::createEntity();
-	m_pistol.addComponent(TransformComp())->transform.setTranslation(3, 2, 4);
-	m_pistol.getComponent<TransformComp>()->transform.setScale(0.03f);
-	//m_pistol.getComponent<TransformComp>()->transform.setRotationDeg(90, -70, 0);
-	//m_pistol.addComponent(RenderModelComp("Assets/Models/MetalRoughSpheres/glTF/MetalRoughSpheres.gltf", RenderPassEnum::pbr));
-	m_pistol.addComponent(RenderModelComp("Assets/Models/cerberus/scene.gltf", RenderPassEnum::pbr));
-	//m_pistol.addComponent(RenderModelComp("Assets/Models/DamagedHelmet/glTF/DamagedHelmet.gltf", RenderPassEnum::pbr));
-	//m_pistol.addComponent(RenderModelComp("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", RenderPassEnum::pbr));
-	//m_pistol.addComponent(RenderModelComp("Assets/Models/pbr/wasteland_hunters_-_vehicule/scene.gltf", RenderPassEnum::pbr));
-	//m_pistol.addComponent(RenderModelComp("Assets/Models/pbr/razor_crest/scene.gltf", RenderPassEnum::pbr));
+	this->CreateEntityWithPBR("Assets/Models/cerberus/scene.gltf", { 4, 2, 2 }, 0, 0.03f);
+	this->CreateEntityWithPBR("Assets/Models/cerberus/scene.gltf", { 3, 2, 4 }, { 0,-70, 0 }, 0.03f);
 
-
-	m_ship = EntityReg::createEntity();
-	m_ship.addComponent(TransformComp())->transform.setTranslation(0, 2, 3);
+	m_ship = this->CreateEntityWithPBR("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", { 0, 2, 3 });
 	m_ship.addScript(ShipContollerScript());
-	m_ship.addComponent(RenderModelComp("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", RenderPassEnum::pbr));
 
 	m_nanosuit = EntityReg::createEntity();
 	m_nanosuit.addComponent(TransformComp())->transform.setTranslation(2, 1, 5);
@@ -74,10 +71,7 @@ Scene::Scene()
 	m_brickWallFloor.getComponent<TransformComp>()->transform.setScale(10);
 	m_brickWallFloor.addComponent(RenderModelComp("Assets/Models/brick_wall/brick_wall.obj", RenderPassEnum::phong));
 
-	m_camera = EntityReg::createEntity();
-	m_camera.addComponent(TransformComp());
-	m_camera.getComponent<TransformComp>()->transform.setTranslation(0, 2, -4);
-	m_camera.addScript(CameraControllerScript());
+	
 
 	m_pointLight = EntityReg::createEntity();
 	m_pointLight.addComponent(TransformComp());
@@ -170,4 +164,19 @@ void Scene::Update(float dt)
 rfe::Entity& Scene::GetCamera()
 {
 	return m_camera;
+}
+
+rfe::Entity Scene::CreateEntityWithPBR(const std::string path, Vector3 pos, Vector3 rotDeg, Vector3 scale)
+{
+	m_entities.push_back(EntityReg::createEntity());
+	m_entities.back().addComponent(TransformComp())->transform.setTranslation(pos);
+	m_entities.back().getComponent<TransformComp>()->transform.setRotationDeg(rotDeg.x, rotDeg.y, rotDeg.z);
+	m_entities.back().getComponent<TransformComp>()->transform.setScale(scale.x, scale.y, scale.z);
+
+	if(std::filesystem::path(path).extension() == ".gltf")
+		m_entities.back().addComponent(RenderModelComp(path, RenderPassEnum::pbr));
+	else
+		m_entities.back().addComponent(RenderModelComp(path, RenderPassEnum::phong));
+
+	return m_entities.back();
 }

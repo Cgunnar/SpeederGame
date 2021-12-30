@@ -33,6 +33,7 @@ private:
 	Shader m_PS_Phong_DiffTex_NorTex_singleLight;
 	Shader m_PS_Phong_DiffTex_NorTex_SpecTex_pointLight;
 	ConstantBuffer m_phongMaterialCB;
+	Sampler m_anisotropic_wrapSampler;
 
 
 	/*struct alignas(16) MatrixAl16

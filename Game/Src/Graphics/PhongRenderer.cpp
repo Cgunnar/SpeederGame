@@ -18,6 +18,7 @@ PhongRenderer::PhongRenderer(std::weak_ptr<SharedRenderResources> sharedRes) : m
 	m_PS_Phong_DiffTex_NorTex_singleLight = LowLvlGfx::CreateShader("Src/Shaders/PS_Phong_DiffTex_NorTex_singleLight.hlsl", ShaderType::PIXELSHADER);
 	m_PS_Phong_DiffTex_NorTex_SpecTex_pointLight = LowLvlGfx::CreateShader("Src/Shaders/PS_Phong_DiffTex_NorTex_SpecTex_pointLight.hlsl", ShaderType::PIXELSHADER);
 	m_phongMaterialCB = LowLvlGfx::CreateConstantBuffer({ sizeof(PhongMaterial), BufferDesc::USAGE::DYNAMIC });
+	m_anisotropic_wrapSampler = LowLvlGfx::Create(standardDescriptors::g_sample_anisotropic_wrap);
 }
 
 void PhongRenderer::Submit(RenderUnitID unitID, const rfm::Transform& worlMatrix, MaterialType type)
@@ -59,6 +60,8 @@ void PhongRenderer::Render(const VP& viewAndProjMatrix, rfe::Entity& camera, Ren
 	LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	LowLvlGfx::Bind(rendRes->m_linearWrapSampler, ShaderType::PIXELSHADER, 0);
+	LowLvlGfx::Bind(m_anisotropic_wrapSampler, ShaderType::PIXELSHADER, 3);
+
 
 	RenderWithColorOnly(flag);
 	RenderWithDiffuseTexture(flag);

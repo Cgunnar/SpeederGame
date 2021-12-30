@@ -86,6 +86,12 @@ namespace rfm
 		this->y = y;
 		this->z = z;
 	}
+	Vector3::Vector3(float val)
+	{
+		this->x = val;
+		this->y = val;
+		this->z = val;
+	}
 	Vector3::Vector3(const Vector4& v)
 	{
 		this->x = v.x;

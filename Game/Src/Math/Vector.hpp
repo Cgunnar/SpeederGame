@@ -38,7 +38,8 @@ namespace rfm
 	class Vector3
 	{
 	public:
-		Vector3(float x = 0, float y = 0, float z = 0);
+		Vector3(float x, float y, float z);
+		Vector3(float val = 0);
 		Vector3(const Vector4& v);
 		Vector3(const Vector2& v, float z);
 		~Vector3() = default;

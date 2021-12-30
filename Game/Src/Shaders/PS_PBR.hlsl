@@ -10,6 +10,7 @@ TextureCube skyIrrMap : register(t6);
 SamplerState mySampler : register(s0);
 SamplerState skyMapSampler : register(s1);
 SamplerState splitSumLookUpSampler : register(s2);
+SamplerState anisotropicWrapSampler : register(s3);
 
 
 
@@ -133,12 +134,12 @@ float4 main(vs_out input) : SV_TARGET
     float alpha = albedoFactor.a;
     
 #ifdef ALBEDO_TEXTURE
-    float4 albedoTextureVal = albedoTexture.Sample(mySampler, input.textureUV);
+    float4 albedoTextureVal = albedoTexture.Sample(anisotropicWrapSampler, input.textureUV);
     albedo *= albedoTextureVal.rgb;
     alpha *= albedoTextureVal.a;
 #endif
     
-    float4 metallicRoughnessTextureVal = metallicRoughnessTexture.Sample(mySampler, input.textureUV);
+    float4 metallicRoughnessTextureVal = metallicRoughnessTexture.Sample(anisotropicWrapSampler, input.textureUV);
     
     float ambientOcclusion = metallicRoughnessTextureVal.r;
     float metallic = metallicRoughnessTextureVal.b * metallicFactor;
@@ -147,7 +148,7 @@ float4 main(vs_out input) : SV_TARGET
     
     float3 emissive = emissiveFactor;
 #ifdef EMISSIVE
-    emissive *= emissiveTexture.Sample(mySampler, input.textureUV).xyz;
+    emissive *= emissiveTexture.Sample(anisotropicWrapSampler, input.textureUV).xyz;
 #endif
     
     float3 normal = normalize(input.normal_world.xyz);
@@ -221,5 +222,12 @@ float4 main(vs_out input) : SV_TARGET
     
     finalColor = finalColor / (finalColor + 1);
     return float4(finalColor, alpha);
-    //return float4(normal, alpha);
+//#ifdef NORMAL_MAP
+//    return float4(input.tangent_world, 1);
+//#endif
+    //float3 dn = normalize(input.normal_world.xyz);
+    //if (input.position_world.x > 1)
+    //    return float4(dn.x, 0, dn.z, 1);
+    //return float4(normal.x, 0, normal.z, alpha);
+    //return float4(normal, 1);
 }

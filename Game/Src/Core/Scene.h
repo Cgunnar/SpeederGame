@@ -18,9 +18,10 @@ public:
 
 	SkyBox sky;
 private:
+	rfe::Entity CreateEntityWithPBR(const std::string path, rfm::Vector3 pos = { 0,0,0 }, rfm::Vector3 rotDeg = { 0,0,0 }, rfm::Vector3 scale = { 1,1,1 });
+
 	rfe::Entity m_camera;
 	rfe::Entity m_nanosuit;
-	rfe::Entity m_pistol;
 	rfe::Entity m_ship;
 	rfe::Entity m_arrow;
 	rfe::Entity m_quad;
@@ -29,6 +30,9 @@ private:
 	rfe::Entity m_brickWallFloor;
 	rfe::Entity m_pointLight;
 	rfe::Entity m_terrain;
+
+	std::vector<rfe::Entity> m_entities;
+
 	GuiTest m_quadContr = GuiTest("quad controller");
 	GuiTest m_lightContr = GuiTest("pointLight controller");
 

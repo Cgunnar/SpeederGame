@@ -116,8 +116,13 @@ struct Rasterizer
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> rasterState;
 };
 
-struct SubMesh
+class SubMesh
 {
+
+public:
+	SubMesh() = default;
+	SubMesh(const std::vector<Vertex_POS_NOR_UV>& vertices, const std::vector<uint32_t>& indices);
+	SubMesh(const std::vector<Vertex_POS_NOR_UV_TAN_BITAN>& vertices, const std::vector<uint32_t>& indices);
 	VertexBuffer vb;
 	IndexBuffer ib;
 	uint32_t indexCount = 0;

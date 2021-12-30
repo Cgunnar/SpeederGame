@@ -22,12 +22,7 @@ Scene::Scene()
 
 	TerrainLoader tl;
 	tl.CreateTerrainFromBMP("Assets/Textures/noiseTexture.bmp");
-	SubMesh terrainMesh;
-	const auto& iBuff = tl.GetIndices();
-	terrainMesh.ib = LowLvlGfx::CreateIndexBuffer(iBuff.data(), iBuff.size());
-	terrainMesh.indexCount = iBuff.size();
-	const auto& vBuff = tl.GetVertices();
-	terrainMesh.vb = LowLvlGfx::CreateVertexBuffer((float*)vBuff.data(), tl.vertexStride * vBuff.size(), tl.vertexStride);
+	SubMesh terrainMesh(tl.GetVertices(), tl.GetIndices());
 
 	m_terrain = EntityReg::createEntity();
 	m_terrain.addComponent(TransformComp())->transform.setTranslation({ -64, -9, -64 });
@@ -62,10 +57,8 @@ Scene::Scene()
 
 	m_ship = EntityReg::createEntity();
 	m_ship.addComponent(TransformComp())->transform.setTranslation(0, 2, 3);
-	//m_ship.getComponent<TransformComp>()->transform.setRotationDeg(0, 180, 0);
 	m_ship.addScript(ShipContollerScript());
 	m_ship.addComponent(RenderModelComp("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", RenderPassEnum::pbr));
-	//m_ship.addComponent(RenderModelComp("Assets/Models/ajf12test/scene.gltf", RenderPassEnum::pbr));
 
 	m_nanosuit = EntityReg::createEntity();
 	m_nanosuit.addComponent(TransformComp())->transform.setTranslation(2, 1, 5);
@@ -84,8 +77,6 @@ Scene::Scene()
 	m_camera = EntityReg::createEntity();
 	m_camera.addComponent(TransformComp());
 	m_camera.getComponent<TransformComp>()->transform.setTranslation(0, 2, -4);
-	//m_camera.getComponent<TransformComp>()->transform.setRotationDeg(15, 0, 0);
-
 	m_camera.addScript(CameraControllerScript());
 
 	m_pointLight = EntityReg::createEntity();
@@ -106,8 +97,6 @@ Scene::Scene()
 	RenderModelComp* rendComp = m_quad.addComponent(RenderModelComp());
 	rendComp->renderPass = RenderPassEnum::phong;
 	SubMesh quadMeshCopy = AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV);
-	
-	//rendComp->renderUnitID = AssetManager::Get().AddRenderUnit(terrainMesh, quadMat);
 	rendComp->renderUnitID = AssetManager::Get().AddRenderUnit(quadMeshCopy, quadMat);
 
 

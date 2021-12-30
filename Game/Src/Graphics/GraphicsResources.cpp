@@ -1,5 +1,6 @@
 #include "pch.hpp"
 #include "GraphicsResources.h"
+#include "LowLvlGfx.h"
 
 namespace standardDescriptors
 {
@@ -27,4 +28,18 @@ namespace standardDescriptors
 		.MinLOD = 0,
 		.MaxLOD = D3D11_FLOAT32_MAX
 	};
+}
+
+SubMesh::SubMesh(const std::vector<Vertex_POS_NOR_UV>& vertices, const std::vector<uint32_t>& indices)
+{
+	ib = LowLvlGfx::CreateIndexBuffer(indices.data(), static_cast<uint32_t>(indices.size()));
+	vb = LowLvlGfx::CreateVertexBuffer(reinterpret_cast<const float*>(vertices.data()), vertices.size() * sizeof(Vertex_POS_NOR_UV), sizeof(Vertex_POS_NOR_UV));
+	this->indexCount = indices.size();
+}
+
+SubMesh::SubMesh(const std::vector<Vertex_POS_NOR_UV_TAN_BITAN>& vertices, const std::vector<uint32_t>& indices)
+{
+	ib = LowLvlGfx::CreateIndexBuffer(indices.data(), static_cast<uint32_t>(indices.size()));
+	vb = LowLvlGfx::CreateVertexBuffer(reinterpret_cast<const float*>(vertices.data()), vertices.size() * sizeof(Vertex_POS_NOR_UV_TAN_BITAN), sizeof(Vertex_POS_NOR_UV_TAN_BITAN));
+	this->indexCount = indices.size();
 }

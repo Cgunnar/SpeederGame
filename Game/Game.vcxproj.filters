@@ -174,6 +174,7 @@
     <ClInclude Include="vendor\singleHeaders\stb_image.h">
       <Filter>vendor\singleHeaders</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Graphics\ShadowMappingPass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">
@@ -272,6 +273,7 @@
     <ClCompile Include="vendor\imgui\backends\imgui_impl_win32.cpp">
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Graphics\ShadowMappingPass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\CS\CS_convolute_DiffIrrCube.hlsl">
@@ -283,7 +285,7 @@
     <FxCompile Include="Src\Shaders\CS\spmap.hlsl">
       <Filter>Src\Shaders\CS</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\CS_equirect2cube.hlsl">
+    <FxCompile Include="Src\Shaders\CS\CS_equirect2cube.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\PS_FlatTexture.hlsl">
@@ -301,19 +303,19 @@
     <FxCompile Include="Src\Shaders\PS_PBR_NOR_EMIS_PointLight.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\PS_Phong_DiffTex_NorTex_SpecTex_pointLight.hlsl">
+    <FxCompile Include="Src\Shaders\Phong\PS_Phong_DiffTex_NorTex_SpecTex_pointLight.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\PS_Phong_DiffTex_NorTex_singleLight.hlsl">
+    <FxCompile Include="Src\Shaders\Phong\PS_Phong_DiffTex_NorTex_singleLight.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\PS_Phong_DiffTexture_singleLight.hlsl">
+    <FxCompile Include="Src\Shaders\Phong\PS_Phong_DiffTexture_singleLight.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\PS_Phong_color_singleLight.hlsl">
+    <FxCompile Include="Src\Shaders\Phong\PS_Phong_color_singleLight.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\PS_Phong_singlePointLight.hlsl">
+    <FxCompile Include="Src\Shaders\Phong\PS_Phong_singlePointLight.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\PS_SkyBox.hlsl">
@@ -334,5 +336,7 @@
     <FxCompile Include="Src\Shaders\VertexShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Src\Shaders\VS_ShadowMapping_POS_NOR_UV.hlsl" />
+    <FxCompile Include="Src\Shaders\PS_empty.hlsl" />
   </ItemGroup>
 </Project>

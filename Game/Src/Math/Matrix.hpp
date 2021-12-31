@@ -15,7 +15,6 @@ namespace rfm
 				float _20, float _21, float _22, float _23, 
 				float _30, float _31, float _32, float _33);
 		Matrix(Vector4 columnVectors[4]);
-		Matrix(float FovY, float aspectRatio, float nearPlane, float farPlane);
 		~Matrix() = default;
 
 
@@ -43,6 +42,9 @@ namespace rfm
 	Matrix rotationYFromAnglesDeg(float a);
 	Matrix rotationZFromAnglesDeg(float a);
 	Matrix rotationMatrixFromNormal(Vector3 normal, float angle);
+	Matrix PerspectiveProjectionMatrix(float FovY, float aspectRatio, float nearPlane, float farPlane);
+	Matrix OrthographicProjectionMatrix(float width, float height, float nearPlane, float farPlane);
+	Matrix LookAt(Vector3 pos, Vector3 target, Vector3 up = { 0, 1, 0 });
 	Matrix operator*(const Matrix& l, const Matrix& r);
 	Matrix operator+(const Matrix& l, const Matrix& r);
 	Matrix operator-(const Matrix& l, const Matrix& r);

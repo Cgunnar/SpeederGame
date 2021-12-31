@@ -17,6 +17,7 @@ public:
 	rfe::Entity& GetCamera();
 
 	SkyBox sky;
+	rfe::Entity sunLight;
 private:
 	rfe::Entity CreateEntityModel(const std::string path, rfm::Vector3 pos = { 0,0,0 }, rfm::Vector3 rotDeg = { 0,0,0 }, rfm::Vector3 scale = { 1,1,1 });
 
@@ -27,7 +28,6 @@ private:
 	rfe::Entity m_ironSphere;
 	rfe::Entity m_debugSphere;
 	rfe::Entity m_pointLight;
-	rfe::Entity m_dirLight;
 	rfe::Entity m_terrain;
 
 	std::vector<rfe::Entity> m_entities;

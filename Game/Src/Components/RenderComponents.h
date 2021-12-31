@@ -43,6 +43,12 @@ struct RenderModelComp : rfe::Component<RenderModelComp>
 	RenderUnitID renderUnitBegin = 0, renderUnitEnd = 0;
 };
 
+struct RendCompAndTransform
+{
+	RenderModelComp rendComp;
+	rfm::Transform worldMatrix;
+};
+
 struct IndexedMeshComp: rfe::Component<IndexedMeshComp>
 {
 	IndexBuffer indexBuffer;

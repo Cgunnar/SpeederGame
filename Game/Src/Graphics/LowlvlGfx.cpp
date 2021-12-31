@@ -121,6 +121,12 @@ void LowLvlGfx::CreateSRV(std::shared_ptr<Texture2D> tex2d, D3D11_SHADER_RESOURC
 	}
 }
 
+void LowLvlGfx::CreateDSV(std::shared_ptr<Texture2D> tex2d, D3D11_DEPTH_STENCIL_VIEW_DESC* desc)
+{
+	HRESULT hr = s_dx11->m_device->CreateDepthStencilView(tex2d->buffer.Get(), desc, &tex2d->dsv);
+	assert(SUCCEEDED(hr));
+}
+
 void LowLvlGfx::CreateRTV(std::shared_ptr<Texture2D> tex2d, D3D11_RENDER_TARGET_VIEW_DESC* desc)
 {
 	HRESULT hr = s_dx11->m_device->CreateRenderTargetView(tex2d->buffer.Get(), desc, &tex2d->rtv);

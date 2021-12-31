@@ -8,6 +8,7 @@
 #include "SharedRendererResources.h"
 #include "RenderComponents.h"
 #include "SkyBox.h"
+#include "ShadowMappingPass.h"
 
 class Renderer
 {
@@ -20,11 +21,12 @@ public:
 
 	void RenderBegin(rfe::Entity& camera);
 	void RenderSkyBox(SkyBox& sky);
-	void Render(rfe::Entity& camera);
+	void Render(rfe::Entity& camera, DirectionalLight dirLight);
 	static SharedRenderResources& GetSharedRenderResources();
 private:
 	static std::shared_ptr<SharedRenderResources> s_sharedRenderResources;
 
+	void CopyFromECS();
 	void SubmitToRender(rfe::Entity& camera);
 	void SubmitToInternalRenderers(AssetManager& am, RenderPassEnum renderPass, RenderUnitID unitID, const rfm::Transform& worldMatrix);
 	//void SubmitOpaqueToInternalRenderers(RenderPassEnum renderPass, RenderUnitID unitID, const rfm::Transform& worldMatrix, MaterialType type);
@@ -39,11 +41,14 @@ private:
 		RenderPassEnum rendPass;
 		RendUnitIDAndTransform unit;
 	};
+
 	std::vector<PassForTransparentUnits> m_transparentRenderUnits;
+	std::vector<RendCompAndTransform> m_rendCompAndTransformFromECS;
 	std::unordered_map<RenderFlag, std::vector<RendUnitIDAndTransform>> m_renderPassesFlagged;
 
 	PhongRenderer m_phongRenderer;
 	PbrRenderer m_pbrRenderer;
+	ShadowMappingPass m_shadowPass;
 
 	VP m_vp;
 };

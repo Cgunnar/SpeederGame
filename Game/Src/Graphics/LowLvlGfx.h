@@ -22,7 +22,7 @@ struct BufferDesc
 class LowLvlGfx
 {
 
-	// I think the syntax for calling static functions look nice, deal with it.
+	// I think the syntax for calling static functions looks nice, deal with it.
 
 public:
 	LowLvlGfx() = delete;
@@ -46,6 +46,7 @@ public:
 	//create
 	static std::shared_ptr<Texture2D> CreateTexture2D(D3D11_TEXTURE2D_DESC desc, D3D11_SUBRESOURCE_DATA* data = nullptr, bool fixedRes = true);
 	static void CreateSRV(std::shared_ptr<Texture2D> tex2d, D3D11_SHADER_RESOURCE_VIEW_DESC* desc = nullptr);
+	static void CreateDSV(std::shared_ptr<Texture2D> tex2d, D3D11_DEPTH_STENCIL_VIEW_DESC* desc = nullptr);
 	static void CreateRTV(std::shared_ptr<Texture2D> tex2d, D3D11_RENDER_TARGET_VIEW_DESC* desc = nullptr);
 	static void CreateUAV(std::shared_ptr<Texture2D> tex2d, D3D11_UNORDERED_ACCESS_VIEW_DESC * desc = nullptr);
 	static Shader CreateShader(const std::string& path, ShaderType type);

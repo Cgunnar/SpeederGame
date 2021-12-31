@@ -357,7 +357,7 @@ std::shared_ptr<Texture2D> SkyBox::LoadEquirectangularMapToCubeMap(const std::st
 
 	LowLvlGfx::CreateUAV(cubeMap, &uDesc);
 
-	m_eq2cubeCS = LowLvlGfx::CreateShader("Src/Shaders/CS_equirect2cube.hlsl", ShaderType::COMPUTESHADER);
+	m_eq2cubeCS = LowLvlGfx::CreateShader("Src/Shaders/CS/CS_equirect2cube.hlsl", ShaderType::COMPUTESHADER);
 
 	LowLvlGfx::BindUAVs({ cubeMap });
 	LowLvlGfx::BindSRV(equirectTex, ShaderType::COMPUTESHADER, 0);

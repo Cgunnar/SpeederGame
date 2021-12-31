@@ -1,6 +1,8 @@
 #pragma once
 #include "RimfrostMath.hpp"
 
+
+
 enum class MeshFormat
 {
 	POS_NOR_UV = 0,

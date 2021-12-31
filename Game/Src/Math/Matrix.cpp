@@ -33,16 +33,6 @@ namespace rfm
 		columns[3] = columnVectors[3];
 	}
 
-	Matrix::Matrix(float FovY, float aspectRatio, float nearPlane, float farPlane)
-	{
-		DirectX::XMFLOAT4X4 perspectiveMatrix;
-		DirectX::XMStoreFloat4x4(&perspectiveMatrix, DirectX::XMMatrixPerspectiveFovLH(FovY, aspectRatio, nearPlane, farPlane));
-		*this = Matrix((float*)&perspectiveMatrix);
-	}
-
-
-
-
 	
 	Matrix transpose(const Matrix& m)
 	{
@@ -144,6 +134,26 @@ namespace rfm
 
 		Matrix rot = Matrix((float*)XMrot.m); //transpose???
 		return rot;
+	}
+
+	Matrix PerspectiveProjectionMatrix(float FovY, float aspectRatio, float nearPlane, float farPlane)
+	{
+		DirectX::XMFLOAT4X4 perspectiveMatrix;
+		DirectX::XMStoreFloat4x4(&perspectiveMatrix, DirectX::XMMatrixPerspectiveFovLH(FovY, aspectRatio, nearPlane, farPlane));
+		return Matrix((float*)&perspectiveMatrix);
+	}
+
+	Matrix OrthographicProjectionMatrix(float width, float height, float nearPlane, float farPlane)
+	{
+		DirectX::XMFLOAT4X4 orthographicMatrix;
+		DirectX::XMStoreFloat4x4(&orthographicMatrix, DirectX::XMMatrixOrthographicLH(width, height, nearPlane, farPlane));
+		return Matrix((float*)&orthographicMatrix);
+	}
+	Matrix LookAt(Vector3 pos, Vector3 target, Vector3 up)
+	{
+		DirectX::XMFLOAT4X4 viewMatrix;
+		DirectX::XMStoreFloat4x4(&viewMatrix, DirectX::XMMatrixLookAtLH({ pos.x, pos.y, pos.z, 1 }, { target.x, target.y, target.z, 1 }, { up.x, up.y, up.z, 0 }));
+		return Matrix((float*)&viewMatrix);
 	}
 	Matrix operator*(const Matrix& l, const Matrix& r)
 	{

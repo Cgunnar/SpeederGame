@@ -16,7 +16,7 @@ std::shared_ptr<SharedRenderResources> Renderer::s_sharedRenderResources = nullp
 
 Renderer::Renderer()
 {
-	m_vp.P = Matrix(PIDIV4, 16.0f / 9.0f, 0.01f, 1000.0f);
+	m_vp.P = PerspectiveProjectionMatrix(PIDIV4, 16.0f / 9.0f, 0.01f, 1000.0f);
 	s_sharedRenderResources = std::make_shared<SharedRenderResources>();
 
 	s_sharedRenderResources->m_worldMatrixCB = LowLvlGfx::CreateConstantBuffer({ sizeof(Matrix), BufferDesc::USAGE::DYNAMIC });
@@ -60,6 +60,7 @@ void Renderer::RenderSkyBox(SkyBox& sky)
 {
 	if (sky.Ldr() != sky.Hdr())
 	{
+		LowLvlGfx::SetViewPort(LowLvlGfx::GetResolution());
 		sky.Bind(*s_sharedRenderResources);
 		LowLvlGfx::Context()->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
 		LowLvlGfx::Context()->IASetInputLayout(nullptr);
@@ -81,22 +82,27 @@ void Renderer::RenderSkyBox(SkyBox& sky)
 	}
 }
 
-void Renderer::Render(rfe::Entity& camera)
+void Renderer::Render(rfe::Entity& camera, DirectionalLight dirLight)
 {
 	LowLvlGfx::UnBindRasterizer(); // this will use the default rasterizer
-	LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }, LowLvlGfx::GetDepthBuffer());
 
 	auto& pointLights = rfe::EntityReg::GetComponentArray<PointLightComp>();
 	assert(!pointLights.empty());
 	PointLight p = pointLights[0].pointLight;
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_pointLightCB, &p);
 
-	auto& dirLights = rfe::EntityReg::GetComponentArray<DirectionalLightComp>();
-	assert(!dirLights.empty());
-	auto dl = dirLights[0].dirLight;
-	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_dirLightCB, &dl);
+	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_dirLightCB, &dirLight);
+
+	CopyFromECS();
+	m_shadowPass.DrawFromDirLight(dirLight.dir, m_rendCompAndTransformFromECS);
+
+	//shadowMapping
 
 
+
+	//main rendering
+	LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }, LowLvlGfx::GetDepthBuffer());
+	LowLvlGfx::SetViewPort(LowLvlGfx::GetResolution());
 	SubmitToRender(camera);
 
 	RenderAllPasses(m_vp, camera);
@@ -119,27 +125,38 @@ SharedRenderResources& Renderer::GetSharedRenderResources()
 
 
 
+void Renderer::CopyFromECS()
+{
+	const auto& rendCompArray = rfe::EntityReg::GetComponentArray<RenderModelComp>();
+	m_rendCompAndTransformFromECS.clear();
+	m_rendCompAndTransformFromECS.reserve(rendCompArray.size());
+	for (const auto& rendComp : rendCompArray)
+	{
+		EntityID entID = rendComp.GetEntityID();
+		assert(EntityReg::GetComponent<TransformComp>(entID));
+		m_rendCompAndTransformFromECS.push_back(
+			{ rendComp, EntityReg::GetComponent<TransformComp>(entID)->transform });
+	}
+}
+
 void Renderer::SubmitToRender(rfe::Entity& camera)
 {
 	AssetManager& assetMan = AssetManager::Get();
-	for (const auto& rendComp : rfe::EntityReg::GetComponentArray<RenderModelComp>())
+	for (const auto& rt : m_rendCompAndTransformFromECS)
 	{
-		EntityID entID = rendComp.GetEntityID();
-		Transform worldMatrix = EntityReg::GetComponent<TransformComp>(entID)->transform;
-
-		RenderUnitID b = rendComp.renderUnitBegin;
-		RenderUnitID e = rendComp.renderUnitEnd;
+		RenderUnitID b = rt.rendComp.renderUnitBegin;
+		RenderUnitID e = rt.rendComp.renderUnitEnd;
 		assert(b <= e);
 		if (b | e)
 		{
 			for (RenderUnitID i = b; i < e; i++)
 			{
-				SubmitToInternalRenderers(assetMan, rendComp.renderPass, i, worldMatrix);
+				SubmitToInternalRenderers(assetMan, rt.rendComp.renderPass, i, rt.worldMatrix);
 			}
 		}
 		else
 		{
-			SubmitToInternalRenderers(assetMan, rendComp.renderPass, rendComp.renderUnitID, worldMatrix);
+			SubmitToInternalRenderers(assetMan, rt.rendComp.renderPass, rt.rendComp.renderUnitID, rt.worldMatrix);
 		}
 	}
 }

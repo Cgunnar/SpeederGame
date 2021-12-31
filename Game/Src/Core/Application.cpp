@@ -72,7 +72,7 @@ void Application::Run()
 		
 		m_renderer->RenderBegin(m_scene->GetCamera());
 		m_renderer->RenderSkyBox(m_scene->sky);
-		m_renderer->Render(m_scene->GetCamera());
+		m_renderer->Render(m_scene->GetCamera(), m_scene->sunLight.GetComponent<DirectionalLightComp>()->dirLight);
 
 		LowLvlGfx::EndFrame();
 	}

@@ -70,9 +70,9 @@ Scene::Scene()
 	m_pointLight.AddComponent<TransformComp>();
 	m_pointLight.AddComponent<PointLightComp>()->pointLight.lightStrength = 5;
 
-	m_dirLight = EntityReg::CreateEntity();
-	m_dirLight.AddComponent<TransformComp>();
-	m_dirLight.AddComponent<DirectionalLightComp>()->dirLight.color = { 1, 0.87f, 0.23f };
+	sunLight = EntityReg::CreateEntity();
+	sunLight.AddComponent<TransformComp>();
+	sunLight.AddComponent<DirectionalLightComp>()->dirLight.color = { 1, 0.87f, 0.23f };
 
 	
 	Material quadMat;
@@ -128,7 +128,7 @@ Scene::Scene()
 	m_lightContr.slider2.ChangeDefaultValues({ 1,1,1 }, 0, 1);
 
 	m_dirlightContr.slider1.ChangeDefaultValues({ 0.3f ,-1, 0.5f}, -1, 1);
-	m_dirlightContr.slider2.ChangeDefaultValues(m_dirLight.GetComponent<DirectionalLightComp>()->dirLight.color, 0, 1);
+	m_dirlightContr.slider2.ChangeDefaultValues(sunLight.GetComponent<DirectionalLightComp>()->dirLight.color, 0, 1);
 
 }
 
@@ -160,8 +160,8 @@ void Scene::Update(float dt)
 	m_pointLight.GetComponent<PointLightComp>()->pointLight.position = m_lightContr.slider1.value;
 	m_pointLight.GetComponent<PointLightComp>()->pointLight.color = m_lightContr.slider2.value;
 
-	m_dirLight.GetComponent<DirectionalLightComp>()->dirLight.dir = m_dirlightContr.slider1.value;
-	m_dirLight.GetComponent<DirectionalLightComp>()->dirLight.color = m_dirlightContr.slider2.value;
+	sunLight.GetComponent<DirectionalLightComp>()->dirLight.dir = m_dirlightContr.slider1.value;
+	sunLight.GetComponent<DirectionalLightComp>()->dirLight.color = m_dirlightContr.slider2.value;
 
 }
 

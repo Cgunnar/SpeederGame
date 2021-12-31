@@ -13,10 +13,10 @@ struct alignas(16) PhongMaterial
 
 PhongRenderer::PhongRenderer(std::weak_ptr<SharedRenderResources> sharedRes) : m_sharedRenderResources(sharedRes)
 {
-	m_PS_Phong_DiffTexture_singleLight = LowLvlGfx::CreateShader("Src/Shaders/PS_Phong_DiffTexture_singleLight.hlsl", ShaderType::PIXELSHADER);
-	m_PS_Phong_singlePointLight = LowLvlGfx::CreateShader("Src/Shaders/PS_Phong_singlePointLight.hlsl", ShaderType::PIXELSHADER);
-	m_PS_Phong_DiffTex_NorTex_singleLight = LowLvlGfx::CreateShader("Src/Shaders/PS_Phong_DiffTex_NorTex_singleLight.hlsl", ShaderType::PIXELSHADER);
-	m_PS_Phong_DiffTex_NorTex_SpecTex_pointLight = LowLvlGfx::CreateShader("Src/Shaders/PS_Phong_DiffTex_NorTex_SpecTex_pointLight.hlsl", ShaderType::PIXELSHADER);
+	m_PS_Phong_DiffTexture_singleLight = LowLvlGfx::CreateShader("Src/Shaders/Phong/PS_Phong_DiffTexture_singleLight.hlsl", ShaderType::PIXELSHADER);
+	m_PS_Phong_singlePointLight = LowLvlGfx::CreateShader("Src/Shaders/Phong/PS_Phong_singlePointLight.hlsl", ShaderType::PIXELSHADER);
+	m_PS_Phong_DiffTex_NorTex_singleLight = LowLvlGfx::CreateShader("Src/Shaders/Phong/PS_Phong_DiffTex_NorTex_singleLight.hlsl", ShaderType::PIXELSHADER);
+	m_PS_Phong_DiffTex_NorTex_SpecTex_pointLight = LowLvlGfx::CreateShader("Src/Shaders/Phong/PS_Phong_DiffTex_NorTex_SpecTex_pointLight.hlsl", ShaderType::PIXELSHADER);
 	m_phongMaterialCB = LowLvlGfx::CreateConstantBuffer({ sizeof(PhongMaterial), BufferDesc::USAGE::DYNAMIC });
 	m_anisotropic_wrapSampler = LowLvlGfx::Create(standardDescriptors::g_sample_anisotropic_wrap);
 }

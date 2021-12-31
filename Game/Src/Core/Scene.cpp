@@ -32,12 +32,12 @@ Scene::Scene()
 	m_terrain.AddComponent(TransformComp())->transform.setTranslation({ -64, -9, -64 });
 	Material terrainMat;
 	PBR_ALBEDO_METROUG_NOR desert_rocks;
-	//desert_rocks.albedoTextureID = am.LoadTex2D("Assets/Textures/sand/basecolor.jpg", LoadTexFlag::GenerateMips);
-	//desert_rocks.matallicRoughnessTextureID = am.LoadTex2D("Assets/Textures/sand/metallic_roughness.png", LoadTexFlag::LinearColorSpace | LoadTexFlag::GenerateMips);
-	//desert_rocks.normalTextureID = am.LoadTex2D("Assets/Textures/sand/normal.jpg", LoadTexFlag::LinearColorSpace | LoadTexFlag::GenerateMips);//desert_rocks.albedoTextureID = am.LoadTex2D("Assets/Textures/sand/basecolor.jpg", LoadTexFlag::GenerateMips);
-	desert_rocks.albedoTextureID = am.LoadTex2D("Assets/Textures/rock_slab_wall/basecolor.png", LoadTexFlag::GenerateMips);
-	desert_rocks.matallicRoughnessTextureID = am.LoadTex2D("Assets/Textures/rock_slab_wall/metallic_roughness.png", LoadTexFlag::LinearColorSpace | LoadTexFlag::GenerateMips);
-	desert_rocks.normalTextureID = am.LoadTex2D("Assets/Textures/rock_slab_wall/normal_ogl.png", LoadTexFlag::LinearColorSpace | LoadTexFlag::GenerateMips);
+	desert_rocks.albedoTextureID = am.LoadTex2D("Assets/Textures/sand/basecolor.jpg", LoadTexFlag::GenerateMips);
+	desert_rocks.matallicRoughnessTextureID = am.LoadTex2D("Assets/Textures/sand/metallic_roughness.png", LoadTexFlag::LinearColorSpace | LoadTexFlag::GenerateMips);
+	desert_rocks.normalTextureID = am.LoadTex2D("Assets/Textures/sand/normal.jpg", LoadTexFlag::LinearColorSpace | LoadTexFlag::GenerateMips);//desert_rocks.albedoTextureID = am.LoadTex2D("Assets/Textures/sand/basecolor.jpg", LoadTexFlag::GenerateMips);
+	//desert_rocks.albedoTextureID = am.LoadTex2D("Assets/Textures/rock_slab_wall/basecolor.png", LoadTexFlag::GenerateMips);
+	//desert_rocks.matallicRoughnessTextureID = am.LoadTex2D("Assets/Textures/rock_slab_wall/metallic_roughness.png", LoadTexFlag::LinearColorSpace | LoadTexFlag::GenerateMips);
+	//desert_rocks.normalTextureID = am.LoadTex2D("Assets/Textures/rock_slab_wall/normal_ogl.png", LoadTexFlag::LinearColorSpace | LoadTexFlag::GenerateMips);
 	terrainMat.materialVariant = desert_rocks;
 	terrainMat.type = MaterialType::PBR_ALBEDO_METROUG_NOR;
 	RenderModelComp renderComp;
@@ -72,7 +72,7 @@ Scene::Scene()
 
 	m_dirLight = EntityReg::CreateEntity();
 	m_dirLight.AddComponent<TransformComp>();
-	m_dirLight.AddComponent<DirectionalLightComp>();
+	m_dirLight.AddComponent<DirectionalLightComp>()->dirLight.color = { 1, 0.87f, 0.23f };
 
 	
 	Material quadMat;
@@ -128,7 +128,7 @@ Scene::Scene()
 	m_lightContr.slider2.ChangeDefaultValues({ 1,1,1 }, 0, 1);
 
 	m_dirlightContr.slider1.ChangeDefaultValues({ 0.3f ,-1, 0.5f}, -1, 1);
-	m_dirlightContr.slider2.ChangeDefaultValues({ 1,1,1 }, 0, 1);
+	m_dirlightContr.slider2.ChangeDefaultValues(m_dirLight.GetComponent<DirectionalLightComp>()->dirLight.color, 0, 1);
 
 }
 

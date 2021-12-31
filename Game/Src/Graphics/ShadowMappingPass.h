@@ -14,7 +14,6 @@ private:
 	Shader m_vertexShader;
 	Shader m_emptyPixelShader;
 	std::shared_ptr<Texture2D> m_shadowMap;
-	ConstantBuffer m_viewProjCB;
 	VP m_vp;
 };
 

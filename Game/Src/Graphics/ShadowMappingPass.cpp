@@ -2,6 +2,7 @@
 #include "ShadowMappingPass.h"
 #include "RenderComponents.h"
 #include "LowLvlGfx.h"
+#include "Renderer.h"
 
 using namespace rfm;
 
@@ -9,12 +10,10 @@ ShadowMappingPass::ShadowMappingPass(uint32_t res) : m_res(res)
 {
 	assert(LowLvlGfx::IsValid());
 
-	m_vertexShader = LowLvlGfx::CreateShader("Src/Shaders/VS_ShadowMapping_POS_NOR_UV.hlsl", ShaderType::VERTEXSHADER);
+	m_vertexShader = LowLvlGfx::CreateShader("Src/Shaders/VS_ShadowMapping.hlsl", ShaderType::VERTEXSHADER);
 	m_emptyPixelShader = LowLvlGfx::CreateShader("Src/Shaders/PS_empty.hlsl", ShaderType::PIXELSHADER);
 
-	m_viewProjCB = LowLvlGfx::CreateConstantBuffer({ 2 * sizeof(Matrix), BufferDesc::USAGE::DYNAMIC });
-
-	m_vp.P = OrthographicProjectionMatrix(100, 100, 0.01f, 1000);
+	m_vp.P = OrthographicProjectionMatrix(50, 50, 0.01f, 500);
 
 	D3D11_TEXTURE2D_DESC desc;
 	desc.Width = res;
@@ -43,26 +42,21 @@ ShadowMappingPass::ShadowMappingPass(uint32_t res) : m_res(res)
 	m_shadowMap = LowLvlGfx::CreateTexture2D(desc);
 	LowLvlGfx::CreateSRV(m_shadowMap, &viewDesc);
 	LowLvlGfx::CreateDSV(m_shadowMap, &depthDesc);
-
-	
-	
 }
 
 void ShadowMappingPass::DrawFromDirLight(rfm::Vector3 lightDirection, const std::vector<RendCompAndTransform>& geometyToRender)
 {
 	lightDirection.normalize();
-	//m_vp.V = LookAt(-lightDirection * 200, 0);
-	m_vp.V = LookAt({-2, 10, 0}, { 0,0,0 });
+	m_vp.V = LookAt(-lightDirection * 200, 0);
+	//m_vp.V = LookAt({-2, 10, 0}, { 0,0,0 });
 
-	LowLvlGfx::UpdateBuffer(m_viewProjCB, &m_vp);
-	LowLvlGfx::Bind(m_viewProjCB, ShaderType::PIXELSHADER, 1);
 	LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	LowLvlGfx::SetViewPort({ m_res, m_res });
 	LowLvlGfx::ClearDSV(m_shadowMap);
 	LowLvlGfx::BindRTVs({}, m_shadowMap);
 	LowLvlGfx::Bind(m_vertexShader);
 	LowLvlGfx::Bind(m_emptyPixelShader);
-
+	LowLvlGfx::Bind(Renderer::GetSharedRenderResources().m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
 
 	AssetManager& am = AssetManager::Get();
 	for (const auto & rt : geometyToRender)
@@ -90,6 +84,8 @@ void ShadowMappingPass::DrawFromDirLight(rfm::Vector3 lightDirection, const std:
 
 void ShadowMappingPass::Draw(const SubMesh& mesh, const rfm::Matrix& worldMatrix)
 {
+	Matrix mvp = m_vp.P * m_vp.V * worldMatrix;
+	LowLvlGfx::UpdateBuffer(Renderer::GetSharedRenderResources().m_worldMatrixCB, &mvp);
 	LowLvlGfx::Bind(mesh.ib);
 	LowLvlGfx::Bind(mesh.vb);
 	LowLvlGfx::DrawIndexed(mesh.indexCount, mesh.startIndexLocation, mesh.baseVertexLocation);

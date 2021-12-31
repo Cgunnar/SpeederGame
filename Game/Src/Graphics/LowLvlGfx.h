@@ -76,7 +76,7 @@ public:
 	static void BindSRV(std::shared_ptr<Texture2D> srv, ShaderType shaderType, uint32_t bindSlot);
 	static void UnBindSRV(ShaderType shaderType, uint32_t bindSlot);
 
-	static void UpdateBuffer(ConstantBuffer cBuff, void* data);
+	static void UpdateBuffer(ConstantBuffer cBuff, const void* data);
 	static void ClearRTV(float rgba[4], std::shared_ptr<Texture2D> rtv);
 	static void ClearRTV(float r, float g, float b, float a, std::shared_ptr<Texture2D> rtv);
 	static void ClearDSV(std::shared_ptr<Texture2D> dsv);

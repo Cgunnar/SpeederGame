@@ -447,7 +447,7 @@ void LowLvlGfx::UnBindSRV(ShaderType shaderType, uint32_t bindSlot)
 
 
 
-void LowLvlGfx::UpdateBuffer(ConstantBuffer cbuff, void* data)
+void LowLvlGfx::UpdateBuffer(ConstantBuffer cbuff, const void* data)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedSubRes;
 	s_dx11->m_context->Map(cbuff.m_buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubRes);

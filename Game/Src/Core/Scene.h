@@ -26,7 +26,6 @@ private:
 	rfe::Entity m_quad;
 	rfe::Entity m_ironSphere;
 	rfe::Entity m_debugSphere;
-	rfe::Entity m_brickWallFloor;
 	rfe::Entity m_pointLight;
 	rfe::Entity m_terrain;
 

@@ -236,6 +236,12 @@ namespace rfe
 		template<typename T>
 		void RunScript(float dt);
 
+		template<typename... T>
+		void StartScripts();
+
+		template<typename T>
+		void StartScript();
+
 		void RemoveComponent(ComponentTypeID type, EntityID entityID);
 		void RemoveInternalEntity(Entity& entity);
 		Entity CreateEntityFromExistingID(EntityID id) { return Entity(id, this); }
@@ -258,6 +264,9 @@ namespace rfe
 
 		template<typename... Args>
 		static void RunScripts(float dt);
+
+		template<typename... Args>
+		static void StartScripts();
 
 		static Entity& CreateEntity();
 		//static void removeEntity(Entity& entity);
@@ -319,6 +328,12 @@ namespace rfe
 	inline void EntityReg::RunScripts(float dt)
 	{
 		m_entCompManInstance.RunScripts<Args...>(dt);
+	}
+
+	template<typename ...Args>
+	inline void EntityReg::StartScripts()
+	{
+		m_entCompManInstance.RunScripts<Args...>();
 	}
 
 	inline void EntityReg::AddComponent(EntityID entityID, ComponentTypeID typeID, BaseComponent* component)
@@ -658,6 +673,8 @@ namespace rfe
 			return EntityReg::GetComponent<T>(this->GetEntityID());
 		}
 
+		void OnStart() {};
+
 		//On update functions
 		void OnUpdate(float dt) {};
 	};
@@ -674,6 +691,21 @@ namespace rfe
 		for (auto& script : T::componentArray)
 		{
 			script.OnUpdate(dt);
+		}
+	}
+
+	template<typename ...T>
+	inline void EntityComponentManager::StartScripts()
+	{
+		int e[]{ 0, (RunScript<T>(), 0)... };
+	}
+
+	template<typename T>
+	inline void EntityComponentManager::StartScript()
+	{
+		for (auto& script : T::componentArray)
+		{
+			script.StartScript();
 		}
 	}
 

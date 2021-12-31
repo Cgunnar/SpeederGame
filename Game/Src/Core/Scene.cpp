@@ -63,11 +63,7 @@ Scene::Scene()
 	m_arrow.AddComponent(TransformComp());
 	m_arrow.AddComponent(RenderModelComp("Assets/Models/Arrows/DXRefSys.obj", RenderPassEnum::phong));
 
-	m_brickWallFloor = EntityReg::CreateEntity();
-	m_brickWallFloor.AddComponent(TransformComp())->transform.setRotationDeg(90, 0, 0);
-	m_brickWallFloor.GetComponent<TransformComp>()->transform.setScale(10);
-	m_brickWallFloor.AddComponent<RenderModelComp>("Assets/Models/brick_wall/brick_wall.obj", RenderPassEnum::phong);
-
+	CreateEntityModel("Assets/Models/brick_wall/brick_wall.obj", 0, { 90, 0, 0}, 10);
 	
 
 	m_pointLight = EntityReg::CreateEntity();

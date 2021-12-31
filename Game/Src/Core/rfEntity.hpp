@@ -38,22 +38,22 @@ namespace rfe
 		Entity& operator=(Entity&& other) noexcept;
 
 		template<typename T>
-		T* getComponent();
+		T* GetComponent();
 
 		template<typename T>
 		requires std::is_copy_assignable_v<T>
-			T* addComponent(const T& component) const;
+			T* AddComponent(const T& component) const;
 
 		template<typename T, typename... Args> requires std::is_copy_assignable_v<T>
-		T* addComponent(Args&&... args);
+		T* AddComponent(Args&&... args);
 
 		template<typename T>
-		void removeComponent() const;
+		void RemoveComponent() const;
 
-		void reset();
-		EntityID getID() const { return m_entityIndex; }
-		int getRefCount() const { return s_refCounts[m_entityIndex]; }
-		bool empty() const
+		void Reset();
+		EntityID GetID() const { return m_entityIndex; }
+		int GetRefCount() const { return s_refCounts[m_entityIndex]; }
+		bool Empty() const
 		{
 #ifdef DEBUG
 			if (m_entityIndex != -1)
@@ -88,8 +88,8 @@ namespace rfe
 		friend ECSSerializer;
 
 	public:
-		EntityID getEntityID() const { return entityIndex; }
-		Entity getEntity() const;
+		EntityID GetEntityID() const { return entityIndex; }
+		Entity GetEntity() const;
 	protected:
 		EntityID entityIndex = -1;
 
@@ -213,25 +213,21 @@ namespace rfe
 		~EntityComponentManager();
 
 	public:
-		Entity& createEntity();
-		void removeEntity(Entity& entity); // this should be encapsulated better
-		void addComponent(EntityID entityID, ComponentTypeID typeID, BaseComponent* component);
-
-		//requires std::is_trivially_copy_assignable_v<T>
+		Entity& CreateEntity();
+		void RemoveEntity(Entity& entity); // this should be encapsulated better
+		void AddComponent(EntityID entityID, ComponentTypeID typeID, BaseComponent* component);
 
 		template<typename T, typename... Args> requires std::is_copy_assignable_v<T>
-		T* addComponent(EntityID entityID, Args&&... args);
+		T* AddComponent(EntityID entityID, Args&&... args);
 
-
-		template<typename T>
-		requires std::is_copy_assignable_v<T>
-			T* addComponent(EntityID entityID, const T& component);
+		template<typename T> requires std::is_copy_assignable_v<T>
+		T* AddComponent(EntityID entityID, const T& component);
 
 		template<typename T>
-		void removeComponent(EntityID entityID);
+		void RemoveComponent(EntityID entityID);
 
 		template<typename T>
-		T* getComponent(EntityID entityID);
+		T* GetComponent(EntityID entityID);
 
 	private:
 		template<typename... T>
@@ -240,9 +236,9 @@ namespace rfe
 		template<typename T>
 		void RunScript(float dt);
 
-		void removeComponent(ComponentTypeID type, EntityID entityID);
-		void removeInternalEntity(Entity& entity);
-		Entity createEntityFromExistingID(EntityID id) { return Entity(id, this); }
+		void RemoveComponent(ComponentTypeID type, EntityID entityID);
+		void RemoveInternalEntity(Entity& entity);
+		Entity CreateEntityFromExistingID(EntityID id) { return Entity(id, this); }
 
 	private:
 		std::vector<std::vector<ComponentMetaData>> m_entitiesComponentHandles;
@@ -258,31 +254,31 @@ namespace rfe
 		friend BaseComponent;
 		EntityReg() = delete;
 	public:
-		static void clear();
+		static void Clear();
 
 		template<typename... Args>
 		static void RunScripts(float dt);
 
-		static Entity& createEntity();
+		static Entity& CreateEntity();
 		//static void removeEntity(Entity& entity);
-		static void addComponent(EntityID entityID, ComponentTypeID typeID, BaseComponent* component);
+		static void AddComponent(EntityID entityID, ComponentTypeID typeID, BaseComponent* component);
 		static const std::vector<Entity>& getAllEntities();
 
 		template<typename T>
 		requires std::is_copy_assignable_v<T> && std::is_copy_constructible_v<T>
-			static T* addComponent(EntityID entityID, const T& component);
+		static T* AddComponent(EntityID entityID, const T& component);
 
 		template<typename T, typename... Args> requires std::is_copy_assignable_v<T>
-			static T* addComponent(EntityID entityID, Args&&... args);
+		static T* AddComponent(EntityID entityID, Args&&... args);
 
 		template<typename T>
-		static void removeComponent(EntityID entityID);
+		static void RemoveComponent(EntityID entityID);
 
 		template<typename T>
-		static T* getComponent(EntityID ID);
+		static T* GetComponent(EntityID ID);
 
 		template<typename T>
-		static std::vector<T>& getComponentArray();
+		static std::vector<T>& GetComponentArray();
 	private:
 		inline static EntityComponentManager m_entCompManInstance;
 	};
@@ -290,28 +286,28 @@ namespace rfe
 	//EntityReg definitions
 	//----------------------------------------------------
 
-	inline Entity& EntityReg::createEntity()
+	inline Entity& EntityReg::CreateEntity()
 	{
-		return m_entCompManInstance.createEntity();
+		return m_entCompManInstance.CreateEntity();
 	}
 
-	inline void EntityReg::clear()
+	inline void EntityReg::Clear()
 	{
-		// this will delete alla entities and components, before componentesArray gets destroyed
+		// this will delete all entities and components, before componentesArray gets destroyed
 		for (auto& e : m_entCompManInstance.m_entityRegistry)
 		{
-			if (!e.empty())
+			if (!e.Empty())
 			{
-				if (e.getRefCount() != 1)
+				if (e.GetRefCount() != 1)
 				{
 					OutputDebugString(L"[ERROR] Release all outstanding references to entities before calling EntityReg::clear(). \n\tEntityID: ");
-					OutputDebugString(std::to_wstring(e.getID()).c_str());
+					OutputDebugString(std::to_wstring(e.GetID()).c_str());
 					OutputDebugString(L"\n\tNumRefs needed to be released: ");
-					OutputDebugString(std::to_wstring(e.getRefCount() - 1).c_str());
+					OutputDebugString(std::to_wstring(e.GetRefCount() - 1).c_str());
 					OutputDebugString(L"\n");
 					throw std::runtime_error("release all outstanding references to entities before calling EntityReg::clear().");
 				}
-				m_entCompManInstance.removeEntity(e);
+				m_entCompManInstance.RemoveEntity(e);
 			}
 		}
 		m_entCompManInstance.m_entityRegistry.clear();
@@ -322,50 +318,41 @@ namespace rfe
 	template<typename ...Args>
 	inline void EntityReg::RunScripts(float dt)
 	{
-		//int e[]{ 0, (m_entCompManInstance.RunScripts<Args>(dt), 0)... };
 		m_entCompManInstance.RunScripts<Args...>(dt);
 	}
 
-
-	/*inline void EntityReg::removeEntity(Entity& entity)
+	inline void EntityReg::AddComponent(EntityID entityID, ComponentTypeID typeID, BaseComponent* component)
 	{
-		assert(&entity != &m_entCompManInstance.m_entityRegistry[entity.getID()]);
-		m_entCompManInstance.removeEntity(entity);
-	}*/
-
-	inline void EntityReg::addComponent(EntityID entityID, ComponentTypeID typeID, BaseComponent* component)
-	{
-		m_entCompManInstance.addComponent(entityID, typeID, component);
+		m_entCompManInstance.AddComponent(entityID, typeID, component);
 	}
-
 	
 	template<typename T>
 	requires std::is_copy_assignable_v<T>&& std::is_copy_constructible_v<T>
-		inline T* EntityReg::addComponent(EntityID entityID, const T& component)
+	inline T* EntityReg::AddComponent(EntityID entityID, const T& component)
 	{
-		return m_entCompManInstance.addComponent<T>(entityID, component);
+		return m_entCompManInstance.AddComponent<T>(entityID, component);
 	}
 
 	template<typename T, typename ...Args>requires std::is_copy_assignable_v<T>
-	inline T* EntityReg::addComponent(EntityID entityID, Args && ...args)
+	inline T* EntityReg::AddComponent(EntityID entityID, Args && ...args)
 	{
-		return m_entCompManInstance.addComponent<T>(entityID, std::forward<Args>(args)...);
+		return m_entCompManInstance.AddComponent<T>(entityID, std::forward<Args>(args)...);
 	}
 
 	template<typename T>
-	inline void EntityReg::removeComponent(EntityID entityID)
+	inline void EntityReg::RemoveComponent(EntityID entityID)
 	{
-		m_entCompManInstance.removeComponent<T>(entityID);
+		m_entCompManInstance.RemoveComponent<T>(entityID);
 	}
 
 	template<typename T>
-	inline T* EntityReg::getComponent(EntityID ID)
+	inline T* EntityReg::GetComponent(EntityID ID)
 	{
-		return m_entCompManInstance.getComponent<T>(ID);
+		return m_entCompManInstance.GetComponent<T>(ID);
 	}
 
 	template<typename T>
-	inline std::vector<T>& EntityReg::getComponentArray()
+	inline std::vector<T>& EntityReg::GetComponentArray()
 	{
 		return T::componentArray;
 	}
@@ -393,7 +380,7 @@ namespace rfe
 
 	inline Entity::Entity(const Entity& other)
 	{
-		if (!other.empty())
+		if (!other.Empty())
 		{
 			this->m_entCompManRef = other.m_entCompManRef;
 			this->m_entityIndex = other.m_entityIndex;
@@ -410,7 +397,7 @@ namespace rfe
 	{
 
 #ifdef _DEBUG
-		if (!this->empty())
+		if (!this->Empty())
 		{
 			OutputDebugString(L"~Entity\tindex: ");
 			OutputDebugString(std::to_wstring(m_entityIndex).c_str());
@@ -419,13 +406,13 @@ namespace rfe
 			OutputDebugString(L"\n");
 		}
 #endif // _DEBUG
-		this->reset();
+		this->Reset();
 	}
 
 	inline Entity& Entity::operator=(const Entity& other)
 	{
-		this->reset();
-		if (!other.empty())
+		this->Reset();
+		if (!other.Empty())
 		{
 			this->m_entCompManRef = other.m_entCompManRef;
 			this->m_entityIndex = other.m_entityIndex;
@@ -450,7 +437,7 @@ namespace rfe
 
 	inline Entity& Entity::operator=(Entity&& other) noexcept
 	{
-		this->reset();
+		this->Reset();
 		this->m_entityIndex = other.m_entityIndex;
 		this->m_entCompManRef = other.m_entCompManRef;
 		//invalidate other
@@ -458,13 +445,13 @@ namespace rfe
 		other.m_entityIndex = -1;
 		return *this;
 	}
-	inline void Entity::reset()
+	inline void Entity::Reset()
 	{
-		if (empty()) return;
+		if (Empty()) return;
 		if (s_refCounts[m_entityIndex] <= 2)
 		{
-			m_entCompManRef->removeEntity(*this);
-			assert(this->empty()); //removeEntity take care of reseting the entity
+			m_entCompManRef->RemoveEntity(*this);
+			assert(this->Empty()); //removeEntity take care of reseting the entity
 		}
 		else
 		{
@@ -475,29 +462,27 @@ namespace rfe
 	};
 
 	template<typename T>
-	inline T* Entity::getComponent()
+	inline T* Entity::GetComponent()
 	{
-		return m_entCompManRef->getComponent<T>(this->m_entityIndex);
+		return m_entCompManRef->GetComponent<T>(this->m_entityIndex);
 	}
 
-	//requires std::is_trivially_copy_assignable_v<T>
-	template<typename T>
-	requires std::is_copy_assignable_v<T>
-		inline T* Entity::addComponent(const T& component) const
+	template<typename T> requires std::is_copy_assignable_v<T>
+	inline T* Entity::AddComponent(const T& component) const
 	{
-		return m_entCompManRef->addComponent<T>(this->m_entityIndex, component);
+		return m_entCompManRef->AddComponent<T>(this->m_entityIndex, component);
 	}
 
 	template<typename T, typename ...Args> requires std::is_copy_assignable_v<T>
-	inline T* Entity::addComponent(Args && ...args)
+	inline T* Entity::AddComponent(Args && ...args)
 	{
-		return m_entCompManRef->addComponent<T>(this->m_entityIndex, std::forward<Args>(args)...);
+		return m_entCompManRef->AddComponent<T>(this->m_entityIndex, std::forward<Args>(args)...);
 	}
 
 	template<typename T>
-	inline void Entity::removeComponent() const
+	inline void Entity::RemoveComponent() const
 	{
-		m_entCompManRef->removeComponent<T>(this->m_entityIndex);
+		m_entCompManRef->RemoveComponent<T>(this->m_entityIndex);
 	}
 
 
@@ -518,7 +503,7 @@ namespace rfe
 		}
 	}
 
-	inline Entity& EntityComponentManager::createEntity()
+	inline Entity& EntityComponentManager::CreateEntity()
 	{
 		EntityID index;
 		if (!m_freeEntitySlots.empty())
@@ -533,14 +518,14 @@ namespace rfe
 			index = m_entitiesComponentHandles.size();
 			m_entitiesComponentHandles.emplace_back(std::vector<ComponentMetaData>());
 			m_entityRegistry.emplace_back(Entity(index, this));
-			assert(m_entityRegistry.back().getID() == m_entityRegistry[index].getID());
+			assert(m_entityRegistry.back().GetID() == m_entityRegistry[index].GetID());
 		}
 		return m_entityRegistry[index];
 	}
 
-	inline void EntityComponentManager::removeInternalEntity(Entity& entity)
+	inline void EntityComponentManager::RemoveInternalEntity(Entity& entity)
 	{
-		assert(!entity.empty());
+		assert(!entity.Empty());
 		assert(entity.s_refCounts[entity.m_entityIndex] == 1);
 		assert(m_entitiesComponentHandles.size() == m_entityRegistry.size());
 		assert(&entity == &m_entityRegistry[entity.m_entityIndex]);
@@ -551,7 +536,7 @@ namespace rfe
 			auto compUtil = BaseComponent::getComponentUtility(c.typeID);
 			compUtil.compDestroy(c.index);
 
-			removeComponent(c.typeID, entity.m_entityIndex);
+			RemoveComponent(c.typeID, entity.m_entityIndex);
 		}
 		if (entity.m_entityIndex + 1 == m_entitiesComponentHandles.size())
 		{
@@ -569,9 +554,9 @@ namespace rfe
 		entity.m_entityIndex = -1;
 	}
 
-	inline void EntityComponentManager::removeEntity(Entity& entity)
+	inline void EntityComponentManager::RemoveEntity(Entity& entity)
 	{
-		assert(!entity.empty());
+		assert(!entity.Empty());
 
 #ifdef DEBUG
 		std::string debugOut = "Removed Entity: " + std::to_string(entity.m_entityIndex) + ", refCount: "
@@ -595,13 +580,13 @@ namespace rfe
 		}
 
 
-		if (entity.getRefCount() == 1)
+		if (entity.GetRefCount() == 1)
 		{
-			removeInternalEntity(entity);
+			RemoveInternalEntity(entity);
 		}
-		else if (entity.getRefCount() == 2)
+		else if (entity.GetRefCount() == 2)
 		{
-			EntityID id = entity.getID();
+			EntityID id = entity.GetID();
 
 			//first reset entity: ref count will now be 1, can't call entity.reset(), because that will lead to recursion
 			entity.m_entCompManRef = nullptr;
@@ -614,13 +599,13 @@ namespace rfe
 			}
 			else
 			{
-				m_entityRegistry[id].reset(); //second reset internal entity
+				m_entityRegistry[id].Reset(); //second reset internal entity
 			}
 			assert(entity.s_refCounts[id] == 0);
 		}
 	}
 
-	inline void EntityComponentManager::addComponent(EntityID entityID, ComponentTypeID typeID, BaseComponent* component)
+	inline void EntityComponentManager::AddComponent(EntityID entityID, ComponentTypeID typeID, BaseComponent* component)
 	{
 		auto createFunc = BaseComponent::getCreateComponentFunction(typeID);
 		ComponentIndex index = createFunc(component);
@@ -629,7 +614,7 @@ namespace rfe
 
 
 	template<typename T, typename ...Args> requires std::is_copy_assignable_v<T>
-	inline T* EntityComponentManager::addComponent(EntityID entityID, Args&& ...args)
+	inline T* EntityComponentManager::AddComponent(EntityID entityID, Args&& ...args)
 	{
 		ComponentTypeID typeID = T::typeID;
 		ComponentIndex index;
@@ -642,9 +627,8 @@ namespace rfe
 		return compPtr;
 	}
 
-	template<typename T>
-	requires std::is_copy_assignable_v<T>
-		inline T* EntityComponentManager::addComponent(EntityID entityID, const T& comp)
+	template<typename T> requires std::is_copy_assignable_v<T>
+	inline T* EntityComponentManager::AddComponent(EntityID entityID, const T& comp)
 	{
 		ComponentTypeID typeID = T::typeID;
 		ComponentIndex index;
@@ -658,7 +642,7 @@ namespace rfe
 	}
 
 	template<typename T>
-	inline void EntityComponentManager::removeComponent(EntityID entityID)
+	inline void EntityComponentManager::RemoveComponent(EntityID entityID)
 	{
 		removeComponent(T::typeID, entityID);
 	}
@@ -669,9 +653,9 @@ namespace rfe
 	public:
 		//helpers functions
 		template<typename T>
-		T* getComponent()
+		T* GetComponent()
 		{
-			return EntityReg::getComponent<T>(this->getEntityID());
+			return EntityReg::GetComponent<T>(this->GetEntityID());
 		}
 
 		//On update functions
@@ -693,7 +677,7 @@ namespace rfe
 		}
 	}
 
-	inline void EntityComponentManager::removeComponent(ComponentTypeID type, EntityID entityID)
+	inline void EntityComponentManager::RemoveComponent(ComponentTypeID type, EntityID entityID)
 	{
 		auto& entityComponentHandles = m_entitiesComponentHandles[entityID];
 		if (auto iti = std::ranges::find_if(entityComponentHandles.begin(), entityComponentHandles.end(),
@@ -721,7 +705,7 @@ namespace rfe
 	}
 
 	template<typename T>
-	inline T* EntityComponentManager::getComponent(EntityID entityID)
+	inline T* EntityComponentManager::GetComponent(EntityID entityID)
 	{
 		auto& entityComponents = m_entitiesComponentHandles[entityID];
 		if (auto it = std::ranges::find_if(entityComponents.begin(), entityComponents.end(),
@@ -756,9 +740,9 @@ namespace rfe
 		return compID;
 	}
 
-	inline Entity BaseComponent::getEntity() const
+	inline Entity BaseComponent::GetEntity() const
 	{
-		return EntityReg::m_entCompManInstance.createEntityFromExistingID(entityIndex);
+		return EntityReg::m_entCompManInstance.CreateEntityFromExistingID(entityIndex);
 	}
 
 	inline size_t BaseComponent::getSize(ComponentTypeID id)

@@ -9,7 +9,7 @@ void ShipContollerScript::OnUpdate(float dt)
 	if (gPad.IsConnected())
 	{
 		
-		auto& transform = getComponent<TransformComp>()->transform;
+		auto& transform = GetComponent<TransformComp>()->transform;
 		transform.rotateDegL(
 			dt * gPad.thumbSticks.leftY * m_pitchSpeed,
 			dt * gPad.thumbSticks.rightX * m_yawSpeed,

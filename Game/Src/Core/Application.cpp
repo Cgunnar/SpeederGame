@@ -61,7 +61,7 @@ void Application::Run()
 		{
 			Mouse& mouse = Input::Get().GetMouse();
 			mouse.SetMode(~mouse.GetMode());
-			m_scene->GetCamera().getComponent<CameraControllerScript>()->ToggleCameraLock();
+			m_scene->GetCamera().GetComponent<CameraControllerScript>()->ToggleCameraLock();
 		}
 
 		auto ms = Input::Get().GetMouse().GetMouseState();

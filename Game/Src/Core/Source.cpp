@@ -13,6 +13,6 @@ int main()
 
 	myGame->Run();
 	delete myGame;
-	rfe::EntityReg::clear();
+	rfe::EntityReg::Clear();
 	return 0;
 }

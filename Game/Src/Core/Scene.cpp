@@ -18,9 +18,9 @@ using namespace rfe;
 
 Scene::Scene()
 {
-	m_camera = EntityReg::createEntity();
-	m_camera.addComponent<TransformComp>()->transform.setTranslation(0, 2, -4);
-	m_camera.addComponent<CameraControllerScript>();
+	m_camera = EntityReg::CreateEntity();
+	m_camera.AddComponent<TransformComp>()->transform.setTranslation(0, 2, -4);
+	m_camera.AddComponent<CameraControllerScript>();
 
 	AssetManager& am = AssetManager::Get();
 
@@ -28,8 +28,8 @@ Scene::Scene()
 	tl.CreateTerrainFromBMP("Assets/Textures/noiseTexture.bmp");
 	SubMesh terrainMesh(tl.GetVerticesTBN(), tl.GetIndices());
 
-	m_terrain = EntityReg::createEntity();
-	m_terrain.addComponent(TransformComp())->transform.setTranslation({ -64, -9, -64 });
+	m_terrain = EntityReg::CreateEntity();
+	m_terrain.AddComponent(TransformComp())->transform.setTranslation({ -64, -9, -64 });
 	Material terrainMat;
 	PBR_ALBEDO_METROUG_NOR desert_rocks;
 	//desert_rocks.albedoTextureID = am.LoadTex2D("Assets/Textures/sand/basecolor.jpg", LoadTexFlag::GenerateMips);
@@ -43,7 +43,7 @@ Scene::Scene()
 	RenderModelComp renderComp;
 	renderComp.SetRenderUnit(am.AddRenderUnit(terrainMesh, terrainMat));
 	renderComp.renderPass = RenderPassEnum::pbr;
-	m_terrain.addComponent(renderComp);
+	m_terrain.AddComponent(renderComp);
 
 
 	this->CreateEntityModel("Assets/Models/MetalRoughSpheres/glTF/pbrSpheres.gltf", { -2, 3, 4 }, { 0, 0, 0 }, 0.2f);
@@ -54,26 +54,26 @@ Scene::Scene()
 	this->CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 3, 2, 4 }, { 0,-70, 0 }, 0.03f);
 
 	m_ship = this->CreateEntityModel("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", { 0, 2, 3 });
-	m_ship.addComponent(ShipContollerScript());
+	m_ship.AddComponent(ShipContollerScript());
 	
 
 	CreateEntityModel("Assets/Models/nanosuit/nanosuit.obj", { 2, 1, 5 }, 0, 0.1f);
 
-	m_arrow = EntityReg::createEntity();
-	m_arrow.addComponent(TransformComp());
-	m_arrow.addComponent(RenderModelComp("Assets/Models/Arrows/DXRefSys.obj", RenderPassEnum::phong));
+	m_arrow = EntityReg::CreateEntity();
+	m_arrow.AddComponent(TransformComp());
+	m_arrow.AddComponent(RenderModelComp("Assets/Models/Arrows/DXRefSys.obj", RenderPassEnum::phong));
 
-	m_brickWallFloor = EntityReg::createEntity();
-	m_brickWallFloor.addComponent(TransformComp())->transform.setRotationDeg(90, 0, 0);
-	m_brickWallFloor.getComponent<TransformComp>()->transform.setScale(10);
-	m_brickWallFloor.addComponent<RenderModelComp>("Assets/Models/brick_wall/brick_wall.obj", RenderPassEnum::phong);
+	m_brickWallFloor = EntityReg::CreateEntity();
+	m_brickWallFloor.AddComponent(TransformComp())->transform.setRotationDeg(90, 0, 0);
+	m_brickWallFloor.GetComponent<TransformComp>()->transform.setScale(10);
+	m_brickWallFloor.AddComponent<RenderModelComp>("Assets/Models/brick_wall/brick_wall.obj", RenderPassEnum::phong);
 
 	
 
-	m_pointLight = EntityReg::createEntity();
-	m_pointLight.addComponent(TransformComp());
-	m_pointLight.addComponent(PointLightComp());
-	m_pointLight.getComponent<PointLightComp>()->pointLight.lightStrength = 5;
+	m_pointLight = EntityReg::CreateEntity();
+	m_pointLight.AddComponent(TransformComp());
+	m_pointLight.AddComponent(PointLightComp());
+	m_pointLight.GetComponent<PointLightComp>()->pointLight.lightStrength = 5;
 
 	
 	Material quadMat;
@@ -83,9 +83,9 @@ Scene::Scene()
 	mat.diffuseTextureID = AssetManager::Get().LoadTex2D("Assets/Hej.png", LoadTexFlag::GenerateMips);
 	quadMat.materialVariant = mat;
 
-	m_quad = EntityReg::createEntity();
-	m_quad.addComponent(TransformComp());
-	RenderModelComp* rendComp = m_quad.addComponent(RenderModelComp());
+	m_quad = EntityReg::CreateEntity();
+	m_quad.AddComponent(TransformComp());
+	RenderModelComp* rendComp = m_quad.AddComponent(RenderModelComp());
 	rendComp->renderPass = RenderPassEnum::phong;
 	SubMesh quadMeshCopy = AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV);
 	rendComp->renderUnitID = AssetManager::Get().AddRenderUnit(quadMeshCopy, quadMat);
@@ -100,9 +100,9 @@ Scene::Scene()
 	pbrMat.albedoTextureID = AssetManager::Get().LoadTex2D("Assets/Textures/rustediron/basecolor.png", LoadTexFlag::GenerateMips);
 	rusteIronMat.materialVariant = pbrMat;
 
-	m_ironSphere = EntityReg::createEntity();
-	m_ironSphere.addComponent(TransformComp())->transform.setTranslation(0, 2, 0);
-	rendComp = m_ironSphere.addComponent(RenderModelComp());
+	m_ironSphere = EntityReg::CreateEntity();
+	m_ironSphere.AddComponent(TransformComp())->transform.setTranslation(0, 2, 0);
+	rendComp = m_ironSphere.AddComponent(RenderModelComp());
 	rendComp->renderPass = RenderPassEnum::pbr;
 	SubMesh quadMeshCopy2 = AssetManager::Get().GetMesh(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN);
 
@@ -111,16 +111,16 @@ Scene::Scene()
 
 	
 
-	m_debugSphere = EntityReg::createEntity();
-	m_debugSphere.addComponent<TransformComp>()->transform.setTranslation(-3, 2, 0);
-	m_debugSphere.getComponent<TransformComp>()->transform.setRotationDeg(0, -90, 0);
+	m_debugSphere = EntityReg::CreateEntity();
+	m_debugSphere.AddComponent<TransformComp>()->transform.setTranslation(-3, 2, 0);
+	m_debugSphere.GetComponent<TransformComp>()->transform.setRotationDeg(0, -90, 0);
 
 	RenderModelComp rc;
 	GID mID = am.LoadMesh("Assets/Models/UV_Sphere/sphere.obj", MeshFormat::POS_NOR_UV_TAN_BITAN);
 	SubMesh blendUVSphere = am.GetMesh(mID);
 	rc.SetRenderUnit(am.AddRenderUnit(blendUVSphere, rusteIronMat));
 	rc.renderPass = RenderPassEnum::pbr;
-	m_debugSphere.addComponent(rc);
+	m_debugSphere.AddComponent(rc);
 
 
 	m_quadContr.slider1.ChangeDefaultValues({ 0,0,8 });
@@ -142,7 +142,7 @@ void Scene::Update(float dt)
 
 	EntityReg::RunScripts<CameraControllerScript, ShipContollerScript>(dt);
 
-	Transform followShip = m_ship.getComponent<TransformComp>()->transform;
+	Transform followShip = m_ship.GetComponent<TransformComp>()->transform;
 	followShip.translateL(0, 1, -4);
 	//m_camera.getComponent<TransformComp>()->transform = followShip;
 
@@ -150,11 +150,11 @@ void Scene::Update(float dt)
 	m_quadContr.Show();
 	m_lightContr.Show();
 
-	m_quad.getComponent<TransformComp>()->transform.setTranslation(m_quadContr.slider1.value);
-	m_quad.getComponent<TransformComp>()->transform.setRotation(m_quadContr.slider2.value.x, m_quadContr.slider2.value.y, m_quadContr.slider2.value.z);
+	m_quad.GetComponent<TransformComp>()->transform.setTranslation(m_quadContr.slider1.value);
+	m_quad.GetComponent<TransformComp>()->transform.setRotation(m_quadContr.slider2.value.x, m_quadContr.slider2.value.y, m_quadContr.slider2.value.z);
 
-	m_pointLight.getComponent<PointLightComp>()->pointLight.position = m_lightContr.slider1.value;
-	m_pointLight.getComponent<PointLightComp>()->pointLight.color = m_lightContr.slider2.value;
+	m_pointLight.GetComponent<PointLightComp>()->pointLight.position = m_lightContr.slider1.value;
+	m_pointLight.GetComponent<PointLightComp>()->pointLight.color = m_lightContr.slider2.value;
 
 }
 
@@ -165,16 +165,16 @@ rfe::Entity& Scene::GetCamera()
 
 rfe::Entity Scene::CreateEntityModel(const std::string path, Vector3 pos, Vector3 rotDeg, Vector3 scale)
 {
-	m_entities.push_back(EntityReg::createEntity());
-	Transform& t = m_entities.back().addComponent<TransformComp>()->transform;
+	m_entities.push_back(EntityReg::CreateEntity());
+	Transform& t = m_entities.back().AddComponent<TransformComp>()->transform;
 	t.setTranslation(pos);
 	t.setRotationDeg(rotDeg.x, rotDeg.y, rotDeg.z);
 	t.setScale(scale.x, scale.y, scale.z);
 
 	if(std::filesystem::path(path).extension() == ".gltf")
-		m_entities.back().addComponent<RenderModelComp>(path, RenderPassEnum::pbr);
+		m_entities.back().AddComponent<RenderModelComp>(path, RenderPassEnum::pbr);
 	else
-		m_entities.back().addComponent<RenderModelComp>(path, RenderPassEnum::phong);
+		m_entities.back().AddComponent<RenderModelComp>(path, RenderPassEnum::phong);
 
 	return m_entities.back();
 }

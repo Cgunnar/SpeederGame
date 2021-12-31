@@ -51,7 +51,7 @@ void Renderer::RenderBegin(rfe::Entity& camera)
 	LowLvlGfx::ClearDSV(LowLvlGfx::GetDepthBuffer());
 
 	LowLvlGfx::SetViewPort(LowLvlGfx::GetResolution());
-	m_vp.V = inverse(*camera.getComponent<TransformComp>());
+	m_vp.V = inverse(*camera.GetComponent<TransformComp>());
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_vpCB, &m_vp);
 }
 
@@ -85,7 +85,7 @@ void Renderer::Render(rfe::Entity& camera)
 	LowLvlGfx::UnBindRasterizer();
 	LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }, LowLvlGfx::GetDepthBuffer());
 
-	auto& pointLights = rfe::EntityReg::getComponentArray<PointLightComp>();
+	auto& pointLights = rfe::EntityReg::GetComponentArray<PointLightComp>();
 	assert(!pointLights.empty());
 	PointLight p = pointLights[0].pointLight;
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_pointLightCB, &p);
@@ -118,10 +118,10 @@ SharedRenderResources& Renderer::GetSharedRenderResources()
 void Renderer::SubmitToRender(rfe::Entity& camera)
 {
 	AssetManager& assetMan = AssetManager::Get();
-	for (const auto& rendComp : rfe::EntityReg::getComponentArray<RenderModelComp>())
+	for (const auto& rendComp : rfe::EntityReg::GetComponentArray<RenderModelComp>())
 	{
-		EntityID entID = rendComp.getEntityID();
-		Transform worldMatrix = EntityReg::getComponent<TransformComp>(entID)->transform;
+		EntityID entID = rendComp.GetEntityID();
+		Transform worldMatrix = EntityReg::GetComponent<TransformComp>(entID)->transform;
 
 		RenderUnitID b = rendComp.renderUnitBegin;
 		RenderUnitID e = rendComp.renderUnitEnd;
@@ -159,7 +159,7 @@ void Renderer::SubmitAndRenderTransparentToInternalRenderers(const VP& viewAndPr
 {
 	if (m_transparentRenderUnits.empty()) return;
 
-	auto camTransform = camera.getComponent<TransformComp>()->transform;
+	auto camTransform = camera.GetComponent<TransformComp>()->transform;
 	Vector3 forward = camTransform.forward();
 	auto&& backToFront = [&forward](PassForTransparentUnits a, PassForTransparentUnits b)
 	{

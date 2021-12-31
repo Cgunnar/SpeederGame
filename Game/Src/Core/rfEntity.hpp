@@ -40,14 +40,12 @@ namespace rfe
 		template<typename T>
 		T* getComponent();
 
-		//requires std::is_trivially_copy_assignable_v<T>
 		template<typename T>
 		requires std::is_copy_assignable_v<T>
 			T* addComponent(const T& component) const;
 
-		template<typename T>
-		requires std::is_copy_assignable_v<T>
-			T* addScript(const T& component) const;
+		template<typename T, typename... Args> requires std::is_copy_assignable_v<T>
+		T* addComponent(Args&&... args);
 
 		template<typename T>
 		void removeComponent() const;
@@ -121,11 +119,10 @@ namespace rfe
 
 	struct ComponentMetaData
 	{
-		ComponentMetaData(ComponentTypeID typeID, ComponentIndex index, EntityID entIndex, bool script) : typeID(typeID), index(index), entityIndex(entIndex), isScript(script) {}
+		ComponentMetaData(ComponentTypeID typeID, ComponentIndex index, EntityID entIndex) : typeID(typeID), index(index), entityIndex(entIndex) {}
 		ComponentTypeID typeID;
 		ComponentIndex index;
 		EntityID entityIndex;
-		bool isScript = false;
 	};
 
 
@@ -218,16 +215,17 @@ namespace rfe
 	public:
 		Entity& createEntity();
 		void removeEntity(Entity& entity); // this should be encapsulated better
-		void addComponent(EntityID entityID, ComponentTypeID typeID, BaseComponent* component, bool script);
+		void addComponent(EntityID entityID, ComponentTypeID typeID, BaseComponent* component);
 
 		//requires std::is_trivially_copy_assignable_v<T>
+
+		template<typename T, typename... Args> requires std::is_copy_assignable_v<T>
+		T* addComponent(EntityID entityID, Args&&... args);
+
+
 		template<typename T>
 		requires std::is_copy_assignable_v<T>
 			T* addComponent(EntityID entityID, const T& component);
-
-		template<typename T>
-		requires std::is_copy_assignable_v<T>
-		T* AddScript(EntityID entityID, const T& comp);
 
 		template<typename T>
 		void removeComponent(EntityID entityID);
@@ -267,12 +265,15 @@ namespace rfe
 
 		static Entity& createEntity();
 		//static void removeEntity(Entity& entity);
-		static void addComponent(EntityID entityID, ComponentTypeID typeID, BaseComponent* component, bool script);
+		static void addComponent(EntityID entityID, ComponentTypeID typeID, BaseComponent* component);
 		static const std::vector<Entity>& getAllEntities();
 
 		template<typename T>
-		requires std::is_copy_assignable_v<T>&& std::is_copy_constructible_v<T>
+		requires std::is_copy_assignable_v<T> && std::is_copy_constructible_v<T>
 			static T* addComponent(EntityID entityID, const T& component);
+
+		template<typename T, typename... Args> requires std::is_copy_assignable_v<T>
+			static T* addComponent(EntityID entityID, Args&&... args);
 
 		template<typename T>
 		static void removeComponent(EntityID entityID);
@@ -332,9 +333,9 @@ namespace rfe
 		m_entCompManInstance.removeEntity(entity);
 	}*/
 
-	inline void EntityReg::addComponent(EntityID entityID, ComponentTypeID typeID, BaseComponent* component, bool script)
+	inline void EntityReg::addComponent(EntityID entityID, ComponentTypeID typeID, BaseComponent* component)
 	{
-		m_entCompManInstance.addComponent(entityID, typeID, component, script);
+		m_entCompManInstance.addComponent(entityID, typeID, component);
 	}
 
 	
@@ -343,6 +344,12 @@ namespace rfe
 		inline T* EntityReg::addComponent(EntityID entityID, const T& component)
 	{
 		return m_entCompManInstance.addComponent<T>(entityID, component);
+	}
+
+	template<typename T, typename ...Args>requires std::is_copy_assignable_v<T>
+	inline T* EntityReg::addComponent(EntityID entityID, Args && ...args)
+	{
+		return m_entCompManInstance.addComponent<T>(entityID, std::forward<Args>(args)...);
 	}
 
 	template<typename T>
@@ -481,11 +488,10 @@ namespace rfe
 		return m_entCompManRef->addComponent<T>(this->m_entityIndex, component);
 	}
 
-	template<typename T>
-	requires std::is_copy_assignable_v<T>
-	inline T* Entity::addScript(const T& component) const
+	template<typename T, typename ...Args> requires std::is_copy_assignable_v<T>
+	inline T* Entity::addComponent(Args && ...args)
 	{
-		return m_entCompManRef->AddScript<T>(this->m_entityIndex, component);
+		return m_entCompManRef->addComponent<T>(this->m_entityIndex, std::forward<Args>(args)...);
 	}
 
 	template<typename T>
@@ -538,10 +544,6 @@ namespace rfe
 		assert(entity.s_refCounts[entity.m_entityIndex] == 1);
 		assert(m_entitiesComponentHandles.size() == m_entityRegistry.size());
 		assert(&entity == &m_entityRegistry[entity.m_entityIndex]);
-
-
-
-
 
 		auto& components = m_entitiesComponentHandles[entity.m_entityIndex];
 		for (auto& c : components)
@@ -616,45 +618,30 @@ namespace rfe
 			}
 			assert(entity.s_refCounts[id] == 0);
 		}
-
-
-
-
-
-		//return;
-		////----------------------------
-
-
-		//
-
-		//auto& components = m_entitiesComponentHandles[entity.m_entityIndex];
-		//for (auto& c : components)
-		//{
-		//	removeComponent(c.typeID, entity.m_entityIndex);
-		//}
-		////this is the entity in the back of the vector
-		//if (entity.m_entityIndex + 1 == m_entitiesComponentHandles.size())
-		//{
-		//	m_entityRegistry.pop_back();
-		//	m_entitiesComponentHandles.pop_back();
-		//}
-		//else
-		//{
-		//	m_entitiesComponentHandles[entity.m_entityIndex].clear();
-		//	m_freeEntitySlots.push(entity.m_entityIndex);
-		//}
-
 	}
 
-	inline void EntityComponentManager::addComponent(EntityID entityID, ComponentTypeID typeID, BaseComponent* component, bool script)
+	inline void EntityComponentManager::addComponent(EntityID entityID, ComponentTypeID typeID, BaseComponent* component)
 	{
 		auto createFunc = BaseComponent::getCreateComponentFunction(typeID);
 		ComponentIndex index = createFunc(component);
-		m_entitiesComponentHandles[entityID].emplace_back(typeID, index, entityID, script);
+		m_entitiesComponentHandles[entityID].emplace_back(typeID, index, entityID);
 	}
 
 
-	//requires std::is_trivially_copy_assignable_v<T>
+	template<typename T, typename ...Args> requires std::is_copy_assignable_v<T>
+	inline T* EntityComponentManager::addComponent(EntityID entityID, Args&& ...args)
+	{
+		ComponentTypeID typeID = T::typeID;
+		ComponentIndex index;
+		index = T::componentArray.size();
+		T::componentArray.emplace_back(std::forward<Args>(args)...);
+
+		T* compPtr = &T::componentArray[index];
+		compPtr->entityIndex = entityID;
+		m_entitiesComponentHandles[entityID].emplace_back(typeID, index, entityID);
+		return compPtr;
+	}
+
 	template<typename T>
 	requires std::is_copy_assignable_v<T>
 		inline T* EntityComponentManager::addComponent(EntityID entityID, const T& comp)
@@ -666,22 +653,7 @@ namespace rfe
 
 		T* compPtr = &T::componentArray[index];
 		compPtr->entityIndex = entityID;
-		m_entitiesComponentHandles[entityID].emplace_back(typeID, index, entityID, false);
-		return compPtr;
-	}
-
-	template<typename T>
-	requires std::is_copy_assignable_v<T>
-		inline T* EntityComponentManager::AddScript(EntityID entityID, const T& comp)
-	{
-		ComponentTypeID typeID = T::typeID;
-		ComponentIndex index;
-		index = comp.componentArray.size();
-		T::componentArray.emplace_back(comp);
-
-		T* compPtr = &T::componentArray[index];
-		compPtr->entityIndex = entityID;
-		m_entitiesComponentHandles[entityID].emplace_back(typeID, index, entityID, true);
+		m_entitiesComponentHandles[entityID].emplace_back(typeID, index, entityID);
 		return compPtr;
 	}
 
@@ -694,12 +666,6 @@ namespace rfe
 	template<typename T>
 	class NativeScriptComponent : public Component<T>
 	{
-		/*friend EntityComponentManager;
-		friend Component<T>;
-	private:
-		using BaseComponent::entityIndex;
-		using BaseComponent::registerComponent;*/
-
 	public:
 		//helpers functions
 		template<typename T>

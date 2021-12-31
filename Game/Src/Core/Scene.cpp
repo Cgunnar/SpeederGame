@@ -19,9 +19,8 @@ using namespace rfe;
 Scene::Scene()
 {
 	m_camera = EntityReg::createEntity();
-	m_camera.addComponent(TransformComp());
-	m_camera.getComponent<TransformComp>()->transform.setTranslation(0, 2, -4);
-	m_camera.addScript(CameraControllerScript());
+	m_camera.addComponent<TransformComp>()->transform.setTranslation(0, 2, -4);
+	m_camera.addComponent<CameraControllerScript>();
 
 	AssetManager& am = AssetManager::Get();
 
@@ -55,12 +54,12 @@ Scene::Scene()
 	this->CreateEntityWithPBR("Assets/Models/cerberus/scene.gltf", { 3, 2, 4 }, { 0,-70, 0 }, 0.03f);
 
 	m_ship = this->CreateEntityWithPBR("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", { 0, 2, 3 });
-	m_ship.addScript(ShipContollerScript());
+	m_ship.addComponent(ShipContollerScript());
 
 	m_nanosuit = EntityReg::createEntity();
-	m_nanosuit.addComponent(TransformComp())->transform.setTranslation(2, 1, 5);
+	m_nanosuit.addComponent<TransformComp>()->transform.setTranslation(2, 1, 5);
 	m_nanosuit.getComponent<TransformComp>()->transform.setScale(0.1f);
-	m_nanosuit.addComponent(RenderModelComp("Assets/Models/nanosuit/nanosuit.obj", RenderPassEnum::phong));
+	m_nanosuit.addComponent<RenderModelComp>("Assets/Models/nanosuit/nanosuit.obj", RenderPassEnum::phong);
 
 	m_arrow = EntityReg::createEntity();
 	m_arrow.addComponent(TransformComp());
@@ -69,7 +68,7 @@ Scene::Scene()
 	m_brickWallFloor = EntityReg::createEntity();
 	m_brickWallFloor.addComponent(TransformComp())->transform.setRotationDeg(90, 0, 0);
 	m_brickWallFloor.getComponent<TransformComp>()->transform.setScale(10);
-	m_brickWallFloor.addComponent(RenderModelComp("Assets/Models/brick_wall/brick_wall.obj", RenderPassEnum::phong));
+	m_brickWallFloor.addComponent<RenderModelComp>("Assets/Models/brick_wall/brick_wall.obj", RenderPassEnum::phong);
 
 	
 
@@ -115,7 +114,7 @@ Scene::Scene()
 	
 
 	m_debugSphere = EntityReg::createEntity();
-	m_debugSphere.addComponent(TransformComp())->transform.setTranslation({ -3, 2, 0 });
+	m_debugSphere.addComponent<TransformComp>()->transform.setTranslation(-3, 2, 0);
 	m_debugSphere.getComponent<TransformComp>()->transform.setRotationDeg(0, -90, 0);
 
 	RenderModelComp rc;
@@ -153,8 +152,8 @@ void Scene::Update(float dt)
 	m_quadContr.Show();
 	m_lightContr.Show();
 
-	//m_quad.getComponent<TransformComp>()->transform.setTranslation(m_quadContr.slider1.value);
-	//m_quad.getComponent<TransformComp>()->transform.setRotation(m_quadContr.slider2.value.x, m_quadContr.slider2.value.y, m_quadContr.slider2.value.z);
+	m_quad.getComponent<TransformComp>()->transform.setTranslation(m_quadContr.slider1.value);
+	m_quad.getComponent<TransformComp>()->transform.setRotation(m_quadContr.slider2.value.x, m_quadContr.slider2.value.y, m_quadContr.slider2.value.z);
 
 	m_pointLight.getComponent<PointLightComp>()->pointLight.position = m_lightContr.slider1.value;
 	m_pointLight.getComponent<PointLightComp>()->pointLight.color = m_lightContr.slider2.value;

@@ -46,24 +46,24 @@ Scene::Scene()
 	m_terrain.AddComponent(renderComp);
 
 
-	this->CreateEntityModel("Assets/Models/MetalRoughSpheres/glTF/pbrSpheres.gltf", { -2, 3, 4 }, { 0, 0, 0 }, 0.2f);
-
 	sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr");
 
-	this->CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 4, 2, 2 }, 0, 0.03f);
-	this->CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 3, 2, 4 }, { 0,-70, 0 }, 0.03f);
 
-	m_ship = this->CreateEntityModel("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", { 0, 2, 3 });
-	m_ship.AddComponent(ShipContollerScript());
+	CreateEntityModel("Assets/Models/MetalRoughSpheres/glTF/pbrSpheres.gltf", { -2, 3, 4 }, { 0, 0, 0 }, 0.2f);
+	CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 4, 2, 2 }, 0, 0.03f);
+	CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 3, 2, 4 }, { 0,-70, 0 }, 0.03f);
+	CreateEntityModel("Assets/Models/nanosuit/nanosuit.obj", { 2, 1, 5 }, 0, 0.1f);
+	CreateEntityModel("Assets/Models/brick_wall/brick_wall.obj", 0, { 90, 0, 0}, 10);
+
+	m_ship = CreateEntityModel("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", { 0, 2, 3 });
+	m_ship.AddComponent<ShipContollerScript>();
 	
 
-	CreateEntityModel("Assets/Models/nanosuit/nanosuit.obj", { 2, 1, 5 }, 0, 0.1f);
 
 	m_arrow = EntityReg::CreateEntity();
 	m_arrow.AddComponent(TransformComp());
 	m_arrow.AddComponent(RenderModelComp("Assets/Models/Arrows/DXRefSys.obj", RenderPassEnum::phong));
 
-	CreateEntityModel("Assets/Models/brick_wall/brick_wall.obj", 0, { 90, 0, 0}, 10);
 	
 
 	m_pointLight = EntityReg::CreateEntity();

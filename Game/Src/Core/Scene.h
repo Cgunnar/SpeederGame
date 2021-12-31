@@ -27,12 +27,14 @@ private:
 	rfe::Entity m_ironSphere;
 	rfe::Entity m_debugSphere;
 	rfe::Entity m_pointLight;
+	rfe::Entity m_dirLight;
 	rfe::Entity m_terrain;
 
 	std::vector<rfe::Entity> m_entities;
 
 	GuiTest m_quadContr = GuiTest("quad controller");
 	GuiTest m_lightContr = GuiTest("pointLight controller");
+	GuiTest m_dirlightContr = GuiTest("dirLight controller");
 
 };
 

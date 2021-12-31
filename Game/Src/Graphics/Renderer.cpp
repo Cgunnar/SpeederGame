@@ -23,6 +23,7 @@ Renderer::Renderer()
 	s_sharedRenderResources->m_vpCB = LowLvlGfx::CreateConstantBuffer({ 2 * sizeof(Matrix), BufferDesc::USAGE::DYNAMIC });
 
 	s_sharedRenderResources->m_pointLightCB = LowLvlGfx::CreateConstantBuffer({ sizeof(PointLight), BufferDesc::USAGE::DYNAMIC });
+	s_sharedRenderResources->m_dirLightCB = LowLvlGfx::CreateConstantBuffer({ sizeof(DirectionalLight), BufferDesc::USAGE::DYNAMIC });
 
 
 	s_sharedRenderResources->m_vertexShader = LowLvlGfx::CreateShader("Src/Shaders/VertexShader.hlsl", ShaderType::VERTEXSHADER);
@@ -82,7 +83,7 @@ void Renderer::RenderSkyBox(SkyBox& sky)
 
 void Renderer::Render(rfe::Entity& camera)
 {
-	LowLvlGfx::UnBindRasterizer();
+	LowLvlGfx::UnBindRasterizer(); // this will use the default rasterizer
 	LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }, LowLvlGfx::GetDepthBuffer());
 
 	auto& pointLights = rfe::EntityReg::GetComponentArray<PointLightComp>();
@@ -90,7 +91,10 @@ void Renderer::Render(rfe::Entity& camera)
 	PointLight p = pointLights[0].pointLight;
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_pointLightCB, &p);
 
-
+	auto& dirLights = rfe::EntityReg::GetComponentArray<DirectionalLightComp>();
+	assert(!dirLights.empty());
+	auto dl = dirLights[0].dirLight;
+	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_dirLightCB, &dl);
 
 
 	SubmitToRender(camera);

@@ -32,6 +32,13 @@ struct alignas(16) PointLight
 	float exponentialAttenuation = 0.1f;
 };
 
+struct alignas(16) DirectionalLight
+{
+	rfm::Vector3 dir{ 0, -1, 0 };
+	float lightStrength = 1;
+	rfm::Vector3 color{ 1, 1, 1 };
+};
+
 class Shader
 {
 	friend LowLvlGfx;

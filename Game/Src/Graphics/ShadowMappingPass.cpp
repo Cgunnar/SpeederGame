@@ -6,14 +6,13 @@
 
 using namespace rfm;
 
-ShadowMappingPass::ShadowMappingPass(uint32_t res) : m_res(res)
-{
-	assert(LowLvlGfx::IsValid());
 
+ShadowMappingPass::ShadowMappingPass(std::weak_ptr<SharedRenderResources> sharedRes, uint32_t res) : m_res(res), m_sharedRenderResources(sharedRes)
+{
 	m_vertexShader = LowLvlGfx::CreateShader("Src/Shaders/VS_ShadowMapping.hlsl", ShaderType::VERTEXSHADER);
 	m_emptyPixelShader = LowLvlGfx::CreateShader("Src/Shaders/PS_empty.hlsl", ShaderType::PIXELSHADER);
 
-	m_vp.P = OrthographicProjectionMatrix(50, 50, 0.01f, 500);
+	m_projectionMatrix = OrthographicProjectionMatrix(50, 50, 0.01f, 500);
 
 	D3D11_TEXTURE2D_DESC desc;
 	desc.Width = res;
@@ -39,24 +38,26 @@ ShadowMappingPass::ShadowMappingPass(uint32_t res) : m_res(res)
 	depthDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	depthDesc.Texture2D.MipSlice = 0;
 
-	m_shadowMap = LowLvlGfx::CreateTexture2D(desc);
-	LowLvlGfx::CreateSRV(m_shadowMap, &viewDesc);
-	LowLvlGfx::CreateDSV(m_shadowMap, &depthDesc);
+	auto rendRes = m_sharedRenderResources.lock();
+	rendRes->shadowMap = LowLvlGfx::CreateTexture2D(desc);
+	LowLvlGfx::CreateSRV(rendRes->shadowMap, &viewDesc);
+	LowLvlGfx::CreateDSV(rendRes->shadowMap, &depthDesc);
 }
 
 void ShadowMappingPass::DrawFromDirLight(rfm::Vector3 lightDirection, const std::vector<RendCompAndTransform>& geometyToRender)
 {
+	auto rendRes = m_sharedRenderResources.lock();
+
 	lightDirection.normalize();
-	m_vp.V = LookAt(-lightDirection * 200, 0);
-	//m_vp.V = LookAt({-2, 10, 0}, { 0,0,0 });
+	m_vp = m_projectionMatrix * LookAt(-lightDirection * 200, 0);
 
 	LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	LowLvlGfx::SetViewPort({ m_res, m_res });
-	LowLvlGfx::ClearDSV(m_shadowMap);
-	LowLvlGfx::BindRTVs({}, m_shadowMap);
+	LowLvlGfx::ClearDSV(rendRes->shadowMap);
+	LowLvlGfx::BindRTVs({}, rendRes->shadowMap);
 	LowLvlGfx::Bind(m_vertexShader);
 	LowLvlGfx::Bind(m_emptyPixelShader);
-	LowLvlGfx::Bind(Renderer::GetSharedRenderResources().m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
+	LowLvlGfx::Bind(rendRes->m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
 
 	AssetManager& am = AssetManager::Get();
 	for (const auto & rt : geometyToRender)
@@ -68,25 +69,27 @@ void ShadowMappingPass::DrawFromDirLight(rfm::Vector3 lightDirection, const std:
 		{
 			for (RenderUnitID i = b; i < e; i++)
 			{
-				Draw(am.GetRenderUnit(i).subMesh, rt.worldMatrix);
+				const SubMesh& mesh = am.GetRenderUnit(i).subMesh;
+				Matrix mvp = m_vp * rt.worldMatrix;
+				LowLvlGfx::UpdateBuffer(rendRes->m_worldMatrixCB, &mvp);
+				LowLvlGfx::Bind(mesh.ib);
+				LowLvlGfx::Bind(mesh.vb);
+				LowLvlGfx::DrawIndexed(mesh.indexCount, mesh.startIndexLocation, mesh.baseVertexLocation);
 			}
 		}
 		else
 		{
-			Draw(am.GetRenderUnit(rt.rendComp.renderUnitID).subMesh, rt.worldMatrix);
+			const SubMesh& mesh = am.GetRenderUnit(rt.rendComp.renderUnitID).subMesh;
+			Matrix mvp = m_vp * rt.worldMatrix;
+			LowLvlGfx::UpdateBuffer(rendRes->m_worldMatrixCB, &mvp);
+			LowLvlGfx::Bind(mesh.ib);
+			LowLvlGfx::Bind(mesh.vb);
+			LowLvlGfx::DrawIndexed(mesh.indexCount, mesh.startIndexLocation, mesh.baseVertexLocation);
 		}
 	}
-
-
-
-
 }
 
-void ShadowMappingPass::Draw(const SubMesh& mesh, const rfm::Matrix& worldMatrix)
+const Matrix* ShadowMappingPass::GetViewProjectionMatrix() const
 {
-	Matrix mvp = m_vp.P * m_vp.V * worldMatrix;
-	LowLvlGfx::UpdateBuffer(Renderer::GetSharedRenderResources().m_worldMatrixCB, &mvp);
-	LowLvlGfx::Bind(mesh.ib);
-	LowLvlGfx::Bind(mesh.vb);
-	LowLvlGfx::DrawIndexed(mesh.indexCount, mesh.startIndexLocation, mesh.baseVertexLocation);
+	return &m_vp;
 }

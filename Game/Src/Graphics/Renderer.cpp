@@ -20,6 +20,7 @@ Renderer::Renderer()
 	s_sharedRenderResources = std::make_shared<SharedRenderResources>();
 
 	s_sharedRenderResources->m_worldMatrixCB = LowLvlGfx::CreateConstantBuffer({ sizeof(Matrix), BufferDesc::USAGE::DYNAMIC });
+	s_sharedRenderResources->m_shadowMapViewProjCB = LowLvlGfx::CreateConstantBuffer({ sizeof(Matrix), BufferDesc::USAGE::DYNAMIC });
 	s_sharedRenderResources->m_vpCB = LowLvlGfx::CreateConstantBuffer({ 2 * sizeof(Matrix), BufferDesc::USAGE::DYNAMIC });
 
 	s_sharedRenderResources->m_pointLightCB = LowLvlGfx::CreateConstantBuffer({ sizeof(PointLight), BufferDesc::USAGE::DYNAMIC });
@@ -37,6 +38,7 @@ Renderer::Renderer()
 
 	m_phongRenderer = PhongRenderer(s_sharedRenderResources->weak_from_this());
 	m_pbrRenderer = PbrRenderer(s_sharedRenderResources->weak_from_this());
+	m_shadowPass = ShadowMappingPass(s_sharedRenderResources->weak_from_this());
 }
 
 Renderer::~Renderer()
@@ -94,11 +96,11 @@ void Renderer::Render(rfe::Entity& camera, DirectionalLight dirLight)
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_dirLightCB, &dirLight);
 
 	CopyFromECS();
-	m_shadowPass.DrawFromDirLight(dirLight.dir, m_rendCompAndTransformFromECS);
 
 	//shadowMapping
+	m_shadowPass.DrawFromDirLight(dirLight.dir, m_rendCompAndTransformFromECS);
 
-
+	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_shadowMapViewProjCB, m_shadowPass.GetViewProjectionMatrix());
 
 	//main rendering
 	LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }, LowLvlGfx::GetDepthBuffer());

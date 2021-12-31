@@ -336,7 +336,7 @@
     <FxCompile Include="Src\Shaders\VertexShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\VS_ShadowMapping_POS_NOR_UV.hlsl" />
+    <FxCompile Include="Src\Shaders\VS_ShadowMapping.hlsl" />
     <FxCompile Include="Src\Shaders\PS_empty.hlsl" />
   </ItemGroup>
 </Project>

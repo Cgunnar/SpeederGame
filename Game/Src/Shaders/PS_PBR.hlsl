@@ -6,6 +6,8 @@ Texture2D emissiveTexture : register(t3);
 Texture2D splitSumBrdfLookUpMap : register(t4);
 TextureCube skyMap : register(t5);
 TextureCube skyIrrMap : register(t6);
+Texture2D shadowMap : register(t7);
+
 
 SamplerState mySampler : register(s0);
 SamplerState skyMapSampler : register(s1);
@@ -45,6 +47,11 @@ cbuffer DirLight : register(b3)
     float3 directionalLightDir;
     float directionalLightStrength;
     float3 directionalLightColor;
+};
+
+cbuffer ShadowMap : register(b4)
+{
+    matrix shadowMapVP;
 };
 
 
@@ -156,6 +163,16 @@ float3 BRDF(float3 albedo, float metallic, float roughness, float3 F0, float3 no
 
 float4 main(vs_out input) : SV_TARGET
 {
+    
+    //shadow mapping
+    float4 shadowCoord4 = mul(shadowMapVP, input.position_world);
+    float3 shadowCoord = shadowCoord4.xyz / shadowCoord4.w;
+    
+    
+    
+    
+    
+    
     float3 albedo = albedoFactor.rgb;
     float alpha = albedoFactor.a;
     

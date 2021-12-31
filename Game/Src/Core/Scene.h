@@ -18,10 +18,9 @@ public:
 
 	SkyBox sky;
 private:
-	rfe::Entity CreateEntityWithPBR(const std::string path, rfm::Vector3 pos = { 0,0,0 }, rfm::Vector3 rotDeg = { 0,0,0 }, rfm::Vector3 scale = { 1,1,1 });
+	rfe::Entity CreateEntityModel(const std::string path, rfm::Vector3 pos = { 0,0,0 }, rfm::Vector3 rotDeg = { 0,0,0 }, rfm::Vector3 scale = { 1,1,1 });
 
 	rfe::Entity m_camera;
-	rfe::Entity m_nanosuit;
 	rfe::Entity m_ship;
 	rfe::Entity m_arrow;
 	rfe::Entity m_quad;

@@ -46,20 +46,18 @@ Scene::Scene()
 	m_terrain.addComponent(renderComp);
 
 
-	this->CreateEntityWithPBR("Assets/Models/MetalRoughSpheres/glTF/pbrSpheres.gltf", { -2, 3, 4 }, { 0, 0, 0 }, 0.2f);
+	this->CreateEntityModel("Assets/Models/MetalRoughSpheres/glTF/pbrSpheres.gltf", { -2, 3, 4 }, { 0, 0, 0 }, 0.2f);
 
 	sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr");
 
-	this->CreateEntityWithPBR("Assets/Models/cerberus/scene.gltf", { 4, 2, 2 }, 0, 0.03f);
-	this->CreateEntityWithPBR("Assets/Models/cerberus/scene.gltf", { 3, 2, 4 }, { 0,-70, 0 }, 0.03f);
+	this->CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 4, 2, 2 }, 0, 0.03f);
+	this->CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 3, 2, 4 }, { 0,-70, 0 }, 0.03f);
 
-	m_ship = this->CreateEntityWithPBR("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", { 0, 2, 3 });
+	m_ship = this->CreateEntityModel("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", { 0, 2, 3 });
 	m_ship.addComponent(ShipContollerScript());
+	
 
-	m_nanosuit = EntityReg::createEntity();
-	m_nanosuit.addComponent<TransformComp>()->transform.setTranslation(2, 1, 5);
-	m_nanosuit.getComponent<TransformComp>()->transform.setScale(0.1f);
-	m_nanosuit.addComponent<RenderModelComp>("Assets/Models/nanosuit/nanosuit.obj", RenderPassEnum::phong);
+	CreateEntityModel("Assets/Models/nanosuit/nanosuit.obj", { 2, 1, 5 }, 0, 0.1f);
 
 	m_arrow = EntityReg::createEntity();
 	m_arrow.addComponent(TransformComp());
@@ -165,17 +163,18 @@ rfe::Entity& Scene::GetCamera()
 	return m_camera;
 }
 
-rfe::Entity Scene::CreateEntityWithPBR(const std::string path, Vector3 pos, Vector3 rotDeg, Vector3 scale)
+rfe::Entity Scene::CreateEntityModel(const std::string path, Vector3 pos, Vector3 rotDeg, Vector3 scale)
 {
 	m_entities.push_back(EntityReg::createEntity());
-	m_entities.back().addComponent(TransformComp())->transform.setTranslation(pos);
-	m_entities.back().getComponent<TransformComp>()->transform.setRotationDeg(rotDeg.x, rotDeg.y, rotDeg.z);
-	m_entities.back().getComponent<TransformComp>()->transform.setScale(scale.x, scale.y, scale.z);
+	Transform& t = m_entities.back().addComponent<TransformComp>()->transform;
+	t.setTranslation(pos);
+	t.setRotationDeg(rotDeg.x, rotDeg.y, rotDeg.z);
+	t.setScale(scale.x, scale.y, scale.z);
 
 	if(std::filesystem::path(path).extension() == ".gltf")
-		m_entities.back().addComponent(RenderModelComp(path, RenderPassEnum::pbr));
+		m_entities.back().addComponent<RenderModelComp>(path, RenderPassEnum::pbr);
 	else
-		m_entities.back().addComponent(RenderModelComp(path, RenderPassEnum::phong));
+		m_entities.back().addComponent<RenderModelComp>(path, RenderPassEnum::phong);
 
 	return m_entities.back();
 }

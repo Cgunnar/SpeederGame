@@ -8,7 +8,7 @@ class ShadowMappingPass
 public:
 	ShadowMappingPass() = default;
 	ShadowMappingPass(std::weak_ptr<SharedRenderResources> sharedRes, uint32_t res = 4096);
-	void DrawFromDirLight(rfm::Vector3 lightDirection, const std::vector<RendCompAndTransform>& geometyToRender);
+	void DrawFromDirLight(rfe::Entity camera, rfm::Vector3 lightDirection, const std::vector<RendCompAndTransform>& geometyToRender);
 	const rfm::Matrix* GetViewProjectionMatrix() const;
 private:
 	std::weak_ptr<SharedRenderResources> m_sharedRenderResources;

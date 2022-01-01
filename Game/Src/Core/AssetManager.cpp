@@ -109,7 +109,7 @@ RenderUnitID AssetManager::AddRenderUnit(RenderUnit renderUnit)
 	return m_renderUnits.size(); // RenderUnitID will always be index + 1
 }
 
-RenderUnitID AssetManager::AddRenderUnit(const SubMesh& subMesh, const MetallicRoughnessMaterial& material)
+RenderUnitID AssetManager::AddRenderUnit(const SubMesh& subMesh, const Material& material)
 {
 	return this->AddRenderUnit(subMesh, MaterialVariant(material));
 }

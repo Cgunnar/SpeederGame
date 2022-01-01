@@ -36,7 +36,7 @@ struct EngineMeshSubset
 	std::string name;
 	//TextureTypes texTypes;
 	EngineMaterial material;
-	MetallicRoughnessMaterial pbrMaterial;
+	Material pbrMaterial;
 	unsigned int vertexCount;
 	unsigned int vertexStart;
 
@@ -161,6 +161,6 @@ private:
 
 	SubMeshTree processNode(aiNode* node, const aiScene* scene, const std::string& path);
 	EngineMeshSubset processMesh(aiMesh* mesh, const aiScene* scene, const std::string& path);
-	MetallicRoughnessMaterial GetPbrMaterials(aiMaterial* aiMat, const std::string& path);
+	Material GetPbrMaterials(aiMaterial* aiMat, const std::string& path);
 };
 

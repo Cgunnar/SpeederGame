@@ -78,7 +78,7 @@ inline void operator |= (MaterialType& l, MaterialType r)
 }
 
 
-struct MetallicRoughnessMaterial
+struct Material
 {
 	MaterialProperties properties = MaterialProperties::NONE;
 	BlendMode blendMode = BlendMode::opaque;
@@ -181,7 +181,7 @@ struct PBR_NO_TEXTURES
 struct MaterialVariant
 {
 	MaterialVariant() = default;
-	MaterialVariant(const MetallicRoughnessMaterial& pbrMaterial);
+	MaterialVariant(const Material& pbrMaterial);
 	std::string name;
 	MaterialType type = MaterialType::none;
 	RenderFlag renderFlag = RenderFlag::none;

@@ -44,12 +44,15 @@ ShadowMappingPass::ShadowMappingPass(std::weak_ptr<SharedRenderResources> shared
 	LowLvlGfx::CreateDSV(rendRes->shadowMap, &depthDesc);
 }
 
-void ShadowMappingPass::DrawFromDirLight(rfm::Vector3 lightDirection, const std::vector<RendCompAndTransform>& geometyToRender)
+void ShadowMappingPass::DrawFromDirLight(rfe::Entity camera, rfm::Vector3 lightDirection, const std::vector<RendCompAndTransform>& geometyToRender)
 {
+	Vector3 cameraPos = camera.GetComponent<TransformComp>()->transform.getTranslation();
+	m_projectionMatrix = OrthographicProjectionMatrix(64, 64, 0.01f, 500);
+
 	auto rendRes = m_sharedRenderResources.lock();
 
 	lightDirection.normalize();
-	m_vp = m_projectionMatrix * LookAt(-lightDirection*50, 0);
+	m_vp = m_projectionMatrix * LookAt(cameraPos - lightDirection * 50, cameraPos);
 
 	LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	LowLvlGfx::SetViewPort({ m_res, m_res });

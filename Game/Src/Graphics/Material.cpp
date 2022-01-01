@@ -2,7 +2,7 @@
 #include "Material.h"
 #include "AssetManager.h"
 
-MaterialVariant::MaterialVariant(const MetallicRoughnessMaterial& pbrMaterial)
+MaterialVariant::MaterialVariant(const Material& pbrMaterial)
 {
 	AssetManager& am = AssetManager::Get();
 	this->name = pbrMaterial.name;

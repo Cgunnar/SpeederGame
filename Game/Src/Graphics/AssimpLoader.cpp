@@ -182,7 +182,7 @@ EngineMeshSubset AssimpLoader::processMesh(aiMesh* mesh, const aiScene* scene, c
 	// Get material
 	auto mtl = scene->mMaterials[mesh->mMaterialIndex];
 
-	MetallicRoughnessMaterial pbrMaterial = GetPbrMaterials(mtl, path);
+	Material pbrMaterial = GetPbrMaterials(mtl, path);
 
 	aiString diffName, normName, specName, metalRougName, albedoName;
 	//mtl->GetTexture(aiTextureType_HEIGHT, 0, &normName);
@@ -263,9 +263,9 @@ EngineMeshSubset AssimpLoader::processMesh(aiMesh* mesh, const aiScene* scene, c
 	return subsetData;
 }
 
-MetallicRoughnessMaterial AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const std::string& path)
+Material AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const std::string& path)
 {
-	MetallicRoughnessMaterial pbrMat;
+	Material pbrMat;
 
 	aiString materialName;
 	if (!aiMat->Get(AI_MATKEY_NAME, materialName))

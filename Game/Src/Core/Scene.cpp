@@ -73,21 +73,12 @@ Scene::Scene()
 	sunLight.AddComponent<TransformComp>();
 	sunLight.AddComponent<DirectionalLightComp>()->dirLight.color = { 1, 0.87f, 0.23f };
 
-	MetallicRoughnessMaterial qM;
+	Material qM;
 	qM.baseColorPath = "Assets/Hej.png";
 	qM.emissiveFactor = 0;
-
-	MaterialVariant quadMat;
-	quadMat.type = MaterialType::PhongMaterial_DiffTex;
-	PhongMaterial_DiffTex mat;
-	mat.specularColor = { 1,0,0 };
-	mat.diffuseTextureID = AssetManager::Get().LoadTex2D("Assets/Hej.png", LoadTexFlag::GenerateMips);
-	quadMat.materialVariant = mat;
-
-	SubMesh quadMeshCopy = AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV);
 	m_quad = EntityReg::CreateEntity();
 	m_quad.AddComponent(TransformComp());
-	m_quad.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(quadMeshCopy, qM));
+	m_quad.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV), qM));
 
 
 
@@ -103,19 +94,6 @@ Scene::Scene()
 	m_ironSphere = EntityReg::CreateEntity();
 	m_ironSphere.AddComponent(TransformComp())->transform.setTranslation(0, 2, 0);
 	m_ironSphere.AddComponent(RenderModelComp(AssetManager::Get().AddRenderUnit(quadMeshCopy2, rusteIronMat)));
-	
-
-	
-
-	m_debugSphere = EntityReg::CreateEntity();
-	m_debugSphere.AddComponent<TransformComp>()->transform.setTranslation(-3, 2, 0);
-	m_debugSphere.GetComponent<TransformComp>()->transform.setRotationDeg(0, -90, 0);
-
-	RenderModelComp rc;
-	GID mID = am.LoadMesh("Assets/Models/UV_Sphere/sphere.obj", MeshFormat::POS_NOR_UV_TAN_BITAN);
-	SubMesh blendUVSphere = am.GetMesh(mID);
-	rc.SetRenderUnit(am.AddRenderUnit(blendUVSphere, rusteIronMat));
-	m_debugSphere.AddComponent(rc);
 
 
 	m_quadContr.slider1.ChangeDefaultValues({ 0,0,8 });

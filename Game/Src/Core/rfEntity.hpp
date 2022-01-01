@@ -411,16 +411,16 @@ namespace rfe
 	inline Entity::~Entity()
 	{
 
-#ifdef _DEBUG
-		if (!this->Empty())
-		{
-			OutputDebugString(L"~Entity\tindex: ");
-			OutputDebugString(std::to_wstring(m_entityIndex).c_str());
-			OutputDebugString(L", refCount: ");
-			OutputDebugString(std::to_wstring(s_refCounts[m_entityIndex]).c_str());
-			OutputDebugString(L"\n");
-		}
-#endif // _DEBUG
+//#ifdef _DEBUG
+//		if (!this->Empty())
+//		{
+//			OutputDebugString(L"~Entity\tindex: ");
+//			OutputDebugString(std::to_wstring(m_entityIndex).c_str());
+//			OutputDebugString(L", refCount: ");
+//			OutputDebugString(std::to_wstring(s_refCounts[m_entityIndex]).c_str());
+//			OutputDebugString(L"\n");
+//		}
+//#endif // _DEBUG
 		this->Reset();
 	}
 

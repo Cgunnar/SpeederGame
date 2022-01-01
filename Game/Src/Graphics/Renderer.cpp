@@ -98,7 +98,7 @@ void Renderer::Render(rfe::Entity& camera, DirectionalLight dirLight)
 	CopyFromECS();
 
 	//shadowMapping
-	m_shadowPass.DrawFromDirLight(dirLight.dir, m_rendCompAndTransformFromECS);
+	m_shadowPass.DrawFromDirLight(camera, dirLight.dir, m_rendCompAndTransformFromECS);
 
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_shadowMapViewProjCB, m_shadowPass.GetViewProjectionMatrix());
 

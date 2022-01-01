@@ -276,8 +276,8 @@ MetallicRoughnessMaterial AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const
 	bool twoSided = false;
 	if (!aiMat->Get(AI_MATKEY_TWOSIDED, twoSided))
 	{
-		pbrMat.twoSided = twoSided;
-		pbrMat.properties = pbrMat.properties | MaterialProperties::NO_BACKFACE_CULLING;
+		if(twoSided)
+			pbrMat.properties = pbrMat.properties | MaterialProperties::NO_BACKFACE_CULLING;
 	}
 
 	float metallicFactor;
@@ -367,7 +367,7 @@ MetallicRoughnessMaterial AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const
 
 	if (!aiMat->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &aoName))
 	{
-		pbrMat.aoPath = path + aoName.C_Str();
+		//pbrMat.aoPath = path + aoName.C_Str();
 		assert(false);// want to know if this is used
 	}
 

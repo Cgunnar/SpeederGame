@@ -28,8 +28,9 @@ public:
 	const SubMesh& GetMesh(GID id) const;
 	const RenderUnit& GetRenderUnit(RenderUnitID id) const;
 	RenderUnitID AddMesh(SubMesh mesh);
-	RenderUnitID AddRenderUnit(const SubMesh& subMesh, const Material& material);
+	RenderUnitID AddRenderUnit(const SubMesh& subMesh, const MaterialVariant& material);
 	RenderUnitID AddRenderUnit(RenderUnit renderUnit);
+	RenderUnitID AddRenderUnit(const SubMesh& subMesh, const MetallicRoughnessMaterial& material);
 	GID LoadMesh(const std::string& path, MeshFormat format);
 
 	GID LoadModel(const std::string& filePath);
@@ -49,7 +50,7 @@ private:
 	AssimpLoader m_assimpLoader;
 	std::unordered_map<uint64_t, std::shared_ptr<Texture2D>> m_textures;
 	std::unordered_map<uint64_t, Model> m_models;
-	std::unordered_map<uint64_t, Material> m_materials;
+	std::unordered_map<uint64_t, MaterialVariant> m_materials;
 	std::unordered_map<uint64_t, SubMesh> m_meshes;
 	std::vector<RenderUnit> m_renderUnits;
 	std::unordered_map<std::string, GID> m_filePathMap;

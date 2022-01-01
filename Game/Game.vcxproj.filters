@@ -338,5 +338,6 @@
     </FxCompile>
     <FxCompile Include="Src\Shaders\VS_ShadowMapping.hlsl" />
     <FxCompile Include="Src\Shaders\PS_empty.hlsl" />
+    <FxCompile Include="Src\Shaders\PS_PBR_AL.hlsl" />
   </ItemGroup>
 </Project>

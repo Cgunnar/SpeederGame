@@ -23,6 +23,11 @@ struct RenderModelComp : rfe::Component<RenderModelComp>
 		}
 	}
 
+	RenderModelComp(RenderUnitID renderUnitID)
+	{
+		this->SetRenderUnit(renderUnitID);
+	}
+
 	void SetModel(GID modelID)
 	{
 		ModelID = modelID;

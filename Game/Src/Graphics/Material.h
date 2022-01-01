@@ -30,7 +30,7 @@ enum class MaterialProperties
 	METALLICROUGHNESS = 1 << 11,
 	ALBEDO_MAP = 1 << 12,
 	PBR = 1 << 13,
-	NO_BACKFACE_CULLING = 1 << 13,
+	NO_BACKFACE_CULLING = 1 << 14,
 	WIREFRAME = 1 << 15,
 
 };
@@ -60,9 +60,8 @@ enum class MaterialType
 	PBR_ALBEDO_METROUG_NOR = 1 << 4,
 	PBR_ALBEDO_METROUG = 1 << 5,
 	PBR_ALBEDO_METROUG_NOR_EMIS = 1 << 6,
-	PBR_NO_TEXTURES = 1 << 7,
-	/*wireframe = 1 << 8,
-	transparent = 1 << 9,*/
+	PBR_ALBEDO = 1 << 7,
+	PBR_NO_TEXTURES = 1 << 8,
 };
 inline MaterialType operator &(MaterialType l, MaterialType r)
 {
@@ -84,18 +83,16 @@ struct MetallicRoughnessMaterial
 	MaterialProperties properties = MaterialProperties::NONE;
 	BlendMode blendMode = BlendMode::opaque;
 	float maskCutOfValue = 0;
-	bool twoSided = false;
 	std::string name = "";
 	std::string baseColorPath = "";
 	std::string normalPath = "";
 	std::string metallicRoughnessPath = "";
 	std::string emissivePath = "";
-	std::string aoPath = "";
 
 	float metallicFactor = 0;
 	float roughnessFactor = 1;
 	rfm::Vector4 baseColorFactor = rfm::Vector4(1, 1, 1, 1);
-	rfm::Vector3 emissiveFactor = rfm::Vector4(1, 1, 1);
+	rfm::Vector3 emissiveFactor = rfm::Vector4(1, 1, 1, 1);
 };
 
 struct PhongMaterial_Color
@@ -138,7 +135,7 @@ struct PBR_ALBEDO_METROUG_NOR
 	float metallic = 0;
 	float roughness = 1;
 	rfm::Vector4 rgba = rfm::Vector4(1, 1, 1, 1);
-	rfm::Vector3 emissiveFactor = rfm::Vector3(0, 0, 0);
+	rfm::Vector3 emissiveFactor;
 };
 
 struct PBR_ALBEDO_METROUG_NOR_EMIS
@@ -160,7 +157,16 @@ struct PBR_ALBEDO_METROUG
 	float metallic = 1;
 	float roughness = 1;
 	rfm::Vector4 rgba = rfm::Vector4(1, 1, 1, 1);
-	rfm::Vector3 emissiveFactor = rfm::Vector3(0, 0, 0);
+	rfm::Vector3 emissiveFactor;
+};
+
+struct PBR_ALBEDO
+{
+	GID albedoTextureID;
+	float metallic = 0;
+	float roughness = 1;
+	rfm::Vector4 rgba = rfm::Vector4(1, 1, 1, 1);
+	rfm::Vector3 emissiveFactor;
 };
 
 struct PBR_NO_TEXTURES
@@ -168,19 +174,21 @@ struct PBR_NO_TEXTURES
 	float metallic = 0;
 	float roughness = 1;
 	rfm::Vector4 rgba = rfm::Vector4(1, 1, 1, 1);
-	rfm::Vector3 emissiveFactor = rfm::Vector3(1, 1, 1);
+	rfm::Vector3 emissiveFactor;
 };
 
 
-struct Material
+struct MaterialVariant
 {
+	MaterialVariant() = default;
+	MaterialVariant(const MetallicRoughnessMaterial& pbrMaterial);
 	std::string name;
 	MaterialType type = MaterialType::none;
 	RenderFlag renderFlag = RenderFlag::none;
 
 	std::variant <
 		PhongMaterial_Color, PhongMaterial_DiffTex, PhongMaterial_DiffTex_NormTex, PhongMaterial_DiffTex_NormTex_SpecTex,
-		PBR_ALBEDO_METROUG_NOR, PBR_ALBEDO_METROUG, PBR_ALBEDO_METROUG_NOR_EMIS, PBR_NO_TEXTURES
+		PBR_ALBEDO_METROUG_NOR, PBR_ALBEDO_METROUG, PBR_ALBEDO_METROUG_NOR_EMIS, PBR_ALBEDO, PBR_NO_TEXTURES
 	> materialVariant;
 };
 

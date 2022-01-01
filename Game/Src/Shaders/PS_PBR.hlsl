@@ -186,11 +186,19 @@ float4 main(vs_out input) : SV_TARGET
     alpha *= albedoTextureVal.a;
 #endif
     
+    
+#ifndef NO_METALLIC_ROUGHNESS_TEXTURE
     float4 metallicRoughnessTextureVal = metallicRoughnessTexture.Sample(anisotropicWrapSampler, input.textureUV);
     
     float ambientOcclusion = metallicRoughnessTextureVal.r;
     float metallic = metallicRoughnessTextureVal.b * metallicFactor;
     float roughness = metallicRoughnessTextureVal.g * roughnessFactor;
+#else
+    float ambientOcclusion = 1;
+    float metallic = metallicFactor;
+    float roughness = roughnessFactor;
+#endif
+    
     roughness = max(roughness, 0.05);
     
     float3 emissive = emissiveFactor;

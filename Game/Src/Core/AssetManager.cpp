@@ -93,11 +93,11 @@ const RenderUnit& AssetManager::GetRenderUnit(RenderUnitID id) const
 
 RenderUnitID AssetManager::AddMesh(SubMesh mesh)
 {
-	m_renderUnits.push_back({ mesh, Material() });
+	m_renderUnits.push_back({ mesh, MaterialVariant() });
 	return m_renderUnits.size(); // RenderUnitID will always be index + 1
 }
 
-RenderUnitID AssetManager::AddRenderUnit(const SubMesh& subMesh, const Material& material)
+RenderUnitID AssetManager::AddRenderUnit(const SubMesh& subMesh, const MaterialVariant& material)
 {
 	m_renderUnits.push_back({ subMesh, material });
 	return m_renderUnits.size(); // RenderUnitID will always be index + 1
@@ -107,6 +107,11 @@ RenderUnitID AssetManager::AddRenderUnit(RenderUnit renderUnit)
 {
 	m_renderUnits.push_back(renderUnit);
 	return m_renderUnits.size(); // RenderUnitID will always be index + 1
+}
+
+RenderUnitID AssetManager::AddRenderUnit(const SubMesh& subMesh, const MetallicRoughnessMaterial& material)
+{
+	return this->AddRenderUnit(subMesh, MaterialVariant(material));
 }
 
 GID AssetManager::LoadMesh(const std::string& path, MeshFormat format)
@@ -147,68 +152,9 @@ void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subMo
 		MaterialProperties p = m.material.properties;
 		MaterialProperties pbrP = m.pbrMaterial.properties;
 
-		if (((pbrP & MaterialProperties::NORMAL_MAP) != 0) &&
-			((pbrP & MaterialProperties::ALBEDO_MAP) != 0) &&
-			((pbrP & MaterialProperties::METALLICROUGHNESS) != 0) &&
-			((pbrP & MaterialProperties::IS_EMISSIVE) != 0))
+		if ((pbrP & MaterialProperties::PBR) != 0)
 		{
-			PBR_ALBEDO_METROUG_NOR_EMIS mat;
-			mat.albedoTextureID = this->LoadTex2D(m.pbrMaterial.baseColorPath, LoadTexFlag::GenerateMips);
-			mat.normalTextureID = this->LoadTex2D(m.pbrMaterial.normalPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
-			mat.emissiveTextureID = this->LoadTex2D(m.pbrMaterial.emissivePath, LoadTexFlag::GenerateMips);
-			mat.matallicRoughnessTextureID = this->LoadTex2D(m.pbrMaterial.metallicRoughnessPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
-
-			mat.emissiveFactor = m.pbrMaterial.emissiveFactor;
-			mat.rgba = m.pbrMaterial.baseColorFactor;
-			mat.metallic = m.pbrMaterial.metallicFactor;
-			mat.roughness = m.pbrMaterial.roughnessFactor;
-
-			ru.material.materialVariant = mat;
-			ru.material.type = MaterialType::PBR_ALBEDO_METROUG_NOR_EMIS;
-		}
-		else if (((pbrP & MaterialProperties::NORMAL_MAP) != 0) &&
-			((pbrP & MaterialProperties::ALBEDO_MAP) != 0) &&
-			((pbrP & MaterialProperties::METALLICROUGHNESS) != 0))
-		{
-			PBR_ALBEDO_METROUG_NOR mat;
-			mat.albedoTextureID = this->LoadTex2D(m.pbrMaterial.baseColorPath, LoadTexFlag::GenerateMips);
-			mat.normalTextureID = this->LoadTex2D(m.pbrMaterial.normalPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
-			mat.matallicRoughnessTextureID = this->LoadTex2D(m.pbrMaterial.metallicRoughnessPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
-
-			mat.emissiveFactor = m.pbrMaterial.emissiveFactor;
-			mat.rgba = m.pbrMaterial.baseColorFactor;
-			mat.metallic = m.pbrMaterial.metallicFactor;
-			mat.roughness = m.pbrMaterial.roughnessFactor;
-
-			ru.material.materialVariant = mat;
-			ru.material.type = MaterialType::PBR_ALBEDO_METROUG_NOR;
-		}
-		else if (((pbrP & MaterialProperties::ALBEDO_MAP) != 0) &&
-			((pbrP & MaterialProperties::METALLICROUGHNESS) != 0))
-		{
-			PBR_ALBEDO_METROUG mat;
-			mat.albedoTextureID = this->LoadTex2D(m.pbrMaterial.baseColorPath, LoadTexFlag::GenerateMips);
-			mat.matallicRoughnessTextureID = this->LoadTex2D(m.pbrMaterial.metallicRoughnessPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
-
-			mat.emissiveFactor = m.pbrMaterial.emissiveFactor;
-			mat.rgba = m.pbrMaterial.baseColorFactor;
-			mat.metallic = m.pbrMaterial.metallicFactor;
-			mat.roughness = m.pbrMaterial.roughnessFactor;
-
-			ru.material.materialVariant = mat;
-			ru.material.type = MaterialType::PBR_ALBEDO_METROUG;
-		}
-		else if ((pbrP & MaterialProperties::PBR) != 0)
-		{
-			PBR_NO_TEXTURES mat;
-
-			mat.emissiveFactor = m.pbrMaterial.emissiveFactor;
-			mat.rgba = m.pbrMaterial.baseColorFactor;
-			mat.metallic = m.pbrMaterial.metallicFactor;
-			mat.roughness = m.pbrMaterial.roughnessFactor;
-
-			ru.material.materialVariant = mat;
-			ru.material.type = MaterialType::PBR_NO_TEXTURES;
+			ru.material = MaterialVariant(m.pbrMaterial);
 		}
 		else if (((p & MaterialProperties::DIFFUSE_MAP) != 0) &&
 			((p & MaterialProperties::NORMAL_MAP) != 0) &&
@@ -287,7 +233,7 @@ void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subMo
 			ru.material.renderFlag |= RenderFlag::alphaToCov;
 		}
 
-		if (m.pbrMaterial.twoSided || m.material.properties == MaterialProperties::NO_BACKFACE_CULLING)
+		if (((m.pbrMaterial.properties & MaterialProperties::NO_BACKFACE_CULLING) != 0) || ((m.material.properties & MaterialProperties::NO_BACKFACE_CULLING) != 0))
 		{
 			ru.material.renderFlag |= RenderFlag::noBackFaceCull;
 		}

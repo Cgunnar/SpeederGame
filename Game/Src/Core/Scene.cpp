@@ -30,7 +30,7 @@ Scene::Scene()
 
 	m_terrain = EntityReg::CreateEntity();
 	m_terrain.AddComponent(TransformComp())->transform.setTranslation({ -64, -9, -64 });
-	Material terrainMat;
+	MaterialVariant terrainMat;
 	PBR_ALBEDO_METROUG_NOR sand;
 	sand.albedoTextureID = am.LoadTex2D("Assets/Textures/sand/basecolor.jpg", LoadTexFlag::GenerateMips);
 	sand.matallicRoughnessTextureID = am.LoadTex2D("Assets/Textures/sand/metallic_roughness.png", LoadTexFlag::LinearColorSpace | LoadTexFlag::GenerateMips);
@@ -73,23 +73,25 @@ Scene::Scene()
 	sunLight.AddComponent<TransformComp>();
 	sunLight.AddComponent<DirectionalLightComp>()->dirLight.color = { 1, 0.87f, 0.23f };
 
-	
-	Material quadMat;
+	MetallicRoughnessMaterial qM;
+	qM.baseColorPath = "Assets/Hej.png";
+	qM.emissiveFactor = 0;
+
+	MaterialVariant quadMat;
 	quadMat.type = MaterialType::PhongMaterial_DiffTex;
 	PhongMaterial_DiffTex mat;
 	mat.specularColor = { 1,0,0 };
 	mat.diffuseTextureID = AssetManager::Get().LoadTex2D("Assets/Hej.png", LoadTexFlag::GenerateMips);
 	quadMat.materialVariant = mat;
 
+	SubMesh quadMeshCopy = AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV);
 	m_quad = EntityReg::CreateEntity();
 	m_quad.AddComponent(TransformComp());
-	RenderModelComp* rendComp = m_quad.AddComponent(RenderModelComp());
-	SubMesh quadMeshCopy = AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV);
-	rendComp->renderUnitID = AssetManager::Get().AddRenderUnit(quadMeshCopy, quadMat);
+	m_quad.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(quadMeshCopy, qM));
 
 
 
-	Material rusteIronMat;
+	MaterialVariant rusteIronMat;
 	rusteIronMat.type = MaterialType::PBR_ALBEDO_METROUG_NOR;
 	PBR_ALBEDO_METROUG_NOR pbrMat;
 	pbrMat.matallicRoughnessTextureID = AssetManager::Get().LoadTex2D("Assets/Textures/rustediron/metallic_roughness.png", LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
@@ -97,12 +99,10 @@ Scene::Scene()
 	pbrMat.albedoTextureID = AssetManager::Get().LoadTex2D("Assets/Textures/rustediron/basecolor.png", LoadTexFlag::GenerateMips);
 	rusteIronMat.materialVariant = pbrMat;
 
+	SubMesh quadMeshCopy2 = AssetManager::Get().GetMesh(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN);
 	m_ironSphere = EntityReg::CreateEntity();
 	m_ironSphere.AddComponent(TransformComp())->transform.setTranslation(0, 2, 0);
-	rendComp = m_ironSphere.AddComponent(RenderModelComp());
-	SubMesh quadMeshCopy2 = AssetManager::Get().GetMesh(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN);
-
-	rendComp->renderUnitID = AssetManager::Get().AddRenderUnit(quadMeshCopy2, rusteIronMat);
+	m_ironSphere.AddComponent(RenderModelComp(AssetManager::Get().AddRenderUnit(quadMeshCopy2, rusteIronMat)));
 	
 
 	

@@ -13,6 +13,7 @@ SamplerState mySampler : register(s0);
 SamplerState skyMapSampler : register(s1);
 SamplerState splitSumLookUpSampler : register(s2);
 SamplerState anisotropicWrapSampler : register(s3);
+SamplerState shadowMapSampler : register(s4);
 
 
 
@@ -163,15 +164,15 @@ float3 BRDF(float3 albedo, float metallic, float roughness, float3 F0, float3 no
 
 float4 main(vs_out input) : SV_TARGET
 {
-    
     //shadow mapping
     float4 shadowCoord = mul(shadowMapVP, input.position_world);
     shadowCoord.xyz = shadowCoord.xyz / shadowCoord.w;
     shadowCoord.x = shadowCoord.x * 0.5f + 0.5f;
     shadowCoord.y = -shadowCoord.y * 0.5f + 0.5f;
     float shadowFactor = 1;
-    if (shadowMap.Sample(mySampler, shadowCoord.xy).r + 0.0001f < shadowCoord.z)
-        shadowFactor = 0.2f;
+    float bias = max(0.001 * (1.0 - dot(normalize(input.normal_world.xyz), -normalize(directionalLightDir))), 0.0001);
+    if (shadowCoord.z <= 1 && shadowMap.Sample(shadowMapSampler, shadowCoord.xy).r + bias < shadowCoord.z)
+        shadowFactor = 0.1f;
     
     
     

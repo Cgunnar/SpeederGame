@@ -20,6 +20,7 @@ private:
 	std::shared_ptr<Texture2D> m_splitSumLookUpMap;
 
 	Sampler m_samplerClamp;
+	Sampler m_shadowMapSampler;
 	ConstantBuffer m_pbrCB;
 	Rasterizer m_noBackFaceCullRasterizer;
 	BlendState m_alphaToCovBlend;

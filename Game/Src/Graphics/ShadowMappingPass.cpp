@@ -12,7 +12,7 @@ ShadowMappingPass::ShadowMappingPass(std::weak_ptr<SharedRenderResources> shared
 	m_vertexShader = LowLvlGfx::CreateShader("Src/Shaders/VS_ShadowMapping.hlsl", ShaderType::VERTEXSHADER);
 	m_emptyPixelShader = LowLvlGfx::CreateShader("Src/Shaders/PS_empty.hlsl", ShaderType::PIXELSHADER);
 
-	m_projectionMatrix = OrthographicProjectionMatrix(150, 150, 0.01f, 1000);
+	m_projectionMatrix = OrthographicProjectionMatrix(32, 32, 0.01f, 60);
 
 	D3D11_TEXTURE2D_DESC desc;
 	desc.Width = res;

@@ -62,6 +62,24 @@ PbrRenderer::PbrRenderer(std::weak_ptr<SharedRenderResources> sharedRes) : m_sha
 	rzDesc.CullMode = D3D11_CULL_NONE;
 	rzDesc.FillMode = D3D11_FILL_SOLID;
 	m_noBackFaceCullRasterizer = LowLvlGfx::Create(rzDesc);
+
+
+
+
+	D3D11_SAMPLER_DESC samplerDesc = {
+		.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR,
+		.AddressU = D3D11_TEXTURE_ADDRESS_BORDER,
+		.AddressV = D3D11_TEXTURE_ADDRESS_BORDER,
+		.AddressW = D3D11_TEXTURE_ADDRESS_BORDER,
+		.MipLODBias = 0.0f,
+		.MaxAnisotropy = 1,
+		.ComparisonFunc = D3D11_COMPARISON_ALWAYS,
+		.BorderColor = {1,1,1,1},
+		.MinLOD = 0,
+		.MaxLOD = D3D11_FLOAT32_MAX
+	};
+
+	m_shadowMapSampler = LowLvlGfx::Create(samplerDesc);
 }
 
 void PbrRenderer::SetDiffuseIrradianceCubeMap(std::shared_ptr<Texture2D> irrMap)
@@ -122,6 +140,7 @@ void PbrRenderer::Render(const VP& viewAndProjMatrix, rfe::Entity& camera, Rende
 	LowLvlGfx::Bind(rendRes->m_vpCB, ShaderType::PIXELSHADER, 1);
 	LowLvlGfx::Bind(rendRes->m_linearWrapSampler, ShaderType::PIXELSHADER, 0);
 	LowLvlGfx::Bind(m_samplerClamp, ShaderType::PIXELSHADER, 2);
+	LowLvlGfx::Bind(m_shadowMapSampler, ShaderType::PIXELSHADER, 4);
 
 	LowLvlGfx::BindSRV(m_splitSumLookUpMap, ShaderType::PIXELSHADER, 4);
 	LowLvlGfx::BindSRV(m_specCubeMap, ShaderType::PIXELSHADER, 5);

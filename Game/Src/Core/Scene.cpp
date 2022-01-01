@@ -42,7 +42,6 @@ Scene::Scene()
 	terrainMat.type = MaterialType::PBR_ALBEDO_METROUG_NOR;
 	RenderModelComp renderComp;
 	renderComp.SetRenderUnit(am.AddRenderUnit(terrainMesh, terrainMat));
-	renderComp.renderPass = RenderPassEnum::pbr;
 	m_terrain.AddComponent(renderComp);
 
 
@@ -62,7 +61,7 @@ Scene::Scene()
 
 	m_arrow = EntityReg::CreateEntity();
 	m_arrow.AddComponent(TransformComp());
-	m_arrow.AddComponent(RenderModelComp("Assets/Models/Arrows/DXRefSys.obj", RenderPassEnum::phong));
+	m_arrow.AddComponent(RenderModelComp("Assets/Models/Arrows/DXRefSys.obj"));
 
 	
 
@@ -85,7 +84,6 @@ Scene::Scene()
 	m_quad = EntityReg::CreateEntity();
 	m_quad.AddComponent(TransformComp());
 	RenderModelComp* rendComp = m_quad.AddComponent(RenderModelComp());
-	rendComp->renderPass = RenderPassEnum::phong;
 	SubMesh quadMeshCopy = AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV);
 	rendComp->renderUnitID = AssetManager::Get().AddRenderUnit(quadMeshCopy, quadMat);
 
@@ -102,7 +100,6 @@ Scene::Scene()
 	m_ironSphere = EntityReg::CreateEntity();
 	m_ironSphere.AddComponent(TransformComp())->transform.setTranslation(0, 2, 0);
 	rendComp = m_ironSphere.AddComponent(RenderModelComp());
-	rendComp->renderPass = RenderPassEnum::pbr;
 	SubMesh quadMeshCopy2 = AssetManager::Get().GetMesh(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN);
 
 	rendComp->renderUnitID = AssetManager::Get().AddRenderUnit(quadMeshCopy2, rusteIronMat);
@@ -118,7 +115,6 @@ Scene::Scene()
 	GID mID = am.LoadMesh("Assets/Models/UV_Sphere/sphere.obj", MeshFormat::POS_NOR_UV_TAN_BITAN);
 	SubMesh blendUVSphere = am.GetMesh(mID);
 	rc.SetRenderUnit(am.AddRenderUnit(blendUVSphere, rusteIronMat));
-	rc.renderPass = RenderPassEnum::pbr;
 	m_debugSphere.AddComponent(rc);
 
 
@@ -178,10 +174,11 @@ rfe::Entity Scene::CreateEntityModel(const std::string path, Vector3 pos, Vector
 	t.setRotationDeg(rotDeg.x, rotDeg.y, rotDeg.z);
 	t.setScale(scale.x, scale.y, scale.z);
 
-	if(std::filesystem::path(path).extension() == ".gltf")
-		m_entities.back().AddComponent<RenderModelComp>(path, RenderPassEnum::pbr);
+	/*if(std::filesystem::path(path).extension() == ".gltf")
+		m_entities.back().AddComponent<RenderModelComp>(path);
 	else
-		m_entities.back().AddComponent<RenderModelComp>(path, RenderPassEnum::phong);
+		m_entities.back().AddComponent<RenderModelComp>(path);*/
 
+	m_entities.back().AddComponent<RenderModelComp>(path);
 	return m_entities.back();
 }

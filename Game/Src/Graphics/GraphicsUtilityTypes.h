@@ -71,8 +71,6 @@ struct alignas(16) VP
 enum class RenderPassEnum
 {
 	none = 0,
-	phong,
-	pbr,
 };
 
 enum class TextureTypes

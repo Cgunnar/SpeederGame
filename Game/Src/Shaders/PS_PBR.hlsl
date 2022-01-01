@@ -150,7 +150,7 @@ float3 BRDF(float3 albedo, float metallic, float roughness, float3 F0, float3 no
     
     float D = DistributionGGX(normal, h, roughness);
     float G = GeometrySmith(normal, vDir, lDir, roughness);
-    float F = fresnelSchlick(saturate(dot(vDir, h)), F0);
+    float3 F = fresnelSchlick(saturate(dot(vDir, h)), F0);
     float3 kd = float3(1, 1, 1) - F;
     kd = lerp(kd, float3(0, 0, 0), metallic * float3(1, 1, 1));
     
@@ -165,14 +165,17 @@ float4 main(vs_out input) : SV_TARGET
 {
     
     //shadow mapping
-    float4 shadowCoord4 = mul(shadowMapVP, input.position_world);
-    float3 shadowCoord = shadowCoord4.xyz / shadowCoord4.w;
+    float4 shadowCoord = mul(shadowMapVP, input.position_world);
+    shadowCoord.xyz = shadowCoord.xyz / shadowCoord.w;
+    shadowCoord.x = shadowCoord.x * 0.5f + 0.5f;
+    shadowCoord.y = -shadowCoord.y * 0.5f + 0.5f;
+    float shadowFactor = 1;
+    if (shadowMap.Sample(mySampler, shadowCoord.xy).r + 0.0001f < shadowCoord.z)
+        shadowFactor = 0.2f;
     
     
     
-    
-    
-    
+    //pbr
     float3 albedo = albedoFactor.rgb;
     float alpha = albedoFactor.a;
     
@@ -220,7 +223,7 @@ float4 main(vs_out input) : SV_TARGET
     //dirLight
     lDir = -normalize(directionalLightDir);//should not be needed but i dont trust this to be normalized
     att = 1;
-    LightOutPut += BRDF(albedo, metallic, roughness, F0, normal, vDir, oOmega, lDir, att, directionalLightColor, directionalLightStrength);
+    LightOutPut += shadowFactor * BRDF(albedo, metallic, roughness, F0, normal, vDir, oOmega, lDir, att, directionalLightColor, directionalLightStrength);
     
     
     //fix ambient
@@ -228,7 +231,7 @@ float4 main(vs_out input) : SV_TARGET
     float3 skyDiffIrradiance = skyIrrMap.Sample(skyMapSampler, normal).rgb;
     
     
-    float F = fresnelSchlickRoughness(oOmega, F0, roughness);
+    float3 F = fresnelSchlickRoughness(oOmega, F0, roughness);
     float3 kd = 1 - F;
     kd *= 1 - metallic;
     

@@ -12,7 +12,7 @@ ShadowMappingPass::ShadowMappingPass(std::weak_ptr<SharedRenderResources> shared
 	m_vertexShader = LowLvlGfx::CreateShader("Src/Shaders/VS_ShadowMapping.hlsl", ShaderType::VERTEXSHADER);
 	m_emptyPixelShader = LowLvlGfx::CreateShader("Src/Shaders/PS_empty.hlsl", ShaderType::PIXELSHADER);
 
-	m_projectionMatrix = OrthographicProjectionMatrix(50, 50, 0.01f, 500);
+	m_projectionMatrix = OrthographicProjectionMatrix(150, 150, 0.01f, 1000);
 
 	D3D11_TEXTURE2D_DESC desc;
 	desc.Width = res;
@@ -49,7 +49,7 @@ void ShadowMappingPass::DrawFromDirLight(rfm::Vector3 lightDirection, const std:
 	auto rendRes = m_sharedRenderResources.lock();
 
 	lightDirection.normalize();
-	m_vp = m_projectionMatrix * LookAt(-lightDirection * 200, 0);
+	m_vp = m_projectionMatrix * LookAt(-lightDirection*50, 0);
 
 	LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	LowLvlGfx::SetViewPort({ m_res, m_res });

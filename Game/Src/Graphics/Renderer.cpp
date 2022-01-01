@@ -38,7 +38,7 @@ Renderer::Renderer()
 
 	m_phongRenderer = PhongRenderer(s_sharedRenderResources->weak_from_this());
 	m_pbrRenderer = PbrRenderer(s_sharedRenderResources->weak_from_this());
-	m_shadowPass = ShadowMappingPass(s_sharedRenderResources->weak_from_this());
+	m_shadowPass = ShadowMappingPass(s_sharedRenderResources->weak_from_this(), 8192/2);
 }
 
 Renderer::~Renderer()

@@ -136,7 +136,7 @@ void PbrRenderer::Render(const VP& viewAndProjMatrix, rfe::Entity& camera, Rende
 	RenderPBR_ALBEDO_METROUG(flag);
 	RenderPBR_NO_TEXTURES(flag);
 
-
+	LowLvlGfx::UnBindSRV(ShaderType::PIXELSHADER, 7);
 
 	m_prePocessed = false;
 }

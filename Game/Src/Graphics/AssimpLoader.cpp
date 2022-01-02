@@ -177,78 +177,15 @@ EngineMeshSubset AssimpLoader::processMesh(aiMesh* mesh, const aiScene* scene, c
 
 	}
 
-	EngineMaterial newMat;
-
 	// Get material
 	auto mtl = scene->mMaterials[mesh->mMaterialIndex];
 
 	Material pbrMaterial = GetPbrMaterials(mtl, path);
 
-	aiString diffName, normName, specName, metalRougName, albedoName;
-	//mtl->GetTexture(aiTextureType_HEIGHT, 0, &normName);
-	if (!mtl->GetTexture(aiTextureType_DIFFUSE, 0, &diffName))
-	{
-		newMat.properties = newMat.properties | MaterialProperties::DIFFUSE_MAP;
-		newMat.diffuseMapPath = path + diffName.C_Str();
-	}
-	if (!mtl->GetTexture(aiTextureType_NORMALS, 0, &normName))
-	{
-		newMat.properties = newMat.properties | MaterialProperties::NORMAL_MAP;
-		newMat.normalMapPath = path + normName.C_Str();
-		m_hasNormalMap = true;
-	}
-	if(!mtl->GetTexture(aiTextureType_SPECULAR, 0, &specName))
-	{
-		newMat.properties = newMat.properties | MaterialProperties::SPECULAR_MAP;
-		newMat.specularMapPath = path + specName.C_Str();
-	}
-
-	
-
-	aiString materialName;
-	if (!mtl->Get(AI_MATKEY_NAME, materialName))
-	{
-		newMat.name = materialName.C_Str();
-	}
-
-	aiColor3D colorDiff(0.f, 0.f, 0.f);
-	if (!mtl->Get(AI_MATKEY_COLOR_DIFFUSE, colorDiff))
-	{
-		newMat.properties = newMat.properties | MaterialProperties::DIFFUSE_COLOR;
-		newMat.colorDiffuse = rfm::Vector3(colorDiff[0], colorDiff[1], colorDiff[2]);
-	}
-
-	aiColor3D colorSpec(0.f, 0.f, 0.f);
-	if (!mtl->Get(AI_MATKEY_COLOR_SPECULAR, colorSpec))
-	{
-		newMat.properties = newMat.properties | MaterialProperties::SPECULAR_COLOR;
-		newMat.colorSpecular = rfm::Vector3(colorSpec[0], colorSpec[1], colorSpec[2]);
-	}
-
-
-	float shininess;
-	if (!mtl->Get(AI_MATKEY_SHININESS, shininess))
-	{
-		newMat.properties = newMat.properties | MaterialProperties::SHININESS;
-		newMat.shininess = shininess;
-	}
-
-	float opacity;
-	if (!mtl->Get(AI_MATKEY_OPACITY, opacity))
-	{
-		newMat.opacity = 1;
-		if (opacity < 1)
-		{
-			newMat.properties = newMat.properties | MaterialProperties::ALPHA_BLENDING_CONSTANS_OPACITY;
-			newMat.opacity = opacity;
-		}
-	}
-
 	// Subset data
 	EngineMeshSubset subsetData = { };
 
-	subsetData.name = materialName.C_Str();
-	subsetData.material = newMat;
+	subsetData.name = pbrMaterial.name;
 	subsetData.pbrMaterial = pbrMaterial;
 
 	subsetData.vertexCount = mesh->mNumVertices;
@@ -259,7 +196,6 @@ EngineMeshSubset AssimpLoader::processMesh(aiMesh* mesh, const aiScene* scene, c
 	subsetData.indexStart = m_meshIndexCount;
 	m_meshIndexCount += indicesThisMesh;
 
-	/*m_subsets.push_back(subsetData);*/
 	return subsetData;
 }
 
@@ -290,7 +226,7 @@ Material AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const std::string& pat
 	if (!aiMat->Get(AI_MATKEY_ROUGHNESS_FACTOR, roughnessFactor))
 	{
 		pbrMat.roughnessFactor = roughnessFactor;
-		pbrMat.properties = pbrMat.properties | MaterialProperties::PBR;
+		//pbrMat.properties = pbrMat.properties | MaterialProperties::PBR;
 	}
 
 	aiString alphaMode;
@@ -302,12 +238,10 @@ Material AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const std::string& pat
 			float cutOf = 1;
 			if (!aiMat->Get(AI_MATKEY_GLTF_ALPHACUTOFF, cutOf))
 				pbrMat.maskCutOfValue = cutOf;
-			pbrMat.properties = pbrMat.properties | MaterialProperties::ALPHA_TESTING;
 		}
 		else if(alphaMode == aiString("BLEND"))
 		{
 			pbrMat.blendMode = BlendMode::blend;
-			pbrMat.properties = pbrMat.properties | MaterialProperties::ALPHA_BLENDING;
 		}
 		else if (alphaMode == aiString("OPAQUE"))
 		{
@@ -328,31 +262,26 @@ Material AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const std::string& pat
 	if (!aiMat->GetTexture(AI_MATKEY_BASE_COLOR_TEXTURE, &baseColorName))
 	{
 		pbrMat.baseColorPath = path + baseColorName.C_Str();
-		pbrMat.properties = pbrMat.properties | MaterialProperties::ALBEDO_MAP;
 	}
 	else if (!aiMat->GetTexture(aiTextureType_DIFFUSE, 0, &baseColorName))
 	{
 		pbrMat.baseColorPath = path + baseColorName.C_Str();
-		pbrMat.properties = pbrMat.properties | MaterialProperties::ALBEDO_MAP;
 	}
 	
 	if (!aiMat->GetTexture(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_METALLICROUGHNESS_TEXTURE, &metallicRoughnessName))
 	{
 		pbrMat.metallicRoughnessPath = path + metallicRoughnessName.C_Str();
-		pbrMat.properties = pbrMat.properties | MaterialProperties::METALLICROUGHNESS;
 	}
 	
 	if (!aiMat->GetTexture(aiTextureType::aiTextureType_EMISSIVE, 0, &emissiveName))
 	{
 		pbrMat.emissivePath = path + emissiveName.C_Str();
-		pbrMat.properties = pbrMat.properties | MaterialProperties::IS_EMISSIVE;
 	}
 
 	if (!aiMat->GetTexture(aiTextureType_NORMALS, 0, &normName))
 	{
 		pbrMat.normalPath = path + normName.C_Str();
 		m_hasNormalMap = true; // to use tangent and bitangent vertexbuffer
-		pbrMat.properties = pbrMat.properties | MaterialProperties::NORMAL_MAP;
 	}
 
 	if (!aiMat->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &aoName))
@@ -375,7 +304,6 @@ Material AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const std::string& pat
 			if (opacity < 1)
 			{
 				pbrMat.blendMode = BlendMode::blend;
-				pbrMat.properties = pbrMat.properties | MaterialProperties::ALPHA_BLENDING;
 			}
 		}
 		pbrMat.baseColorFactor = rfm::Vector4(colorDiff[0], colorDiff[1], colorDiff[2], opacity);
@@ -383,7 +311,7 @@ Material AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const std::string& pat
 	else
 		pbrMat.baseColorFactor = { 1,1,1,1 };
 
-	pbrMat.properties = pbrMat.properties | MaterialProperties::PBR;
+	//pbrMat.properties = pbrMat.properties | MaterialProperties::PBR;
 
 	return pbrMat;
 }

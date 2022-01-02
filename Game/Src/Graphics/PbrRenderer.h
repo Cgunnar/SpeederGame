@@ -10,7 +10,7 @@ public:
 	void SetDiffuseIrradianceCubeMap(std::shared_ptr<Texture2D> irrMap);
 	void SetSpecularCubeMap(std::shared_ptr<Texture2D> specMap);
 	void SetSplitSumAproxLookUpMap(std::shared_ptr<Texture2D> splitSumLUMap);
-	void Submit(RenderUnitID unitID, const rfm::Transform& worlMatrix, MaterialType type);
+	void Submit(RenderUnitID unitID, const rfm::Transform& worlMatrix, MaterialVariantEnum type);
 	void PreProcess(const VP& viewAndProjMatrix, rfe::Entity& camera, RenderFlag flag);
 	void Render(const VP& viewAndProjMatrix, rfe::Entity& camera, RenderFlag flag);
 private:
@@ -21,6 +21,7 @@ private:
 
 	Sampler m_samplerClamp;
 	Sampler m_shadowMapSampler;
+	Sampler m_anisotropic_wrapSampler;
 	ConstantBuffer m_pbrCB;
 	Rasterizer m_noBackFaceCullRasterizer;
 	BlendState m_alphaToCovBlend;

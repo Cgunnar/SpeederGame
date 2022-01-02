@@ -102,9 +102,6 @@
     <ClInclude Include="Src\Graphics\PbrRenderer.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Graphics\PhongRenderer.h">
-      <Filter>Src\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Graphics\Renderer.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
@@ -225,9 +222,6 @@
     <ClCompile Include="Src\Graphics\PbrRenderer.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Graphics\PhongRenderer.cpp">
-      <Filter>Src\Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Graphics\Renderer.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
@@ -288,9 +282,6 @@
     <FxCompile Include="Src\Shaders\CS\CS_equirect2cube.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\PS_FlatTexture.hlsl">
-      <Filter>Src\Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="Src\Shaders\PBR\PS_PBR.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
@@ -303,28 +294,10 @@
     <FxCompile Include="Src\Shaders\PBR\PS_PBR_NOR_EMIS_PointLight.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\Phong\PS_Phong_DiffTex_NorTex_SpecTex_pointLight.hlsl">
-      <Filter>Src\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Src\Shaders\Phong\PS_Phong_DiffTex_NorTex_singleLight.hlsl">
-      <Filter>Src\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Src\Shaders\Phong\PS_Phong_DiffTexture_singleLight.hlsl">
-      <Filter>Src\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Src\Shaders\Phong\PS_Phong_color_singleLight.hlsl">
-      <Filter>Src\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Src\Shaders\Phong\PS_Phong_singlePointLight.hlsl">
-      <Filter>Src\Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="Src\Shaders\PS_SkyBox.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\PS_SkyBox_toneMapped.hlsl">
-      <Filter>Src\Shaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Src\Shaders\PixelShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\VS_NormalMap.hlsl">

@@ -149,91 +149,33 @@ void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subMo
 	for (auto m : subMeshTree.subMeshes)
 	{
 		RenderUnit ru;
-		MaterialProperties p = m.material.properties;
 		MaterialProperties pbrP = m.pbrMaterial.properties;
 
-		if ((pbrP & MaterialProperties::PBR) != 0)
-		{
-			ru.material = MaterialVariant(m.pbrMaterial);
-		}
-		else if (((p & MaterialProperties::DIFFUSE_MAP) != 0) &&
-			((p & MaterialProperties::NORMAL_MAP) != 0) &&
-			((p & MaterialProperties::SPECULAR_MAP) != 0) &&
-			((p & MaterialProperties::SHININESS) != 0))
-		{
-			PhongMaterial_DiffTex_NormTex_SpecTex mat;
-			mat.diffuseTextureID = this->LoadTex2D(m.material.diffuseMapPath, LoadTexFlag::GenerateMips);
-			mat.normalTextureID = this->LoadTex2D(m.material.normalMapPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
-			mat.specularTextureID = this->LoadTex2D(m.material.specularMapPath, LoadTexFlag::GenerateMips);
-			mat.shininess = m.material.shininess;
-
-			ru.material.materialVariant = mat;
-			ru.material.type = MaterialType::PhongMaterial_DiffTex_NormTex_SpecTex;
-		}
-		else if (((p & MaterialProperties::DIFFUSE_MAP) != 0) &&
-			((p & MaterialProperties::NORMAL_MAP) != 0) &&
-			((p & MaterialProperties::SPECULAR_COLOR) != 0) &&
-			((p & MaterialProperties::SHININESS) != 0))
-		{
-			PhongMaterial_DiffTex_NormTex mat;
-			mat.diffuseTextureID = this->LoadTex2D(m.material.diffuseMapPath, LoadTexFlag::GenerateMips);
-			mat.normalTextureID = this->LoadTex2D(m.material.normalMapPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
-			mat.specularColor = m.material.colorSpecular;
-			mat.shininess = m.material.shininess;
-
-			ru.material.materialVariant = mat;
-			ru.material.type = MaterialType::PhongMaterial_DiffTex_NormTex;
-		}
-		else if (((p & MaterialProperties::DIFFUSE_MAP) != 0) &&
-			((p & MaterialProperties::SPECULAR_COLOR) != 0) &&
-			((p & MaterialProperties::SHININESS) != 0))
-		{
-			PhongMaterial_DiffTex mat;
-			mat.diffuseTextureID = this->LoadTex2D(m.material.diffuseMapPath, LoadTexFlag::GenerateMips);
-			mat.specularColor = m.material.colorSpecular;
-			mat.shininess = m.material.shininess;
-
-			ru.material.materialVariant = mat;
-			ru.material.type = MaterialType::PhongMaterial_DiffTex;
-		}
-		else if (((p & MaterialProperties::DIFFUSE_COLOR) != 0) &&
-			((p & MaterialProperties::SPECULAR_COLOR) != 0) &&
-			((p & MaterialProperties::SHININESS) != 0))
-		{
-			PhongMaterial_Color mat;
-			mat.ambientColor = m.material.colorDiffuse;
-			mat.diffuseColor = m.material.colorDiffuse;
-			mat.specularColor = m.material.colorSpecular;
-			mat.shininess = m.material.shininess;
-
-			ru.material.materialVariant = mat;
-			ru.material.type = MaterialType::PhongMaterial_Color;
-		}
+		ru.material = MaterialVariant(m.pbrMaterial);
 
 		//assert(ru.material.type != MaterialType::none); //some material is missing
-		if (ru.material.type == MaterialType::none) //some material is missing
+		if (ru.material.type == MaterialVariantEnum::none) //some material is missing
 		{
-			PhongMaterial_Color mat;
-			mat.ambientColor = rfm::Vector3(1, 0, 0);
-			mat.diffuseColor = rfm::Vector3(1, 0, 0);
+			PBR_NO_TEXTURES mat;
+			mat.emissiveFactor = rfm::Vector3(1, 0, 0);
+			mat.roughness = 1;
+			mat.metallic = 0;
+			mat.rgba = rfm::Vector4(1, 0, 0, 1);
 
 			ru.material.materialVariant = mat;
-			ru.material.type = MaterialType::PhongMaterial_Color;
+			ru.material.type = MaterialVariantEnum::PBR_NO_TEXTURES;
 		}
 
-		if (m.pbrMaterial.blendMode == BlendMode::blend || 
-			m.material.properties == MaterialProperties::ALPHA_BLENDING ||
-			m.material.properties == MaterialProperties::ALPHA_BLENDING_CONSTANS_OPACITY)
+		if (m.pbrMaterial.blendMode == BlendMode::blend)
 		{
 			ru.material.renderFlag |= RenderFlag::alphaBlend;
 		}
-		else if (m.pbrMaterial.blendMode == BlendMode::mask ||
-			m.material.properties == MaterialProperties::ALPHA_TESTING)
+		else if (m.pbrMaterial.blendMode == BlendMode::mask)
 		{
 			ru.material.renderFlag |= RenderFlag::alphaToCov;
 		}
 
-		if (((m.pbrMaterial.properties & MaterialProperties::NO_BACKFACE_CULLING) != 0) || ((m.material.properties & MaterialProperties::NO_BACKFACE_CULLING) != 0))
+		if ((m.pbrMaterial.properties & MaterialProperties::NO_BACKFACE_CULLING) != 0)
 		{
 			ru.material.renderFlag |= RenderFlag::noBackFaceCull;
 		}

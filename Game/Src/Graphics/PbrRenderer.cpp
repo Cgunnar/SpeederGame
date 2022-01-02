@@ -82,6 +82,7 @@ PbrRenderer::PbrRenderer(std::weak_ptr<SharedRenderResources> sharedRes) : m_sha
 	};
 
 	m_shadowMapSampler = LowLvlGfx::Create(samplerDesc);
+	m_anisotropic_wrapSampler = LowLvlGfx::Create(standardDescriptors::g_sample_anisotropic_wrap);
 }
 
 void PbrRenderer::SetDiffuseIrradianceCubeMap(std::shared_ptr<Texture2D> irrMap)
@@ -99,29 +100,29 @@ void PbrRenderer::SetSpecularCubeMap(std::shared_ptr<Texture2D> specMap)
 	m_specCubeMap = specMap;
 }
 
-void PbrRenderer::Submit(RenderUnitID unitID, const rfm::Transform& worlMatrix, MaterialType type)
+void PbrRenderer::Submit(RenderUnitID unitID, const rfm::Transform& worlMatrix, MaterialVariantEnum type)
 {
-	if ((type & MaterialType::PBR_ALBEDO_METROUG_NOR) == MaterialType::PBR_ALBEDO_METROUG_NOR)
+	if (type == MaterialVariantEnum::PBR_ALBEDO_METROUG_NOR)
 	{
 		m_PBR_ALBEDO_METROUG_NOR.emplace_back(unitID, worlMatrix, type);
 	}
-	else if ((type & MaterialType::PBR_ALBEDO_METROUG) == MaterialType::PBR_ALBEDO_METROUG)
+	else if (type == MaterialVariantEnum::PBR_ALBEDO_METROUG)
 	{
 		m_PBR_ALBEDO_METROUG.emplace_back(unitID, worlMatrix, type);
 	}
-	else if ((type & MaterialType::PBR_ALBEDO_METROUG_NOR_EMIS) == MaterialType::PBR_ALBEDO_METROUG_NOR_EMIS)
+	else if (type == MaterialVariantEnum::PBR_ALBEDO_METROUG_NOR_EMIS)
 	{
 		m_PBR_ALBEDO_METROUG_NOR_EMIS.emplace_back(unitID, worlMatrix, type);
 	}
-	else if ((type & MaterialType::PBR_NO_TEXTURES) == MaterialType::PBR_NO_TEXTURES)
+	else if (type == MaterialVariantEnum::PBR_NO_TEXTURES)
 	{
 		m_PBR_NO_TEXTURES.emplace_back(unitID, worlMatrix, type);
 	}
-	else if ((type & MaterialType::PBR_ALBEDO) == MaterialType::PBR_ALBEDO)
+	else if (type == MaterialVariantEnum::PBR_ALBEDO)
 	{
 		m_PBR_ALBEDO.emplace_back(unitID, worlMatrix, type);
 	}
-	else if ((type & MaterialType::PBR_ALBEDO_NOR) == MaterialType::PBR_ALBEDO_NOR)
+	else if (type == MaterialVariantEnum::PBR_ALBEDO_NOR)
 	{
 		m_PBR_ALBEDO_NOR.emplace_back(unitID, worlMatrix, type);
 	}
@@ -149,6 +150,7 @@ void PbrRenderer::Render(const VP& viewAndProjMatrix, rfe::Entity& camera, Rende
 	LowLvlGfx::Bind(rendRes->m_vpCB, ShaderType::VERTEXSHADER, 1);
 	LowLvlGfx::Bind(rendRes->m_vpCB, ShaderType::PIXELSHADER, 1);
 	LowLvlGfx::Bind(rendRes->m_linearWrapSampler, ShaderType::PIXELSHADER, 0);
+	LowLvlGfx::Bind(m_anisotropic_wrapSampler, ShaderType::PIXELSHADER, 3);
 	LowLvlGfx::Bind(m_samplerClamp, ShaderType::PIXELSHADER, 2);
 	LowLvlGfx::Bind(m_shadowMapSampler, ShaderType::PIXELSHADER, 4);
 
@@ -187,7 +189,6 @@ void PbrRenderer::RenderPBR_ALBEDO_METROUG_NOR(RenderFlag flag)
 	for (auto& unit : m_PBR_ALBEDO_METROUG_NOR)
 	{
 		const RenderUnit& rendUnit = assetMan.GetRenderUnit(unit.id);
-		assert((rendUnit.material.type & MaterialType::PBR_ALBEDO_METROUG_NOR) == MaterialType::PBR_ALBEDO_METROUG_NOR);
 		const PBR_ALBEDO_METROUG_NOR& matVariant = std::get<PBR_ALBEDO_METROUG_NOR>(rendUnit.material.materialVariant);
 		auto albedoTex = assetMan.GetTexture2D(matVariant.albedoTextureID);
 		auto normalTex = assetMan.GetTexture2D(matVariant.normalTextureID);
@@ -228,7 +229,6 @@ void PbrRenderer::RenderPBR_ALBEDO_METROUG(RenderFlag flag)
 	for (auto& unit : m_PBR_ALBEDO_METROUG)
 	{
 		const RenderUnit& rendUnit = assetMan.GetRenderUnit(unit.id);
-		assert((rendUnit.material.type & MaterialType::PBR_ALBEDO_METROUG) == MaterialType::PBR_ALBEDO_METROUG);
 		const PBR_ALBEDO_METROUG& matVariant = std::get<PBR_ALBEDO_METROUG>(rendUnit.material.materialVariant);
 		auto albedoTex = assetMan.GetTexture2D(matVariant.albedoTextureID);
 		auto matallicRoughnessText = assetMan.GetTexture2D(matVariant.matallicRoughnessTextureID);
@@ -268,7 +268,6 @@ void PbrRenderer::RenderPBR_ALBEDO_METROUG_NOR_EMIS(RenderFlag flag)
 	for (auto& unit : m_PBR_ALBEDO_METROUG_NOR_EMIS)
 	{
 		const RenderUnit& rendUnit = assetMan.GetRenderUnit(unit.id);
-		assert((rendUnit.material.type & MaterialType::PBR_ALBEDO_METROUG_NOR_EMIS) == MaterialType::PBR_ALBEDO_METROUG_NOR_EMIS);
 		const PBR_ALBEDO_METROUG_NOR_EMIS& matVariant = std::get<PBR_ALBEDO_METROUG_NOR_EMIS>(rendUnit.material.materialVariant);
 		auto albedoTex = assetMan.GetTexture2D(matVariant.albedoTextureID);
 		auto normalTex = assetMan.GetTexture2D(matVariant.normalTextureID);
@@ -312,7 +311,6 @@ void PbrRenderer::RenderPBR_NO_TEXTURES(RenderFlag flag)
 	for (auto& unit : m_PBR_NO_TEXTURES)
 	{
 		const RenderUnit& rendUnit = assetMan.GetRenderUnit(unit.id);
-		assert((rendUnit.material.type & MaterialType::PBR_NO_TEXTURES) == MaterialType::PBR_NO_TEXTURES);
 		const PBR_NO_TEXTURES& matVariant = std::get<PBR_NO_TEXTURES>(rendUnit.material.materialVariant);
 
 		PbrMaterialCBStruct cMat;
@@ -347,7 +345,6 @@ void PbrRenderer::RenderPBR_ALBEDO(RenderFlag flag)
 	for (auto& unit : m_PBR_ALBEDO)
 	{
 		const RenderUnit& rendUnit = assetMan.GetRenderUnit(unit.id);
-		assert((rendUnit.material.type & MaterialType::PBR_ALBEDO) == MaterialType::PBR_ALBEDO);
 		const PBR_ALBEDO& matVariant = std::get<PBR_ALBEDO>(rendUnit.material.materialVariant);
 		auto albedoTex = assetMan.GetTexture2D(matVariant.albedoTextureID);
 
@@ -385,7 +382,6 @@ void PbrRenderer::RenderPBR_ALBEDO_NOR(RenderFlag flag)
 	for (auto& unit : m_PBR_ALBEDO_NOR)
 	{
 		const RenderUnit& rendUnit = assetMan.GetRenderUnit(unit.id);
-		assert((rendUnit.material.type & MaterialType::PBR_ALBEDO_NOR) == MaterialType::PBR_ALBEDO_NOR);
 		const PBR_ALBEDO_NOR& matVariant = std::get<PBR_ALBEDO_NOR>(rendUnit.material.materialVariant);
 		auto albedoTex = assetMan.GetTexture2D(matVariant.albedoTextureID);
 		auto normalTex = assetMan.GetTexture2D(matVariant.normalTextureID);

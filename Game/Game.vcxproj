@@ -123,7 +123,6 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClInclude Include="Src\Graphics\LowLvlGfx.h" />
     <ClInclude Include="Src\Graphics\Material.h" />
     <ClInclude Include="Src\Graphics\PbrRenderer.h" />
-    <ClInclude Include="Src\Graphics\PhongRenderer.h" />
     <ClInclude Include="Src\Graphics\Renderer.h" />
     <ClInclude Include="Src\Graphics\SharedRendererResources.h" />
     <ClInclude Include="Src\Graphics\SkyBox.h" />
@@ -166,7 +165,6 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClCompile Include="Src\Graphics\LowlvlGfx.cpp" />
     <ClCompile Include="Src\Graphics\Material.cpp" />
     <ClCompile Include="Src\Graphics\PbrRenderer.cpp" />
-    <ClCompile Include="Src\Graphics\PhongRenderer.cpp" />
     <ClCompile Include="Src\Graphics\Renderer.cpp" />
     <ClCompile Include="Src\Graphics\SkyBox.cpp" />
     <ClCompile Include="Src\Graphics\TerrainLoader.cpp" />
@@ -218,9 +216,6 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\PS_FlatTexture.hlsl">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </FxCompile>
     <FxCompile Include="Src\Shaders\PBR\PS_PBR.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </FxCompile>
@@ -241,28 +236,10 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <FxCompile Include="Src\Shaders\PBR\PS_PBR_NOR_EMIS_PointLight.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\Phong\PS_Phong_DiffTex_NorTex_SpecTex_pointLight.hlsl">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="Src\Shaders\Phong\PS_Phong_DiffTex_NorTex_singleLight.hlsl">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="Src\Shaders\Phong\PS_Phong_DiffTexture_singleLight.hlsl">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="Src\Shaders\Phong\PS_Phong_color_singleLight.hlsl">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="Src\Shaders\Phong\PS_Phong_singlePointLight.hlsl">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </FxCompile>
     <FxCompile Include="Src\Shaders\PS_SkyBox.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Src\Shaders\PS_SkyBox_toneMapped.hlsl">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="Src\Shaders\PixelShader.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Src\Shaders\VS_NormalMap.hlsl">

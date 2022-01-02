@@ -36,7 +36,7 @@ Renderer::Renderer()
 
 	SetUpHdrRTV();
 
-	m_phongRenderer = PhongRenderer(s_sharedRenderResources->weak_from_this());
+	//m_phongRenderer = PhongRenderer(s_sharedRenderResources->weak_from_this());
 	m_pbrRenderer = PbrRenderer(s_sharedRenderResources->weak_from_this());
 	m_shadowPass = ShadowMappingPass(s_sharedRenderResources->weak_from_this(), 8192/2);
 }
@@ -192,7 +192,7 @@ void Renderer::SubmitAndRenderTransparentToInternalRenderers(const VP& viewAndPr
 	};
 	std::sort(m_transparentRenderUnits.begin(), m_transparentRenderUnits.end(), backToFront);
 
-	MaterialType previusType = m_transparentRenderUnits[0].unit.type;
+	MaterialVariantEnum previusType = m_transparentRenderUnits[0].unit.type;
 	RenderFlag previusRenderFlag = m_transparentRenderUnits[0].rendFlag;
 
 	for (int i = 0; i < m_transparentRenderUnits.size(); i++)
@@ -200,15 +200,15 @@ void Renderer::SubmitAndRenderTransparentToInternalRenderers(const VP& viewAndPr
 		auto& traUnit = m_transparentRenderUnits[i];
 		if (traUnit.unit.type != previusType || previusRenderFlag != traUnit.rendFlag)
 		{
-			m_phongRenderer.Render(viewAndProjMatrix, camera, previusRenderFlag);
+			//m_phongRenderer.Render(viewAndProjMatrix, camera, previusRenderFlag);
 			m_pbrRenderer.Render(viewAndProjMatrix, camera, previusRenderFlag);
 		}
-		m_phongRenderer.Submit(traUnit.unit.id, traUnit.unit.worldMatrix, traUnit.unit.type);
+		//m_phongRenderer.Submit(traUnit.unit.id, traUnit.unit.worldMatrix, traUnit.unit.type);
 		m_pbrRenderer.Submit(traUnit.unit.id, traUnit.unit.worldMatrix, traUnit.unit.type);
 		previusType = traUnit.unit.type;
 		previusRenderFlag = traUnit.rendFlag;
 	}
-	m_phongRenderer.Render(viewAndProjMatrix, camera, previusRenderFlag);
+	//m_phongRenderer.Render(viewAndProjMatrix, camera, previusRenderFlag);
 	m_pbrRenderer.Render(viewAndProjMatrix, camera, previusRenderFlag);
 
 	m_transparentRenderUnits.clear();
@@ -222,11 +222,11 @@ void Renderer::RenderAllPasses(const VP& viewAndProjMatrix, rfe::Entity& camera)
 		if (it.second.empty()) continue;
 		for (auto& unit : it.second)
 		{
-			m_phongRenderer.Submit(unit.id, unit.worldMatrix, unit.type);
+			//m_phongRenderer.Submit(unit.id, unit.worldMatrix, unit.type);
 			m_pbrRenderer.Submit(unit.id, unit.worldMatrix, unit.type);
 		}
 		it.second.clear();
-		m_phongRenderer.Render(viewAndProjMatrix, camera, it.first);
+		//m_phongRenderer.Render(viewAndProjMatrix, camera, it.first);
 		m_pbrRenderer.Render(viewAndProjMatrix, camera, it.first);
 	}
 }

@@ -167,10 +167,10 @@ struct Model : public SubModel
 
 struct RendUnitIDAndTransform
 {
-	RendUnitIDAndTransform(RenderUnitID unitID, rfm::Transform worldMatrix, MaterialType matType) : id(unitID),
+	RendUnitIDAndTransform(RenderUnitID unitID, rfm::Transform worldMatrix, MaterialVariantEnum matType) : id(unitID),
 		worldMatrix(worldMatrix), type(matType) {}
 	RenderUnitID id;
-	MaterialType type;
+	MaterialVariantEnum type;
 	rfm::Transform worldMatrix;
 };
 

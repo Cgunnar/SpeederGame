@@ -3,7 +3,7 @@
 #include "RimfrostMath.hpp"
 #include "rfEntity.hpp"
 #include "AssetManager.h"
-#include "PhongRenderer.h"
+//#include "PhongRenderer.h"
 #include "PbrRenderer.h"
 #include "SharedRendererResources.h"
 #include "RenderComponents.h"
@@ -46,7 +46,7 @@ private:
 	std::vector<RendCompAndTransform> m_rendCompAndTransformFromECS;
 	std::unordered_map<RenderFlag, std::vector<RendUnitIDAndTransform>> m_renderPassesFlagged;
 
-	PhongRenderer m_phongRenderer;
+	//PhongRenderer m_phongRenderer;
 	PbrRenderer m_pbrRenderer;
 	ShadowMappingPass m_shadowPass;
 

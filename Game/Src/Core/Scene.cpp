@@ -43,7 +43,7 @@ Scene::Scene()
 	//desert_rocks.matallicRoughnessTextureID = am.LoadTex2D("Assets/Textures/rock_slab_wall/metallic_roughness.png", LoadTexFlag::LinearColorSpace | LoadTexFlag::GenerateMips);
 	//desert_rocks.normalTextureID = am.LoadTex2D("Assets/Textures/rock_slab_wall/normal_ogl.png", LoadTexFlag::LinearColorSpace | LoadTexFlag::GenerateMips);
 	terrainMat.materialVariant = sand;
-	terrainMat.type = MaterialType::PBR_ALBEDO_METROUG_NOR;
+	terrainMat.type = MaterialVariantEnum::PBR_ALBEDO_METROUG_NOR;
 	RenderModelComp renderComp;
 	renderComp.SetRenderUnit(am.AddRenderUnit(terrainMesh, terrainMat));
 	m_terrain.AddComponent(renderComp);
@@ -85,7 +85,7 @@ Scene::Scene()
 
 
 	MaterialVariant rusteIronMat;
-	rusteIronMat.type = MaterialType::PBR_ALBEDO_METROUG_NOR;
+	rusteIronMat.type = MaterialVariantEnum::PBR_ALBEDO_METROUG_NOR;
 	PBR_ALBEDO_METROUG_NOR pbrMat;
 	pbrMat.matallicRoughnessTextureID = AssetManager::Get().LoadTex2D("Assets/Textures/rustediron/metallic_roughness.png", LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
 	pbrMat.normalTextureID = AssetManager::Get().LoadTex2D("Assets/Textures/rustediron/normal.png", LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);

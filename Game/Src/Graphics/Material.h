@@ -1,5 +1,4 @@
 #pragma once
-#include <variant>
 #include "RimfrostMath.hpp"
 #include "utilityTypes.h"
 #include "GraphicsUtilityTypes.h"
@@ -14,24 +13,8 @@ enum class BlendMode
 enum class MaterialProperties
 {
 	NONE = 0,
-	DIFFUSE_MAP = 1 << 0,
-	SPECULAR_MAP = 1 << 1,
-	NORMAL_MAP = 1 << 2,
-	SHININESS = 1 << 3,
-	DIFFUSE_COLOR = 1 << 4,
-	SPECULAR_COLOR = 1 << 5,
-	AMBIENT_COLOR = 1 << 6,
-
-	ALPHA_BLENDING = 1 << 7,
-	ALPHA_BLENDING_CONSTANS_OPACITY = 1 << 8,
-	ALPHA_TESTING = 1 << 9,
-
-	IS_EMISSIVE = 1 << 10,
-	METALLICROUGHNESS = 1 << 11,
-	ALBEDO_MAP = 1 << 12,
-	PBR = 1 << 13,
-	NO_BACKFACE_CULLING = 1 << 14,
-	WIREFRAME = 1 << 15,
+	NO_BACKFACE_CULLING = 1 << 0,
+	WIREFRAME = 1 << 1,
 
 };
 
@@ -50,33 +33,16 @@ inline bool operator != (MaterialProperties l, int r)
 
 
 
-enum class MaterialType
+enum class MaterialVariantEnum
 {
 	none = 0,
-	PhongMaterial_Color = 1 << 0,
-	PhongMaterial_DiffTex = 1 << 1,
-	PhongMaterial_DiffTex_NormTex = 1 << 2,
-	PhongMaterial_DiffTex_NormTex_SpecTex = 1 << 3,
-	PBR_ALBEDO_METROUG_NOR = 1 << 4,
-	PBR_ALBEDO_METROUG = 1 << 5,
-	PBR_ALBEDO_METROUG_NOR_EMIS = 1 << 6,
-	PBR_ALBEDO = 1 << 7,
-	PBR_ALBEDO_NOR = 1 << 8,
-	PBR_NO_TEXTURES = 1 << 9,
+	PBR_ALBEDO_METROUG_NOR,
+	PBR_ALBEDO_METROUG,
+	PBR_ALBEDO_METROUG_NOR_EMIS,
+	PBR_ALBEDO,
+	PBR_ALBEDO_NOR,
+	PBR_NO_TEXTURES,
 };
-inline MaterialType operator &(MaterialType l, MaterialType r)
-{
-	return (MaterialType)((int)l & (int)r);
-}
-inline MaterialType operator |(MaterialType l, MaterialType r)
-{
-	return (MaterialType)((int)l | (int)r);
-}
-
-inline void operator |= (MaterialType& l, MaterialType r)
-{
-	l = l | r;
-}
 
 
 struct Material
@@ -93,39 +59,7 @@ struct Material
 	float metallicFactor = 0;
 	float roughnessFactor = 1;
 	rfm::Vector4 baseColorFactor = rfm::Vector4(1, 1, 1, 1);
-	rfm::Vector3 emissiveFactor = rfm::Vector4(1, 1, 1, 1);
-};
-
-struct PhongMaterial_Color
-{
-	//linear color space
-	rfm::Vector3 ambientColor{ 0.8f, 0.8f, 0.8f };
-	rfm::Vector3 diffuseColor{ 0.8f, 0.8f, 0.8f };
-	rfm::Vector3 specularColor{ 1, 1, 1 };
-	float shininess = 800;
-};
-
-struct PhongMaterial_DiffTex
-{
-	GID diffuseTextureID;
-	rfm::Vector3 specularColor{ 1, 1, 1 };
-	float shininess = 800;
-};
-
-struct PhongMaterial_DiffTex_NormTex
-{
-	GID diffuseTextureID;
-	GID normalTextureID;
-	rfm::Vector3 specularColor{ 1, 1, 1 };
-	float shininess = 800;
-};
-
-struct PhongMaterial_DiffTex_NormTex_SpecTex
-{
-	GID diffuseTextureID;
-	GID normalTextureID;
-	GID specularTextureID;
-	float shininess = 800;
+	rfm::Vector3 emissiveFactor = rfm::Vector3(1, 1, 1);
 };
 
 struct PBR_ALBEDO_METROUG_NOR
@@ -194,12 +128,11 @@ struct MaterialVariant
 	MaterialVariant() = default;
 	MaterialVariant(const Material& pbrMaterial);
 	std::string name;
-	MaterialType type = MaterialType::none;
+	MaterialVariantEnum type = MaterialVariantEnum::none;
 	RenderFlag renderFlag = RenderFlag::none;
 
-	std::variant <
-		PhongMaterial_Color, PhongMaterial_DiffTex, PhongMaterial_DiffTex_NormTex, PhongMaterial_DiffTex_NormTex_SpecTex,
-		PBR_ALBEDO_METROUG_NOR, PBR_ALBEDO_METROUG, PBR_ALBEDO_METROUG_NOR_EMIS, PBR_ALBEDO, PBR_ALBEDO_NOR, PBR_NO_TEXTURES
+	std::variant <PBR_ALBEDO_METROUG_NOR, PBR_ALBEDO_METROUG, PBR_ALBEDO_METROUG_NOR_EMIS,
+		PBR_ALBEDO, PBR_ALBEDO_NOR, PBR_NO_TEXTURES
 	> materialVariant;
 };
 

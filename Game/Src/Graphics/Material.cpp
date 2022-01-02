@@ -23,7 +23,7 @@ MaterialVariant::MaterialVariant(const Material& pbrMaterial)
 		mat.roughness = pbrMaterial.roughnessFactor;
 
 		this->materialVariant = mat;
-		this->type = MaterialType::PBR_ALBEDO_METROUG_NOR_EMIS;
+		this->type = MaterialVariantEnum::PBR_ALBEDO_METROUG_NOR_EMIS;
 	}
 	else if (!pbrMaterial.normalPath.empty() &&
 			!pbrMaterial.baseColorPath.empty() &&
@@ -40,7 +40,7 @@ MaterialVariant::MaterialVariant(const Material& pbrMaterial)
 		mat.roughness = pbrMaterial.roughnessFactor;
 
 		this->materialVariant = mat;
-		this->type = MaterialType::PBR_ALBEDO_METROUG_NOR;
+		this->type = MaterialVariantEnum::PBR_ALBEDO_METROUG_NOR;
 	}
 	else if (!pbrMaterial.normalPath.empty() && !pbrMaterial.baseColorPath.empty())
 	{
@@ -54,7 +54,7 @@ MaterialVariant::MaterialVariant(const Material& pbrMaterial)
 		mat.roughness = pbrMaterial.roughnessFactor;
 
 		this->materialVariant = mat;
-		this->type = MaterialType::PBR_ALBEDO_NOR;
+		this->type = MaterialVariantEnum::PBR_ALBEDO_NOR;
 	}
 	else if (!pbrMaterial.baseColorPath.empty() && !pbrMaterial.metallicRoughnessPath.empty())
 	{
@@ -68,7 +68,7 @@ MaterialVariant::MaterialVariant(const Material& pbrMaterial)
 		mat.roughness = pbrMaterial.roughnessFactor;
 
 		this->materialVariant = mat;
-		this->type = MaterialType::PBR_ALBEDO_METROUG;
+		this->type = MaterialVariantEnum::PBR_ALBEDO_METROUG;
 	}
 	else if (!pbrMaterial.baseColorPath.empty())
 	{
@@ -81,7 +81,7 @@ MaterialVariant::MaterialVariant(const Material& pbrMaterial)
 		mat.roughness = pbrMaterial.roughnessFactor;
 
 		this->materialVariant = mat;
-		this->type = MaterialType::PBR_ALBEDO;
+		this->type = MaterialVariantEnum::PBR_ALBEDO;
 	}
 	else if (!pbrMaterial.normalPath.empty())
 	{
@@ -96,7 +96,7 @@ MaterialVariant::MaterialVariant(const Material& pbrMaterial)
 		mat.roughness = pbrMaterial.roughnessFactor;
 
 		this->materialVariant = mat;
-		this->type = MaterialType::PBR_NO_TEXTURES;
+		this->type = MaterialVariantEnum::PBR_NO_TEXTURES;
 	}
 
 	if (pbrMaterial.blendMode == BlendMode::blend)

@@ -11,31 +11,29 @@
 
 
 
-struct EngineMaterial
-{
-	std::string name;
-	MaterialProperties properties = MaterialProperties::NONE;
-	rfm::Vector3 colorDiffuse = { 0,0,0 };
-	rfm::Vector3 colorAmbient = { 0,0,0 };
-	rfm::Vector3 colorSpecular = { 0,0,0 }; // what does this have to do with the material?, it should be a property of the light source
-	rfm::Vector3 colorEmissive = { 0,0,0 }; //fix later
-	rfm::Vector3 colorTransparent = { 0,0,0 };
-	float opacity = 1; // why do i need this?
-	float shininess = 0;
-
-	std::string diffuseMapPath = "";
-	std::string specularMapPath = "";
-	std::string normalMapPath = "";
-	std::string metallicroughnessPath = "";
-
-};
+//struct EngineMaterial
+//{
+//	std::string name;
+//	MaterialProperties properties = MaterialProperties::NONE;
+//	rfm::Vector3 colorDiffuse = { 0,0,0 };
+//	rfm::Vector3 colorAmbient = { 0,0,0 };
+//	rfm::Vector3 colorSpecular = { 0,0,0 }; // what does this have to do with the material?, it should be a property of the light source
+//	rfm::Vector3 colorEmissive = { 0,0,0 }; //fix later
+//	rfm::Vector3 colorTransparent = { 0,0,0 };
+//	float opacity = 1; // why do i need this?
+//	float shininess = 0;
+//
+//	std::string diffuseMapPath = "";
+//	std::string specularMapPath = "";
+//	std::string normalMapPath = "";
+//	std::string metallicroughnessPath = "";
+//
+//};
 
 
 struct EngineMeshSubset
 {
 	std::string name;
-	//TextureTypes texTypes;
-	EngineMaterial material;
 	Material pbrMaterial;
 	unsigned int vertexCount;
 	unsigned int vertexStart;

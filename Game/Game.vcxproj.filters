@@ -172,6 +172,7 @@
       <Filter>vendor\singleHeaders</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\ShadowMappingPass.h" />
+    <ClInclude Include="vendor\singleHeaders\PerlinNoise.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">

@@ -145,6 +145,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClInclude Include="vendor\imgui\backends\imgui_impl_dx11.h" />
     <ClInclude Include="vendor\imgui\backends\imgui_impl_win32.h" />
     <ClInclude Include="vendor\singleHeaders\json.hpp" />
+    <ClInclude Include="vendor\singleHeaders\PerlinNoise.hpp" />
     <ClInclude Include="vendor\singleHeaders\stb_image.h" />
   </ItemGroup>
   <ItemGroup>

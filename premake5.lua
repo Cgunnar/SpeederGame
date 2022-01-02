@@ -143,4 +143,54 @@ project "ImageTool"
     filter {"files:Game/vendor/**.cpp"}
         flags {"NoPCH"}
 
-    
+
+
+project "TestProject"
+    location "TestProject"
+    kind "ConsoleApp"
+    staticruntime "on"
+    language "C++"
+    cppdialect "C++20"
+    systemversion "latest"
+    targetdir ("%{prj.name}/" .. "bin/" .. outputdir)
+    objdir ("%{prj.name}/" .. "bin-int/" .. outputdir)
+
+    libdirs { "Game/vendor/vld/lib/", "Game/vendor/assimp/%{cfg.buildcfg}/lib/" }
+
+    files
+    {
+        "%{prj.name}/Src/**.h",
+        "%{prj.name}/Src/**.hpp",
+        "%{prj.name}/Src/**.cpp"
+    }
+
+    includedirs
+    {
+        "%{prj.name}/Src",
+        "%{prj.name}/Src/**",
+        "Game/vendor/**",
+    }
+
+    defines
+    {
+        "_UNICODE",
+        "UNICODE",
+    }
+
+    links
+    {
+        "DirectXTK"
+    }
+
+    filter { "configurations:Debug" }
+        defines { "_DEBUG", "DEBUG" }
+        runtime "Debug"
+        symbols "on"
+
+    filter { "configurations:Release" }
+        defines { "_NDEBUG", "NDEBUG" }
+        runtime "Release"
+        optimize "on"
+
+    filter {"files:Game/vendor/**.cpp"}
+        flags {"NoPCH"}

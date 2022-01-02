@@ -316,22 +316,7 @@ Material AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const std::string& pat
 	}
 
 	
-	aiColor4D baseColorFactor(0.0f, 0.0f, 0.0f, 0.0f);
-	if (!aiMat->Get(AI_MATKEY_BASE_COLOR, baseColorFactor))
-	{
-		pbrMat.baseColorFactor = rfm::Vector4(baseColorFactor[0], baseColorFactor[1], baseColorFactor[2], baseColorFactor[3]);
-	}
-
-	bool use_metallic_map;
-	if (!aiMat->Get(AI_MATKEY_USE_METALLIC_MAP, use_metallic_map))
-	{
-		assert(false); // is this used?
-	}
-	bool use_roughness_map;
-	if (!aiMat->Get(AI_MATKEY_USE_ROUGHNESS_MAP, use_roughness_map))
-	{
-		assert(false); // is this used?
-	}
+	
 
 	aiColor3D ai_matkey_emissive(0.0f, 0.0f, 0.0f);
 	if (!aiMat->Get(AI_MATKEY_COLOR_EMISSIVE, ai_matkey_emissive))
@@ -341,6 +326,11 @@ Material AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const std::string& pat
 
 	aiString baseColorName, normName, metallicRoughnessName, emissiveName, aoName;
 	if (!aiMat->GetTexture(AI_MATKEY_BASE_COLOR_TEXTURE, &baseColorName))
+	{
+		pbrMat.baseColorPath = path + baseColorName.C_Str();
+		pbrMat.properties = pbrMat.properties | MaterialProperties::ALBEDO_MAP;
+	}
+	else if (!aiMat->GetTexture(aiTextureType_DIFFUSE, 0, &baseColorName))
 	{
 		pbrMat.baseColorPath = path + baseColorName.C_Str();
 		pbrMat.properties = pbrMat.properties | MaterialProperties::ALBEDO_MAP;
@@ -370,6 +360,28 @@ Material AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const std::string& pat
 		//pbrMat.aoPath = path + aoName.C_Str();
 		assert(false);// want to know if this is used
 	}
+
+	aiColor4D baseColorFactor(0.0f, 0.0f, 0.0f, 0.0f);
+	aiColor3D colorDiff(0.f, 0.f, 0.f); // legacy material
+	if (!aiMat->Get(AI_MATKEY_BASE_COLOR, baseColorFactor))
+	{
+		pbrMat.baseColorFactor = rfm::Vector4(baseColorFactor[0], baseColorFactor[1], baseColorFactor[2], baseColorFactor[3]);
+	}
+	else if (!aiMat->Get(AI_MATKEY_COLOR_DIFFUSE, colorDiff) && pbrMat.baseColorPath.empty()) // legacy material
+	{
+		float opacity = 1;
+		if (!aiMat->Get(AI_MATKEY_OPACITY, opacity))
+		{
+			if (opacity < 1)
+			{
+				pbrMat.blendMode = BlendMode::blend;
+				pbrMat.properties = pbrMat.properties | MaterialProperties::ALPHA_BLENDING;
+			}
+		}
+		pbrMat.baseColorFactor = rfm::Vector4(colorDiff[0], colorDiff[1], colorDiff[2], opacity);
+	}
+	else
+		pbrMat.baseColorFactor = { 1,1,1,1 };
 
 	
 

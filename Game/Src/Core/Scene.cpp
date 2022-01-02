@@ -18,6 +18,12 @@ using namespace rfe;
 
 Scene::Scene()
 {
+	m_arrow = EntityReg::CreateEntity();
+	m_arrow.AddComponent(TransformComp());
+	m_arrow.AddComponent(RenderModelComp("Assets/Models/Arrows/DXRefSys.obj"));
+
+
+	CreateEntityModel("Assets/Models/brick_wall/brick_wall.obj", 0, { 90, 0, 0 }, 10);
 	m_camera = EntityReg::CreateEntity();
 	m_camera.AddComponent<TransformComp>()->transform.setTranslation(0, 2, -4);
 	m_camera.AddComponent<CameraControllerScript>();
@@ -52,16 +58,14 @@ Scene::Scene()
 	CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 4, 2, 2 }, 0, 0.03f);
 	CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 3, 2, 4 }, { 0,-70, 0 }, 0.03f);
 	CreateEntityModel("Assets/Models/nanosuit/nanosuit.obj", { 2, 1, 5 }, 0, 0.1f);
-	CreateEntityModel("Assets/Models/brick_wall/brick_wall.obj", 0, { 90, 0, 0}, 10);
+	
 
 	m_ship = CreateEntityModel("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", { 0, 2, 3 });
 	m_ship.AddComponent<ShipContollerScript>();
 	
 
 
-	m_arrow = EntityReg::CreateEntity();
-	m_arrow.AddComponent(TransformComp());
-	m_arrow.AddComponent(RenderModelComp("Assets/Models/Arrows/DXRefSys.obj"));
+	
 
 	
 
@@ -101,7 +105,7 @@ Scene::Scene()
 	m_lightContr.slider1.ChangeDefaultValues({ 0,2,-9 });
 	m_lightContr.slider2.ChangeDefaultValues({ 1,1,1 }, 0, 1);
 
-	m_dirlightContr.slider1.ChangeDefaultValues({ 0.3f ,-1, 0.5f}, -1, 1);
+	m_dirlightContr.slider1.ChangeDefaultValues({ -0.922f ,-0.176f, 1}, -1, 1);
 	m_dirlightContr.slider2.ChangeDefaultValues(sunLight.GetComponent<DirectionalLightComp>()->dirLight.color, 0, 1);
 
 }

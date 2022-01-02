@@ -13,6 +13,9 @@
     <Filter Include="Src\GUI">
       <UniqueIdentifier>{A1E0E709-0DC0-66A5-16D8-F17B8236CD06}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Game">
+      <UniqueIdentifier>{D62CE446-C2F9-3E52-EB12-2DFAD73E74E0}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Src\Graphics">
       <UniqueIdentifier>{EDA9DC45-D90C-6CEA-8292-A4A06ED4376D}</UniqueIdentifier>
     </Filter>
@@ -27,6 +30,9 @@
     </Filter>
     <Filter Include="Src\Shaders\CS">
       <UniqueIdentifier>{0B744131-F741-3537-E0D5-A55DCC42119C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Src\Shaders\PBR">
+      <UniqueIdentifier>{D92A7059-45B6-DD1D-4EC7-6012BAD1391E}</UniqueIdentifier>
     </Filter>
     <Filter Include="Src\Utility">
       <UniqueIdentifier>{509EB806-BC53-31FC-4548-2BD3B1FC2700}</UniqueIdentifier>
@@ -75,6 +81,12 @@
     <ClInclude Include="Src\GUI\GuiDebug.h">
       <Filter>Src\GUI</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Game\TerrainGenerator.h">
+      <Filter>Src\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Game\TerrainLoader.h">
+      <Filter>Src\Game</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Graphics\AssimpLoader.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
@@ -105,13 +117,13 @@
     <ClInclude Include="Src\Graphics\Renderer.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Graphics\ShadowMappingPass.h">
+      <Filter>Src\Graphics</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Graphics\SharedRendererResources.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\SkyBox.h">
-      <Filter>Src\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Graphics\TerrainLoader.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Matrix.hpp">
@@ -135,7 +147,13 @@
     <ClInclude Include="Src\NativeScripts\NativeScript.h">
       <Filter>Src\NativeScripts</Filter>
     </ClInclude>
+    <ClInclude Include="Src\NativeScripts\NativeScriptCollection.h">
+      <Filter>Src\NativeScripts</Filter>
+    </ClInclude>
     <ClInclude Include="Src\NativeScripts\ShipContollerScript.h">
+      <Filter>Src\NativeScripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\NativeScripts\TerrainScript.h">
       <Filter>Src\NativeScripts</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\FileUtility.hpp">
@@ -165,16 +183,15 @@
     <ClInclude Include="vendor\imgui\backends\imgui_impl_win32.h">
       <Filter>vendor\imgui\backends</Filter>
     </ClInclude>
+    <ClInclude Include="vendor\singleHeaders\PerlinNoise.hpp">
+      <Filter>vendor\singleHeaders</Filter>
+    </ClInclude>
     <ClInclude Include="vendor\singleHeaders\json.hpp">
       <Filter>vendor\singleHeaders</Filter>
     </ClInclude>
     <ClInclude Include="vendor\singleHeaders\stb_image.h">
       <Filter>vendor\singleHeaders</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Graphics\ShadowMappingPass.h" />
-    <ClInclude Include="vendor\singleHeaders\PerlinNoise.hpp" />
-    <ClInclude Include="Src\NativeScripts\TerrainScript.h" />
-    <ClInclude Include="Src\NativeScripts\NativeScriptCollection.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">
@@ -200,6 +217,12 @@
     </ClCompile>
     <ClCompile Include="Src\GUI\GuiDebug.cpp">
       <Filter>Src\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Game\TerrainGenerator.cpp">
+      <Filter>Src\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Game\TerrainLoader.cpp">
+      <Filter>Src\Game</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\AssimpLoader.cpp">
       <Filter>Src\Graphics</Filter>
@@ -228,10 +251,10 @@
     <ClCompile Include="Src\Graphics\Renderer.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Graphics\SkyBox.cpp">
+    <ClCompile Include="Src\Graphics\ShadowMappingPass.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Graphics\TerrainLoader.cpp">
+    <ClCompile Include="Src\Graphics\SkyBox.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Math\Matrix.cpp">
@@ -252,6 +275,9 @@
     <ClCompile Include="Src\NativeScripts\ShipContollerScript.cpp">
       <Filter>Src\NativeScripts</Filter>
     </ClCompile>
+    <ClCompile Include="Src\NativeScripts\TerrainScript.cpp">
+      <Filter>Src\NativeScripts</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Utility\FrameTimer.cpp">
       <Filter>Src\Utility</Filter>
     </ClCompile>
@@ -270,11 +296,12 @@
     <ClCompile Include="vendor\imgui\backends\imgui_impl_win32.cpp">
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Graphics\ShadowMappingPass.cpp" />
-    <ClCompile Include="Src\NativeScripts\TerrainScript.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\CS\CS_convolute_DiffIrrCube.hlsl">
+      <Filter>Src\Shaders\CS</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\CS\CS_equirect2cube.hlsl">
       <Filter>Src\Shaders\CS</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\CS\spbrdf.hlsl">
@@ -283,20 +310,23 @@
     <FxCompile Include="Src\Shaders\CS\spmap.hlsl">
       <Filter>Src\Shaders\CS</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\CS\CS_equirect2cube.hlsl">
-      <Filter>Src\Shaders</Filter>
-    </FxCompile>
     <FxCompile Include="Src\Shaders\PBR\PS_PBR.hlsl">
-      <Filter>Src\Shaders</Filter>
+      <Filter>Src\Shaders\PBR</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\PBR\PS_PBR_AL.hlsl">
+      <Filter>Src\Shaders\PBR</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\PBR\PS_PBR_ALB_METROU_PointLight.hlsl">
-      <Filter>Src\Shaders</Filter>
+      <Filter>Src\Shaders\PBR</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\PBR\PS_PBR_AL_MERO_NO_PointLight.hlsl">
-      <Filter>Src\Shaders</Filter>
+      <Filter>Src\Shaders\PBR</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\PBR\PS_PBR_AL_NOR.hlsl">
+      <Filter>Src\Shaders\PBR</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\PBR\PS_PBR_NOR_EMIS_PointLight.hlsl">
-      <Filter>Src\Shaders</Filter>
+      <Filter>Src\Shaders\PBR</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\PS_SkyBox.hlsl">
       <Filter>Src\Shaders</Filter>
@@ -304,7 +334,13 @@
     <FxCompile Include="Src\Shaders\PS_SkyBox_toneMapped.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Src\Shaders\PS_empty.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
     <FxCompile Include="Src\Shaders\VS_NormalMap.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\VS_ShadowMapping.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\VS_SkyBox.hlsl">
@@ -313,9 +349,5 @@
     <FxCompile Include="Src\Shaders\VertexShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\VS_ShadowMapping.hlsl" />
-    <FxCompile Include="Src\Shaders\PS_empty.hlsl" />
-    <FxCompile Include="Src\Shaders\PBR\PS_PBR_AL.hlsl" />
-    <FxCompile Include="Src\Shaders\PBR\PS_PBR_AL_NOR.hlsl" />
   </ItemGroup>
 </Project>

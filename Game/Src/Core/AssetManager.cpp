@@ -231,7 +231,7 @@ Model& AssetManager::GetModel(GID modelID)
 
 
 
-GID AssetManager::LoadTex2D(const std::string& path, LoadTexFlag flags)
+GID AssetManager::LoadTex2DFromFile(const std::string& path, LoadTexFlag flags)
 {
 	bool srgb = (flags & LoadTexFlag::LinearColorSpace) == 0;
 	bool generateMips = (flags & LoadTexFlag::GenerateMips) != 0;
@@ -242,14 +242,26 @@ GID AssetManager::LoadTex2D(const std::string& path, LoadTexFlag flags)
 		return m_filePathMap[path];
 	}
 	MyImageStruct im;
-	GID newID = GID::GenerateNew();
-	m_filePathMap[path] = newID;
 	readImage(im, path);
+
+	GID newID = LoadTex2DFromMemoryR8G8B8A8((unsigned char*)im.imagePtr, im.width, im.height, flags);
+	m_filePathMap[path] = newID;
+	return newID;
+}
+
+GID AssetManager::LoadTex2DFromMemoryR8G8B8A8(const unsigned char* src, int width, int height, LoadTexFlag flags)
+{
+	assert(width > 0 && height > 0 && src);
+	bool srgb = (flags & LoadTexFlag::LinearColorSpace) == 0;
+	bool generateMips = (flags & LoadTexFlag::GenerateMips) != 0;
+
+	GID newID = GID::GenerateNew();
+
 	D3D11_TEXTURE2D_DESC desc;
 	desc.CPUAccessFlags = 0;
 
-	desc.Height = im.height;
-	desc.Width = im.width;
+	desc.Height = height;
+	desc.Width = width;
 	desc.ArraySize = 1;
 	desc.SampleDesc.Count = 1;
 	desc.SampleDesc.Quality = 0;
@@ -260,7 +272,7 @@ GID AssetManager::LoadTex2D(const std::string& path, LoadTexFlag flags)
 		desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 		desc.Usage = D3D11_USAGE_DEFAULT;
 		desc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
-		desc.MipLevels = im.mipNumber;
+		desc.MipLevels = GfxHelpers::CalcMipNumber(width, height);
 	}
 
 	else
@@ -268,7 +280,7 @@ GID AssetManager::LoadTex2D(const std::string& path, LoadTexFlag flags)
 		desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 		desc.Usage = D3D11_USAGE_IMMUTABLE;
 		desc.MiscFlags = 0;
-		desc.MipLevels = 0;
+		desc.MipLevels = 1;
 	}
 
 	std::shared_ptr<Texture2D> myTexture;
@@ -276,7 +288,7 @@ GID AssetManager::LoadTex2D(const std::string& path, LoadTexFlag flags)
 	if (generateMips)
 	{
 		D3D11_SUBRESOURCE_DATA* subResMipArray = nullptr;
-		GfxHelpers::SetSubResDataMips(im.imagePtr, subResMipArray, im.mipNumber, im.stride);
+		GfxHelpers::SetSubResDataMips(src, subResMipArray, desc.MipLevels, width * 4);
 		myTexture = LowLvlGfx::CreateTexture2D(desc, subResMipArray);
 		delete[] subResMipArray;
 
@@ -290,8 +302,8 @@ GID AssetManager::LoadTex2D(const std::string& path, LoadTexFlag flags)
 	else
 	{
 		D3D11_SUBRESOURCE_DATA subRes;
-		subRes.pSysMem = im.imagePtr;
-		subRes.SysMemPitch = im.stride;
+		subRes.pSysMem = src;
+		subRes.SysMemPitch = width * 4;
 		subRes.SysMemSlicePitch = 0;
 		myTexture = LowLvlGfx::CreateTexture2D(desc, &subRes);
 		LowLvlGfx::CreateSRV(myTexture, nullptr);

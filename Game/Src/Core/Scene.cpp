@@ -12,6 +12,7 @@
 #include "Input.h"
 #include "TerrainLoader.h"
 #include "TerrainScript.h"
+#include "TerrainGenerator.h"
 
 using namespace rfm;
 using namespace rfe;
@@ -19,8 +20,9 @@ using namespace rfe;
 
 Scene::Scene()
 {
-	
-
+	TerrainGenerator tg;
+	float* f = tg.GenerateNoise(1024, 1024, 100, 123456u);
+	delete f;
 
 	CreateEntityModel("Assets/Models/brick_wall/brick_wall.obj", 0, { 90, 0, 0 }, 10);
 	m_camera = EntityReg::CreateEntity();
@@ -50,10 +52,10 @@ Scene::Scene()
 	sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr");
 
 
-	CreateEntityModel("Assets/Models/MetalRoughSpheres/glTF/pbrSpheres.gltf", { -2, 3, 4 }, { 0, 0, 0 }, 0.2f);
-	CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 4, 2, 2 }, 0, 0.03f);
-	CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 3, 2, 4 }, { 0,-70, 0 }, 0.03f);
-	CreateEntityModel("Assets/Models/nanosuit/nanosuit.obj", { 2, 1, 5 }, 0, 0.1f);
+	//CreateEntityModel("Assets/Models/MetalRoughSpheres/glTF/pbrSpheres.gltf", { -2, 3, 4 }, { 0, 0, 0 }, 0.2f);
+	//CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 4, 2, 2 }, 0, 0.03f);
+	//CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 3, 2, 4 }, { 0,-70, 0 }, 0.03f);
+	//CreateEntityModel("Assets/Models/nanosuit/nanosuit.obj", { 2, 1, 5 }, 0, 0.1f);
 
 
 	m_arrow = EntityReg::CreateEntity();
@@ -74,7 +76,7 @@ Scene::Scene()
 	sunLight.AddComponent<DirectionalLightComp>()->dirLight.color = { 1, 0.87f, 0.23f };
 
 	Material qM;
-	qM.baseColorPath = "Assets/Hej.png";
+	qM.baseColorPath = "testNoise.bmp";
 	qM.emissiveFactor = 0;
 	m_quad = EntityReg::CreateEntity();
 	m_quad.AddComponent(TransformComp());
@@ -85,9 +87,9 @@ Scene::Scene()
 	MaterialVariant rusteIronMat;
 	rusteIronMat.type = MaterialVariantEnum::PBR_ALBEDO_METROUG_NOR;
 	PBR_ALBEDO_METROUG_NOR pbrMat;
-	pbrMat.matallicRoughnessTextureID = AssetManager::Get().LoadTex2D("Assets/Textures/rustediron/metallic_roughness.png", LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
-	pbrMat.normalTextureID = AssetManager::Get().LoadTex2D("Assets/Textures/rustediron/normal.png", LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
-	pbrMat.albedoTextureID = AssetManager::Get().LoadTex2D("Assets/Textures/rustediron/basecolor.png", LoadTexFlag::GenerateMips);
+	pbrMat.matallicRoughnessTextureID = AssetManager::Get().LoadTex2DFromFile("Assets/Textures/rustediron/metallic_roughness.png", LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
+	pbrMat.normalTextureID = AssetManager::Get().LoadTex2DFromFile("Assets/Textures/rustediron/normal.png", LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
+	pbrMat.albedoTextureID = AssetManager::Get().LoadTex2DFromFile("Assets/Textures/rustediron/basecolor.png", LoadTexFlag::GenerateMips);
 	rusteIronMat.materialVariant = pbrMat;
 
 	SubMesh quadMeshCopy2 = AssetManager::Get().GetMesh(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN);
@@ -96,17 +98,13 @@ Scene::Scene()
 	m_ironSphere.AddComponent(RenderModelComp(AssetManager::Get().AddRenderUnit(quadMeshCopy2, rusteIronMat)));
 
 
-	m_quadContr.slider1.ChangeDefaultValues({ 0,0,8 });
+	m_quadContr.slider1.ChangeDefaultValues({ 0,1,-1.2f });
 
 	m_lightContr.slider1.ChangeDefaultValues({ 0,2,-9 });
 	m_lightContr.slider2.ChangeDefaultValues({ 1,1,1 }, 0, 1);
 
 	m_dirlightContr.slider1.ChangeDefaultValues({ -0.922f ,-0.176f, 1}, -1, 1);
 	m_dirlightContr.slider2.ChangeDefaultValues(sunLight.GetComponent<DirectionalLightComp>()->dirLight.color, 0, 1);
-
-
-
-
 }
 
 Scene::~Scene()

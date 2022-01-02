@@ -25,7 +25,7 @@ int main()
 	{
 		for (int x = 0; x < width; ++x)
 		{
-			noise[y * width + x] = static_cast<unsigned char>(255 * perlin.octave2D_01((x * 0.01), (y * 0.01), 3));
+			noise[y * width + x] = static_cast<unsigned char>(255 * perlin.octave2D_01((x * 0.01), (y * 0.01), 1));
 		}
 	}
 	

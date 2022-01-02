@@ -35,7 +35,8 @@ public:
 
 	GID LoadModel(const std::string& filePath);
 	Model& GetModel(GID modelID);
-	GID LoadTex2D(const std::string& path, LoadTexFlag flags);
+	GID LoadTex2DFromFile(const std::string& path, LoadTexFlag flags);
+	GID LoadTex2DFromMemoryR8G8B8A8(const unsigned char* src, int width, int height, LoadTexFlag flags);
 private:
 	AssetManager();
 	~AssetManager();

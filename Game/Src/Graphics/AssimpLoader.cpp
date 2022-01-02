@@ -383,7 +383,7 @@ Material AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const std::string& pat
 	else
 		pbrMat.baseColorFactor = { 1,1,1,1 };
 
-	
+	pbrMat.properties = pbrMat.properties | MaterialProperties::PBR;
 
 	return pbrMat;
 }

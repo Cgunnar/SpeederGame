@@ -18,9 +18,7 @@ using namespace rfe;
 
 Scene::Scene()
 {
-	m_arrow = EntityReg::CreateEntity();
-	m_arrow.AddComponent(TransformComp());
-	m_arrow.AddComponent(RenderModelComp("Assets/Models/Arrows/DXRefSys.obj"));
+	
 
 
 	CreateEntityModel("Assets/Models/brick_wall/brick_wall.obj", 0, { 90, 0, 0 }, 10);
@@ -58,14 +56,14 @@ Scene::Scene()
 	CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 4, 2, 2 }, 0, 0.03f);
 	CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 3, 2, 4 }, { 0,-70, 0 }, 0.03f);
 	CreateEntityModel("Assets/Models/nanosuit/nanosuit.obj", { 2, 1, 5 }, 0, 0.1f);
-	
+
+
+	m_arrow = EntityReg::CreateEntity();
+	m_arrow.AddComponent(TransformComp());
+	m_arrow.AddComponent(RenderModelComp("Assets/Models/Arrows/DXRefSys.obj"));
 
 	m_ship = CreateEntityModel("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", { 0, 2, 3 });
 	m_ship.AddComponent<ShipContollerScript>();
-	
-
-
-	
 
 	
 
@@ -155,11 +153,6 @@ rfe::Entity Scene::CreateEntityModel(const std::string path, Vector3 pos, Vector
 	t.setTranslation(pos);
 	t.setRotationDeg(rotDeg.x, rotDeg.y, rotDeg.z);
 	t.setScale(scale.x, scale.y, scale.z);
-
-	/*if(std::filesystem::path(path).extension() == ".gltf")
-		m_entities.back().AddComponent<RenderModelComp>(path);
-	else
-		m_entities.back().AddComponent<RenderModelComp>(path);*/
 
 	m_entities.back().AddComponent<RenderModelComp>(path);
 	return m_entities.back();

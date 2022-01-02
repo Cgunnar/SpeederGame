@@ -30,6 +30,7 @@ private:
 	Shader m_PS_PBR_NOR_EMIS_PointLight;
 	Shader m_PS_PBR_AL;
 	Shader m_PS_PBR;
+	Shader m_PS_PBR_AL_NOR;
 
 	bool m_prePocessed = false;
 	void RenderPBR_ALBEDO_METROUG_NOR(RenderFlag flag);
@@ -37,6 +38,7 @@ private:
 	void RenderPBR_ALBEDO_METROUG_NOR_EMIS(RenderFlag flag);
 	void RenderPBR_NO_TEXTURES(RenderFlag flag);
 	void RenderPBR_ALBEDO(RenderFlag flag);
+	void RenderPBR_ALBEDO_NOR(RenderFlag flag);
 
 	void HandleRenderFlag(RenderFlag flag);
 
@@ -45,5 +47,6 @@ private:
 	std::vector<RendUnitIDAndTransform> m_PBR_ALBEDO_METROUG;
 	std::vector<RendUnitIDAndTransform> m_PBR_NO_TEXTURES;
 	std::vector<RendUnitIDAndTransform> m_PBR_ALBEDO;
+	std::vector<RendUnitIDAndTransform> m_PBR_ALBEDO_NOR;
 };
 

@@ -61,7 +61,8 @@ enum class MaterialType
 	PBR_ALBEDO_METROUG = 1 << 5,
 	PBR_ALBEDO_METROUG_NOR_EMIS = 1 << 6,
 	PBR_ALBEDO = 1 << 7,
-	PBR_NO_TEXTURES = 1 << 8,
+	PBR_ALBEDO_NOR = 1 << 8,
+	PBR_NO_TEXTURES = 1 << 9,
 };
 inline MaterialType operator &(MaterialType l, MaterialType r)
 {
@@ -160,6 +161,16 @@ struct PBR_ALBEDO_METROUG
 	rfm::Vector3 emissiveFactor;
 };
 
+struct PBR_ALBEDO_NOR
+{
+	GID albedoTextureID;
+	GID normalTextureID;
+	float metallic = 0;
+	float roughness = 1;
+	rfm::Vector4 rgba = rfm::Vector4(1, 1, 1, 1);
+	rfm::Vector3 emissiveFactor;
+};
+
 struct PBR_ALBEDO
 {
 	GID albedoTextureID;
@@ -188,7 +199,7 @@ struct MaterialVariant
 
 	std::variant <
 		PhongMaterial_Color, PhongMaterial_DiffTex, PhongMaterial_DiffTex_NormTex, PhongMaterial_DiffTex_NormTex_SpecTex,
-		PBR_ALBEDO_METROUG_NOR, PBR_ALBEDO_METROUG, PBR_ALBEDO_METROUG_NOR_EMIS, PBR_ALBEDO, PBR_NO_TEXTURES
+		PBR_ALBEDO_METROUG_NOR, PBR_ALBEDO_METROUG, PBR_ALBEDO_METROUG_NOR_EMIS, PBR_ALBEDO, PBR_ALBEDO_NOR, PBR_NO_TEXTURES
 	> materialVariant;
 };
 

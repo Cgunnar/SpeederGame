@@ -291,16 +291,16 @@
     <FxCompile Include="Src\Shaders\PS_FlatTexture.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\PS_PBR.hlsl">
+    <FxCompile Include="Src\Shaders\PBR\PS_PBR.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\PS_PBR_ALB_METROU_PointLight.hlsl">
+    <FxCompile Include="Src\Shaders\PBR\PS_PBR_ALB_METROU_PointLight.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\PS_PBR_AL_MERO_NO_PointLight.hlsl">
+    <FxCompile Include="Src\Shaders\PBR\PS_PBR_AL_MERO_NO_PointLight.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\PS_PBR_NOR_EMIS_PointLight.hlsl">
+    <FxCompile Include="Src\Shaders\PBR\PS_PBR_NOR_EMIS_PointLight.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\Phong\PS_Phong_DiffTex_NorTex_SpecTex_pointLight.hlsl">
@@ -338,6 +338,7 @@
     </FxCompile>
     <FxCompile Include="Src\Shaders\VS_ShadowMapping.hlsl" />
     <FxCompile Include="Src\Shaders\PS_empty.hlsl" />
-    <FxCompile Include="Src\Shaders\PS_PBR_AL.hlsl" />
+    <FxCompile Include="Src\Shaders\PBR\PS_PBR_AL.hlsl" />
+    <FxCompile Include="Src\Shaders\PBR\PS_PBR_AL_NOR.hlsl" />
   </ItemGroup>
 </Project>

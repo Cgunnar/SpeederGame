@@ -1,0 +1,4 @@
+#define ALBEDO_TEXTURE
+#define NORMAL_MAP
+#define NO_METALLIC_ROUGHNESS_TEXTURE
+#include "PS_PBR.hlsl"

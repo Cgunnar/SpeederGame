@@ -42,6 +42,20 @@ MaterialVariant::MaterialVariant(const Material& pbrMaterial)
 		this->materialVariant = mat;
 		this->type = MaterialType::PBR_ALBEDO_METROUG_NOR;
 	}
+	else if (!pbrMaterial.normalPath.empty() && !pbrMaterial.baseColorPath.empty())
+	{
+		PBR_ALBEDO_NOR mat;
+		mat.albedoTextureID = am.LoadTex2D(pbrMaterial.baseColorPath, LoadTexFlag::GenerateMips);
+		mat.normalTextureID = am.LoadTex2D(pbrMaterial.normalPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
+
+		mat.emissiveFactor = pbrMaterial.emissiveFactor;
+		mat.rgba = pbrMaterial.baseColorFactor;
+		mat.metallic = pbrMaterial.metallicFactor;
+		mat.roughness = pbrMaterial.roughnessFactor;
+
+		this->materialVariant = mat;
+		this->type = MaterialType::PBR_ALBEDO_NOR;
+	}
 	else if (!pbrMaterial.baseColorPath.empty() && !pbrMaterial.metallicRoughnessPath.empty())
 	{
 		PBR_ALBEDO_METROUG mat;
@@ -68,6 +82,10 @@ MaterialVariant::MaterialVariant(const Material& pbrMaterial)
 
 		this->materialVariant = mat;
 		this->type = MaterialType::PBR_ALBEDO;
+	}
+	else if (!pbrMaterial.normalPath.empty())
+	{
+		assert(false);
 	}
 	else
 	{

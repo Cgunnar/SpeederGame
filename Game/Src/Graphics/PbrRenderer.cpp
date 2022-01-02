@@ -18,11 +18,12 @@ struct alignas(16) PbrMaterialCBStruct
 
 PbrRenderer::PbrRenderer(std::weak_ptr<SharedRenderResources> sharedRes) : m_sharedRenderResources(sharedRes)
 {
-	m_PS_PBR_AL_MERO_NO_PointLight = LowLvlGfx::CreateShader("Src/Shaders/PS_PBR_AL_MERO_NO_PointLight.hlsl", ShaderType::PIXELSHADER);
-	m_PS_PBR_ALB_METROU_PointLight = LowLvlGfx::CreateShader("Src/Shaders/PS_PBR_ALB_METROU_PointLight.hlsl", ShaderType::PIXELSHADER);
-	m_PS_PBR_NOR_EMIS_PointLight = LowLvlGfx::CreateShader("Src/Shaders/PS_PBR_NOR_EMIS_PointLight.hlsl", ShaderType::PIXELSHADER);
-	m_PS_PBR = LowLvlGfx::CreateShader("Src/Shaders/PS_PBR.hlsl", ShaderType::PIXELSHADER);
-	m_PS_PBR_AL = LowLvlGfx::CreateShader("Src/Shaders/PS_PBR_AL.hlsl", ShaderType::PIXELSHADER);
+	m_PS_PBR_AL_MERO_NO_PointLight = LowLvlGfx::CreateShader("Src/Shaders/PBR/PS_PBR_AL_MERO_NO_PointLight.hlsl", ShaderType::PIXELSHADER);
+	m_PS_PBR_ALB_METROU_PointLight = LowLvlGfx::CreateShader("Src/Shaders/PBR/PS_PBR_ALB_METROU_PointLight.hlsl", ShaderType::PIXELSHADER);
+	m_PS_PBR_NOR_EMIS_PointLight = LowLvlGfx::CreateShader("Src/Shaders/PBR/PS_PBR_NOR_EMIS_PointLight.hlsl", ShaderType::PIXELSHADER);
+	m_PS_PBR = LowLvlGfx::CreateShader("Src/Shaders/PBR/PS_PBR.hlsl", ShaderType::PIXELSHADER);
+	m_PS_PBR_AL = LowLvlGfx::CreateShader("Src/Shaders/PBR/PS_PBR_AL.hlsl", ShaderType::PIXELSHADER);
+	m_PS_PBR_AL_NOR = LowLvlGfx::CreateShader("Src/Shaders/PBR/PS_PBR_AL_NOR.hlsl", ShaderType::PIXELSHADER);
 
 	BufferDesc desc;
 	desc.size = sizeof(PbrMaterialCBStruct);
@@ -120,6 +121,10 @@ void PbrRenderer::Submit(RenderUnitID unitID, const rfm::Transform& worlMatrix, 
 	{
 		m_PBR_ALBEDO.emplace_back(unitID, worlMatrix, type);
 	}
+	else if ((type & MaterialType::PBR_ALBEDO_NOR) == MaterialType::PBR_ALBEDO_NOR)
+	{
+		m_PBR_ALBEDO_NOR.emplace_back(unitID, worlMatrix, type);
+	}
 }
 
 void PbrRenderer::PreProcess(const VP& viewAndProjMatrix, rfe::Entity& camera, RenderFlag flag)
@@ -159,6 +164,7 @@ void PbrRenderer::Render(const VP& viewAndProjMatrix, rfe::Entity& camera, Rende
 	RenderPBR_ALBEDO_METROUG_NOR(flag);
 	RenderPBR_ALBEDO_METROUG(flag);
 	RenderPBR_NO_TEXTURES(flag);
+	RenderPBR_ALBEDO_NOR(flag);
 	RenderPBR_ALBEDO(flag);
 
 	LowLvlGfx::UnBindSRV(ShaderType::PIXELSHADER, 7);
@@ -363,6 +369,46 @@ void PbrRenderer::RenderPBR_ALBEDO(RenderFlag flag)
 	}
 
 	m_PBR_ALBEDO.clear();
+}
+
+void PbrRenderer::RenderPBR_ALBEDO_NOR(RenderFlag flag)
+{
+	if (m_PBR_ALBEDO_NOR.empty()) return;
+
+	auto rendRes = m_sharedRenderResources.lock();
+	const AssetManager& assetMan = AssetManager::Get();
+	LowLvlGfx::Bind(rendRes->m_vertexShaderNormalMap);
+	LowLvlGfx::Bind(m_PS_PBR_AL_NOR);
+
+	//LowLvlGfx::BindRTVs({ rendRes->m_hdrRenderTarget }, LowLvlGfx::GetDepthBuffer());
+
+	for (auto& unit : m_PBR_ALBEDO_NOR)
+	{
+		const RenderUnit& rendUnit = assetMan.GetRenderUnit(unit.id);
+		assert((rendUnit.material.type & MaterialType::PBR_ALBEDO_NOR) == MaterialType::PBR_ALBEDO_NOR);
+		const PBR_ALBEDO_NOR& matVariant = std::get<PBR_ALBEDO_NOR>(rendUnit.material.materialVariant);
+		auto albedoTex = assetMan.GetTexture2D(matVariant.albedoTextureID);
+		auto normalTex = assetMan.GetTexture2D(matVariant.normalTextureID);
+
+		LowLvlGfx::BindSRV(albedoTex, ShaderType::PIXELSHADER, 0);
+		LowLvlGfx::BindSRV(normalTex, ShaderType::PIXELSHADER, 2);
+
+		PbrMaterialCBStruct cMat;
+		cMat.albedoFactor = matVariant.rgba;
+		cMat.roughnessFactor = matVariant.roughness;
+		cMat.metallicFactor = matVariant.metallic;
+		cMat.emissiveFactor = matVariant.emissiveFactor;
+		LowLvlGfx::UpdateBuffer(m_pbrCB, &cMat);
+		LowLvlGfx::Bind(m_pbrCB, ShaderType::PIXELSHADER, 2);
+
+		LowLvlGfx::UpdateBuffer(rendRes->m_worldMatrixCB, &unit.worldMatrix);
+		LowLvlGfx::Bind(rendRes->m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
+		LowLvlGfx::Bind(rendUnit.subMesh.vb);
+		LowLvlGfx::Bind(rendUnit.subMesh.ib);
+		LowLvlGfx::DrawIndexed(rendUnit.subMesh.indexCount, rendUnit.subMesh.startIndexLocation, rendUnit.subMesh.baseVertexLocation);
+	}
+
+	m_PBR_ALBEDO_NOR.clear();
 }
 
 void PbrRenderer::HandleRenderFlag(RenderFlag flag)

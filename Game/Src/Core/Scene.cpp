@@ -21,7 +21,7 @@ using namespace rfe;
 Scene::Scene()
 {
 	TerrainGenerator tg;
-	float* f = tg.GenerateNoise(1024, 1024, 100, 123456u);
+	float* f = tg.GenerateNoise(100, 100, 27.6, 4, 0.5f, 2, 123456u, { 4, 12 });
 	delete f;
 
 	CreateEntityModel("Assets/Models/brick_wall/brick_wall.obj", 0, { 90, 0, 0 }, 10);

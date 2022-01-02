@@ -333,7 +333,7 @@ namespace rfe
 	template<typename ...Args>
 	inline void EntityReg::StartScripts()
 	{
-		m_entCompManInstance.RunScripts<Args...>();
+		m_entCompManInstance.StartScripts<Args...>();
 	}
 
 	inline void EntityReg::AddComponent(EntityID entityID, ComponentTypeID typeID, BaseComponent* component)
@@ -697,7 +697,7 @@ namespace rfe
 	template<typename ...T>
 	inline void EntityComponentManager::StartScripts()
 	{
-		int e[]{ 0, (RunScript<T>(), 0)... };
+		int e[]{ 0, (StartScript<T>(), 0)...};
 	}
 
 	template<typename T>
@@ -705,7 +705,7 @@ namespace rfe
 	{
 		for (auto& script : T::componentArray)
 		{
-			script.StartScript();
+			script.OnStart();
 		}
 	}
 

@@ -173,6 +173,8 @@
     </ClInclude>
     <ClInclude Include="Src\Graphics\ShadowMappingPass.h" />
     <ClInclude Include="vendor\singleHeaders\PerlinNoise.hpp" />
+    <ClInclude Include="Src\NativeScripts\TerrainScript.h" />
+    <ClInclude Include="Src\NativeScripts\NativeScriptCollection.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">
@@ -269,6 +271,7 @@
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\ShadowMappingPass.cpp" />
+    <ClCompile Include="Src\NativeScripts\TerrainScript.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\CS\CS_convolute_DiffIrrCube.hlsl">

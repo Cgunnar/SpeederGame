@@ -134,6 +134,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClInclude Include="Src\Math\Vector.hpp" />
     <ClInclude Include="Src\NativeScripts\CameraControllerScript.h" />
     <ClInclude Include="Src\NativeScripts\NativeScript.h" />
+    <ClInclude Include="Src\NativeScripts\NativeScriptCollection.h" />
     <ClInclude Include="Src\NativeScripts\ShipContollerScript.h" />
     <ClInclude Include="Src\Utility\FileUtility.hpp" />
     <ClInclude Include="Src\Utility\FrameTimer.hpp" />
@@ -142,6 +143,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClInclude Include="Src\Utility\Timer.hpp" />
     <ClInclude Include="Src\Utility\utilityTypes.h" />
     <ClInclude Include="Src\pch.hpp" />
+    <ClInclude Include="Src\NativeScripts\TerrainScript.h" />
     <ClInclude Include="vendor\imgui\backends\imgui_impl_dx11.h" />
     <ClInclude Include="vendor\imgui\backends\imgui_impl_win32.h" />
     <ClInclude Include="vendor\singleHeaders\json.hpp" />
@@ -181,6 +183,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClCompile Include="Src\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Src\NativeScripts\TerrainScript.cpp" />
     <ClCompile Include="vendor\imgui\backends\imgui_impl_dx11.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>

@@ -12,7 +12,7 @@
 #include "RenderComponents.h"
 #include "AssetManager.h"
 #include "Input.h"
-#include "CameraControllerScript.h"
+#include "NativeScriptCollection.h"
 
 
 using namespace rfe;
@@ -44,6 +44,8 @@ Application::~Application()
 void Application::Run()
 {
 	//Input::getInput().GetMouse().confineCursor(true);
+
+	EntityReg::StartScripts<CameraControllerScript, ShipContollerScript, TerrainScript>();
 
 	bool running = true;
 	while (running)

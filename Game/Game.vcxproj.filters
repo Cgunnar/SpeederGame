@@ -84,7 +84,7 @@
     <ClInclude Include="Src\Game\TerrainGenerator.h">
       <Filter>Src\Game</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Game\TerrainLoader.h">
+    <ClInclude Include="Src\Game\TerrainMeshGenerator.h">
       <Filter>Src\Game</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\AssimpLoader.h">
@@ -222,7 +222,7 @@
     <ClCompile Include="Src\Game\TerrainGenerator.cpp">
       <Filter>Src\Game</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Game\TerrainLoader.cpp">
+    <ClCompile Include="Src\Game\TerrainMeshGenerator.cpp">
       <Filter>Src\Game</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\AssimpLoader.cpp">

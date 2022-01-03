@@ -114,7 +114,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClInclude Include="Src\Core\rfEntity.hpp" />
     <ClInclude Include="Src\GUI\GuiDebug.h" />
     <ClInclude Include="Src\Game\TerrainGenerator.h" />
-    <ClInclude Include="Src\Game\TerrainLoader.h" />
+    <ClInclude Include="Src\Game\TerrainMeshGenerator.h" />
     <ClInclude Include="Src\Graphics\AssimpLoader.h" />
     <ClInclude Include="Src\Graphics\DX11.h" />
     <ClInclude Include="Src\Graphics\Geometry.h" />
@@ -162,7 +162,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClCompile Include="Src\Core\Window.cpp" />
     <ClCompile Include="Src\GUI\GuiDebug.cpp" />
     <ClCompile Include="Src\Game\TerrainGenerator.cpp" />
-    <ClCompile Include="Src\Game\TerrainLoader.cpp" />
+    <ClCompile Include="Src\Game\TerrainMeshGenerator.cpp" />
     <ClCompile Include="Src\Graphics\AssimpLoader.cpp" />
     <ClCompile Include="Src\Graphics\DX11.cpp" />
     <ClCompile Include="Src\Graphics\Geometry.cpp" />

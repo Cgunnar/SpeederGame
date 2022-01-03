@@ -243,6 +243,11 @@ namespace rfm
 	{
 	}
 
+	Vector2::Vector2(float val) : x(val), y(val)
+	{
+
+	}
+
 	Vector2::Vector2(const Vector3& v) : x(v.x), y(v.y)
 	{
 	}

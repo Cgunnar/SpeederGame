@@ -71,7 +71,8 @@ namespace rfm
 	class Vector2
 	{
 	public:
-		Vector2(float x = 0, float y = 0);
+		Vector2(float x, float y);
+		Vector2(float val = 0);
 		Vector2(const Vector3& v);
 		~Vector2() = default;
 
@@ -79,7 +80,8 @@ namespace rfm
 		Vector2& operator +=(const Vector2& other);
 		float length() const;
 		void normalize();
-		float x, y;
+		float x = 0;
+		float y = 0;
 	};
 	float dot(const Vector2& v, const Vector2& u);
 

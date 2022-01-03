@@ -27,11 +27,11 @@ Scene::Scene()
 	tg.bioms.emplace_back("water", Vector3(0,0,1), 0.3f, true);
 	tg.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.5);
 	tg.bioms.emplace_back("mountain", 0.2f, 1);
-	auto f = tg.GenerateTerrinMap(512, 512, 27.6f, 4, 0.5f, 2, { 4, 12 }, 32);
+	auto f = tg.GenerateTerrinMap(241, 241, 27.6f, 4, 0.5f, 2, { 4, 12 }, 32);
 
 
 	TerrainMeshGenerator t2;
-	t2.CreateTerrain(f, 10, 0, [](float in) {return in <= 0.3f ? 0.3f*0.3f : in * in; });
+	t2.CreateTerrainMesh(f, 10, 0, 0, [](float in) {return in <= 0.3f ? 0.3f*0.3f : in * in; });
 	SubMesh terrainMesh2(t2.GetVerticesTBN(), t2.GetIndices());
 
 
@@ -54,7 +54,7 @@ Scene::Scene()
 
 	
 	TerrainMeshGenerator tl;
-	tl.CreateTerrainFromBMP("Assets/Textures/noiseTexture.bmp");
+	tl.CreateTerrainMeshFromBMP("Assets/Textures/noiseTexture.bmp", 10, 0);
 	SubMesh terrainMesh(tl.GetVerticesTBN(), tl.GetIndices());
 
 	Material terrainMatSand;

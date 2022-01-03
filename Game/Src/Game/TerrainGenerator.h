@@ -32,5 +32,8 @@ public:
 private:
 	std::vector<float> GenerateNoise(int width, int height, float scale, int octaves, float persistance, float lacunarity,
 		rfm::Vector2 offset, uint32_t seed = 123456u);
+
+
+	static constexpr int chunkSize = 241;
 };
 

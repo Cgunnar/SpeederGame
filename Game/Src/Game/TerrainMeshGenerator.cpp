@@ -9,7 +9,7 @@ TerrainMeshGenerator::~TerrainMeshGenerator()
 {
 }
 
-void TerrainMeshGenerator::CreateTerrainFromBMP(const std::string& fileName, float scale, rfm::Vector2 uvScale)
+void TerrainMeshGenerator::CreateTerrainMeshFromBMP(const std::string& fileName, float scale, int LOD, rfm::Vector2 uvScale)
 {
 #pragma warning(suppress : 4996)
     FILE* fp = fopen(fileName.c_str(), "rb");
@@ -39,7 +39,8 @@ void TerrainMeshGenerator::CreateTerrainFromBMP(const std::string& fileName, flo
     }
     delete[] bmpData;
 
-    CreateTerrainFromFloatArray(heightMapFloat.data(), infoHeader.biWidth, infoHeader.biHeight, scale, uvScale);
+    CreateTerrainMeshFromHeightMapMemory(heightMapFloat.data(), infoHeader.biWidth, infoHeader.biHeight,
+        scale, LOD, uvScale);
 }
 
 const std::vector<Vertex_POS_NOR_UV>& TerrainMeshGenerator::GetVertices() const
@@ -57,29 +58,38 @@ const std::vector<uint32_t>& TerrainMeshGenerator::GetIndices() const
     return m_indices;
 }
 
-void TerrainMeshGenerator::CreateTerrain(TerrainMap terrainMap, float scale, rfm::Vector2 uvScale, std::function<float(float)> heightScaleFunc)
+void TerrainMeshGenerator::CreateTerrainMesh(TerrainMap terrainMap, float scale, int LOD,
+    rfm::Vector2 uvScale, std::function<float(float)> heightScaleFunc)
 {
-    CreateTerrainFromFloatArray(terrainMap.heightMap.data(), terrainMap.width, terrainMap.height, scale, uvScale, heightScaleFunc);
+    CreateTerrainMeshFromHeightMapMemory(terrainMap.heightMap.data(), terrainMap.width, terrainMap.height,
+        scale, LOD, uvScale, heightScaleFunc);
 }
 
-void TerrainMeshGenerator::CreateTerrainFromFloatArray(const float* hightMap, int width, int height, float scale, rfm::Vector2 uvScale, std::function<float(float)> heightScaleFunc)
+void TerrainMeshGenerator::CreateTerrainMeshFromHeightMapMemory(const float* hightMap, int width, int height,
+    float scale, int LOD, rfm::Vector2 uvScale, std::function<float(float)> heightScaleFunc)
 {
+    assert(0 <= LOD && LOD <= 6);
+    LOD *= 2;
+    if (!LOD) LOD = 1;
+    int verticesPerLine = (width - 1) / LOD + 1;
+    int numTriangles = (verticesPerLine - 1) * (verticesPerLine - 1) * 2;
+
     m_indices.clear();
+    m_indices.reserve(numTriangles * 3);
     m_triangles.clear();
+    m_triangles.reserve(numTriangles);
     m_vertices.clear();
+    m_vertices.reserve(verticesPerLine * verticesPerLine);
     m_verticesTBN.clear();
+    m_verticesTBN.reserve(verticesPerLine * verticesPerLine);
 
     if (uvScale.x == 0) uvScale.x = static_cast<float>(width);
     if (uvScale.y == 0) uvScale.y = static_cast<float>(height);
-
-    uint8_t heightValue = 0;
-    int offset = 0;
-
     
-
-    for (int y = 0; y < height; y++)
+    int index = 0;
+    for (int y = 0; y < height; y+=LOD)
     {
-        for (int x = 0; x < width; x++)
+        for (int x = 0; x < width; x+=LOD)
         {
 
             Vertex_POS_NOR_UV v;
@@ -94,25 +104,21 @@ void TerrainMeshGenerator::CreateTerrainFromFloatArray(const float* hightMap, in
             vTBN.position = v.position;
             vTBN.uv = v.uv;
             m_verticesTBN.push_back(vTBN);
-        }
-    }
 
 
-    for (int y = 0; y < height - 1; y++)
-    {
-        for (int x = 0; x < width - 1; x++)
-        {
-            int index = y * width + x;
+            if (x < width - 1 && y < height - 1)
+            {
+                //tri
+                m_indices.push_back(index);
+                m_indices.push_back(index + 1);
+                m_indices.push_back(index + verticesPerLine);
 
-            //tri
-            m_indices.push_back(index);
-            m_indices.push_back(index + 1);
-            m_indices.push_back(index + width);
-
-            //tri
-            m_indices.push_back(index + 1);
-            m_indices.push_back(index + width + 1);
-            m_indices.push_back(index + width);
+                //tri
+                m_indices.push_back(index + 1);
+                m_indices.push_back(index + verticesPerLine + 1);
+                m_indices.push_back(index + verticesPerLine);
+            }
+            index++;
         }
     }
 

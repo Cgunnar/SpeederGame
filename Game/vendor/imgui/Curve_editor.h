@@ -23,7 +23,7 @@
 namespace ImGui
 {
     template<int steps>
-    void bezier_table(ImVec2 P[4], ImVec2 results[steps + 1]) {
+    inline void bezier_table(ImVec2 P[4], ImVec2 results[steps + 1]) {
         static float C[(steps + 1) * 4], * K = 0;
         if (!K) {
             K = C;
@@ -44,7 +44,7 @@ namespace ImGui
         }
     }
 
-    float BezierValue(float dt01, float P[4]) {
+    inline float BezierValue(float dt01, float P[4]) {
         enum { STEPS = 256 };
         ImVec2 Q[4] = { { 0, 0 }, { P[0], P[1] }, { P[2], P[3] }, { 1, 1 } };
         ImVec2 results[STEPS + 1];
@@ -52,7 +52,7 @@ namespace ImGui
         return results[(int)((dt01 < 0 ? 0 : dt01 > 1 ? 1 : dt01) * STEPS)].y;
     }
 
-    int Bezier(const char* label, float P[5]) {
+    inline int Bezier(const char* label, float P[5]) {
         // visuals
         enum { SMOOTHNESS = 64 }; // curve smoothness: the higher number of segments, the smoother curve
         enum { CURVE_WIDTH = 4 }; // main curved line width
@@ -262,7 +262,7 @@ namespace ImGui
         return changed;
     }
 
-    void ShowBezierDemo() {
+    inline void ShowBezierDemo() {
         { static float v[5] = { 0.950f, 0.050f, 0.795f, 0.035f }; Bezier("easeInExpo", v); }
     }
 }

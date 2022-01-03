@@ -20,6 +20,9 @@ using namespace rfe;
 
 Scene::Scene()
 {
+	AssetManager& am = AssetManager::Get();
+
+
 	TerrainGenerator tg;
 	tg.bioms.emplace_back("water", Vector3(0,0,1), 0.3f, true);
 	tg.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.4);
@@ -28,18 +31,16 @@ Scene::Scene()
 
 
 	TerrainMeshGenerator t2;
-	t2.CreateTerrain(10, f.heightMap.data(), 100, 100, 0);
+	t2.CreateTerrain(10, f.heightMap.data(), f.width, f.height, 0);
 	SubMesh terrainMesh2(t2.GetVerticesTBN(), t2.GetIndices());
 
 
-	Material qM;
-	//qM.baseColorTexture = "testNoise.bmp";
-	qM.baseColorTexture = AssetManager::Get().LoadTex2DFromMemoryR8G8B8A8(f.colorMapRGBA.data(), f.width, f.height, LoadTexFlag::GenerateMips);
-	qM.emissiveFactor = 0;
-	m_quad = EntityReg::CreateEntity();
-	m_quad.AddComponent<TransformComp>()->transform.setScale(0.01f);
-	m_quad.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(terrainMesh2, qM));
-	//m_quad.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV), qM));
+	Material terrainMat;
+	terrainMat.baseColorTexture = am.LoadTex2DFromMemoryR8G8B8A8(f.colorMapRGBA.data(), f.width, f.height, LoadTexFlag::GenerateMips);
+	terrainMat.emissiveFactor = 0;
+	m_terrain = EntityReg::CreateEntity();
+	m_terrain.AddComponent<TransformComp>()->transform.setScale(0.02f);
+	m_terrain.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(terrainMesh2, terrainMat));
 
 
 
@@ -51,24 +52,23 @@ Scene::Scene()
 	m_camera.AddComponent<TransformComp>()->transform.setTranslation(0, 2, -4);
 	m_camera.AddComponent<CameraControllerScript>();
 
-	AssetManager& am = AssetManager::Get();
-
+	
 	TerrainMeshGenerator tl;
 	tl.CreateTerrainFromBMP("Assets/Textures/noiseTexture.bmp");
 	SubMesh terrainMesh(tl.GetVerticesTBN(), tl.GetIndices());
 
-	Material terrainMat;
-	terrainMat.name = "terrainMaterial";
-	terrainMat.emissiveFactor = 0;
-	terrainMat.SetMetallicRoughnessTexture("Assets/Textures/sand/metallic_roughness.png");
-	terrainMat.SetBaseColorTexture("Assets/Textures/sand/basecolor.jpg");
-	terrainMat.SetNormalTexture("Assets/Textures/sand/normal.jpg");
+	Material terrainMatSand;
+	terrainMatSand.name = "terrainMaterial";
+	terrainMatSand.emissiveFactor = 0;
+	terrainMatSand.SetMetallicRoughnessTexture("Assets/Textures/sand/metallic_roughness.png");
+	terrainMatSand.SetBaseColorTexture("Assets/Textures/sand/basecolor.jpg");
+	terrainMatSand.SetNormalTexture("Assets/Textures/sand/normal.jpg");
 
-	m_terrain = EntityReg::CreateEntity();
-	m_terrain.AddComponent<TransformComp>()->transform.setTranslation({ -64, -9, -64 });
-	m_terrain.AddComponent<TerrainScript>();
+	m_oldTerrain = EntityReg::CreateEntity();
+	m_oldTerrain.AddComponent<TransformComp>()->transform.setTranslation({ -64, -9, -64 });
+	m_oldTerrain.AddComponent<TerrainScript>();
 	
-	m_terrain.AddComponent<RenderModelComp>(am.AddRenderUnit(terrainMesh, terrainMat));
+	m_oldTerrain.AddComponent<RenderModelComp>(am.AddRenderUnit(terrainMesh, terrainMatSand));
 
 
 	sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr");
@@ -111,7 +111,7 @@ Scene::Scene()
 
 	SubMesh quadMeshCopy2 = AssetManager::Get().GetMesh(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN);
 	m_ironSphere = EntityReg::CreateEntity();
-	m_ironSphere.AddComponent(TransformComp())->transform.setTranslation(0, 2, 0);
+	m_ironSphere.AddComponent(TransformComp())->transform.setTranslation(0, 3, 1);
 	m_ironSphere.AddComponent(RenderModelComp(AssetManager::Get().AddRenderUnit(quadMeshCopy2, rusteIronMat)));
 
 
@@ -146,8 +146,8 @@ void Scene::Update(float dt)
 	m_lightContr.Show();
 	m_dirlightContr.Show();
 
-	m_quad.GetComponent<TransformComp>()->transform.setTranslation(m_quadContr.slider1.value);
-	m_quad.GetComponent<TransformComp>()->transform.setRotation(m_quadContr.slider2.value.x, m_quadContr.slider2.value.y, m_quadContr.slider2.value.z);
+	m_terrain.GetComponent<TransformComp>()->transform.setTranslation(m_quadContr.slider1.value);
+	m_terrain.GetComponent<TransformComp>()->transform.setRotation(m_quadContr.slider2.value.x, m_quadContr.slider2.value.y, m_quadContr.slider2.value.z);
 
 	m_pointLight.GetComponent<PointLightComp>()->pointLight.position = m_lightContr.slider1.value;
 	m_pointLight.GetComponent<PointLightComp>()->pointLight.color = m_lightContr.slider2.value;

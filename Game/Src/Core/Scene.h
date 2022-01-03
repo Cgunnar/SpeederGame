@@ -5,6 +5,7 @@
 #include "StandardComponents.h"
 #include "RenderComponents.h"
 #include "GuiDebug.h"
+#include "TerrainGUI.h"
 #include "SkyBox.h"
 
 class Scene
@@ -24,16 +25,15 @@ private:
 	rfe::Entity m_camera;
 	rfe::Entity m_ship;
 	rfe::Entity m_arrow;
-	rfe::Entity m_quad;
+	rfe::Entity m_terrain;
 	rfe::Entity m_ironSphere;
 	rfe::Entity m_pointLight;
-	rfe::Entity m_terrain;
+	rfe::Entity m_oldTerrain;
 
 	std::vector<rfe::Entity> m_entities;
 
 	GuiTest m_quadContr = GuiTest("quad controller");
 	GuiTest m_lightContr = GuiTest("pointLight controller");
 	GuiTest m_dirlightContr = GuiTest("dirLight controller");
-
 };
 

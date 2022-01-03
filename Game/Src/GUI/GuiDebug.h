@@ -3,10 +3,12 @@
 #include "RimfrostMath.hpp"
 
 class GuiTest;
+class TerrainGUI;
 
 class Slider
 {
 	friend GuiTest;
+	friend TerrainGUI;
 public:
 	rfm::Vector3 value;
 	void ChangeDefaultValues(rfm::Vector3 val, float min = -10, float max = 10)

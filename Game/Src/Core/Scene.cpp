@@ -21,8 +21,9 @@ using namespace rfe;
 Scene::Scene()
 {
 	TerrainGenerator tg;
-	tg.bioms.emplace_back("water", Vector3(0,0,1), 0.4f, true);
-	tg.bioms.emplace_back("grassLand", Vector3(0,1,0), 1);
+	tg.bioms.emplace_back("water", Vector3(0,0,1), 0.3f, true);
+	tg.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.4);
+	tg.bioms.emplace_back("mountain", 0.2f, 1);
 	auto f = tg.GenerateTerrinMap(100, 100, 27.6f, 4, 0.5f, 2, { 4, 12 }, 32);
 
 

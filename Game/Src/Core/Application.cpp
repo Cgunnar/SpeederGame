@@ -13,6 +13,8 @@
 #include "AssetManager.h"
 #include "Input.h"
 #include "NativeScriptCollection.h"
+#include "imgui.h"
+#include "Curve_editor.h"
 
 
 using namespace rfe;
@@ -70,7 +72,10 @@ void Application::Run()
 
 		m_scene->Update(static_cast<float>(FrameTimer::dt()));
 
-		
+		//ImGui::ShowDemoWindow();
+		//static float v[5] = { 0.390f, 0.575f, 0.565f, 1.000f };
+		//ImGui::Bezier( "easeOutSine", v );       // draw
+		//float y = ImGui::BezierValue( 0.5f, v ); // x delta in [0..1] range
 		
 		m_renderer->RenderBegin(m_scene->GetCamera());
 		m_renderer->RenderSkyBox(m_scene->sky);

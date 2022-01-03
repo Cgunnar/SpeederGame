@@ -21,8 +21,18 @@ using namespace rfe;
 Scene::Scene()
 {
 	TerrainGenerator tg;
-	float* f = tg.GenerateNoise(100, 100, 27.6, 4, 0.5f, 2, 123456u, { 4, 12 });
-	delete f;
+	tg.bioms.push_back({ "water", { 0,0,1 }, 0.4f});
+	tg.bioms.push_back({ "grassLand", { 0,1,0 }, 1});
+	float* f = tg.GenerateTerrinMap(100, 100, 27.6f, 4, 0.5f, 2, { 4, 12 }, 32);
+	delete[] f;
+
+
+
+
+
+
+
+
 
 	CreateEntityModel("Assets/Models/brick_wall/brick_wall.obj", 0, { 90, 0, 0 }, 10);
 	m_camera = EntityReg::CreateEntity();

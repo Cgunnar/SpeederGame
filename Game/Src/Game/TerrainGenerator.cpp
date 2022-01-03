@@ -6,30 +6,69 @@
 #include "stb_image.h"
 #include "RimfrostMath.hpp"
 #include "RandGen.hpp"
+#include "UtilityFunctions.h"
 
 using namespace rfm;
 
-inline static constexpr unsigned char ToUint8(float x) noexcept
+
+
+
+
+float* TerrainGenerator::GenerateTerrinMap(int width, int height, float scale, int octaves, float persistance, float lacunarity, rfm::Vector2 offset, uint32_t seed)
 {
-	return (x <= 0.0) ? 0 : (1.0 <= x) ? 255 : static_cast<unsigned char>(x * 255.0 + 0.5);
+	float* noise = GenerateNoise(width, height, scale, octaves, persistance, lacunarity, offset, seed);
+	
+	
+	unsigned char* noiseChar = new unsigned char[(size_t)width * (size_t)height]();
+	for (int i = 0; i < height * width; i++)
+	{
+		noiseChar[i] = util::ToUint8(noise[i]);
+	}
+
+	if (!stbi_write_bmp("testNoise.bmp", width, height, STBI_grey, noiseChar))
+	{
+		std::cout << "write error" << std::endl;
+	}
+	delete[] noiseChar;
+
+
+	std::vector<Vector3> colorMap;
+	colorMap.resize(height * (size_t)width);
+	for (int i = 0; i < height * width; i++)
+	{
+		for (auto& b : bioms)
+		{
+			if (noise[i] <= b.height)
+			{
+				colorMap[i] = b.color;
+				break;
+			}
+		}
+	}
+
+	auto colorUint8 = util::FloatToCharRGB((float*)colorMap.data(), width, height);
+
+	if (!stbi_write_png("terrainColor.png", width, height, STBI_rgb, colorUint8.data(), width*STBI_rgb))
+	{
+		std::cout << "write error" << std::endl;
+	}
+
+
+	return noise;
 }
 
-
-
-
-
-
 float* TerrainGenerator::GenerateNoise(int width, int height, float scale, int octaves, float persistance, float lacunarity,
-	uint32_t seed, rfm::Vector2 offset)
+	rfm::Vector2 offset, uint32_t seed)
 {
+	assert(width > 0 && height > 0 && scale > 0 && octaves >= 1 && lacunarity >= 1 && 0 <= persistance && persistance <= 1);
+
 	Vector2* octRandOffsets = new Vector2[octaves]();
 	for (int i = 0; i < octaves; i++)
 	{
 		octRandOffsets[i].x = GenRandFloat(-10000, 10000, seed + octaves) + offset.x;
-		octRandOffsets[i].y = GenRandFloat(-10000, 10000, octRandOffsets[i].x) + offset.y;
+		octRandOffsets[i].y = GenRandFloat(-10000, 10000, (int)octRandOffsets[i].x) + offset.y;
 	}
 
-	assert(width > 0 && height > 0 && scale > 0);
 	const siv::PerlinNoise::seed_type sivseed = seed;
 	const siv::PerlinNoise perlin{ sivseed };
 
@@ -42,13 +81,13 @@ float* TerrainGenerator::GenerateNoise(int width, int height, float scale, int o
 		for (int x = 0; x < width; x++)
 		{
 			float amplitude = 1;
-			float frequency = 1;
+			float frequency = 1;	
 			float noiseHeight = 0;
 
 			for (int i = 0; i < octaves; i++)
 			{
-				float sampleX = x * frequency / scale + octRandOffsets[i].x;
-				float sampleY = y * frequency / scale + octRandOffsets[i].y;
+				float sampleX = ((float)x - width / 2.0f)  * frequency / scale + octRandOffsets[i].x;
+				float sampleY = ((float)y - height / 2.0f) * frequency / scale + octRandOffsets[i].y;
 
 				float perlinNoise = amplitude * static_cast<float>(perlin.noise2D(sampleX, sampleY));
 				noiseHeight += perlinNoise;
@@ -73,17 +112,7 @@ float* TerrainGenerator::GenerateNoise(int width, int height, float scale, int o
 	}
 	
 
-	unsigned char* noiseChar = new unsigned char[(size_t)width * (size_t)height]();
-	for (int i = 0; i < height * width; i++)
-	{
-		noiseChar[i] = ToUint8(noise[i]);
-	}
-
-	if (!stbi_write_bmp("testNoise.bmp", width, height, STBI_grey, noiseChar))
-	{
-		std::cout << "write error" << std::endl;
-	}
-	delete[] noiseChar;
+	
 	delete[] octRandOffsets;
 	return noise;
 }

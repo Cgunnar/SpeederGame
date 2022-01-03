@@ -11,20 +11,20 @@
 using namespace rfm;
 
 
-
-
-
-float* TerrainGenerator::GenerateTerrinMap(int width, int height, float scale, int octaves, float persistance, float lacunarity, rfm::Vector2 offset, uint32_t seed)
+TerrainMap TerrainGenerator::GenerateTerrinMap(int width, int height, float scale, int octaves, float persistance, float lacunarity, rfm::Vector2 offset, uint32_t seed)
 {
-	float* noise = GenerateNoise(width, height, scale, octaves, persistance, lacunarity, offset, seed);
+
+	TerrainMap map;
+	map.height = height;
+	map.height = width;
+	map.heightMap = GenerateNoise(width, height, scale, octaves, persistance, lacunarity, offset, seed);
 	
 	
 	unsigned char* noiseChar = new unsigned char[(size_t)width * (size_t)height]();
 	for (int i = 0; i < height * width; i++)
 	{
-		noiseChar[i] = util::ToUint8(noise[i]);
+		noiseChar[i] = util::ToUint8(map.heightMap[i]);
 	}
-
 	if (!stbi_write_bmp("testNoise.bmp", width, height, STBI_grey, noiseChar))
 	{
 		std::cout << "write error" << std::endl;
@@ -32,32 +32,34 @@ float* TerrainGenerator::GenerateTerrinMap(int width, int height, float scale, i
 	delete[] noiseChar;
 
 
-	std::vector<Vector3> colorMap;
+	std::vector<Vector4> colorMap;
 	colorMap.resize(height * (size_t)width);
 	for (int i = 0; i < height * width; i++)
 	{
 		for (auto& b : bioms)
 		{
-			if (noise[i] <= b.height)
+			if (map.heightMap[i] <= b.threshold)
 			{
-				colorMap[i] = b.color;
+				if(b.flat) map.heightMap[i] = b.threshold;
+				colorMap[i] = Vector4(b.color, 1);
 				break;
 			}
 		}
 	}
 
-	auto colorUint8 = util::FloatToCharRGB((float*)colorMap.data(), width, height);
+	map.colorMapRGBA = util::FloatToCharRGBA((float*)colorMap.data(), width, height);
 
-	if (!stbi_write_png("terrainColor.png", width, height, STBI_rgb, colorUint8.data(), width*STBI_rgb))
+	if (!stbi_write_png("terrainColor.png", width, height, STBI_rgb_alpha, map.colorMapRGBA.data(), width*STBI_rgb_alpha))
 	{
 		std::cout << "write error" << std::endl;
 	}
 
+	
 
-	return noise;
+	return map;
 }
 
-float* TerrainGenerator::GenerateNoise(int width, int height, float scale, int octaves, float persistance, float lacunarity,
+std::vector<float> TerrainGenerator::GenerateNoise(int width, int height, float scale, int octaves, float persistance, float lacunarity,
 	rfm::Vector2 offset, uint32_t seed)
 {
 	assert(width > 0 && height > 0 && scale > 0 && octaves >= 1 && lacunarity >= 1 && 0 <= persistance && persistance <= 1);
@@ -72,7 +74,8 @@ float* TerrainGenerator::GenerateNoise(int width, int height, float scale, int o
 	const siv::PerlinNoise::seed_type sivseed = seed;
 	const siv::PerlinNoise perlin{ sivseed };
 
-	float* noise = new float[(size_t)width * (size_t)height]();
+	std::vector<float> noise;
+	noise.resize((size_t)width * (size_t)height);
 
 	float maxNoise = std::numeric_limits<float>::min();
 	float minNoise = std::numeric_limits<float>::max();
@@ -103,7 +106,7 @@ float* TerrainGenerator::GenerateNoise(int width, int height, float scale, int o
 				minNoise = noiseHeight;
 			}
 
-			noise[y * width + x] = noiseHeight;
+			noise[y * static_cast<size_t>(width) + x] = noiseHeight;
 		}
 	}
 	for (int i = 0; i < height * width; i++)

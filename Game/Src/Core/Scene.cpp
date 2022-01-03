@@ -21,16 +21,14 @@ using namespace rfe;
 Scene::Scene()
 {
 	TerrainGenerator tg;
-	tg.bioms.push_back({ "water", { 0,0,1 }, 0.4f});
-	tg.bioms.push_back({ "grassLand", { 0,1,0 }, 1});
-	float* f = tg.GenerateTerrinMap(100, 100, 27.6f, 4, 0.5f, 2, { 4, 12 }, 32);
+	tg.bioms.emplace_back("water", Vector3(0,0,1), 0.4f, true);
+	tg.bioms.emplace_back("grassLand", Vector3(0,1,0), 1);
+	auto f = tg.GenerateTerrinMap(100, 100, 27.6f, 4, 0.5f, 2, { 4, 12 }, 32);
 
 
 	TerrainMeshGenerator t2;
-	t2.CreateTerrain(10, f, 100, 100, 0);
+	t2.CreateTerrain(10, f.heightMap.data(), 100, 100, 0);
 	SubMesh terrainMesh2(t2.GetVerticesTBN(), t2.GetIndices());
-
-	delete[] f;
 
 
 	Material qM;
@@ -38,7 +36,7 @@ Scene::Scene()
 	qM.baseColorPath = "terrainColor.png";
 	qM.emissiveFactor = 0;
 	m_quad = EntityReg::CreateEntity();
-	m_quad.AddComponent<TransformComp>()->transform.setScale(0.01, 0.01, 0.01);
+	m_quad.AddComponent<TransformComp>()->transform.setScale(0.01f);
 	m_quad.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(terrainMesh2, qM));
 	//m_quad.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV), qM));
 

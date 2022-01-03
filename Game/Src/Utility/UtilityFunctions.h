@@ -3,6 +3,7 @@
 namespace util
 {
 	std::vector<uint8_t> FloatToCharRGB(const float* src, int width, int height);
+	std::vector<uint8_t> FloatToCharRGBA(const float* src, int width, int height);
 
 
 

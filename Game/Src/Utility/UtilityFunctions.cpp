@@ -14,4 +14,14 @@ namespace util
 		}
 		return charVec;
 	}
+	std::vector<uint8_t> FloatToCharRGBA(const float* src, int width, int height)
+	{
+		std::vector<uint8_t> charVec;
+		charVec.resize(static_cast<size_t>(width) * height * 4);
+		for (int i = 0; i < width * height * 4; i++)
+		{
+			charVec[i] = ToUint8(src[i]);
+		}
+		return charVec;
+	}
 }

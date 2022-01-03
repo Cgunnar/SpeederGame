@@ -77,12 +77,11 @@ void TerrainMeshGenerator::CreateTerrain(float scale, const float* hightMap, int
             int i = (width * row) + col;
 
             Vertex_POS_NOR_UV v;
-            float x = static_cast<float>(col - (float)width / 2.0f);
-            float y = static_cast<float>(hightMap[offset] * scale);
-            float z = static_cast<float>(row - (float)height / 2.0f);
+            float x = static_cast<float>(col - static_cast<float>(width) / 2.0f);
+            float y = static_cast<float>(hightMap[offset++] * scale);
+            float z = static_cast<float>(row - static_cast<float>(height) / 2.0f);
             v.position = rfm::Vector3(x, y, z);
             v.uv = rfm::Vector2(static_cast<float>(col) / uvScale.x , static_cast<float>(row) / uvScale.y);
-            //v.uv = rfm::Vector2(x / uvScale.x , static_cast<float>(height - row) / uvScale.y);
             m_vertices.push_back(v);
 
 
@@ -90,9 +89,6 @@ void TerrainMeshGenerator::CreateTerrain(float scale, const float* hightMap, int
             vTBN.position = v.position;
             vTBN.uv = v.uv;
             m_verticesTBN.push_back(vTBN);
-
-
-            offset++;
         }
     }
 

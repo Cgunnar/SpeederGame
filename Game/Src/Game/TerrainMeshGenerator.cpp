@@ -39,7 +39,7 @@ void TerrainMeshGenerator::CreateTerrainFromBMP(const std::string& fileName, flo
     }
     delete[] bmpData;
 
-    CreateTerrain(scale, heightMapFloat.data(), infoHeader.biWidth, infoHeader.biHeight, uvScale);
+    CreateTerrain(heightMapFloat.data(), infoHeader.biWidth, infoHeader.biHeight, scale, uvScale);
 }
 
 const std::vector<Vertex_POS_NOR_UV>& TerrainMeshGenerator::GetVertices() const
@@ -57,7 +57,7 @@ const std::vector<uint32_t>& TerrainMeshGenerator::GetIndices() const
     return m_indices;
 }
 
-void TerrainMeshGenerator::CreateTerrain(float scale, const float* hightMap, int width, int height, rfm::Vector2 uvScale)
+void TerrainMeshGenerator::CreateTerrain(const float* hightMap, int width, int height, float scale, rfm::Vector2 uvScale, std::function<float(float)> heightScaleFunc)
 {
     m_indices.clear();
     m_triangles.clear();
@@ -70,18 +70,18 @@ void TerrainMeshGenerator::CreateTerrain(float scale, const float* hightMap, int
     uint8_t heightValue = 0;
     int offset = 0;
 
-    for (int row = 0; row < height; row++)
+    
+
+    for (int y = 0; y < height; y++)
     {
-        for (int col = 0; col < width; col++)
+        for (int x = 0; x < width; x++)
         {
-            int i = (width * row) + col;
 
             Vertex_POS_NOR_UV v;
-            float x = static_cast<float>(col - static_cast<float>(width) / 2.0f);
-            float y = static_cast<float>(hightMap[offset++] * scale);
-            float z = static_cast<float>(row - static_cast<float>(height) / 2.0f);
-            v.position = rfm::Vector3(x, y, z);
-            v.uv = rfm::Vector2(static_cast<float>(col) / uvScale.x , static_cast<float>(row) / uvScale.y);
+            v.position.x = static_cast<float>(x) - static_cast<float>(width-1) / 2.0f;
+            v.position.y = heightScaleFunc(hightMap[y * width + x]) * scale;
+            v.position.z = static_cast<float>(height-1) / 2.0f - static_cast<float>(y);
+            v.uv = rfm::Vector2(static_cast<float>(x) / uvScale.x , static_cast<float>(y) / uvScale.y);
             m_vertices.push_back(v);
 
 
@@ -93,22 +93,20 @@ void TerrainMeshGenerator::CreateTerrain(float scale, const float* hightMap, int
     }
 
 
-
-    int index;
-    for (int row = 0; row < height - 1; row++)
+    for (int y = 0; y < height - 1; y++)
     {
-        for (int col = 0; col < width - 1; col++)
+        for (int x = 0; x < width - 1; x++)
         {
-            index = width * row + col;
+            int index = y * width + x;
 
             //tri
-            m_indices.push_back(index + 1);
             m_indices.push_back(index);
+            m_indices.push_back(index + 1);
             m_indices.push_back(index + width);
 
             //tri
-            m_indices.push_back(index + width + 1);
             m_indices.push_back(index + 1);
+            m_indices.push_back(index + width + 1);
             m_indices.push_back(index + width);
         }
     }

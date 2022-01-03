@@ -16,7 +16,8 @@ public:
 	const std::vector<uint32_t>& GetIndices() const;
 	static constexpr uint32_t vertexStride = sizeof(Vertex_POS_NOR_UV);
 	static constexpr uint32_t vertexStrideTBN = sizeof(Vertex_POS_NOR_UV_TAN_BITAN);
-	void CreateTerrain(float scale, const float* hightMap, int width, int height, rfm::Vector2 uvScale = 1);
+	void CreateTerrain(const float* hightMap, int width, int height, float scale,
+		rfm::Vector2 uvScale = 1, std::function<float(float)> heightScaleFunc = [](float s) {return s; });
 private:
 	void CalcNormal(Triangle& tri) const;
 	std::vector<Triangle> m_triangles;

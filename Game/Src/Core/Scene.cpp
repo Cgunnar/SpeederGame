@@ -25,13 +25,13 @@ Scene::Scene()
 
 	TerrainGenerator tg;
 	tg.bioms.emplace_back("water", Vector3(0,0,1), 0.3f, true);
-	tg.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.4);
+	tg.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.5);
 	tg.bioms.emplace_back("mountain", 0.2f, 1);
-	auto f = tg.GenerateTerrinMap(100, 100, 27.6f, 4, 0.5f, 2, { 4, 12 }, 32);
+	auto f = tg.GenerateTerrinMap(512, 512, 27.6f, 4, 0.5f, 2, { 4, 12 }, 32);
 
 
 	TerrainMeshGenerator t2;
-	t2.CreateTerrain(10, f.heightMap.data(), f.width, f.height, 0);
+	t2.CreateTerrain(f.heightMap.data(), f.width, f.height, 10, 0, [](float in) {return in * in; });
 	SubMesh terrainMesh2(t2.GetVerticesTBN(), t2.GetIndices());
 
 
@@ -39,7 +39,7 @@ Scene::Scene()
 	terrainMat.baseColorTexture = am.LoadTex2DFromMemoryR8G8B8A8(f.colorMapRGBA.data(), f.width, f.height, LoadTexFlag::GenerateMips);
 	terrainMat.emissiveFactor = 0;
 	m_terrain = EntityReg::CreateEntity();
-	m_terrain.AddComponent<TransformComp>()->transform.setScale(0.02f);
+	m_terrain.AddComponent<TransformComp>()->transform.setScale(0.01f);
 	m_terrain.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(terrainMesh2, terrainMat));
 
 

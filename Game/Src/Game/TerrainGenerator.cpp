@@ -104,6 +104,8 @@ std::vector<float> TerrainGenerator::GenerateNoise(int width, int height, float 
 	for (int i = 0; i < height * width; i++)
 	{
  		noise[i] = rfm::InvLerp(minNoise, maxNoise, noise[i]);
+		/*noise[i] *= 3 * noise[i];
+ 		noise[i] = rfm::InvLerp(0, maxNoise * 3, noise[i]);*/
 	}
 	
 

@@ -16,20 +16,20 @@ TerrainMap TerrainGenerator::GenerateTerrinMap(int width, int height, float scal
 
 	TerrainMap map;
 	map.height = height;
-	map.height = width;
+	map.width = width;
 	map.heightMap = GenerateNoise(width, height, scale, octaves, persistance, lacunarity, offset, seed);
 	
 	
-	unsigned char* noiseChar = new unsigned char[(size_t)width * (size_t)height]();
-	for (int i = 0; i < height * width; i++)
-	{
-		noiseChar[i] = util::ToUint8(map.heightMap[i]);
-	}
-	if (!stbi_write_bmp("testNoise.bmp", width, height, STBI_grey, noiseChar))
-	{
-		std::cout << "write error" << std::endl;
-	}
-	delete[] noiseChar;
+	//unsigned char* noiseChar = new unsigned char[(size_t)width * (size_t)height]();
+	//for (int i = 0; i < height * width; i++)
+	//{
+	//	noiseChar[i] = util::ToUint8(map.heightMap[i]);
+	//}
+	//if (!stbi_write_bmp("testNoise.bmp", width, height, STBI_grey, noiseChar))
+	//{
+	//	std::cout << "write error" << std::endl;
+	//}
+	//delete[] noiseChar;
 
 
 	std::vector<Vector4> colorMap;
@@ -48,14 +48,6 @@ TerrainMap TerrainGenerator::GenerateTerrinMap(int width, int height, float scal
 	}
 
 	map.colorMapRGBA = util::FloatToCharRGBA((float*)colorMap.data(), width, height);
-
-	if (!stbi_write_png("terrainColor.png", width, height, STBI_rgb_alpha, map.colorMapRGBA.data(), width*STBI_rgb_alpha))
-	{
-		std::cout << "write error" << std::endl;
-	}
-
-	
-
 	return map;
 }
 

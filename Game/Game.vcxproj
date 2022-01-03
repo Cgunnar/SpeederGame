@@ -184,10 +184,10 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClCompile Include="Src\Utility\FrameTimer.cpp" />
     <ClCompile Include="Src\Utility\ReadImg.cpp" />
     <ClCompile Include="Src\Utility\Timer.cpp" />
+    <ClCompile Include="Src\Utility\UtilityFunctions.cpp" />
     <ClCompile Include="Src\pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Src\Utility\UtilityFunctions.cpp" />
     <ClCompile Include="vendor\imgui\backends\imgui_impl_dx11.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>

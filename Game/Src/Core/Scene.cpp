@@ -32,8 +32,8 @@ Scene::Scene()
 
 
 	Material qM;
-	//qM.baseColorPath = "testNoise.bmp";
-	qM.baseColorPath = "terrainColor.png";
+	//qM.baseColorTexture = "testNoise.bmp";
+	qM.baseColorTexture = AssetManager::Get().LoadTex2DFromMemoryR8G8B8A8(f.colorMapRGBA.data(), f.width, f.height, LoadTexFlag::GenerateMips);
 	qM.emissiveFactor = 0;
 	m_quad = EntityReg::CreateEntity();
 	m_quad.AddComponent<TransformComp>()->transform.setScale(0.01f);
@@ -59,9 +59,9 @@ Scene::Scene()
 	Material terrainMat;
 	terrainMat.name = "terrainMaterial";
 	terrainMat.emissiveFactor = 0;
-	terrainMat.metallicRoughnessPath = "Assets/Textures/sand/metallic_roughness.png";
-	terrainMat.baseColorPath = "Assets/Textures/sand/basecolor.jpg";
-	terrainMat.normalPath = "Assets/Textures/sand/normal.jpg";
+	terrainMat.SetMetallicRoughnessTexture("Assets/Textures/sand/metallic_roughness.png");
+	terrainMat.SetBaseColorTexture("Assets/Textures/sand/basecolor.jpg");
+	terrainMat.SetNormalTexture("Assets/Textures/sand/normal.jpg");
 
 	m_terrain = EntityReg::CreateEntity();
 	m_terrain.AddComponent<TransformComp>()->transform.setTranslation({ -64, -9, -64 });

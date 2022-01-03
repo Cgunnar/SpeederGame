@@ -47,14 +47,18 @@ enum class MaterialVariantEnum
 
 struct Material
 {
+	void SetBaseColorTexture(const std::string& path);
+	void SetNormalTexture(const std::string& path);
+	void SetMetallicRoughnessTexture(const std::string& path);
+	void SetEmissiveTexture(const std::string& path);
 	MaterialProperties properties = MaterialProperties::NONE;
 	BlendMode blendMode = BlendMode::opaque;
 	float maskCutOfValue = 0;
 	std::string name = "";
-	std::string baseColorPath = "";
-	std::string normalPath = "";
-	std::string metallicRoughnessPath = "";
-	std::string emissivePath = "";
+	GID baseColorTexture;
+	GID normalTexture;
+	GID metallicRoughnessTexture;
+	GID emissiveTexture;
 
 	float metallicFactor = 0;
 	float roughnessFactor = 1;

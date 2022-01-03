@@ -171,6 +171,9 @@
     <ClInclude Include="Src\Utility\Timer.hpp">
       <Filter>Src\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Utility\UtilityFunctions.h">
+      <Filter>Src\Utility</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Utility\utilityTypes.h">
       <Filter>Src\Utility</Filter>
     </ClInclude>
@@ -192,7 +195,6 @@
     <ClInclude Include="vendor\singleHeaders\stb_image.h">
       <Filter>vendor\singleHeaders</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Utility\UtilityFunctions.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">
@@ -288,6 +290,9 @@
     <ClCompile Include="Src\Utility\Timer.cpp">
       <Filter>Src\Utility</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Utility\UtilityFunctions.cpp">
+      <Filter>Src\Utility</Filter>
+    </ClCompile>
     <ClCompile Include="Src\pch.cpp">
       <Filter>Src</Filter>
     </ClCompile>
@@ -297,7 +302,6 @@
     <ClCompile Include="vendor\imgui\backends\imgui_impl_win32.cpp">
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Utility\UtilityFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\CS\CS_convolute_DiffIrrCube.hlsl">

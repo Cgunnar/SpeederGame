@@ -6,16 +6,16 @@ MaterialVariant::MaterialVariant(const Material& pbrMaterial)
 {
 	AssetManager& am = AssetManager::Get();
 	this->name = pbrMaterial.name;
-	if (!pbrMaterial.normalPath.empty() &&
-		!pbrMaterial.baseColorPath.empty() &&
-		!pbrMaterial.metallicRoughnessPath.empty() &&
-		!pbrMaterial.emissivePath.empty())
+	if (pbrMaterial.normalTexture &&
+		pbrMaterial.baseColorTexture &&
+		pbrMaterial.metallicRoughnessTexture &&
+		pbrMaterial.emissiveTexture)
 	{
 		PBR_ALBEDO_METROUG_NOR_EMIS mat;
-		mat.albedoTextureID = am.LoadTex2DFromFile(pbrMaterial.baseColorPath, LoadTexFlag::GenerateMips);
-		mat.normalTextureID = am.LoadTex2DFromFile(pbrMaterial.normalPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
-		mat.emissiveTextureID = am.LoadTex2DFromFile(pbrMaterial.emissivePath, LoadTexFlag::GenerateMips);
-		mat.matallicRoughnessTextureID = am.LoadTex2DFromFile(pbrMaterial.metallicRoughnessPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
+		mat.albedoTextureID = pbrMaterial.baseColorTexture;
+		mat.normalTextureID = pbrMaterial.normalTexture;
+		mat.emissiveTextureID = pbrMaterial.emissiveTexture;
+		mat.matallicRoughnessTextureID = pbrMaterial.metallicRoughnessTexture;
 
 		mat.emissiveFactor = pbrMaterial.emissiveFactor;
 		mat.rgba = pbrMaterial.baseColorFactor;
@@ -25,14 +25,14 @@ MaterialVariant::MaterialVariant(const Material& pbrMaterial)
 		this->materialVariant = mat;
 		this->type = MaterialVariantEnum::PBR_ALBEDO_METROUG_NOR_EMIS;
 	}
-	else if (!pbrMaterial.normalPath.empty() &&
-			!pbrMaterial.baseColorPath.empty() &&
-			!pbrMaterial.metallicRoughnessPath.empty())
+	else if (pbrMaterial.normalTexture &&
+			pbrMaterial.baseColorTexture &&
+			pbrMaterial.metallicRoughnessTexture)
 	{
 		PBR_ALBEDO_METROUG_NOR mat;
-		mat.albedoTextureID = am.LoadTex2DFromFile(pbrMaterial.baseColorPath, LoadTexFlag::GenerateMips);
-		mat.normalTextureID = am.LoadTex2DFromFile(pbrMaterial.normalPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
-		mat.matallicRoughnessTextureID = am.LoadTex2DFromFile(pbrMaterial.metallicRoughnessPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
+		mat.albedoTextureID = pbrMaterial.baseColorTexture;
+		mat.normalTextureID = pbrMaterial.normalTexture;
+		mat.matallicRoughnessTextureID = pbrMaterial.metallicRoughnessTexture;
 
 		mat.emissiveFactor = pbrMaterial.emissiveFactor;
 		mat.rgba = pbrMaterial.baseColorFactor;
@@ -42,11 +42,11 @@ MaterialVariant::MaterialVariant(const Material& pbrMaterial)
 		this->materialVariant = mat;
 		this->type = MaterialVariantEnum::PBR_ALBEDO_METROUG_NOR;
 	}
-	else if (!pbrMaterial.normalPath.empty() && !pbrMaterial.baseColorPath.empty())
+	else if (pbrMaterial.normalTexture && pbrMaterial.baseColorTexture)
 	{
 		PBR_ALBEDO_NOR mat;
-		mat.albedoTextureID = am.LoadTex2DFromFile(pbrMaterial.baseColorPath, LoadTexFlag::GenerateMips);
-		mat.normalTextureID = am.LoadTex2DFromFile(pbrMaterial.normalPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
+		mat.albedoTextureID = pbrMaterial.baseColorTexture;
+		mat.normalTextureID = pbrMaterial.normalTexture;
 
 		mat.emissiveFactor = pbrMaterial.emissiveFactor;
 		mat.rgba = pbrMaterial.baseColorFactor;
@@ -56,11 +56,11 @@ MaterialVariant::MaterialVariant(const Material& pbrMaterial)
 		this->materialVariant = mat;
 		this->type = MaterialVariantEnum::PBR_ALBEDO_NOR;
 	}
-	else if (!pbrMaterial.baseColorPath.empty() && !pbrMaterial.metallicRoughnessPath.empty())
+	else if (pbrMaterial.baseColorTexture && pbrMaterial.metallicRoughnessTexture)
 	{
 		PBR_ALBEDO_METROUG mat;
-		mat.albedoTextureID = am.LoadTex2DFromFile(pbrMaterial.baseColorPath, LoadTexFlag::GenerateMips);
-		mat.matallicRoughnessTextureID = am.LoadTex2DFromFile(pbrMaterial.metallicRoughnessPath, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
+		mat.albedoTextureID = pbrMaterial.baseColorTexture;
+		mat.matallicRoughnessTextureID = pbrMaterial.metallicRoughnessTexture;
 
 		mat.emissiveFactor = pbrMaterial.emissiveFactor;
 		mat.rgba = pbrMaterial.baseColorFactor;
@@ -70,11 +70,10 @@ MaterialVariant::MaterialVariant(const Material& pbrMaterial)
 		this->materialVariant = mat;
 		this->type = MaterialVariantEnum::PBR_ALBEDO_METROUG;
 	}
-	else if (!pbrMaterial.baseColorPath.empty())
+	else if (pbrMaterial.baseColorTexture)
 	{
 		PBR_ALBEDO mat;
-		mat.albedoTextureID = am.LoadTex2DFromFile(pbrMaterial.baseColorPath, LoadTexFlag::GenerateMips);
-
+		mat.albedoTextureID = pbrMaterial.baseColorTexture;
 		mat.emissiveFactor = pbrMaterial.emissiveFactor;
 		mat.rgba = pbrMaterial.baseColorFactor;
 		mat.metallic = pbrMaterial.metallicFactor;
@@ -83,7 +82,7 @@ MaterialVariant::MaterialVariant(const Material& pbrMaterial)
 		this->materialVariant = mat;
 		this->type = MaterialVariantEnum::PBR_ALBEDO;
 	}
-	else if (!pbrMaterial.normalPath.empty())
+	else if (pbrMaterial.normalTexture)
 	{
 		assert(false);
 	}
@@ -112,4 +111,22 @@ MaterialVariant::MaterialVariant(const Material& pbrMaterial)
 	{
 		this->renderFlag |= RenderFlag::noBackFaceCull;
 	}
+}
+
+void Material::SetBaseColorTexture(const std::string& path)
+{
+	baseColorTexture = AssetManager::Get().LoadTex2DFromFile(path, LoadTexFlag::GenerateMips);
+}
+
+void Material::SetNormalTexture(const std::string& path)
+{
+	normalTexture = AssetManager::Get().LoadTex2DFromFile(path, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
+}
+void Material::SetMetallicRoughnessTexture(const std::string& path)
+{
+	metallicRoughnessTexture = AssetManager::Get().LoadTex2DFromFile(path, LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
+}
+void Material::SetEmissiveTexture(const std::string& path)
+{
+	emissiveTexture = AssetManager::Get().LoadTex2DFromFile(path, LoadTexFlag::GenerateMips);
 }

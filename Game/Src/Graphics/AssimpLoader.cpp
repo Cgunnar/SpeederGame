@@ -261,26 +261,26 @@ Material AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const std::string& pat
 	aiString baseColorName, normName, metallicRoughnessName, emissiveName, aoName;
 	if (!aiMat->GetTexture(AI_MATKEY_BASE_COLOR_TEXTURE, &baseColorName))
 	{
-		pbrMat.baseColorPath = path + baseColorName.C_Str();
+		pbrMat.SetBaseColorTexture(path + baseColorName.C_Str());
 	}
 	else if (!aiMat->GetTexture(aiTextureType_DIFFUSE, 0, &baseColorName))
 	{
-		pbrMat.baseColorPath = path + baseColorName.C_Str();
+		pbrMat.SetBaseColorTexture(path + baseColorName.C_Str());
 	}
 	
 	if (!aiMat->GetTexture(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_METALLICROUGHNESS_TEXTURE, &metallicRoughnessName))
 	{
-		pbrMat.metallicRoughnessPath = path + metallicRoughnessName.C_Str();
+		pbrMat.SetMetallicRoughnessTexture(path + metallicRoughnessName.C_Str());
 	}
 	
 	if (!aiMat->GetTexture(aiTextureType::aiTextureType_EMISSIVE, 0, &emissiveName))
 	{
-		pbrMat.emissivePath = path + emissiveName.C_Str();
+		pbrMat.SetEmissiveTexture(path + emissiveName.C_Str());
 	}
 
 	if (!aiMat->GetTexture(aiTextureType_NORMALS, 0, &normName))
 	{
-		pbrMat.normalPath = path + normName.C_Str();
+		pbrMat.SetNormalTexture(path + normName.C_Str());
 		m_hasNormalMap = true; // to use tangent and bitangent vertexbuffer
 	}
 
@@ -296,7 +296,7 @@ Material AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const std::string& pat
 	{
 		pbrMat.baseColorFactor = rfm::Vector4(baseColorFactor[0], baseColorFactor[1], baseColorFactor[2], baseColorFactor[3]);
 	}
-	else if (!aiMat->Get(AI_MATKEY_COLOR_DIFFUSE, colorDiff) && pbrMat.baseColorPath.empty()) // legacy material
+	else if (!aiMat->Get(AI_MATKEY_COLOR_DIFFUSE, colorDiff) && !pbrMat.baseColorTexture) // legacy material
 	{
 		float opacity = 1;
 		if (!aiMat->Get(AI_MATKEY_OPACITY, opacity))

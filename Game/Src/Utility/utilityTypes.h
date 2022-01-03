@@ -14,6 +14,7 @@ struct GID
 	GID() = default;
 
 	operator const uint64_t& () const { return id; }
+	operator const bool () const { return id != 0; }
 
 	static GID GenerateNew()
 	{

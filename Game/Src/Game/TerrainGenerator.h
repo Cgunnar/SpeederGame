@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RimfrostMath.hpp"
+#include "TerrainMeshGenerator.h"
 
 struct Biom
 {
@@ -14,12 +15,7 @@ struct Biom
 };
 
 
-struct TerrainMap
-{
-	int width, height;
-	std::vector<float> heightMap;
-	std::vector<uint8_t> colorMapRGBA;
-};
+
 
 
 class TerrainGenerator

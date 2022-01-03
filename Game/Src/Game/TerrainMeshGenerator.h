@@ -2,6 +2,12 @@
 #include "RimfrostMath.hpp"
 #include "GraphicsResources.h"
 
+struct TerrainMap
+{
+	int width, height;
+	std::vector<float> heightMap;
+	std::vector<uint8_t> colorMapRGBA;
+};
 class TerrainMeshGenerator
 {
 public:
@@ -16,7 +22,8 @@ public:
 	const std::vector<uint32_t>& GetIndices() const;
 	static constexpr uint32_t vertexStride = sizeof(Vertex_POS_NOR_UV);
 	static constexpr uint32_t vertexStrideTBN = sizeof(Vertex_POS_NOR_UV_TAN_BITAN);
-	void CreateTerrain(const float* hightMap, int width, int height, float scale,
+	void CreateTerrain(TerrainMap terrainMap, float scale, rfm::Vector2 uvScale = 1, std::function<float(float)> heightScaleFunc = [](float s) {return s; });
+	void CreateTerrainFromFloatArray(const float* hightMap, int width, int height, float scale,
 		rfm::Vector2 uvScale = 1, std::function<float(float)> heightScaleFunc = [](float s) {return s; });
 private:
 	void CalcNormal(Triangle& tri) const;

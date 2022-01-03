@@ -39,7 +39,7 @@ void TerrainMeshGenerator::CreateTerrainFromBMP(const std::string& fileName, flo
     }
     delete[] bmpData;
 
-    CreateTerrain(heightMapFloat.data(), infoHeader.biWidth, infoHeader.biHeight, scale, uvScale);
+    CreateTerrainFromFloatArray(heightMapFloat.data(), infoHeader.biWidth, infoHeader.biHeight, scale, uvScale);
 }
 
 const std::vector<Vertex_POS_NOR_UV>& TerrainMeshGenerator::GetVertices() const
@@ -57,7 +57,12 @@ const std::vector<uint32_t>& TerrainMeshGenerator::GetIndices() const
     return m_indices;
 }
 
-void TerrainMeshGenerator::CreateTerrain(const float* hightMap, int width, int height, float scale, rfm::Vector2 uvScale, std::function<float(float)> heightScaleFunc)
+void TerrainMeshGenerator::CreateTerrain(TerrainMap terrainMap, float scale, rfm::Vector2 uvScale, std::function<float(float)> heightScaleFunc)
+{
+    CreateTerrainFromFloatArray(terrainMap.heightMap.data(), terrainMap.width, terrainMap.height, scale, uvScale, heightScaleFunc);
+}
+
+void TerrainMeshGenerator::CreateTerrainFromFloatArray(const float* hightMap, int width, int height, float scale, rfm::Vector2 uvScale, std::function<float(float)> heightScaleFunc)
 {
     m_indices.clear();
     m_triangles.clear();

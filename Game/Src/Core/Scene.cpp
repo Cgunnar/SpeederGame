@@ -31,7 +31,7 @@ Scene::Scene()
 
 
 	TerrainMeshGenerator t2;
-	t2.CreateTerrain(f.heightMap.data(), f.width, f.height, 10, 0, [](float in) {return in * in; });
+	t2.CreateTerrain(f, 10, 0, [](float in) {return in <= 0.3f ? 0.3f*0.3f : in * in; });
 	SubMesh terrainMesh2(t2.GetVerticesTBN(), t2.GetIndices());
 
 

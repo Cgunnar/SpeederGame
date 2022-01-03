@@ -18,18 +18,6 @@ TerrainMap TerrainGenerator::GenerateTerrinMap(int width, int height, float scal
 	map.height = height;
 	map.width = width;
 	map.heightMap = GenerateNoise(width, height, scale, octaves, persistance, lacunarity, offset, seed);
-	
-	
-	//unsigned char* noiseChar = new unsigned char[(size_t)width * (size_t)height]();
-	//for (int i = 0; i < height * width; i++)
-	//{
-	//	noiseChar[i] = util::ToUint8(map.heightMap[i]);
-	//}
-	//if (!stbi_write_bmp("testNoise.bmp", width, height, STBI_grey, noiseChar))
-	//{
-	//	std::cout << "write error" << std::endl;
-	//}
-	//delete[] noiseChar;
 
 
 	std::vector<Vector4> colorMap;

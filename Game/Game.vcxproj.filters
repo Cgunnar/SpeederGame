@@ -196,6 +196,7 @@
       <Filter>vendor\singleHeaders</Filter>
     </ClInclude>
     <ClInclude Include="Src\GUI\TerrainGUI.h" />
+    <ClInclude Include="Src\Game\Terrain.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">
@@ -304,6 +305,7 @@
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
     <ClCompile Include="Src\GUI\TerrainGUI.cpp" />
+    <ClCompile Include="Src\Game\Terrain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\CS\CS_convolute_DiffIrrCube.hlsl">

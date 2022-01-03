@@ -38,7 +38,7 @@ Renderer::Renderer()
 
 	//m_phongRenderer = PhongRenderer(s_sharedRenderResources->weak_from_this());
 	m_pbrRenderer = PbrRenderer(s_sharedRenderResources->weak_from_this());
-	m_shadowPass = ShadowMappingPass(s_sharedRenderResources->weak_from_this(), 8192/2);
+	m_shadowPass = ShadowMappingPass(s_sharedRenderResources->weak_from_this(), 8192 / 2);
 }
 
 Renderer::~Renderer()
@@ -134,10 +134,13 @@ void Renderer::CopyFromECS()
 	m_rendCompAndTransformFromECS.reserve(rendCompArray.size());
 	for (const auto& rendComp : rendCompArray)
 	{
-		EntityID entID = rendComp.GetEntityID();
-		assert(EntityReg::GetComponent<TransformComp>(entID));
-		m_rendCompAndTransformFromECS.push_back(
-			{ rendComp, EntityReg::GetComponent<TransformComp>(entID)->transform });
+		if (rendComp.visible)
+		{
+			EntityID entID = rendComp.GetEntityID();
+			assert(EntityReg::GetComponent<TransformComp>(entID));
+			m_rendCompAndTransformFromECS.push_back(
+				{ rendComp, EntityReg::GetComponent<TransformComp>(entID)->transform });
+		}
 	}
 }
 

@@ -12,6 +12,11 @@ struct TransformComp : rfe::Component<TransformComp>
 	operator const rfm::Matrix& () const { return transform; }
 };
 
+struct PlayerComp : rfe::Component<PlayerComp>
+{
+	
+};
+
 struct ChildComp : rfe::Component<ChildComp>
 {
 	std::vector<rfe::Entity> children;

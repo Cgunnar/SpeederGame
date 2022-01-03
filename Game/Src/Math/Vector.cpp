@@ -120,6 +120,13 @@ namespace rfm
 		this->z = this->z + other.z;
 		return *this;
 	}
+	Vector3& Vector3::operator-=(const Vector3& other)
+	{
+		this->x = this->x - other.x;
+		this->y = this->y - other.y;
+		this->z = this->z - other.z;
+		return *this;
+	}
 	Vector3& Vector3::operator*=(const float& other)
 	{
 		this->x = this->x * other;
@@ -239,6 +246,25 @@ namespace rfm
 		return Vector2(v.x / scale, v.y / scale);
 	}
 
+	Vector2I operator+(const Vector2I& l, const Vector2I& r)
+	{
+		return Vector2I(l.x + r.x, l.y + r.y);
+	}
+	Vector2I operator-(const Vector2I& l, const Vector2I& r)
+	{
+		return Vector2I(l.x - r.x, l.y - r.y);
+	}
+
+	Vector2I operator*(int scale, const Vector2I& v)
+	{
+		return Vector2I(scale * v.x, scale * v.y);
+	}
+
+	Vector2I operator/(const Vector2I& v, int scale)
+	{
+		return Vector2I(v.x / scale, v.y / scale);
+	}
+
 	Vector2::Vector2(float x, float y) : x(x), y(y)
 	{
 	}
@@ -250,6 +276,12 @@ namespace rfm
 
 	Vector2::Vector2(const Vector3& v) : x(v.x), y(v.y)
 	{
+	}
+
+	Vector2::Vector2(const Vector2I& v)
+	{
+		x = static_cast<float>(v.x);
+		y = static_cast<float>(v.y);
 	}
 
 	float& Vector2::operator[](int index) noexcept
@@ -284,4 +316,30 @@ namespace rfm
 		*this = f * *this;
 	}
 
+	Vector2I::Vector2I(int x, int y) : x(x), y(y)
+	{
+
+	}
+
+	Vector2I::Vector2I(int val) : x(val), y(val)
+	{
+	}
+
+	bool Vector2I::operator==(const Vector2I& other) const
+	{
+		return x == other.x && y == other.y;
+	}
+
+	int& Vector2I::operator[](int index) noexcept
+	{
+		assert(index == 0 || index == 1);
+		return index ? y : x;
+	}
+
+	Vector2I& Vector2I::operator+=(const Vector2I& other)
+	{
+		this->x = this->x + other.x;
+		this->y = this->y + other.y;
+		return *this;
+	}
 }

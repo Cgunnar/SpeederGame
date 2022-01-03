@@ -37,6 +37,7 @@ namespace rfm
 		void scale(float scale);
 
 		Vector3 getTranslation() const;
+		Vector3 getScale() const;
 
 		Matrix getRotationMatrix() const;
 

@@ -41,16 +41,17 @@ Scene::Scene()
 	m_terrain = EntityReg::CreateEntity();
 	m_terrain.AddComponent<TransformComp>()->transform.setScale(0.01f);
 	m_terrain.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(terrainMesh2, terrainMat));
+	m_terrain.AddComponent<TerrainScript>();
 
 
 
 
 
-
-	CreateEntityModel("Assets/Models/brick_wall/brick_wall.obj", 0, { 90, 0, 0 }, 10);
+	CreateEntityModel("Assets/Models/brick_wall/brick_wall.obj", {0, -1, 0}, { 90, 0, 0 }, 10);
 	m_camera = EntityReg::CreateEntity();
 	m_camera.AddComponent<TransformComp>()->transform.setTranslation(0, 2, -4);
 	m_camera.AddComponent<CameraControllerScript>();
+	m_camera.AddComponent<PlayerComp>(); // for now the camera is the player
 
 	
 	TerrainMeshGenerator tl;
@@ -66,7 +67,7 @@ Scene::Scene()
 
 	m_oldTerrain = EntityReg::CreateEntity();
 	m_oldTerrain.AddComponent<TransformComp>()->transform.setTranslation({ -64, -9, -64 });
-	m_oldTerrain.AddComponent<TerrainScript>();
+	
 	
 	m_oldTerrain.AddComponent<RenderModelComp>(am.AddRenderUnit(terrainMesh, terrainMatSand));
 
@@ -122,6 +123,8 @@ Scene::Scene()
 
 	m_dirlightContr.slider1.ChangeDefaultValues({ -0.922f ,-0.176f, 1}, -1, 1);
 	m_dirlightContr.slider2.ChangeDefaultValues(sunLight.GetComponent<DirectionalLightComp>()->dirLight.color, 0, 1);
+
+	EntityReg::StartScripts<CameraControllerScript, ShipContollerScript, TerrainScript>();
 }
 
 Scene::~Scene()
@@ -135,7 +138,7 @@ void Scene::Update(float dt)
 
 
 
-	EntityReg::RunScripts<CameraControllerScript, ShipContollerScript>(dt);
+	EntityReg::RunScripts<CameraControllerScript, ShipContollerScript, TerrainScript>(dt);
 
 	Transform followShip = m_ship.GetComponent<TransformComp>()->transform;
 	followShip.translateL(0, 1, -4);

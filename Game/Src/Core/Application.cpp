@@ -46,7 +46,7 @@ void Application::Run()
 {
 	//Input::getInput().GetMouse().confineCursor(true);
 
-	EntityReg::StartScripts<CameraControllerScript, ShipContollerScript, TerrainScript>();
+	
 
 	bool running = true;
 	while (running)

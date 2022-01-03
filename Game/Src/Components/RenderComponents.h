@@ -47,6 +47,7 @@ struct RenderModelComp : rfe::Component<RenderModelComp>
 	GID ModelID;
 	RenderUnitID renderUnitID = 0;
 	RenderUnitID renderUnitBegin = 0, renderUnitEnd = 0;
+	bool visible = true;
 };
 
 struct RendCompAndTransform

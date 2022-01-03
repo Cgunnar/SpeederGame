@@ -124,6 +124,15 @@ namespace rfm
 	{
 		return m_matrix[3];
 	}
+	Vector3 Transform::getScale() const
+	{
+		Vector3 scale;
+		auto S = std::get<2>(decomposeToTRS(m_matrix));
+		scale.x = S[0][0];
+		scale.y = S[1][1];
+		scale.z = S[2][2];
+		return scale;
+	}
 	Matrix Transform::getRotationMatrix() const
 	{
 		return std::get<1>(decomposeToTRS(m_matrix));

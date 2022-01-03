@@ -15,12 +15,10 @@ struct Biom
 };
 
 
-
-
-
 class TerrainGenerator
 {
 public:
+	static constexpr int chunkSize = 241;
 	
 
 	TerrainMap GenerateTerrinMap(int width, int height, float scale, int octaves, float persistance, float lacunarity,
@@ -34,6 +32,5 @@ private:
 		rfm::Vector2 offset, uint32_t seed = 123456u);
 
 
-	static constexpr int chunkSize = 241;
 };
 

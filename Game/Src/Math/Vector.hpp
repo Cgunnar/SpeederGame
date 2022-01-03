@@ -46,6 +46,7 @@ namespace rfm
 
 		float& operator[] (int index) noexcept;
 		Vector3& operator +=(const Vector3& other);
+		Vector3& operator -=(const Vector3& other);
 		Vector3& operator *=(const float& other);
 		//operator DirectX::XMVECTOR() const { return { x, y, z, 0 }; };
 		float length() const;
@@ -67,13 +68,14 @@ namespace rfm
 
 	//Vector2--------------------------------------
 
-
+	class Vector2I;
 	class Vector2
 	{
 	public:
 		Vector2(float x, float y);
 		Vector2(float val = 0);
 		Vector2(const Vector3& v);
+		Vector2(const Vector2I& v);
 		~Vector2() = default;
 
 		float& operator[] (int index) noexcept;
@@ -91,5 +93,34 @@ namespace rfm
 	Vector2 operator *(float scale, const Vector2& v);
 	Vector2 operator /(const Vector2& v, float scale);
 
+	class Vector2I
+	{
+	public:
+		Vector2I(int x, int y);
+		Vector2I(int val = 0);
+		~Vector2I() = default;
+
+		bool operator ==(const Vector2I& other) const;
+		int& operator[] (int index) noexcept;
+		Vector2I& operator +=(const Vector2I& other);
+		int x = 0;
+		int y = 0;
+	};
+
+	Vector2I operator +(const Vector2I& l, const Vector2I& r);
+	Vector2I operator -(const Vector2I& l, const Vector2I& r);
+	Vector2I operator *(int scale, const Vector2I& v);
+	Vector2I operator /(const Vector2I& v, int scale);
+
 
 }
+
+
+template <>
+struct std::hash<rfm::Vector2I>
+{
+	std::size_t operator()(const rfm::Vector2I& v) const
+	{
+		return std::hash<int64_t>()(static_cast<int64_t>(v.x) ^ (static_cast<int64_t>(v.y) << 32));
+	}
+};

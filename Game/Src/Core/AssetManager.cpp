@@ -103,12 +103,6 @@ RenderUnitID AssetManager::AddMesh(SubMesh mesh)
 	return m_renderUnits.size(); // RenderUnitID will always be index + 1
 }
 
-RenderUnitID AssetManager::AddRenderUnit(const SubMesh& subMesh, const MaterialVariant& material)
-{
-	m_renderUnits.push_back({ subMesh, material });
-	return m_renderUnits.size(); // RenderUnitID will always be index + 1
-}
-
 RenderUnitID AssetManager::AddRenderUnit(RenderUnit renderUnit)
 {
 	m_renderUnits.push_back(renderUnit);
@@ -117,7 +111,8 @@ RenderUnitID AssetManager::AddRenderUnit(RenderUnit renderUnit)
 
 RenderUnitID AssetManager::AddRenderUnit(const SubMesh& subMesh, const Material& material)
 {
-	return this->AddRenderUnit(subMesh, MaterialVariant(material));
+	m_renderUnits.push_back({ subMesh, MaterialVariant(material)});
+	return m_renderUnits.size(); // RenderUnitID will always be index + 1
 }
 
 GID AssetManager::LoadMesh(const std::string& path, MeshFormat format)
@@ -162,11 +157,9 @@ void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subMo
 		//assert(ru.material.type != MaterialType::none); //some material is missing
 		if (ru.material.type == MaterialVariantEnum::none) //some material is missing
 		{
-			PBR_NO_TEXTURES mat;
+			Material mat;
 			mat.emissiveFactor = rfm::Vector3(1, 0, 0);
-			mat.roughness = 1;
-			mat.metallic = 0;
-			mat.rgba = rfm::Vector4(1, 0, 0, 1);
+			mat.baseColorFactor = rfm::Vector4(1, 0, 0, 1);
 
 			ru.material.materialVariant = mat;
 			ru.material.type = MaterialVariantEnum::PBR_NO_TEXTURES;

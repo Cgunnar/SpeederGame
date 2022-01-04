@@ -42,9 +42,8 @@ void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 		auto rc = m_chunkMap[c].m_terrainMesh.GetComponent<RenderModelComp>();// ->visible = vis;
 
 		auto& m = AssetManager::Get().GetRenderUnit(rc->renderUnitID);
-		PBR_NO_TEXTURES& matVariant = std::get<PBR_NO_TEXTURES>(m.material.materialVariant);
-		matVariant.rgba = { 0,0,0 };
-		matVariant.emissiveFactor = { 0,0,0 };
+		m.material.materialVariant.baseColorFactor = { 0,0,0 };
+		m.material.materialVariant.emissiveFactor = { 0,0,0 };
 	}
 	m_prevFrameVisibleChunksCoord.clear();
 

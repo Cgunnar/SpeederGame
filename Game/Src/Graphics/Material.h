@@ -63,7 +63,7 @@ struct Material
 	float metallicFactor = 0;
 	float roughnessFactor = 1;
 	rfm::Vector4 baseColorFactor = rfm::Vector4(1, 1, 1, 1);
-	rfm::Vector3 emissiveFactor = rfm::Vector3(1, 1, 1);
+	rfm::Vector3 emissiveFactor;
 };
 
 struct PBR_ALBEDO_METROUG_NOR
@@ -135,8 +135,9 @@ struct MaterialVariant
 	MaterialVariantEnum type = MaterialVariantEnum::none;
 	RenderFlag renderFlag = RenderFlag::none;
 
-	std::variant <PBR_ALBEDO_METROUG_NOR, PBR_ALBEDO_METROUG, PBR_ALBEDO_METROUG_NOR_EMIS,
+	/*std::variant <PBR_ALBEDO_METROUG_NOR, PBR_ALBEDO_METROUG, PBR_ALBEDO_METROUG_NOR_EMIS,
 		PBR_ALBEDO, PBR_ALBEDO_NOR, PBR_NO_TEXTURES
-	> materialVariant;
+	> materialVariant;*/
+	Material materialVariant;
 };
 

@@ -102,13 +102,10 @@ Scene::Scene()
 
 
 
-	MaterialVariant rusteIronMat;
-	rusteIronMat.type = MaterialVariantEnum::PBR_ALBEDO_METROUG_NOR;
-	PBR_ALBEDO_METROUG_NOR pbrMat;
-	pbrMat.matallicRoughnessTextureID = AssetManager::Get().LoadTex2DFromFile("Assets/Textures/rustediron/metallic_roughness.png", LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
-	pbrMat.normalTextureID = AssetManager::Get().LoadTex2DFromFile("Assets/Textures/rustediron/normal.png", LoadTexFlag::GenerateMips | LoadTexFlag::LinearColorSpace);
-	pbrMat.albedoTextureID = AssetManager::Get().LoadTex2DFromFile("Assets/Textures/rustediron/basecolor.png", LoadTexFlag::GenerateMips);
-	rusteIronMat.materialVariant = pbrMat;
+	Material rusteIronMat;
+	rusteIronMat.SetBaseColorTexture("Assets/Textures/rustediron/basecolor.png");
+	rusteIronMat.SetMetallicRoughnessTexture("Assets/Textures/rustediron/metallic_roughness.png");
+	rusteIronMat.SetNormalTexture("Assets/Textures/rustediron/normal.png");
 
 	SubMesh quadMeshCopy2 = AssetManager::Get().GetMesh(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN);
 	m_ironSphere = EntityReg::CreateEntity();

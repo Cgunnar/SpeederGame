@@ -25,9 +25,9 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size)
 
 	auto rc = m_terrainMesh.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV), Material()));
 	auto& m = AssetManager::Get().GetRenderUnit(rc->renderUnitID);
-	PBR_NO_TEXTURES& matVariant = std::get<PBR_NO_TEXTURES>(m.material.materialVariant);
-	matVariant.rgba = { 1,0,0 };
-	matVariant.emissiveFactor = { 1,0,0 };
+	//PBR_NO_TEXTURES& matVariant = std::get<PBR_NO_TEXTURES>(m.material.materialVariant);
+	m.material.materialVariant.baseColorFactor = { 1,0,0 };
+	m.material.materialVariant.emissiveFactor = {1,0,0};
 	//rc->visible = false;
 }
 
@@ -51,15 +51,14 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 	auto rc = m_terrainMesh.GetComponent<RenderModelComp>();// ->visible = m_visible;
 
 	auto& m = AssetManager::Get().GetRenderUnit(rc->renderUnitID);
-	PBR_NO_TEXTURES& matVariant = std::get<PBR_NO_TEXTURES>(m.material.materialVariant);
 	if (m_visible)
 	{
-		matVariant.rgba = { 0,1,0 };
-		matVariant.emissiveFactor = { 0,1,0 };
+		m.material.materialVariant.baseColorFactor = { 0,1,0 };
+		m.material.materialVariant.emissiveFactor = { 0,1,0 };
 	}
 	else
 	{
-		matVariant.rgba = { 0,1,1 };
-		matVariant.emissiveFactor = { 0,1,1 };
+		m.material.materialVariant.baseColorFactor = { 0,1,1 };
+		m.material.materialVariant.emissiveFactor = { 0,1,1 };
 	}
 }

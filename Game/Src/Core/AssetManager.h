@@ -29,7 +29,6 @@ public:
 	const RenderUnit& GetRenderUnit(RenderUnitID id) const;
 	RenderUnit& GetRenderUnit(RenderUnitID id);
 	RenderUnitID AddMesh(SubMesh mesh);
-	RenderUnitID AddRenderUnit(const SubMesh& subMesh, const MaterialVariant& material);
 	RenderUnitID AddRenderUnit(RenderUnit renderUnit);
 	RenderUnitID AddRenderUnit(const SubMesh& subMesh, const Material& material);
 	GID LoadMesh(const std::string& path, MeshFormat format);

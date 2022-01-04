@@ -22,12 +22,19 @@ Scene::Scene()
 {
 	AssetManager& am = AssetManager::Get();
 
+	TerrainMapDesc terrDesc;
+	terrDesc.lacunarity = 2;
+	terrDesc.octaves = 4;
+	terrDesc.persistence = 0.5f;
+	terrDesc.scale = 27.6f;
+	terrDesc.offset = { 4, 12 };
+	terrDesc.seed = 32;
 
-	TerrainGenerator tg;
-	tg.bioms.emplace_back("water", Vector3(0,0,1), 0.3f, true);
-	tg.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.5);
-	tg.bioms.emplace_back("mountain", 0.2f, 1);
-	auto f = tg.GenerateTerrinMap(241, 241, 27.6f, 4, 0.5f, 2, { 4, 12 }, 32);
+	terrDesc.bioms.emplace_back("water", Vector3(0,0,1), 0.3f, true);
+	terrDesc.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.5);
+	terrDesc.bioms.emplace_back("mountain", 0.2f, 1);
+
+	auto f = TerrainGenerator::GenerateTerrinMap(terrDesc);
 
 
 	TerrainMeshGenerator t2;
@@ -40,6 +47,7 @@ Scene::Scene()
 	terrainMat.emissiveFactor = 0;
 	m_terrain = EntityReg::CreateEntity();
 	m_terrain.AddComponent<TransformComp>()->transform.setScale(0.01f);
+	m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, 1, 0);
 	m_terrain.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(terrainMesh2, terrainMat));
 	m_terrain.AddComponent<TerrainScript>();
 

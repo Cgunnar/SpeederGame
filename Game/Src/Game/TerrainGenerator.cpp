@@ -11,20 +11,21 @@
 using namespace rfm;
 
 
-TerrainMap TerrainGenerator::GenerateTerrinMap(int width, int height, float scale, int octaves, float persistance, float lacunarity, rfm::Vector2 offset, uint32_t seed)
+TerrainMap TerrainGenerator::GenerateTerrinMap(TerrainMapDesc mapDesc)
 {
 
 	TerrainMap map;
-	map.height = height;
-	map.width = width;
-	map.heightMap = GenerateNoise(width, height, scale, octaves, persistance, lacunarity, offset, seed);
+	map.height = chunkSize;
+	map.width = chunkSize;
+	map.heightMap = GenerateNoise(chunkSize, chunkSize, mapDesc.scale, mapDesc.octaves,
+		mapDesc.persistence, mapDesc.lacunarity, mapDesc.offset, mapDesc.seed);
 
 
 	std::vector<Vector4> colorMap;
-	colorMap.resize(height * (size_t)width);
-	for (int i = 0; i < height * width; i++)
+	colorMap.resize(chunkSize * (size_t)chunkSize);
+	for (int i = 0; i < chunkSize * chunkSize; i++)
 	{
-		for (auto& b : bioms)
+		for (auto& b : mapDesc.bioms)
 		{
 			if (map.heightMap[i] <= b.threshold)
 			{
@@ -35,7 +36,7 @@ TerrainMap TerrainGenerator::GenerateTerrinMap(int width, int height, float scal
 		}
 	}
 
-	map.colorMapRGBA = util::FloatToCharRGBA((float*)colorMap.data(), width, height);
+	map.colorMapRGBA = util::FloatToCharRGBA((float*)colorMap.data(), chunkSize, chunkSize);
 	return map;
 }
 
@@ -92,8 +93,6 @@ std::vector<float> TerrainGenerator::GenerateNoise(int width, int height, float 
 	for (int i = 0; i < height * width; i++)
 	{
  		noise[i] = rfm::InvLerp(minNoise, maxNoise, noise[i]);
-		/*noise[i] *= 3 * noise[i];
- 		noise[i] = rfm::InvLerp(0, maxNoise * 3, noise[i]);*/
 	}
 	
 

@@ -14,22 +14,27 @@ struct Biom
 	bool flat = false;
 };
 
+struct TerrainMapDesc
+{
+	float scale;
+	int octaves;
+	float persistence;
+	float lacunarity;
+	rfm::Vector2 offset;
+	uint32_t seed = 123456u;
+	std::vector<Biom> bioms;
+};
 
 class TerrainGenerator
 {
 public:
 	static constexpr int chunkSize = 241;
 	
-
-	TerrainMap GenerateTerrinMap(int width, int height, float scale, int octaves, float persistance, float lacunarity,
-		rfm::Vector2 offset, uint32_t seed = 123456u);
-
-
-	std::vector<Biom> bioms;
+	static TerrainMap GenerateTerrinMap(TerrainMapDesc mapDesc);
 
 private:
-	std::vector<float> GenerateNoise(int width, int height, float scale, int octaves, float persistance, float lacunarity,
-		rfm::Vector2 offset, uint32_t seed = 123456u);
+	static std::vector<float> GenerateNoise(int width, int height, float scale, int octaves, float persistance, float lacunarity,
+		rfm::Vector2 offset, uint32_t seed);
 
 
 };

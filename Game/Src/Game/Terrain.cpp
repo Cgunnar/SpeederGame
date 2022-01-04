@@ -25,7 +25,6 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size)
 
 	auto rc = m_terrainMesh.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV), Material()));
 	auto& m = AssetManager::Get().GetRenderUnit(rc->renderUnitID);
-	//PBR_NO_TEXTURES& matVariant = std::get<PBR_NO_TEXTURES>(m.material.materialVariant);
 	m.material.materialVariant.baseColorFactor = { 1,0,0 };
 	m.material.materialVariant.emissiveFactor = {1,0,0};
 	//rc->visible = false;

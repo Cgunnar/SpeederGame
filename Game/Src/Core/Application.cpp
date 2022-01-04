@@ -14,6 +14,7 @@
 #include "Input.h"
 #include "NativeScriptCollection.h"
 #include "imgui.h"
+#include "WorkerThreads.h"
 
 
 using namespace rfe;
@@ -23,6 +24,7 @@ using namespace rfm;
 Application::Application()
 {
 	m_window = new Window();
+	WorkerThreads::Init();
 	LowLvlGfx::Init(m_window->GetHwnd(), m_window->GetClientSize());
 	
 	AssetManager::Init();
@@ -37,16 +39,14 @@ Application::~Application()
 	AssetManager::Destroy();
 	
 	LowLvlGfx::Destroy();
+	WorkerThreads::Destroy();
 	delete m_window;
 }
-
 
 
 void Application::Run()
 {
 	//Input::getInput().GetMouse().confineCursor(true);
-
-	
 
 	bool running = true;
 	while (running)

@@ -1,6 +1,6 @@
 #include "pch.hpp"
 #include "TerrainScript.h"
-#include "TerrainGenerator.h"
+#include "TerrainMapGenerator.h"
 #include "RenderComponents.h"
 
 

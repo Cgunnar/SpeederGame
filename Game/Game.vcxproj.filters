@@ -81,7 +81,7 @@
     <ClInclude Include="Src\GUI\GuiDebug.h">
       <Filter>Src\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Game\TerrainGenerator.h">
+    <ClInclude Include="Src\Game\TerrainMapGenerator.h">
       <Filter>Src\Game</Filter>
     </ClInclude>
     <ClInclude Include="Src\Game\TerrainMeshGenerator.h">
@@ -198,6 +198,7 @@
     <ClInclude Include="Src\GUI\TerrainGUI.h" />
     <ClInclude Include="Src\Game\TerrainChunk.h" />
     <ClInclude Include="Src\Game\TerreinTypes.h" />
+    <ClInclude Include="Src\Core\WorkerThreads.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">
@@ -224,7 +225,7 @@
     <ClCompile Include="Src\GUI\GuiDebug.cpp">
       <Filter>Src\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Game\TerrainGenerator.cpp">
+    <ClCompile Include="Src\Game\TerrainMapGenerator.cpp">
       <Filter>Src\Game</Filter>
     </ClCompile>
     <ClCompile Include="Src\Game\TerrainMeshGenerator.cpp">
@@ -307,6 +308,7 @@
     </ClCompile>
     <ClCompile Include="Src\GUI\TerrainGUI.cpp" />
     <ClCompile Include="Src\Game\TerrainChunk.cpp" />
+    <ClCompile Include="Src\Core\WorkerThreads.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\CS\CS_convolute_DiffIrrCube.hlsl">

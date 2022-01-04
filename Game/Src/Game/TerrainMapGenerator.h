@@ -1,7 +1,7 @@
 #pragma once
 
 #include "RimfrostMath.hpp"
-#include "TerrainMeshGenerator.h"
+#include "TerreinTypes.h"
 
 
 class TerrainMapGenerator
@@ -24,9 +24,9 @@ private:
 
 	static std::unordered_map<rfm::Vector2I, TerrainMap> s_terrainMapHolder;
 	static std::mutex s_mapMutex;
-	static std::mutex s_threadQueueMutex;
-	static std::queue<std::thread>* s_threadQueue;
+	static std::mutex s_workQueueMutex;
+	static std::queue<std::thread>* s_workQueue;
 	static std::thread* s_joinerthread;
-	static std::atomic<bool> s_killThreadJoiner;
+	static std::atomic<bool> s_keepWorking;
 };
 

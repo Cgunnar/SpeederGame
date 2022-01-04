@@ -114,7 +114,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClInclude Include="Src\Core\rfEntity.hpp" />
     <ClInclude Include="Src\Game\TerreinTypes.h" />
     <ClInclude Include="Src\GUI\GuiDebug.h" />
-    <ClInclude Include="Src\Game\TerrainGenerator.h" />
+    <ClInclude Include="Src\Game\TerrainMapGenerator.h" />
     <ClInclude Include="Src\Game\TerrainMeshGenerator.h" />
     <ClInclude Include="Src\Graphics\AssimpLoader.h" />
     <ClInclude Include="Src\Graphics\DX11.h" />
@@ -154,6 +154,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClInclude Include="vendor\singleHeaders\PerlinNoise.hpp" />
     <ClInclude Include="vendor\singleHeaders\json.hpp" />
     <ClInclude Include="vendor\singleHeaders\stb_image.h" />
+    <ClInclude Include="Src\Core\WorkerThreads.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp" />
@@ -164,7 +165,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClCompile Include="Src\Core\Source.cpp" />
     <ClCompile Include="Src\Core\Window.cpp" />
     <ClCompile Include="Src\GUI\GuiDebug.cpp" />
-    <ClCompile Include="Src\Game\TerrainGenerator.cpp" />
+    <ClCompile Include="Src\Game\TerrainMapGenerator.cpp" />
     <ClCompile Include="Src\Game\TerrainMeshGenerator.cpp" />
     <ClCompile Include="Src\Graphics\AssimpLoader.cpp" />
     <ClCompile Include="Src\Graphics\DX11.cpp" />
@@ -199,6 +200,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClCompile Include="vendor\imgui\backends\imgui_impl_win32.cpp">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Src\Core\WorkerThreads.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\CS\CS_convolute_DiffIrrCube.hlsl">

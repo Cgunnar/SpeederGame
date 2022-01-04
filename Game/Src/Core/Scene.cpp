@@ -12,7 +12,7 @@
 #include "Input.h"
 #include "TerrainMeshGenerator.h"
 #include "TerrainScript.h"
-#include "TerrainGenerator.h"
+#include "TerrainMapGenerator.h"
 
 using namespace rfm;
 using namespace rfe;

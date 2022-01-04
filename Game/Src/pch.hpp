@@ -46,3 +46,4 @@
 #include <thread>
 #include <atomic>
 #include <semaphore>
+#include <future>

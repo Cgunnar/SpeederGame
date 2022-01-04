@@ -20,7 +20,7 @@ void TerrainScript::OnStart()
 {
 	m_chunkSize = TerrainMapGenerator::chunkSize - 1;
 	float s = GetComponent<TransformComp>()->transform.getScale().x;
-	m_chunkSize *= s;
+	//m_chunkSize *= s;
 	m_chunksVisibleInViewDist = round(viewDistance / m_chunkSize);
 }
 
@@ -29,7 +29,7 @@ void TerrainScript::OnUpdate(float dt)
 	EntityID viewerID = EntityReg::GetComponentArray<PlayerComp>().front().GetEntity();
 	Transform viewerTransform = EntityReg::GetComponent<TransformComp>(viewerID)->transform;
 
-	Vector2 viewerPos = { viewerTransform.getTranslation().x, viewerTransform.getTranslation().z };
+	Vector2 viewerPos = Vector2(viewerTransform.getTranslation().x, viewerTransform.getTranslation().z) / 0.01f;
 	UpdateChunks(viewerPos);
 }
 

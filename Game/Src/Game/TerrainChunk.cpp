@@ -14,15 +14,15 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size) : m_coord(coord)
 {
 	static int i = 0;
 	std::cout << "newChunk " << i++ << std::endl;
-	m_position = (size + 0.4f) * (Vector2)coord;
+	m_position = size * (Vector2)coord;
 	//m_position = (size+ 0.4f) * (Vector2)coord;
-	m_botLeft = { m_position.x - size/2, 0, m_position.y - size / 2 };
-	m_botRight = { m_position.x + size/2, 0, m_position.y - size / 2 };
-	m_topLeft = { m_position.x - size/2, 0, m_position.y + size / 2 };
-	m_topRight = { m_position.x + size/2, 0, m_position.y + size / 2 };
-
+	m_botLeft = Vector3(m_position.x - size/2, 0, m_position.y - size / 2 );
+	m_botRight = Vector3( m_position.x + size/2, 0, m_position.y - size / 2 );
+	m_topLeft = Vector3( m_position.x - size/2, 0, m_position.y + size / 2 );
+	m_topRight = Vector3( m_position.x + size/2, 0, m_position.y + size / 2 );
+	m_position = 0.01f * m_position;
 	m_terrainMesh = EntityReg::CreateEntity();
-	m_terrainMesh.AddComponent<TransformComp>()->transform.setTranslation(m_position.x, 0, m_position.y);
+	m_terrainMesh.AddComponent<TransformComp>()->transform.setTranslation(Vector3(m_position.x, 0, m_position.y));
 	//m_terrainMesh.GetComponent<TransformComp>()->transform.setScale(size/2);
 	m_terrainMesh.GetComponent<TransformComp>()->transform.setScale(0.01f);
 	//m_terrainMesh.GetComponent<TransformComp>()->transform.setRotationDeg(90, 0, 0);
@@ -38,7 +38,7 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size) : m_coord(coord)
 
 void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 {
-	Vector3 viewPos3D = { viewPos.x, 0, viewPos.y };
+	Vector3 viewPos3D = Vector3(viewPos.x, 0, viewPos.y);
 	
 	Vector3 closestPoint1 = rfm::closestPointOnLineSegmentFromPoint(m_botLeft, m_botRight, viewPos3D);
 	Vector3 closestPoint2 = rfm::closestPointOnLineSegmentFromPoint(m_botLeft, m_topLeft, viewPos3D);

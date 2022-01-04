@@ -11,7 +11,7 @@ public:
 	void OnStart();
 	void OnUpdate(float dt);
 
-	static constexpr float viewDistance = 12;
+	static constexpr float viewDistance = 400;
 private:
 	void UpdateChunks(rfm::Vector2 viewPos);
 

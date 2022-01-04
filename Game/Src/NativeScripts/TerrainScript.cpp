@@ -35,8 +35,6 @@ void TerrainScript::OnUpdate(float dt)
 
 void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 {
-	
-	float s = GetComponent<TransformComp>()->transform.getScale().x;
 	Vector2I chunkCoord;
 	chunkCoord.x = round(viewPos.x / m_chunkSize);
 	chunkCoord.y = round(viewPos.y / m_chunkSize);
@@ -72,7 +70,6 @@ void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 			{
 				m_chunkMap[viewedChunk] = TerrainChunk(viewedChunk, m_chunkSize);
 				m_chunksToLoad.emplace(viewedChunk);
-				
 			}
 			
 		}

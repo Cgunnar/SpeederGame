@@ -20,7 +20,7 @@ private:
 	rfm::Vector3 m_botLeft;
 	rfm::Vector3 m_botRight;
 	bool m_visible = false;
-	bool m_checkForTerrain = false;
+	bool m_checkForLoadedTerrainMap = false;
 	rfe::Entity m_terrainMesh;
 };
 

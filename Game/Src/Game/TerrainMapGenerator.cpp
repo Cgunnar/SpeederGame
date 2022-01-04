@@ -12,10 +12,6 @@
 using namespace rfm;
 
 std::mutex TerrainMapGenerator::s_mapMutex;
-std::mutex TerrainMapGenerator::s_workQueueMutex;
-std::atomic<bool> TerrainMapGenerator::s_keepWorking = false;
-std::thread* TerrainMapGenerator::s_joinerthread = nullptr;
-std::queue<std::thread>* TerrainMapGenerator::s_workQueue = nullptr;
 
 std::unordered_map<rfm::Vector2I, TerrainMap> TerrainMapGenerator::s_terrainMapHolder;
 
@@ -30,39 +26,6 @@ void TerrainMapGenerator::AsyncGenerateTerrinMapInternal(const TerrainMapDesc& m
 	//s_terrainMapHolder[coord] = std::move(newMap);
 	s_terrainMapHolder[coord] = newMap;
 	s_mapMutex.unlock();
-}
-
-void TerrainMapGenerator::JoinThreads()
-{
-	while (!s_keepWorking)
-	{
-		s_workQueueMutex.lock();
-		if (!s_workQueue->empty())
-		{
-			if (s_workQueue->front().joinable())
-			{
-				s_workQueue->front().join();
-				s_workQueue->pop();
-			}
-		}
-		s_workQueueMutex.unlock();
-		std::this_thread::yield();
-	}
-
-	s_workQueueMutex.lock();
-	while (!s_workQueue->empty())
-	{
-		if (s_workQueue->front().joinable())
-		{
-			s_workQueue->front().join();
-			s_workQueue->pop();
-		}
-	}
-	delete s_workQueue;
-	s_workQueue = nullptr;
-	s_workQueueMutex.unlock();
-
-	std::cout << "joinReadThreads end\n";
 }
 
 
@@ -97,9 +60,7 @@ TerrainMap TerrainMapGenerator::GenerateTerrinMap(const TerrainMapDesc& mapDesc)
 
 void TerrainMapGenerator::AsyncGenerateTerrinMap(TerrainMapDesc mapDesc, rfm::Vector2I coord)
 {
-	assert(s_workQueue);
 	assert(!s_terrainMapHolder.contains(coord));
-	//s_workQueue->emplace(TerrainMapGenerator::AsyncGenerateTerrinMapInternal, mapDesc, coord);
 	
 	//s_terrainMapHolder[coord] = TerrainMapGenerator::GenerateTerrinMap(mapDesc);
 	WorkerThreads::AddTask(TerrainMapGenerator::AsyncGenerateTerrinMapInternal, mapDesc, coord);
@@ -119,20 +80,9 @@ std::optional<TerrainMap> TerrainMapGenerator::GetTerrainMap(rfm::Vector2I coord
 	return outOpt;
 }
 
-void TerrainMapGenerator::Init()
-{
-	assert(!s_joinerthread && !s_workQueue);
-	s_workQueue = new std::queue<std::thread>();
-	s_joinerthread = new std::thread(TerrainMapGenerator::JoinThreads);
-}
-
 void TerrainMapGenerator::Destroy()
 {
-	assert(s_joinerthread && s_workQueue);
 	s_terrainMapHolder.clear();
-	s_keepWorking = true;
-	s_joinerthread->join();
-	delete s_joinerthread;
 }
 
 

@@ -23,9 +23,9 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size) : m_coord(coord)
 
 	m_terrainMesh = EntityReg::CreateEntity();
 	m_terrainMesh.AddComponent<TransformComp>()->transform.setTranslation(m_position.x, 0, m_position.y);
-	m_terrainMesh.GetComponent<TransformComp>()->transform.setScale(size/2);
-	//m_terrainMesh.GetComponent<TransformComp>()->transform.setScale(0.01f);
-	m_terrainMesh.GetComponent<TransformComp>()->transform.setRotationDeg(90, 0, 0);
+	//m_terrainMesh.GetComponent<TransformComp>()->transform.setScale(size/2);
+	m_terrainMesh.GetComponent<TransformComp>()->transform.setScale(0.01f);
+	//m_terrainMesh.GetComponent<TransformComp>()->transform.setRotationDeg(90, 0, 0);
 
 	auto rc = m_terrainMesh.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV), Material()));
 	auto& m = AssetManager::Get().GetRenderUnit(rc->renderUnitID);
@@ -67,10 +67,10 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 
 
 
-			/*TerrainMeshGenerator meshGenerator;
+			TerrainMeshGenerator meshGenerator;
 			meshGenerator.CreateTerrainMesh(*optMap, 10, 2, 0, [](float in) {return in <= 0.3f ? 0.3f * 0.3f : in * in; });
 			SubMesh terrainMesh(meshGenerator.GetVerticesTBN(), meshGenerator.GetIndices());
-			rendUnit.subMesh = terrainMesh;*/
+			rendUnit.subMesh = terrainMesh;
 		}
 	}
 	

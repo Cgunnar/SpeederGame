@@ -12,7 +12,6 @@ public:
 	static TerrainMap GenerateTerrinMap(const TerrainMapDesc& mapDesc);
 	static void AsyncGenerateTerrinMap(TerrainMapDesc mapDesc, rfm::Vector2I coord);
 	static std::optional<TerrainMap> GetTerrainMap(rfm::Vector2I coord);
-	static void Init();
 	static void Destroy();
 
 private:
@@ -24,9 +23,5 @@ private:
 
 	static std::unordered_map<rfm::Vector2I, TerrainMap> s_terrainMapHolder;
 	static std::mutex s_mapMutex;
-	static std::mutex s_workQueueMutex;
-	static std::queue<std::thread>* s_workQueue;
-	static std::thread* s_joinerthread;
-	static std::atomic<bool> s_keepWorking;
 };
 

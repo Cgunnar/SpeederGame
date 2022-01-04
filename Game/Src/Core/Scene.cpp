@@ -33,7 +33,6 @@ Scene::Scene()
 	terrDesc.bioms.emplace_back("water", Vector3(0,0,1), 0.3f, true);
 	terrDesc.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.5);
 	terrDesc.bioms.emplace_back("mountain", 0.2f, 1);
-	TerrainMapGenerator::Init();
 
 	auto f = TerrainMapGenerator::GenerateTerrinMap(terrDesc);
 

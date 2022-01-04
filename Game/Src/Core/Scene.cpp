@@ -33,8 +33,9 @@ Scene::Scene()
 	terrDesc.bioms.emplace_back("water", Vector3(0,0,1), 0.3f, true);
 	terrDesc.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.5);
 	terrDesc.bioms.emplace_back("mountain", 0.2f, 1);
+	TerrainMapGenerator::Init();
 
-	auto f = TerrainGenerator::GenerateTerrinMap(terrDesc);
+	auto f = TerrainMapGenerator::GenerateTerrinMap(terrDesc);
 
 
 	TerrainMeshGenerator t2;
@@ -49,7 +50,7 @@ Scene::Scene()
 	m_terrain.AddComponent<TransformComp>()->transform.setScale(0.01f);
 	m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, 1, 0);
 	m_terrain.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(terrainMesh2, terrainMat));
-	m_terrain.AddComponent<TerrainScript>();
+	m_terrain.AddComponent<TerrainScript>(terrDesc);
 
 
 
@@ -134,6 +135,7 @@ Scene::Scene()
 
 Scene::~Scene()
 {
+	TerrainMapGenerator::Destroy();
 }
 
 void Scene::Update(float dt)

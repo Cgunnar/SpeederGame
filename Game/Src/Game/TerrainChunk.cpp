@@ -1,14 +1,15 @@
 #include "pch.hpp"
-#include "Terrain.h"
+#include "TerrainChunk.h"
 #include "StandardComponents.h"
 #include "AssetManager.h"
 #include "RenderComponents.h"
 #include "RfextendedMath.hpp"
+#include "TerrainGenerator.h"
 
 using namespace rfe;
 using namespace rfm;
 
-TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size)
+TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size) : m_coord(coord)
 {
 	static int i = 0;
 	std::cout << "newChunk " << i++ << std::endl;
@@ -25,9 +26,11 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size)
 
 	auto rc = m_terrainMesh.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV), Material()));
 	auto& m = AssetManager::Get().GetRenderUnit(rc->renderUnitID);
-	m.material.materialVariant.baseColorFactor = { 1,0,0 };
-	m.material.materialVariant.emissiveFactor = {1,0,0};
+	m.material.materialVariant.baseColorFactor = { 1,1,1 };
+	m.material.materialVariant.emissiveFactor = {1,1,1};
 	//rc->visible = false;
+
+	
 }
 
 void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
@@ -45,19 +48,41 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 	else if ((viewPos3D - closestPoint3).length() < maxViewDist) m_visible = true;
 	else if ((viewPos3D - closestPoint4).length() < maxViewDist) m_visible = true;
 
-
+	if (m_checkForTerrain)
+	{
+		auto optMap = TerrainMapGenerator::GetTerrainMap(m_coord);
+		if (optMap)
+		{
+			Material terrainMat;
+			terrainMat.baseColorTexture = AssetManager::Get().LoadTex2DFromMemoryR8G8B8A8(
+				optMap->colorMapRGBA.data(), optMap->width, optMap->height, LoadTexFlag::GenerateMips);
+			terrainMat.emissiveFactor = 0;
+			/*terrainMat.baseColorFactor = { 0,1,0 };
+			terrainMat.emissiveFactor = { 0,1,0 };*/
+			auto rc = m_terrainMesh.GetComponent<RenderModelComp>();
+			auto& rendUnit = AssetManager::Get().GetRenderUnit(rc->renderUnitID);
+			rendUnit.material = MaterialVariant(terrainMat);
+			m_checkForTerrain = false;
+		}
+	}
 	
 	auto rc = m_terrainMesh.GetComponent<RenderModelComp>();// ->visible = m_visible;
 
 	auto& m = AssetManager::Get().GetRenderUnit(rc->renderUnitID);
 	if (m_visible)
 	{
-		m.material.materialVariant.baseColorFactor = { 0,1,0 };
-		m.material.materialVariant.emissiveFactor = { 0,1,0 };
+		m.material.materialVariant.baseColorFactor = { 1,1,1 };
+		m.material.materialVariant.emissiveFactor = { 0,0,0 };
 	}
 	else
 	{
-		m.material.materialVariant.baseColorFactor = { 0,1,1 };
-		m.material.materialVariant.emissiveFactor = { 0,1,1 };
+		m.material.materialVariant.baseColorFactor = { 1,0,0 };
+		m.material.materialVariant.emissiveFactor = { 1,0,0 };
 	}
+}
+
+void TerrainChunk::LoadTerrain(const TerrainMapDesc& desc)
+{
+	TerrainMapGenerator::AsyncGenerateTerrinMap(desc, m_coord);
+	m_checkForTerrain = true;
 }

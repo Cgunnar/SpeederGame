@@ -3,17 +3,22 @@
 #include "TerrainGenerator.h"
 #include "RenderComponents.h"
 
+
 using namespace rfm;
 using namespace rfe;
 
-TerrainScript::TerrainScript(uint32_t seed) : m_seed(seed)
+
+
+
+
+TerrainScript::TerrainScript(TerrainMapDesc desc, uint32_t seed) : m_seed(seed), m_mapDesc(desc)
 {
 
 }
 
 void TerrainScript::OnStart()
 {
-	m_chunkSize = TerrainGenerator::chunkSize - 1;
+	m_chunkSize = TerrainMapGenerator::chunkSize - 1;
 	float s = GetComponent<TransformComp>()->transform.getScale().x;
 	m_chunkSize *= s;
 	m_chunksVisibleInViewDist = round(viewDistance / m_chunkSize);
@@ -47,6 +52,12 @@ void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 	}
 	m_prevFrameVisibleChunksCoord.clear();
 
+	if (!m_chunksToLoad.empty())
+	{
+		m_chunkMap[m_chunksToLoad.front()].LoadTerrain(m_mapDesc);
+		m_chunksToLoad.pop();
+	}
+
 	for (int y = -m_chunksVisibleInViewDist; y <= m_chunksVisibleInViewDist; y++)
 	{
 		for (int x = -m_chunksVisibleInViewDist; x <= m_chunksVisibleInViewDist; x++)
@@ -60,6 +71,8 @@ void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 			else
 			{
 				m_chunkMap[viewedChunk] = TerrainChunk(viewedChunk, m_chunkSize);
+				m_chunksToLoad.emplace(viewedChunk);
+				
 			}
 			
 		}

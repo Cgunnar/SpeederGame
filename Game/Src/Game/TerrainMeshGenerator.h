@@ -1,13 +1,8 @@
 #pragma once
 #include "RimfrostMath.hpp"
 #include "GraphicsResources.h"
+#include "TerreinTypes.h"
 
-struct TerrainMap
-{
-	int width, height;
-	std::vector<float> heightMap;
-	std::vector<uint8_t> colorMapRGBA;
-};
 class TerrainMeshGenerator
 {
 public:

@@ -38,8 +38,8 @@ Scene::Scene()
 
 
 	TerrainMeshGenerator t2;
-	t2.CreateTerrainMesh(f, 10, 0, 0, [](float in) {return in <= 0.3f ? 0.3f*0.3f : in * in; });
-	SubMesh terrainMesh2(t2.GetVerticesTBN(), t2.GetIndices());
+	auto t = t2.CreateTerrainMesh(f, 10, 0, 0, [](float in) {return in <= 0.3f ? 0.3f*0.3f : in * in; });
+	SubMesh terrainMesh2(t.verticesTBN, t.indices);
 
 
 	Material terrainMat;
@@ -63,8 +63,8 @@ Scene::Scene()
 
 	
 	TerrainMeshGenerator tl;
-	tl.CreateTerrainMeshFromBMP("Assets/Textures/noiseTexture.bmp", 10, 0);
-	SubMesh terrainMesh(tl.GetVerticesTBN(), tl.GetIndices());
+	auto terMesh = tl.CreateTerrainMeshFromBMP("Assets/Textures/noiseTexture.bmp", 10, 0);
+	SubMesh terrainMesh(terMesh.verticesTBN, terMesh.indices);
 
 	Material terrainMatSand;
 	terrainMatSand.name = "terrainMaterial";

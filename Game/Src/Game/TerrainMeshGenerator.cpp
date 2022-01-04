@@ -9,7 +9,7 @@ TerrainMeshGenerator::~TerrainMeshGenerator()
 {
 }
 
-void TerrainMeshGenerator::CreateTerrainMeshFromBMP(const std::string& fileName, float scale, int LOD, rfm::Vector2 uvScale)
+TerrainMesh TerrainMeshGenerator::CreateTerrainMeshFromBMP(const std::string& fileName, float scale, int LOD, rfm::Vector2 uvScale)
 {
 #pragma warning(suppress : 4996)
     FILE* fp = fopen(fileName.c_str(), "rb");
@@ -39,49 +39,35 @@ void TerrainMeshGenerator::CreateTerrainMeshFromBMP(const std::string& fileName,
     }
     delete[] bmpData;
 
-    CreateTerrainMeshFromHeightMapMemory(heightMapFloat.data(), infoHeader.biWidth, infoHeader.biHeight,
+    return CreateTerrainMeshFromHeightMapMemory(heightMapFloat.data(), infoHeader.biWidth, infoHeader.biHeight,
         scale, LOD, uvScale);
 }
 
-const std::vector<Vertex_POS_NOR_UV>& TerrainMeshGenerator::GetVertices() const
-{
-    return m_vertices;
-}
-
-const std::vector<Vertex_POS_NOR_UV_TAN_BITAN>& TerrainMeshGenerator::GetVerticesTBN() const
-{
-    return m_verticesTBN;
-}
-
-const std::vector<uint32_t>& TerrainMeshGenerator::GetIndices() const
-{
-    return m_indices;
-}
-
-void TerrainMeshGenerator::CreateTerrainMesh(TerrainMap terrainMap, float scale, int LOD,
+TerrainMesh TerrainMeshGenerator::CreateTerrainMesh(TerrainMap terrainMap, float scale, int LOD,
     rfm::Vector2 uvScale, std::function<float(float)> heightScaleFunc)
 {
-    CreateTerrainMeshFromHeightMapMemory(terrainMap.heightMap.data(), terrainMap.width, terrainMap.height,
+    return CreateTerrainMeshFromHeightMapMemory(terrainMap.heightMap.data(), terrainMap.width, terrainMap.height,
         scale, LOD, uvScale, heightScaleFunc);
 }
 
-void TerrainMeshGenerator::CreateTerrainMeshFromHeightMapMemory(const float* hightMap, int width, int height,
+TerrainMesh TerrainMeshGenerator::CreateTerrainMeshFromHeightMapMemory(const float* hightMap, int width, int height,
     float scale, int LOD, rfm::Vector2 uvScale, std::function<float(float)> heightScaleFunc)
 {
     assert(0 <= LOD && LOD <= 6);
+    TerrainMesh mesh;
     LOD *= 2;
     if (!LOD) LOD = 1;
     int verticesPerLine = (width - 1) / LOD + 1;
     int numTriangles = (verticesPerLine - 1) * (verticesPerLine - 1) * 2;
 
-    m_indices.clear();
-    m_indices.reserve(numTriangles * 3);
-    m_triangles.clear();
-    m_triangles.reserve(numTriangles);
-    m_vertices.clear();
-    m_vertices.reserve(verticesPerLine * verticesPerLine);
-    m_verticesTBN.clear();
-    m_verticesTBN.reserve(verticesPerLine * verticesPerLine);
+    mesh.indices.clear();
+    mesh.indices.reserve(numTriangles * 3);
+    mesh.triangles.clear();
+    mesh.triangles.reserve(numTriangles);
+    mesh.vertices.clear();
+    mesh.vertices.reserve(verticesPerLine * verticesPerLine);
+    mesh.verticesTBN.clear();
+    mesh.verticesTBN.reserve(verticesPerLine * verticesPerLine);
 
     if (uvScale.x == 0) uvScale.x = static_cast<float>(width);
     if (uvScale.y == 0) uvScale.y = static_cast<float>(height);
@@ -97,41 +83,41 @@ void TerrainMeshGenerator::CreateTerrainMeshFromHeightMapMemory(const float* hig
             v.position.y = heightScaleFunc(hightMap[y * width + x]) * scale;
             v.position.z = static_cast<float>(height-1) / 2.0f - static_cast<float>(y);
             v.uv = rfm::Vector2(static_cast<float>(x) / uvScale.x , static_cast<float>(y) / uvScale.y);
-            m_vertices.push_back(v);
+            mesh.vertices.push_back(v);
 
 
             Vertex_POS_NOR_UV_TAN_BITAN vTBN;
             vTBN.position = v.position;
             vTBN.uv = v.uv;
-            m_verticesTBN.push_back(vTBN);
+            mesh.verticesTBN.push_back(vTBN);
 
 
             if (x < width - 1 && y < height - 1)
             {
                 //tri
-                m_indices.push_back(index);
-                m_indices.push_back(index + 1);
-                m_indices.push_back(index + verticesPerLine);
+                mesh.indices.push_back(index);
+                mesh.indices.push_back(index + 1);
+                mesh.indices.push_back(index + verticesPerLine);
 
                 //tri
-                m_indices.push_back(index + 1);
-                m_indices.push_back(index + verticesPerLine + 1);
-                m_indices.push_back(index + verticesPerLine);
+                mesh.indices.push_back(index + 1);
+                mesh.indices.push_back(index + verticesPerLine + 1);
+                mesh.indices.push_back(index + verticesPerLine);
             }
             index++;
         }
     }
 
-    assert((m_indices.size() % 3) == 0);
-    for (size_t i = 0; i < m_indices.size(); i += 3)
+    assert((mesh.indices.size() % 3) == 0);
+    for (size_t i = 0; i < mesh.indices.size(); i += 3)
     {
-        auto& v0 = m_vertices[m_indices[i + 0]];
-        auto& v1 = m_vertices[m_indices[i + 1]];
-        auto& v2 = m_vertices[m_indices[i + 2]];
+        auto& v0 = mesh.vertices[mesh.indices[i + 0]];
+        auto& v1 = mesh.vertices[mesh.indices[i + 1]];
+        auto& v2 = mesh.vertices[mesh.indices[i + 2]];
 
-        auto& v0TBN = m_verticesTBN[m_indices[i + 0]];
-        auto& v1TBN = m_verticesTBN[m_indices[i + 1]];
-        auto& v2TBN = m_verticesTBN[m_indices[i + 2]];
+        auto& v0TBN = mesh.verticesTBN[mesh.indices[i + 0]];
+        auto& v1TBN = mesh.verticesTBN[mesh.indices[i + 1]];
+        auto& v2TBN = mesh.verticesTBN[mesh.indices[i + 2]];
 
         Triangle tri;
         tri[0] = v0.position;
@@ -147,15 +133,16 @@ void TerrainMeshGenerator::CreateTerrainMeshFromHeightMapMemory(const float* hig
         v1TBN.normal += tri.normal;
         v2TBN.normal += tri.normal;
 
-        m_triangles.push_back(tri);
+        mesh.triangles.push_back(tri);
     }
-    for (auto i : m_indices)
+    for (auto i : mesh.indices)
     {
-        m_vertices[i].normal.normalize();
-        m_verticesTBN[i].normal.normalize();
+        mesh.vertices[i].normal.normalize();
+        mesh.verticesTBN[i].normal.normalize();
     }
 
-    Geometry::CalcTanAndBiTan(m_verticesTBN, m_indices);
+    Geometry::CalcTanAndBiTan(mesh.verticesTBN, mesh.indices);
+    return mesh;
 }
 
 void TerrainMeshGenerator::CalcNormal(Triangle& tri) const

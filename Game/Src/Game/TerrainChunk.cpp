@@ -68,8 +68,8 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 
 
 			TerrainMeshGenerator meshGenerator;
-			meshGenerator.CreateTerrainMesh(*optMap, 10, 2, 0, [](float in) {return in <= 0.3f ? 0.3f * 0.3f : in * in; });
-			SubMesh terrainMesh(meshGenerator.GetVerticesTBN(), meshGenerator.GetIndices());
+			auto teM = meshGenerator.CreateTerrainMesh(*optMap, 10, 2, 0, [](float in) {return in <= 0.3f ? 0.3f * 0.3f : in * in; });
+			SubMesh terrainMesh(teM.verticesTBN, teM.indices);
 			rendUnit.subMesh = terrainMesh;
 		}
 	}

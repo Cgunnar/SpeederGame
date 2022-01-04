@@ -41,6 +41,7 @@ struct RenderModelComp : rfe::Component<RenderModelComp>
 		ModelID = 0; //invalid
 		renderUnitBegin = renderUnitID;
 		renderUnitEnd = renderUnitID + 1;
+		this->renderUnitID = renderUnitID;
 	}
 
 	RenderPassEnum renderPass = RenderPassEnum::none;

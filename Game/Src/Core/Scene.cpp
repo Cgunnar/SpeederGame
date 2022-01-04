@@ -149,9 +149,6 @@ void Scene::Update(float dt)
 	m_lightContr.Show();
 	m_dirlightContr.Show();
 
-	m_terrain.GetComponent<TransformComp>()->transform.setTranslation(m_quadContr.slider1.value);
-	m_terrain.GetComponent<TransformComp>()->transform.setRotation(m_quadContr.slider2.value.x, m_quadContr.slider2.value.y, m_quadContr.slider2.value.z);
-
 	m_pointLight.GetComponent<PointLightComp>()->pointLight.position = m_lightContr.slider1.value;
 	m_pointLight.GetComponent<PointLightComp>()->pointLight.color = m_lightContr.slider2.value;
 

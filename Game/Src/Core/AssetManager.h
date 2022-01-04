@@ -27,6 +27,7 @@ public:
 	const SubMesh& GetMesh(SimpleMesh mesh) const;
 	const SubMesh& GetMesh(GID id) const;
 	const RenderUnit& GetRenderUnit(RenderUnitID id) const;
+	RenderUnit& GetRenderUnit(RenderUnitID id);
 	RenderUnitID AddMesh(SubMesh mesh);
 	RenderUnitID AddRenderUnit(const SubMesh& subMesh, const MaterialVariant& material);
 	RenderUnitID AddRenderUnit(RenderUnit renderUnit);

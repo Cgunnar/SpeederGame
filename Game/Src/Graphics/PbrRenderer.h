@@ -30,7 +30,7 @@ private:
 	Shader m_PS_PBR_ALB_METROU_PointLight;
 	Shader m_PS_PBR_NOR_EMIS_PointLight;
 	Shader m_PS_PBR_AL;
-	Shader m_PS_PBR;
+	Shader m_PS_PBR_NOTEXTURES;
 	Shader m_PS_PBR_AL_NOR;
 
 	bool m_prePocessed = false;

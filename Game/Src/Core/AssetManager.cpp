@@ -90,6 +90,12 @@ const RenderUnit& AssetManager::GetRenderUnit(RenderUnitID id) const
 	return m_renderUnits[id - 1];
 }
 
+RenderUnit& AssetManager::GetRenderUnit(RenderUnitID id)
+{
+	assert(id > 0 && id - 1 < m_renderUnits.size());
+	return m_renderUnits[id - 1];
+}
+
 
 RenderUnitID AssetManager::AddMesh(SubMesh mesh)
 {

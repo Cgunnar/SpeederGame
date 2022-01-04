@@ -10,7 +10,7 @@ public:
 	void OnStart();
 	void OnUpdate(float dt);
 
-	static constexpr float viewDistance = 200;
+	static constexpr float viewDistance = 20;
 private:
 	void UpdateChunks(rfm::Vector2 viewPos);
 
@@ -20,5 +20,6 @@ private:
 	int m_chunkSize = 0;
 	int m_chunksVisibleInViewDist = 0;
 	std::unordered_map<rfm::Vector2I, TerrainChunk> m_chunkMap;
+	std::vector<rfm::Vector2I> m_prevFrameVisibleChunksCoord;
 };
 

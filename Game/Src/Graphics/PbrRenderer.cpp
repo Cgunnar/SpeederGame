@@ -21,7 +21,7 @@ PbrRenderer::PbrRenderer(std::weak_ptr<SharedRenderResources> sharedRes) : m_sha
 	m_PS_PBR_AL_MERO_NO_PointLight = LowLvlGfx::CreateShader("Src/Shaders/PBR/PS_PBR_AL_MERO_NO_PointLight.hlsl", ShaderType::PIXELSHADER);
 	m_PS_PBR_ALB_METROU_PointLight = LowLvlGfx::CreateShader("Src/Shaders/PBR/PS_PBR_ALB_METROU_PointLight.hlsl", ShaderType::PIXELSHADER);
 	m_PS_PBR_NOR_EMIS_PointLight = LowLvlGfx::CreateShader("Src/Shaders/PBR/PS_PBR_NOR_EMIS_PointLight.hlsl", ShaderType::PIXELSHADER);
-	m_PS_PBR = LowLvlGfx::CreateShader("Src/Shaders/PBR/PS_PBR.hlsl", ShaderType::PIXELSHADER);
+	m_PS_PBR_NOTEXTURES = LowLvlGfx::CreateShader("Src/Shaders/PBR/PS_PBR_NOTEXTURES.hlsl", ShaderType::PIXELSHADER);
 	m_PS_PBR_AL = LowLvlGfx::CreateShader("Src/Shaders/PBR/PS_PBR_AL.hlsl", ShaderType::PIXELSHADER);
 	m_PS_PBR_AL_NOR = LowLvlGfx::CreateShader("Src/Shaders/PBR/PS_PBR_AL_NOR.hlsl", ShaderType::PIXELSHADER);
 
@@ -304,7 +304,7 @@ void PbrRenderer::RenderPBR_NO_TEXTURES(RenderFlag flag)
 	auto rendRes = m_sharedRenderResources.lock();
 	const AssetManager& assetMan = AssetManager::Get();
 	LowLvlGfx::Bind(rendRes->m_vertexShader);
-	LowLvlGfx::Bind(m_PS_PBR);
+	LowLvlGfx::Bind(m_PS_PBR_NOTEXTURES);
 	//LowLvlGfx::BindRTVs({ rendRes->m_hdrRenderTarget }, LowLvlGfx::GetDepthBuffer());
 
 

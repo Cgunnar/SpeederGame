@@ -1,6 +1,7 @@
 #include "pch.hpp"
 #include "TerrainScript.h"
 #include "TerrainGenerator.h"
+#include "RenderComponents.h"
 
 using namespace rfm;
 using namespace rfe;
@@ -13,6 +14,8 @@ TerrainScript::TerrainScript(uint32_t seed) : m_seed(seed)
 void TerrainScript::OnStart()
 {
 	m_chunkSize = TerrainGenerator::chunkSize - 1;
+	float s = GetComponent<TransformComp>()->transform.getScale().x;
+	m_chunkSize *= s;
 	m_chunksVisibleInViewDist = round(viewDistance / m_chunkSize);
 }
 
@@ -28,25 +31,38 @@ void TerrainScript::OnUpdate(float dt)
 void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 {
 	
+	float s = GetComponent<TransformComp>()->transform.getScale().x;
 	Vector2I chunkCoord;
 	chunkCoord.x = round(viewPos.x / m_chunkSize);
 	chunkCoord.y = round(viewPos.y / m_chunkSize);
+
+
+	for (auto& c : m_prevFrameVisibleChunksCoord)
+	{
+		auto rc = m_chunkMap[c].m_terrainMesh.GetComponent<RenderModelComp>();// ->visible = vis;
+
+		auto& m = AssetManager::Get().GetRenderUnit(rc->renderUnitID);
+		PBR_NO_TEXTURES& matVariant = std::get<PBR_NO_TEXTURES>(m.material.materialVariant);
+		matVariant.rgba = { 0,0,0 };
+		matVariant.emissiveFactor = { 0,0,0 };
+	}
+	m_prevFrameVisibleChunksCoord.clear();
 
 	for (int y = -m_chunksVisibleInViewDist; y <= m_chunksVisibleInViewDist; y++)
 	{
 		for (int x = -m_chunksVisibleInViewDist; x <= m_chunksVisibleInViewDist; x++)
 		{
 			Vector2I viewedChunk = chunkCoord + Vector2I(x, y);
-			float s = GetComponent<TransformComp>()->transform.getScale().x;
 			if (m_chunkMap.contains(viewedChunk))
 			{
-				m_chunkMap[viewedChunk].Update(viewPos, s*viewDistance);
+				m_chunkMap[viewedChunk].Update(viewPos, viewDistance);
+				if(m_chunkMap[viewedChunk].m_visible) m_prevFrameVisibleChunksCoord.push_back(viewedChunk);
 			}
 			else
 			{
-				
-				m_chunkMap[viewedChunk] = TerrainChunk(viewedChunk, s*m_chunkSize);
+				m_chunkMap[viewedChunk] = TerrainChunk(viewedChunk, m_chunkSize);
 			}
+			
 		}
 	}
 }

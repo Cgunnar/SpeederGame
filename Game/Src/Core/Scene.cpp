@@ -27,7 +27,7 @@ Scene::Scene()
 	terrDesc.octaves = 4;
 	terrDesc.persistence = 0.5f;
 	terrDesc.scale = 27.6f;
-	terrDesc.offset = { 4, 12 };
+	terrDesc.offset = {0,0};
 	terrDesc.seed = 32;
 
 	terrDesc.bioms.emplace_back("water", Vector3(0,0,1), 0.3f, true);
@@ -35,27 +35,41 @@ Scene::Scene()
 	terrDesc.bioms.emplace_back("mountain", 0.2f, 1);
 
 	auto f = TerrainMapGenerator::GenerateTerrinMap(terrDesc);
-
-
-	TerrainMeshGenerator t2;
-
+	
 	TerrainMeshDesc TmeshDesc;
 	TmeshDesc.heightScaleFunc = [](float in) {return in <= 0.3f ? 0.3f * 0.3f : in * in; };
 
-	auto t = t2.CreateTerrainMesh(f, TmeshDesc);
-	SubMesh terrainMesh2(t.verticesTBN, t.indices);
+	auto t = TerrainMeshGenerator::CreateTerrainMesh(f, TmeshDesc);
+	SubMesh terrainMesh(t.verticesTBN, t.indices);
 
 
+	
 	Material terrainMat;
 	terrainMat.baseColorTexture = am.LoadTex2DFromMemoryR8G8B8A8(f.colorMapRGBA.data(), f.width, f.height, LoadTexFlag::GenerateMips);
 	terrainMat.emissiveFactor = 0;
 	m_terrain = EntityReg::CreateEntity();
 	m_terrain.AddComponent<TransformComp>()->transform.setScale(0.01f);
 	m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, 1, 0);
-	m_terrain.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(terrainMesh2, terrainMat));
+	m_terrain.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(terrainMesh, terrainMat));
 	m_terrain.AddComponent<TerrainScript>(terrDesc);
+	//--------
 
 
+
+	terrDesc.offset = { 241, 0 };
+	f = TerrainMapGenerator::GenerateTerrinMap(terrDesc);
+
+	t = TerrainMeshGenerator::CreateTerrainMesh(f, TmeshDesc);
+	SubMesh terrainMesh2(t.verticesTBN, t.indices);
+
+	Material terrainMat2;
+	terrainMat2.baseColorTexture = am.LoadTex2DFromMemoryR8G8B8A8(f.colorMapRGBA.data(), f.width, f.height, LoadTexFlag::GenerateMips);
+	terrainMat2.emissiveFactor = 0;
+	m_terrain2 = EntityReg::CreateEntity();
+	m_terrain2.AddComponent<TransformComp>()->transform.setScale(0.01f);
+	m_terrain2.GetComponent<TransformComp>()->transform.setTranslation(2.4f, 1, 0);
+	m_terrain2.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(terrainMesh2, terrainMat2));
+	//m_terrain2.AddComponent<TerrainScript>(terrDesc);
 
 
 
@@ -70,7 +84,7 @@ Scene::Scene()
 	TerrainMeshDesc td;
 	td.uvScale = 1;
 	auto terMesh = tl.CreateTerrainMeshFromBMP("Assets/Textures/noiseTexture.bmp", td);
-	SubMesh terrainMesh(terMesh.verticesTBN, terMesh.indices);
+	SubMesh terrainMesh3(terMesh.verticesTBN, terMesh.indices);
 
 	Material terrainMatSand;
 	terrainMatSand.name = "terrainMaterial";
@@ -83,7 +97,7 @@ Scene::Scene()
 	m_oldTerrain.AddComponent<TransformComp>()->transform.setTranslation({ -64, -9, -64 });
 	
 	
-	m_oldTerrain.AddComponent<RenderModelComp>(am.AddRenderUnit(terrainMesh, terrainMatSand));
+	m_oldTerrain.AddComponent<RenderModelComp>(am.AddRenderUnit(terrainMesh3, terrainMatSand));
 
 
 	sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr");

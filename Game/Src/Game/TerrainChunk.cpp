@@ -13,19 +13,14 @@ using namespace rfm;
 TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size) : m_coord(coord)
 {
 	static int i = 0;
-	std::cout << "newChunk " << i++ << std::endl;
 	m_position = size * (Vector2)coord;
-	//m_position = (size+ 0.4f) * (Vector2)coord;
 	m_botLeft = Vector3(m_position.x - size/2, 0, m_position.y - size / 2 );
 	m_botRight = Vector3( m_position.x + size/2, 0, m_position.y - size / 2 );
 	m_topLeft = Vector3( m_position.x - size/2, 0, m_position.y + size / 2 );
 	m_topRight = Vector3( m_position.x + size/2, 0, m_position.y + size / 2 );
-	m_position = 0.01f * m_position;
 	m_chunkEntity = EntityReg::CreateEntity();
-	m_chunkEntity.AddComponent<TransformComp>()->transform.setTranslation(Vector3(m_position.x, 0, m_position.y));
-	//m_chunkEntity.GetComponent<TransformComp>()->transform.setScale(size/2);
+	m_chunkEntity.AddComponent<TransformComp>()->transform.setTranslation(0.01f * Vector3(m_position.x, 0, m_position.y));
 	m_chunkEntity.GetComponent<TransformComp>()->transform.setScale(0.01f);
-	//m_chunkEntity.GetComponent<TransformComp>()->transform.setRotationDeg(90, 0, 0);
 
 	auto rc = m_chunkEntity.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV), Material()));
 	auto& m = AssetManager::Get().GetRenderUnit(rc->renderUnitID);
@@ -102,7 +97,9 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 
 void TerrainChunk::LoadTerrain(const TerrainMapDesc& desc)
 {
-	TerrainMapGenerator::AsyncGenerateTerrinMap(desc, m_coord);
+	TerrainMapDesc d = desc;
+	d.offset = m_position;
+	TerrainMapGenerator::AsyncGenerateTerrinMap(d, m_coord);
 	m_checkForLoadedTerrainMap = true;
 }
 

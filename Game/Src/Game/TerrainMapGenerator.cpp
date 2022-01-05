@@ -94,12 +94,16 @@ std::vector<float> TerrainMapGenerator::GenerateNoise(int width, int height, flo
 	Vector2* octRandOffsets = new Vector2[octaves]();
 	for (int i = 0; i < octaves; i++)
 	{
-		octRandOffsets[i].x = GenRandFloat(-10000, 10000, seed + octaves) + offset.x;
-		octRandOffsets[i].y = GenRandFloat(-10000, 10000, (int)octRandOffsets[i].x) + offset.y;
+		//octRandOffsets[i].x = GenRandFloat(-10000, 10000, seed + i);
+		octRandOffsets[i].x += offset.x;
+		//octRandOffsets[i].y = GenRandFloat(-10000, 10000, seed + i);
+		octRandOffsets[i].y -= offset.y;
 	}
 
 	const siv::PerlinNoise::seed_type sivseed = seed;
 	const siv::PerlinNoise perlin{ sivseed };
+
+	
 
 	std::vector<float> noise;
 	noise.resize((size_t)width * (size_t)height);
@@ -116,8 +120,8 @@ std::vector<float> TerrainMapGenerator::GenerateNoise(int width, int height, flo
 
 			for (int i = 0; i < octaves; i++)
 			{
-				float sampleX = ((float)x - width / 2.0f)  * frequency / scale + octRandOffsets[i].x;
-				float sampleY = ((float)y - height / 2.0f) * frequency / scale + octRandOffsets[i].y;
+				float sampleX = ((float)x + octRandOffsets[i].x - width / 2.0f) * frequency / scale;
+				float sampleY = ((float)y + octRandOffsets[i].y - height / 2.0f) * frequency / scale;
 
 				float perlinNoise = amplitude * static_cast<float>(perlin.noise2D(sampleX, sampleY));
 				noiseHeight += perlinNoise;
@@ -136,9 +140,13 @@ std::vector<float> TerrainMapGenerator::GenerateNoise(int width, int height, flo
 			noise[y * static_cast<size_t>(width) + x] = noiseHeight;
 		}
 	}
+	float maxHeight = siv::perlin_detail::MaxAmplitude(octaves, persistance); 
+
 	for (int i = 0; i < height * width; i++)
 	{
- 		noise[i] = rfm::InvLerp(minNoise, maxNoise, noise[i]);
+		float normNoise = (noise[i] + 1) / (2 * maxHeight / 2.0f);
+		noise[i] = normNoise;
+ 		//noise[i] = rfm::InvLerp(minNoise, maxNoise, noise[i]);
 	}
 	
 

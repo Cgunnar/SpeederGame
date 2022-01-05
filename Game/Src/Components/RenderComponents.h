@@ -11,7 +11,7 @@
 struct RenderModelComp : rfe::Component<RenderModelComp>
 {
 	
-	RenderModelComp(const std::string& filePath = "", RenderPassEnum renderPass = RenderPassEnum::none)
+	RenderModelComp(const std::string& filePath = "", RenderPassEnum renderPass = RenderPassEnum::none, bool visible = true)
 	{
 		if (!filePath.empty())
 		{
@@ -21,27 +21,47 @@ struct RenderModelComp : rfe::Component<RenderModelComp>
 			renderUnitBegin = model.RenderUnitBegin;
 			renderUnitEnd = model.RenderUnitEnd;
 			ModelID = modelID;
+			this->visible = visible;
+		}
+		else
+		{
+			this->visible = false;
 		}
 	}
+
+	
 
 	RenderModelComp(RenderUnitID renderUnitID)
 	{
 		this->SetRenderUnit(renderUnitID);
 	}
 
-	void SetModel(GID modelID)
+	
+	void SetModel(GID modelID, bool visible = true)
 	{
 		ModelID = modelID;
 		Model& model = AssetManager::Get().GetModel(modelID);
 		renderUnitBegin = model.RenderUnitBegin;
 		renderUnitEnd = model.RenderUnitEnd;
+		this->visible = visible;
 	}
-	void SetRenderUnit(RenderUnitID renderUnitID)
+
+	void SetRenderUnit(const SubMesh& mesh, const Material& material, bool visible = true)
 	{
-		ModelID = 0; //invalid
-		renderUnitBegin = renderUnitID;
-		renderUnitEnd = renderUnitID + 1;
-		this->renderUnitID = renderUnitID;
+		renderUnitID = AssetManager::Get().AddRenderUnit(mesh, material);
+		renderUnitBegin = 0;
+		renderUnitEnd = 0;
+		ModelID = 0;
+		this->visible = visible;
+	}
+
+	void SetRenderUnit(RenderUnitID id, bool visible = true)
+	{
+		renderUnitID = id;
+		renderUnitBegin = 0;
+		renderUnitEnd = 0;
+		ModelID = 0;
+		this->visible = visible;
 	}
 
 	RenderPassEnum renderPass = RenderPassEnum::none;

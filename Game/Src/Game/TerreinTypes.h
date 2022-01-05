@@ -3,6 +3,7 @@
 #include <string>
 #include "RimfrostMath.hpp"
 #include "GraphicsUtilityTypes.h"
+#include "GraphicsResources.h"
 
 struct Biom
 {
@@ -50,4 +51,29 @@ struct TerrainMesh
 	std::vector<Vertex_POS_NOR_UV> vertices;
 	std::vector<Vertex_POS_NOR_UV_TAN_BITAN> verticesTBN;
 	std::vector<uint32_t> indices;
+};
+
+
+class TerrainLODMesh
+{
+public:
+	TerrainLODMesh(int lod);
+	TerrainLODMesh() = default;
+	void OnReceive(TerrainMesh&& mesh);
+	void RequestMesh(const TerrainMap& map);
+	void GenerateRenderMesh(MeshFormat format = MeshFormat::POS_NOR_UV_TAN_BITAN);
+	TerrainMesh mesh;
+	MeshFormat meshFormat = MeshFormat::POS_NOR_UV_TAN_BITAN;
+	SubMesh renderMesh;
+	bool hasRequestedMesh = false;
+	bool hasMesh = false;
+	bool hasRenderMesh = false;
+private:
+	int m_lod;
+};
+
+struct LODinfo
+{
+	int lod;
+	float visDistThrhold;
 };

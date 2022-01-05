@@ -20,9 +20,14 @@ TerrainScript::~TerrainScript()
 	m_chunkMap.clear();
 }
 
-TerrainScript::TerrainScript(TerrainMapDesc desc, uint32_t seed) : m_seed(seed), m_mapDesc(desc)
-{
+TerrainScript::TerrainScript(TerrainMapDesc desc) : m_mapDesc(desc)
+{	
+	m_lods.push_back({ .lod = 0, .visDistThrhold = 100 });
+	m_lods.push_back({ .lod = 1, .visDistThrhold = 300 });
+	m_lods.push_back({ .lod = 2, .visDistThrhold = 400 });
 
+	m_maxViewDistance = std::max_element(m_lods.begin(), m_lods.end(), [](LODinfo lodA, LODinfo lodB) {
+		return lodA.visDistThrhold < lodB.visDistThrhold; })->visDistThrhold;
 }
 
 void TerrainScript::OnStart()
@@ -30,7 +35,7 @@ void TerrainScript::OnStart()
 	m_chunkSize = TerrainMapGenerator::chunkSize - 1;
 	float s = GetComponent<TransformComp>()->transform.getScale().x;
 	//m_chunkSize *= s;
-	m_chunksVisibleInViewDist = static_cast<int>(round(viewDistance / m_chunkSize));
+	m_chunksVisibleInViewDist = static_cast<int>(round(m_maxViewDistance / m_chunkSize));
 }
 
 void TerrainScript::OnUpdate(float dt)
@@ -72,12 +77,12 @@ void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 			Vector2I viewedChunk = chunkCoord + Vector2I(x, y);
 			if (m_chunkMap.contains(viewedChunk))
 			{
-				m_chunkMap[viewedChunk]->Update(viewPos, viewDistance);
+				m_chunkMap[viewedChunk]->Update(viewPos, m_maxViewDistance);
 				if(m_chunkMap[viewedChunk]->m_visible) m_prevFrameVisibleChunksCoord.push_back(viewedChunk);
 			}
 			else
 			{
-				m_chunkMap[viewedChunk] = new TerrainChunk(viewedChunk, m_chunkSize);
+				m_chunkMap[viewedChunk] = new TerrainChunk(viewedChunk, m_chunkSize, m_lods);
 				m_chunksToLoad.emplace(viewedChunk);
 			}
 			

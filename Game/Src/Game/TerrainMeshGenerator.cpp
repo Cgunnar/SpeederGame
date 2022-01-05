@@ -68,13 +68,13 @@ TerrainMesh TerrainMeshGenerator::CreateTerrainMeshFromHeightMapMemory(const flo
     int numTriangles = (verticesPerLine - 1) * (verticesPerLine - 1) * 2;
 
     mesh.indices.clear();
-    mesh.indices.reserve(numTriangles * 3);
+    mesh.indices.reserve((size_t)numTriangles * 3);
     mesh.triangles.clear();
     mesh.triangles.reserve(numTriangles);
     mesh.vertices.clear();
-    mesh.vertices.reserve(verticesPerLine * verticesPerLine);
+    mesh.vertices.reserve(verticesPerLine * (size_t)verticesPerLine);
     mesh.verticesTBN.clear();
-    mesh.verticesTBN.reserve(verticesPerLine * verticesPerLine);
+    mesh.verticesTBN.reserve(verticesPerLine * (size_t)verticesPerLine);
 
     if (desc.uvScale.x == 0) desc.uvScale.x = static_cast<float>(width);
     if (desc.uvScale.y == 0) desc.uvScale.y = static_cast<float>(height);

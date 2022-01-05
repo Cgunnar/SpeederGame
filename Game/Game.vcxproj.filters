@@ -309,6 +309,7 @@
     <ClCompile Include="Src\GUI\TerrainGUI.cpp" />
     <ClCompile Include="Src\Game\TerrainChunk.cpp" />
     <ClCompile Include="Src\Core\WorkerThreads.cpp" />
+    <ClCompile Include="Src\Game\TerrainTypes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\CS\CS_convolute_DiffIrrCube.hlsl">

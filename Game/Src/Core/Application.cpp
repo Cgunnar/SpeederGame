@@ -23,8 +23,8 @@ using namespace rfm;
 
 Application::Application()
 {
-	m_window = new Window();
 	WorkerThreads::Init();
+	m_window = new Window();
 	LowLvlGfx::Init(m_window->GetHwnd(), m_window->GetClientSize());
 	
 	AssetManager::Init();
@@ -34,12 +34,12 @@ Application::Application()
 
 Application::~Application()
 {
+	WorkerThreads::Destroy();
 	delete m_scene;
 	delete m_renderer;
 	AssetManager::Destroy();
 	
 	LowLvlGfx::Destroy();
-	WorkerThreads::Destroy();
 	delete m_window;
 }
 

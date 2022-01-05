@@ -3,19 +3,7 @@
 #include "RimfrostMath.hpp"
 #include "TerreinTypes.h"
 
-class TerrainLODMesh
-{
-public:
-	TerrainLODMesh(int lod);
-	TerrainLODMesh() = default;
-	void OnReceive(TerrainMesh mesh);
-	void RequestMesh(TerrainMap map);
-private:
-	TerrainMesh m_mesh;
-	bool m_hasRequestedMesh = false;
-	bool m_hasMesh = false;
-	int m_lod;
-};
+
 
 class TerrainScript;
 class TerrainChunk
@@ -23,21 +11,25 @@ class TerrainChunk
 	friend TerrainScript;
 public:
 	TerrainChunk() = default;
-	TerrainChunk(rfm::Vector2I coord, int size);
+	TerrainChunk(rfm::Vector2I coord, int size, std::vector<LODinfo> lods);
 	void Update(rfm::Vector2 viewPos, float maxViewDist);
 	void LoadTerrain(const TerrainMapDesc& desc);
 private:
 	void OnReceive(TerrainMesh&& mesh);
-	rfm::Vector2 m_position;
+
+	rfe::Entity m_chunkEntity;
 	rfm::Vector2I m_coord;
-	rfm::Vector3 m_topLeft;
-	rfm::Vector3 m_topRight;
-	rfm::Vector3 m_botLeft;
-	rfm::Vector3 m_botRight;
+	rfm::Vector2 m_position;
+	rfm::Vector3 m_corners[4];
+	TerrainMesh m_mesh;
+	TerrainMap m_map;
+	Material m_material;
+	std::vector<LODinfo> m_lods;
+	std::vector<TerrainLODMesh> m_lodMeshes;
 	bool m_visible = false;
 	bool m_checkForLoadedTerrainMap = false;
 	bool m_createRenderMesh = false;
-	TerrainMesh m_mesh;
-	rfe::Entity m_chunkEntity;
+	int m_prevLODindex = -1;
+	bool m_hasMap = false;
 };
 

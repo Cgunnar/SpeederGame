@@ -77,6 +77,51 @@ Resolution LowLvlGfx::GetResolution()
 	return s_dx11->m_resolution;
 }
 
+int LowLvlGfx::GetMemoryUsage()
+{
+
+	IDXGIDevice* pDXGIDevice = nullptr;
+	HRESULT hr = s_dx11->m_device->QueryInterface(__uuidof(IDXGIDevice), (void**)&pDXGIDevice);
+	assert(SUCCEEDED(hr));
+
+	IDXGIAdapter* pDXGIAdapter = nullptr;
+	hr = pDXGIDevice->GetAdapter(&pDXGIAdapter);
+	assert(SUCCEEDED(hr));
+
+	IDXGIFactory6* pIDXGIFactory = nullptr;
+	hr = pDXGIAdapter->GetParent(__uuidof(IDXGIFactory6), (void**)&pIDXGIFactory);
+	assert(SUCCEEDED(hr));
+
+	DXGI_QUERY_VIDEO_MEMORY_INFO memInfo;
+
+	UINT i = 0;
+	IDXGIAdapter4* pAdapter;
+	std::vector <IDXGIAdapter4*> vAdapters;
+	while (pIDXGIFactory->EnumAdapterByGpuPreference(
+		i, DXGI_GPU_PREFERENCE ::DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, __uuidof(IDXGIAdapter4),
+		(void**)&pAdapter) != DXGI_ERROR_NOT_FOUND)
+	{
+		vAdapters.push_back(pAdapter);
+		DXGI_ADAPTER_DESC3 Adesc;
+		pAdapter->GetDesc3(&Adesc);
+		pAdapter->QueryVideoMemoryInfo(0, DXGI_MEMORY_SEGMENT_GROUP::DXGI_MEMORY_SEGMENT_GROUP_LOCAL, &memInfo);
+		++i;
+	}
+	for (auto& a : vAdapters)
+	{
+		a->Release();
+	}
+
+	
+	//hr = pDXGIAdapter->QueryVideoMemoryInfo(0, DXGI_MEMORY_SEGMENT_GROUP::DXGI_MEMORY_SEGMENT_GROUP_LOCAL, &memInfo);
+
+	pIDXGIFactory->Release();
+	pDXGIAdapter->Release();
+	pDXGIDevice->Release();
+	
+	return 0;
+}
+
 Microsoft::WRL::ComPtr<IDXGISwapChain>& LowLvlGfx::SwapChain()
 {
 	return s_dx11->m_swapChain;

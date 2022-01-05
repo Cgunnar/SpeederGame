@@ -46,8 +46,7 @@ Application::~Application()
 
 void Application::Run()
 {
-	//Input::getInput().GetMouse().confineCursor(true);
-
+	LowLvlGfx::GetMemoryUsage();
 	bool running = true;
 	while (running)
 	{
@@ -66,8 +65,6 @@ void Application::Run()
 			mouse.SetMode(~mouse.GetMode());
 			m_scene->GetCamera().GetComponent<CameraControllerScript>()->ToggleCameraLock();
 		}
-
-		auto ms = Input::Get().GetMouse().GetMouseState();
 
 		m_scene->Update(static_cast<float>(FrameTimer::dt()));
 		

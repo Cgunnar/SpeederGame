@@ -10,12 +10,13 @@
 
 #pragma comment( lib, "d3d11.lib" )
 #pragma comment( lib, "d3dcompiler.lib" )
-#pragma comment(lib, "dxguid.lib")
+#pragma comment( lib, "dxguid.lib")
+#pragma comment( lib, "dxgi.lib")
 
 
-extern "C" {
-	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
-}
+//extern "C" {
+//	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+//}
 
 
 using namespace Microsoft::WRL;
@@ -147,9 +148,53 @@ void DX11::ResizeTarget(Resolution res)
 
 void DX11::CheckMonitorRes()
 {
+
+	IDXGIFactory6* pIDXGIFactory6 = nullptr;
+	HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory6), (void**)&pIDXGIFactory6);
+	
+
+	UINT i = 0;
+	IDXGIAdapter4* pDXGIAdapter4;
+	std::vector <IDXGIAdapter4*> vAdapters;
+	while (pIDXGIFactory6->EnumAdapterByGpuPreference(
+		i, DXGI_GPU_PREFERENCE::DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, __uuidof(IDXGIAdapter4),
+		(void**)&pDXGIAdapter4) != DXGI_ERROR_NOT_FOUND)
+	{
+		vAdapters.push_back(pDXGIAdapter4);
+		++i;
+	}
+
+	IDXGIOutput* pDXGIOutput;
+	std::vector <IDXGIOutput*> vOutputs;
+	;
+	for (auto& a : vAdapters)
+	{
+		i = 0;
+		while (a->EnumOutputs(i++, &pDXGIOutput) != DXGI_ERROR_NOT_FOUND)
+		{
+			vOutputs.push_back(pDXGIOutput);
+		}
+	}
+
+	for (auto& o : vOutputs)
+	{
+		o->Release();
+	}
+	for (auto& a : vAdapters)
+	{
+		a->Release();
+	}
+
+
+	pIDXGIFactory6->Release();
+
+	
+
+
+
 	m_nativeRes = {};
 	IDXGIOutput* outPut = nullptr;
-	HRESULT hr = this->m_swapChain->GetContainingOutput(&outPut);
+	hr = this->m_swapChain->GetContainingOutput(&outPut);
 	assert(SUCCEEDED(hr));
 
 	DXGI_FORMAT format = DXGI_FORMAT_B8G8R8A8_UNORM;
@@ -299,12 +344,25 @@ bool DX11::IsFullScreen()
 
 void  DX11::CreateDeviceAndSwapChain(HWND hwnd, Resolution res)
 {
+
+	IDXGIFactory6* pIDXGIFactory6 = nullptr;
+	HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory6), (void**)&pIDXGIFactory6);
+	IDXGIAdapter4* pDXGIAdapter4;
+	
+	hr = pIDXGIFactory6->EnumAdapterByGpuPreference(0, DXGI_GPU_PREFERENCE::DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE,
+		__uuidof(IDXGIAdapter4), (void**)&pDXGIAdapter4);
+	DXGI_ADAPTER_DESC3 Adesc;
+	pDXGIAdapter4->GetDesc3(&Adesc);
+	DXGI_QUERY_VIDEO_MEMORY_INFO memInfo;
+	pDXGIAdapter4->QueryVideoMemoryInfo(0, DXGI_MEMORY_SEGMENT_GROUP::DXGI_MEMORY_SEGMENT_GROUP_LOCAL, &memInfo);
+	std::wcout << Adesc.Description << std::endl;
+
 	UINT deviceFlags = D3D11_CREATE_DEVICE_SINGLETHREADED;
 #if defined(DEBUG) || defined(_DEBUG)
 	deviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif // _DEBUG
 
-	HRESULT hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, deviceFlags, nullptr, 0, D3D11_SDK_VERSION, &m_device, nullptr, &m_context);
+	hr = D3D11CreateDevice(pDXGIAdapter4, D3D_DRIVER_TYPE_UNKNOWN, nullptr, deviceFlags, nullptr, 0, D3D11_SDK_VERSION, &m_device, nullptr, &m_context);
 	assert(SUCCEEDED(hr));
 
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
@@ -341,14 +399,17 @@ void  DX11::CreateDeviceAndSwapChain(HWND hwnd, Resolution res)
 	hr = pDXGIAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&pIDXGIFactory);
 	assert(SUCCEEDED(hr));
 
-	hr = pIDXGIFactory->CreateSwapChain(m_device.Get(), &swapChainDesc, &m_swapChain);
+	hr = pIDXGIFactory6->CreateSwapChain(m_device.Get(), &swapChainDesc, &m_swapChain);
 	assert(SUCCEEDED(hr));
 
-	pIDXGIFactory->MakeWindowAssociation(hwnd, DXGI_MWA_NO_ALT_ENTER);
+	pIDXGIFactory6->MakeWindowAssociation(hwnd, DXGI_MWA_NO_ALT_ENTER);
 
 	pIDXGIFactory->Release();
 	pDXGIAdapter->Release();
 	pDXGIDevice->Release();
+
+	pDXGIAdapter4->Release();
+	pIDXGIFactory6->Release();
 }
 
 void DX11::CreateRTVandDSV()

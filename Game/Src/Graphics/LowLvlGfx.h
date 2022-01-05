@@ -1,7 +1,6 @@
 #pragma once
 #include "DX11.h"
 #include "GraphicsResources.h"
-#include <memory>
 
 
 struct BufferDesc
@@ -38,6 +37,7 @@ public:
 	static void LeaveFullScreen();
 	static bool IsFullScreen();
 	static Resolution GetResolution();
+	static int GetMemoryUsage();
 	static Microsoft::WRL::ComPtr<IDXGISwapChain>& SwapChain();
 	static Microsoft::WRL::ComPtr<ID3D11Device>& Device();
 	static Microsoft::WRL::ComPtr<ID3D11DeviceContext>& Context();

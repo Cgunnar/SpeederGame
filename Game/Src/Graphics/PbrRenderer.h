@@ -24,6 +24,8 @@ private:
 	Sampler m_anisotropic_wrapSampler;
 	ConstantBuffer m_pbrCB;
 	Rasterizer m_noBackFaceCullRasterizer;
+	Rasterizer m_noBackFaceCullAndWireframeRasterizer;
+	Rasterizer m_wireframeRasterizer;
 	BlendState m_alphaToCovBlend;
 	BlendState m_BlendState;
 	Shader m_PS_PBR_AL_MERO_NO_PointLight;

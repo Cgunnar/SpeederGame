@@ -51,6 +51,11 @@ MaterialVariant::MaterialVariant(const Material& pbrMaterial)
 	{
 		this->renderFlag |= RenderFlag::noBackFaceCull;
 	}
+
+	if ((pbrMaterial.properties & MaterialProperties::WIREFRAME) != 0)
+	{
+		this->renderFlag |= RenderFlag::wireframe;
+	}
 }
 
 void Material::SetBaseColorTexture(const std::string& path)

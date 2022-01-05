@@ -64,6 +64,11 @@ PbrRenderer::PbrRenderer(std::weak_ptr<SharedRenderResources> sharedRes) : m_sha
 	rzDesc.CullMode = D3D11_CULL_NONE;
 	rzDesc.FillMode = D3D11_FILL_SOLID;
 	m_noBackFaceCullRasterizer = LowLvlGfx::Create(rzDesc);
+	rzDesc.FillMode = D3D11_FILL_WIREFRAME;
+	m_noBackFaceCullAndWireframeRasterizer = LowLvlGfx::Create(rzDesc);
+	rzDesc.CullMode = D3D11_CULL_BACK;
+	m_wireframeRasterizer = LowLvlGfx::Create(rzDesc);
+
 
 
 
@@ -423,8 +428,17 @@ void PbrRenderer::HandleRenderFlag(RenderFlag flag)
 		LowLvlGfx::Bind(m_BlendState);
 	}
 
-	if ((flag & RenderFlag::noBackFaceCull) != 0)
+	if (((flag & RenderFlag::noBackFaceCull) != 0) && (flag & RenderFlag::wireframe) != 0)
+	{
+		LowLvlGfx::Bind(m_noBackFaceCullAndWireframeRasterizer);
+	}
+	else if ((flag & RenderFlag::noBackFaceCull) != 0)
 	{
 		LowLvlGfx::Bind(m_noBackFaceCullRasterizer);
 	}
+	else if ((flag & RenderFlag::wireframe) != 0)
+	{
+		LowLvlGfx::Bind(m_wireframeRasterizer);
+	}
+
 }

@@ -22,9 +22,9 @@ TerrainScript::~TerrainScript()
 
 TerrainScript::TerrainScript(TerrainMapDesc desc) : m_mapDesc(desc)
 {	
-	m_lods.push_back({ .lod = 0, .visDistThrhold = 100 });
-	m_lods.push_back({ .lod = 1, .visDistThrhold = 300 });
-	m_lods.push_back({ .lod = 2, .visDistThrhold = 400 });
+	m_lods.push_back({ .lod = 0, .visDistThrhold = 120 });
+	m_lods.push_back({ .lod = 3, .visDistThrhold = 240 });
+	m_lods.push_back({ .lod = 5, .visDistThrhold = 480 });
 
 	m_maxViewDistance = std::max_element(m_lods.begin(), m_lods.end(), [](LODinfo lodA, LODinfo lodB) {
 		return lodA.visDistThrhold < lodB.visDistThrhold; })->visDistThrhold;
@@ -33,8 +33,6 @@ TerrainScript::TerrainScript(TerrainMapDesc desc) : m_mapDesc(desc)
 void TerrainScript::OnStart()
 {
 	m_chunkSize = TerrainMapGenerator::chunkSize - 1;
-	float s = GetComponent<TransformComp>()->transform.getScale().x;
-	//m_chunkSize *= s;
 	m_chunksVisibleInViewDist = static_cast<int>(round(m_maxViewDistance / m_chunkSize));
 }
 
@@ -42,8 +40,8 @@ void TerrainScript::OnUpdate(float dt)
 {
 	EntityID viewerID = EntityReg::GetComponentArray<PlayerComp>().front().GetEntity();
 	Transform viewerTransform = EntityReg::GetComponent<TransformComp>(viewerID)->transform;
-
-	Vector2 viewerPos = Vector2(viewerTransform.getTranslation().x, viewerTransform.getTranslation().z) / 0.01f;
+	float s = GetComponent<TransformComp>()->transform.getScale().x;
+	Vector2 viewerPos = Vector2(viewerTransform.getTranslation().x, viewerTransform.getTranslation().z) / s;
 	UpdateChunks(viewerPos);
 }
 

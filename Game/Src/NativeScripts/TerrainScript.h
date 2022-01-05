@@ -14,7 +14,7 @@ public:
 
 private:
 	void UpdateChunks(rfm::Vector2 viewPos);
-	float m_maxViewDistance = 800;
+	float m_maxViewDistance = 0;
 
 	//std::queue<std::function<void(TerrainMap)>> m_callbackTerrainMapQueue;
 	std::queue<rfm::Vector2I> m_chunksToLoad;

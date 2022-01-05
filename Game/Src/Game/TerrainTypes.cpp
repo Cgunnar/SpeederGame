@@ -38,5 +38,6 @@ void TerrainLODMesh::GenerateRenderMesh(MeshFormat format)
 	{
 		renderMesh = SubMesh(mesh.vertices, mesh.indices);
 	}
+	this->mesh = TerrainMesh();
 	hasRenderMesh = true;
 }

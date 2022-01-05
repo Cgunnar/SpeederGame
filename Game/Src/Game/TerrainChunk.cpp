@@ -62,7 +62,7 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 
 			TerrainMeshDesc meshDesc;
 			meshDesc.heightScaleFunc = [](float in) {return in <= 0.3f ? 0.3f * 0.3f : in * in; };
-			meshDesc.LOD = 2;
+			meshDesc.LOD = 0;
 
 			TerrainMeshGenerator::AsyncCreateTerrainMesh(*optMap, [&](TerrainMesh&& mesh){
 					OnReceive(std::move(mesh));
@@ -78,6 +78,7 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 		SubMesh terrainMesh(m_mesh.verticesTBN, m_mesh.indices);
 		rendUnit.subMesh = terrainMesh;
 		m_createRenderMesh = false;
+		m_mesh = TerrainMesh();
 	}
 	
 	auto rc = m_chunkEntity.GetComponent<RenderModelComp>();// ->visible = m_visible;

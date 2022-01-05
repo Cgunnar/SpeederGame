@@ -25,51 +25,36 @@ Scene::Scene()
 	TerrainMapDesc terrDesc;
 	terrDesc.lacunarity = 2;
 	terrDesc.octaves = 4;
-	terrDesc.persistence = 0.5f;
 	terrDesc.scale = 27.6f;
 	terrDesc.offset = {0,0};
 	terrDesc.seed = 32;
-
 	terrDesc.bioms.emplace_back("water", Vector3(0,0,1), 0.3f, true);
 	terrDesc.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.5);
 	terrDesc.bioms.emplace_back("mountain", 0.2f, 1);
 
-	auto f = TerrainMapGenerator::GenerateTerrinMap(terrDesc);
-	
-	TerrainMeshDesc TmeshDesc;
-	TmeshDesc.heightScaleFunc = [](float in) {return in <= 0.3f ? 0.3f * 0.3f : in * in; };
-
-	auto t = TerrainMeshGenerator::CreateTerrainMesh(f, TmeshDesc);
-	SubMesh terrainMesh(t.verticesTBN, t.indices);
-
-
-	
-	Material terrainMat;
-	terrainMat.baseColorTexture = am.LoadTex2DFromMemoryR8G8B8A8(f.colorMapRGBA.data(), f.width, f.height, LoadTexFlag::GenerateMips);
-	terrainMat.emissiveFactor = 0;
 	m_terrain = EntityReg::CreateEntity();
 	m_terrain.AddComponent<TransformComp>()->transform.setScale(0.01f);
-	m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, 1, 0);
-	m_terrain.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(terrainMesh, terrainMat));
+	m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, 0, 0);
+	//m_terrain.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(terrainMesh, terrainMat));
 	m_terrain.AddComponent<TerrainScript>(terrDesc);
 	//--------
 
 
 
-	terrDesc.offset = { 241, 0 };
-	f = TerrainMapGenerator::GenerateTerrinMap(terrDesc);
+	//terrDesc.offset = { 241, 0 };
+	//f = TerrainMapGenerator::GenerateTerrinMap(terrDesc);
 
-	t = TerrainMeshGenerator::CreateTerrainMesh(f, TmeshDesc);
-	SubMesh terrainMesh2(t.verticesTBN, t.indices);
+	//t = TerrainMeshGenerator::CreateTerrainMesh(f, TmeshDesc);
+	//SubMesh terrainMesh2(t.verticesTBN, t.indices);
 
-	Material terrainMat2;
-	terrainMat2.baseColorTexture = am.LoadTex2DFromMemoryR8G8B8A8(f.colorMapRGBA.data(), f.width, f.height, LoadTexFlag::GenerateMips);
-	terrainMat2.emissiveFactor = 0;
-	m_terrain2 = EntityReg::CreateEntity();
-	m_terrain2.AddComponent<TransformComp>()->transform.setScale(0.01f);
-	m_terrain2.GetComponent<TransformComp>()->transform.setTranslation(2.4f, 1, 0);
-	m_terrain2.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(terrainMesh2, terrainMat2));
-	//m_terrain2.AddComponent<TerrainScript>(terrDesc);
+	//Material terrainMat2;
+	//terrainMat2.baseColorTexture = am.LoadTex2DFromMemoryR8G8B8A8(f.colorMapRGBA.data(), f.width, f.height, LoadTexFlag::GenerateMips);
+	//terrainMat2.emissiveFactor = 0;
+	//m_terrain2 = EntityReg::CreateEntity();
+	//m_terrain2.AddComponent<TransformComp>()->transform.setScale(0.01f);
+	//m_terrain2.GetComponent<TransformComp>()->transform.setTranslation(2.4f, 1, 0);
+	//m_terrain2.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(terrainMesh2, terrainMat2));
+	////m_terrain2.AddComponent<TerrainScript>(terrDesc);
 
 
 

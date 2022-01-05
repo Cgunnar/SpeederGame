@@ -17,10 +17,10 @@ struct Biom
 
 struct TerrainMapDesc
 {
-	float scale;
-	int octaves;
-	float persistence;
-	float lacunarity;
+	float scale = 10;
+	int octaves = 1;
+	float persistence = 0.5f;
+	float lacunarity = 1;
 	rfm::Vector2 offset;
 	uint32_t seed = 123456u;
 	std::vector<Biom> bioms;

@@ -2,14 +2,11 @@
 #include "TerrainMeshGenerator.h"
 #include "Geometry.h"
 #include "RimfrostMath.hpp"
+#include "WorkerThreads.h"
 
 using namespace rfm;
 
-TerrainMeshGenerator::~TerrainMeshGenerator()
-{
-}
-
-TerrainMesh TerrainMeshGenerator::CreateTerrainMeshFromBMP(const std::string& fileName, float scale, int LOD, rfm::Vector2 uvScale)
+TerrainMesh TerrainMeshGenerator::CreateTerrainMeshFromBMP(const std::string& fileName, TerrainMeshDesc desc)
 {
 #pragma warning(suppress : 4996)
     FILE* fp = fopen(fileName.c_str(), "rb");
@@ -39,25 +36,35 @@ TerrainMesh TerrainMeshGenerator::CreateTerrainMeshFromBMP(const std::string& fi
     }
     delete[] bmpData;
 
-    return CreateTerrainMeshFromHeightMapMemory(heightMapFloat.data(), infoHeader.biWidth, infoHeader.biHeight,
-        scale, LOD, uvScale);
+    return CreateTerrainMeshFromHeightMapMemory(heightMapFloat.data(),
+        infoHeader.biWidth, infoHeader.biHeight, desc);
 }
 
-TerrainMesh TerrainMeshGenerator::CreateTerrainMesh(TerrainMap terrainMap, float scale, int LOD,
-    rfm::Vector2 uvScale, std::function<float(float)> heightScaleFunc)
+TerrainMesh TerrainMeshGenerator::CreateTerrainMesh(const TerrainMap& terrainMap, TerrainMeshDesc desc)
 {
-    return CreateTerrainMeshFromHeightMapMemory(terrainMap.heightMap.data(), terrainMap.width, terrainMap.height,
-        scale, LOD, uvScale, heightScaleFunc);
+    return CreateTerrainMeshFromHeightMapMemory(terrainMap.heightMap.data(),
+        terrainMap.width, terrainMap.height, desc);
+}
+
+void TerrainMeshGenerator::AsyncCreateTerrainMeshInternal(const TerrainMap& terrainMap, std::function<void(TerrainMesh)> callback, TerrainMeshDesc desc)
+{
+    auto t = TerrainMeshGenerator::CreateTerrainMesh(terrainMap, desc);
+    callback(t);
+}
+
+void TerrainMeshGenerator::AsyncCreateTerrainMesh(const TerrainMap& terrainMap, std::function<void(TerrainMesh)> callback, TerrainMeshDesc desc)
+{
+    WorkerThreads::AddTask(TerrainMeshGenerator::AsyncCreateTerrainMeshInternal, terrainMap, callback, desc);
 }
 
 TerrainMesh TerrainMeshGenerator::CreateTerrainMeshFromHeightMapMemory(const float* hightMap, int width, int height,
-    float scale, int LOD, rfm::Vector2 uvScale, std::function<float(float)> heightScaleFunc)
+    TerrainMeshDesc desc)
 {
-    assert(0 <= LOD && LOD <= 6);
+    assert(0 <= desc.LOD && desc.LOD <= 6);
     TerrainMesh mesh;
-    LOD *= 2;
-    if (!LOD) LOD = 1;
-    int verticesPerLine = (width - 1) / LOD + 1;
+    desc.LOD *= 2;
+    if (!desc.LOD) desc.LOD = 1;
+    int verticesPerLine = (width - 1) / desc.LOD + 1;
     int numTriangles = (verticesPerLine - 1) * (verticesPerLine - 1) * 2;
 
     mesh.indices.clear();
@@ -69,20 +76,20 @@ TerrainMesh TerrainMeshGenerator::CreateTerrainMeshFromHeightMapMemory(const flo
     mesh.verticesTBN.clear();
     mesh.verticesTBN.reserve(verticesPerLine * verticesPerLine);
 
-    if (uvScale.x == 0) uvScale.x = static_cast<float>(width);
-    if (uvScale.y == 0) uvScale.y = static_cast<float>(height);
+    if (desc.uvScale.x == 0) desc.uvScale.x = static_cast<float>(width);
+    if (desc.uvScale.y == 0) desc.uvScale.y = static_cast<float>(height);
     
     int index = 0;
-    for (int y = 0; y < height; y+=LOD)
+    for (int y = 0; y < height; y+= desc.LOD)
     {
-        for (int x = 0; x < width; x+=LOD)
+        for (int x = 0; x < width; x+= desc.LOD)
         {
 
             Vertex_POS_NOR_UV v;
             v.position.x = static_cast<float>(x) - static_cast<float>(width-1) / 2.0f;
-            v.position.y = heightScaleFunc(hightMap[y * width + x]) * scale;
+            v.position.y = desc.heightScaleFunc(hightMap[y * width + x]) * desc.heightScale;
             v.position.z = static_cast<float>(height-1) / 2.0f - static_cast<float>(y);
-            v.uv = rfm::Vector2(static_cast<float>(x) / uvScale.x , static_cast<float>(y) / uvScale.y);
+            v.uv = rfm::Vector2(static_cast<float>(x) / desc.uvScale.x , static_cast<float>(y) / desc.uvScale.y);
             mesh.vertices.push_back(v);
 
 
@@ -145,9 +152,11 @@ TerrainMesh TerrainMeshGenerator::CreateTerrainMeshFromHeightMapMemory(const flo
     return mesh;
 }
 
-void TerrainMeshGenerator::CalcNormal(Triangle& tri) const
+void TerrainMeshGenerator::CalcNormal(Triangle& tri)
 {
     tri.normal = cross(tri[1] - tri[0], tri[2] - tri[0]);
 }
+
+
 
 

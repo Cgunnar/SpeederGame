@@ -11,6 +11,15 @@ using namespace rfe;
 
 
 
+TerrainScript::~TerrainScript()
+{
+	for (auto c : m_chunkMap)
+	{
+		delete c.second;
+	}
+	m_chunkMap.clear();
+}
+
 TerrainScript::TerrainScript(TerrainMapDesc desc, uint32_t seed) : m_seed(seed), m_mapDesc(desc)
 {
 
@@ -21,7 +30,7 @@ void TerrainScript::OnStart()
 	m_chunkSize = TerrainMapGenerator::chunkSize - 1;
 	float s = GetComponent<TransformComp>()->transform.getScale().x;
 	//m_chunkSize *= s;
-	m_chunksVisibleInViewDist = round(viewDistance / m_chunkSize);
+	m_chunksVisibleInViewDist = static_cast<int>(round(viewDistance / m_chunkSize));
 }
 
 void TerrainScript::OnUpdate(float dt)
@@ -36,13 +45,13 @@ void TerrainScript::OnUpdate(float dt)
 void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 {
 	Vector2I chunkCoord;
-	chunkCoord.x = round(viewPos.x / m_chunkSize);
-	chunkCoord.y = round(viewPos.y / m_chunkSize);
+	chunkCoord.x = static_cast<int>(round(viewPos.x / m_chunkSize));
+	chunkCoord.y = static_cast<int>(round(viewPos.y / m_chunkSize));
 
 
 	for (auto& c : m_prevFrameVisibleChunksCoord)
 	{
-		auto rc = m_chunkMap[c].m_terrainMesh.GetComponent<RenderModelComp>();// ->visible = vis;
+		auto rc = m_chunkMap[c]->m_chunkEntity.GetComponent<RenderModelComp>();// ->visible = vis;
 
 		auto& m = AssetManager::Get().GetRenderUnit(rc->renderUnitID);
 		m.material.materialVariant.baseColorFactor = { 0,0,0 };
@@ -52,7 +61,7 @@ void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 
 	if (!m_chunksToLoad.empty())
 	{
-		m_chunkMap[m_chunksToLoad.front()].LoadTerrain(m_mapDesc);
+		m_chunkMap[m_chunksToLoad.front()]->LoadTerrain(m_mapDesc);
 		m_chunksToLoad.pop();
 	}
 
@@ -63,12 +72,12 @@ void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 			Vector2I viewedChunk = chunkCoord + Vector2I(x, y);
 			if (m_chunkMap.contains(viewedChunk))
 			{
-				m_chunkMap[viewedChunk].Update(viewPos, viewDistance);
-				if(m_chunkMap[viewedChunk].m_visible) m_prevFrameVisibleChunksCoord.push_back(viewedChunk);
+				m_chunkMap[viewedChunk]->Update(viewPos, viewDistance);
+				if(m_chunkMap[viewedChunk]->m_visible) m_prevFrameVisibleChunksCoord.push_back(viewedChunk);
 			}
 			else
 			{
-				m_chunkMap[viewedChunk] = TerrainChunk(viewedChunk, m_chunkSize);
+				m_chunkMap[viewedChunk] = new TerrainChunk(viewedChunk, m_chunkSize);
 				m_chunksToLoad.emplace(viewedChunk);
 			}
 			

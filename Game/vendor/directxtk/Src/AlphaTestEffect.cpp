@@ -191,7 +191,7 @@ void AlphaTestEffect::Impl::Apply(_In_ ID3D11DeviceContext* deviceContext)
             
     color.SetConstants(dirtyFlags, constants.diffuseColor);
 
-    // Recompute the alpha test settings?
+    // Recompute the alpha AsyncCreateTerrainMeshInternal settings?
     if (dirtyFlags & EffectDirtyFlags::AlphaTest)
     {
         // Convert reference alpha from 8 bit integer to 0-1 float format.

@@ -2111,7 +2111,7 @@ JSON_HEDLEY_INTEL_CL_VERSION_CHECK(2021,1,0)
 #include <cassert> // assert
 #define JSON_ASSERT(x) assert(x)
 #endif
-// allow to access some private functions (needed by the test suite)
+// allow to access some private functions (needed by the AsyncCreateTerrainMeshInternal suite)
 #if defined(JSON_TESTS_PRIVATE)
 #define JSON_PRIVATE_UNLESS_TESTED public
 #else
@@ -2510,7 +2510,7 @@ namespace nlohmann
 		json.exception.parse_error.102 | parse error at 14: missing or wrong low surrogate | JSON uses the `\uxxxx` format to describe Unicode characters. Code points above above 0xFFFF are split into two `\uxxxx` entries ("surrogate pairs"). This error indicates that the surrogate pair is incomplete or contains an invalid code point.
 		json.exception.parse_error.103 | parse error: code points above 0x10FFFF are invalid | Unicode supports code points up to 0x10FFFF. Code points above 0x10FFFF are invalid.
 		json.exception.parse_error.104 | parse error: JSON patch must be an array of objects | [RFC 6902](https://tools.ietf.org/html/rfc6902) requires a JSON Patch document to be a JSON document that represents an array of objects.
-		json.exception.parse_error.105 | parse error: operation must have string member 'op' | An operation of a JSON Patch document must contain exactly one "op" member, whose value indicates the operation to perform. Its value must be one of "add", "remove", "replace", "move", "copy", or "test"; other values are errors.
+		json.exception.parse_error.105 | parse error: operation must have string member 'op' | An operation of a JSON Patch document must contain exactly one "op" member, whose value indicates the operation to perform. Its value must be one of "add", "remove", "replace", "move", "copy", or "AsyncCreateTerrainMeshInternal"; other values are errors.
 		json.exception.parse_error.106 | parse error: array index '01' must not begin with '0' | An array index in a JSON Pointer ([RFC 6901](https://tools.ietf.org/html/rfc6901)) may be `0` or any number without a leading `0`.
 		json.exception.parse_error.107 | parse error: JSON pointer must be empty or begin with '/' - was: 'foo' | A JSON Pointer must be a Unicode string containing a sequence of zero or more reference tokens, each prefixed by a `/` character.
 		json.exception.parse_error.108 | parse error: escape character '~' must be followed with '0' or '1' | In a JSON Pointer, only `~0` and `~1` are valid escape sequences.
@@ -2715,7 +2715,7 @@ namespace nlohmann
 		Exceptions have ids 5xx.
 		name / id | example message | description
 		------------------------------ | --------------- | -------------------------
-		json.exception.other_error.501 | unsuccessful: {"op":"test","path":"/baz", "value":"bar"} | A JSON Patch operation 'test' failed. The unsuccessful operation is also printed.
+		json.exception.other_error.501 | unsuccessful: {"op":"AsyncCreateTerrainMeshInternal","path":"/baz", "value":"bar"} | A JSON Patch operation 'AsyncCreateTerrainMeshInternal' failed. The unsuccessful operation is also printed.
 		@sa - @ref exception for the base class of the library exceptions
 		@sa - @ref parse_error for exceptions indicating a parse error
 		@sa - @ref invalid_iterator for exceptions indicating errors with iterators
@@ -14562,7 +14562,7 @@ namespace nlohmann
 				// use the Grisu2 algorithm to produce short numbers which are
 				// guaranteed to round-trip, using strtof and strtod, resp.
 				//
-				// NB: The test below works if <long double> == <double>.
+				// NB: The AsyncCreateTerrainMeshInternal below works if <long double> == <double>.
 				static constexpr bool is_ieee_single_or_double
 					= (std::numeric_limits<number_float_t>::is_iec559 && std::numeric_limits<number_float_t>::digits == 24 && std::numeric_limits<number_float_t>::max_exponent == 128) ||
 					(std::numeric_limits<number_float_t>::is_iec559 && std::numeric_limits<number_float_t>::digits == 53 && std::numeric_limits<number_float_t>::max_exponent == 1024);
@@ -15300,7 +15300,7 @@ namespace nlohmann
 		bytes in the string rather than the number of characters or glyphs.
 		#### String comparison
 		[RFC 8259](https://tools.ietf.org/html/rfc8259) states:
-		> Software implementations are typically required to test names of object
+		> Software implementations are typically required to AsyncCreateTerrainMeshInternal names of object
 		> members for equality. Implementations that transform the textual
 		> representation into sequences of Unicode code units and then perform the
 		> comparison numerically, code unit by code unit, are interoperable in the
@@ -21445,7 +21445,7 @@ namespace nlohmann
 		found"`
 		@throw out_of_range.405 if JSON pointer has no parent ("add", "remove",
 		"move")
-		@throw other_error.501 if "test" operation was unsuccessful
+		@throw other_error.501 if "AsyncCreateTerrainMeshInternal" operation was unsuccessful
 		@complexity Linear in the size of the JSON value and the length of the
 		JSON patch. As usually only a fraction of the JSON value is affected by
 		the patch, the complexity can usually be neglected.
@@ -21461,7 +21461,7 @@ namespace nlohmann
 			// make a working copy to apply the patch to
 			basic_json result = *this;
 			// the valid JSON Patch operations
-			enum class patch_operations { add, remove, replace, move, copy, test, invalid };
+			enum class patch_operations { add, remove, replace, move, copy, AsyncCreateTerrainMeshInternal, invalid };
 			const auto get_op = [](const std::string& op)
 			{
 				if (op == "add")
@@ -21486,7 +21486,7 @@ namespace nlohmann
 				}
 				if (op == "test")
 				{
-					return patch_operations::test;
+					return patch_operations::AsyncCreateTerrainMeshInternal;
 				}
 				return patch_operations::invalid;
 			};
@@ -21655,7 +21655,7 @@ namespace nlohmann
 					operation_add(ptr, v);
 					break;
 				}
-				case patch_operations::test:
+				case patch_operations::AsyncCreateTerrainMeshInternal:
 				{
 					bool success = false;
 					JSON_TRY
@@ -21668,7 +21668,7 @@ namespace nlohmann
 					{
 						// ignore out of range errors: success remains false
 					}
-					// throw an exception if test fails
+					// throw an exception if AsyncCreateTerrainMeshInternal fails
 					if (JSON_HEDLEY_UNLIKELY(!success))
 					{
 						JSON_THROW(other_error::create(501, "unsuccessful: " + val.dump(), val));
@@ -21678,7 +21678,7 @@ namespace nlohmann
 				default:
 				{
 					// op must be "add", "remove", "replace", "move", "copy", or
-					// "test"
+					// "AsyncCreateTerrainMeshInternal"
 					JSON_THROW(parse_error::create(105, 0, "operation value '" + op + "' is invalid", val));
 				}
 				}

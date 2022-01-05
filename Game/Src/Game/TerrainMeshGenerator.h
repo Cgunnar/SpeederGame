@@ -3,30 +3,20 @@
 #include "GraphicsResources.h"
 #include "TerreinTypes.h"
 
-struct TerrainMesh
-{
-	static constexpr uint32_t vertexStride = sizeof(Vertex_POS_NOR_UV);
-	static constexpr uint32_t vertexStrideTBN = sizeof(Vertex_POS_NOR_UV_TAN_BITAN);
-	std::vector<Triangle> triangles;
-	std::vector<Vertex_POS_NOR_UV> vertices;
-	std::vector<Vertex_POS_NOR_UV_TAN_BITAN> verticesTBN;
-	std::vector<uint32_t> indices;
-};
+
 class TerrainMeshGenerator
 {
 public:
-	TerrainMeshGenerator() = default;
-	~TerrainMeshGenerator();
 	
-	TerrainMesh CreateTerrainMeshFromBMP(const std::string& fileName, float scale, int LOD, rfm::Vector2 uvScale = { 1,1 });
+	static TerrainMesh CreateTerrainMeshFromBMP(const std::string& fileName, TerrainMeshDesc desc = TerrainMeshDesc());
 	
-	TerrainMesh CreateTerrainMesh(TerrainMap terrainMap, float scale, int LOD = 1, rfm::Vector2 uvScale = 1, std::function<float(float)> heightScaleFunc = [](float s) {return s; });
-	TerrainMesh CreateTerrainMeshFromHeightMapMemory(const float* hightMap, int width, int height, float scale, int LOD,
-		rfm::Vector2 uvScale = 1, std::function<float(float)> heightScaleFunc = [](float s) {return s; });
+	static TerrainMesh CreateTerrainMesh(const TerrainMap& terrainMap, TerrainMeshDesc desc = TerrainMeshDesc());
+	static void AsyncCreateTerrainMesh(const TerrainMap& terrainMap, std::function<void(TerrainMesh)> callback, TerrainMeshDesc desc = TerrainMeshDesc());
+	static TerrainMesh CreateTerrainMeshFromHeightMapMemory(const float* hightMap, int width, int height, TerrainMeshDesc desc = TerrainMeshDesc());
 private:
-	void CalcNormal(Triangle& tri) const;
+	static void CalcNormal(Triangle& tri);
 	
-
+	static void AsyncCreateTerrainMeshInternal(const TerrainMap& terrainMap, std::function<void(TerrainMesh)> callback, TerrainMeshDesc desc);
 	static std::unordered_map<rfm::Vector2I, TerrainMap> s_terrainMapHolder;
 	static std::mutex s_mapMutex;
 };

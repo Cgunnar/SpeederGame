@@ -22,9 +22,11 @@ private:
 template<typename F, typename ...Args>
 inline void WorkerThreads::AddTask(F&& func, Args&&... args)
 {
+	s_workQueueMutex.lock();
 	s_workQueue.emplace(
 		[func = std::forward<F>(func), args = std::make_tuple(std::forward<Args>(args)...)]()  mutable
 	{
-		return std::apply(func, std::move(args));
+		std::apply(func, std::move(args));
 	});
+	s_workQueueMutex.unlock();
 }

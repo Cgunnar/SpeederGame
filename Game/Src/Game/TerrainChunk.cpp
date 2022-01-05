@@ -21,13 +21,13 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size) : m_coord(coord)
 	m_topLeft = Vector3( m_position.x - size/2, 0, m_position.y + size / 2 );
 	m_topRight = Vector3( m_position.x + size/2, 0, m_position.y + size / 2 );
 	m_position = 0.01f * m_position;
-	m_terrainMesh = EntityReg::CreateEntity();
-	m_terrainMesh.AddComponent<TransformComp>()->transform.setTranslation(Vector3(m_position.x, 0, m_position.y));
-	//m_terrainMesh.GetComponent<TransformComp>()->transform.setScale(size/2);
-	m_terrainMesh.GetComponent<TransformComp>()->transform.setScale(0.01f);
-	//m_terrainMesh.GetComponent<TransformComp>()->transform.setRotationDeg(90, 0, 0);
+	m_chunkEntity = EntityReg::CreateEntity();
+	m_chunkEntity.AddComponent<TransformComp>()->transform.setTranslation(Vector3(m_position.x, 0, m_position.y));
+	//m_chunkEntity.GetComponent<TransformComp>()->transform.setScale(size/2);
+	m_chunkEntity.GetComponent<TransformComp>()->transform.setScale(0.01f);
+	//m_chunkEntity.GetComponent<TransformComp>()->transform.setRotationDeg(90, 0, 0);
 
-	auto rc = m_terrainMesh.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV), Material()));
+	auto rc = m_chunkEntity.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV), Material()));
 	auto& m = AssetManager::Get().GetRenderUnit(rc->renderUnitID);
 	m.material.materialVariant.baseColorFactor = { 1,1,1 };
 	m.material.materialVariant.emissiveFactor = {1,1,1};
@@ -60,21 +60,32 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 			terrainMat.baseColorTexture = AssetManager::Get().LoadTex2DFromMemoryR8G8B8A8(
 				optMap->colorMapRGBA.data(), optMap->width, optMap->height, LoadTexFlag::GenerateMips);
 			terrainMat.emissiveFactor = 0;
-			auto rc = m_terrainMesh.GetComponent<RenderModelComp>();
+			auto rc = m_chunkEntity.GetComponent<RenderModelComp>();
 			auto& rendUnit = AssetManager::Get().GetRenderUnit(rc->renderUnitID);
 			rendUnit.material = MaterialVariant(terrainMat);
 			m_checkForLoadedTerrainMap = false;
 
+			TerrainMeshDesc meshDesc;
+			meshDesc.heightScaleFunc = [](float in) {return in <= 0.3f ? 0.3f * 0.3f : in * in; };
+			meshDesc.LOD = 2;
 
-
-			TerrainMeshGenerator meshGenerator;
-			auto teM = meshGenerator.CreateTerrainMesh(*optMap, 10, 2, 0, [](float in) {return in <= 0.3f ? 0.3f * 0.3f : in * in; });
-			SubMesh terrainMesh(teM.verticesTBN, teM.indices);
-			rendUnit.subMesh = terrainMesh;
+			TerrainMeshGenerator::AsyncCreateTerrainMesh(*optMap, [&](TerrainMesh&& mesh){
+					OnReceive(std::move(mesh));
+				}, meshDesc);
+			
 		}
 	}
+
+	if (m_createRenderMesh)
+	{
+		auto rc = m_chunkEntity.GetComponent<RenderModelComp>();
+		auto& rendUnit = AssetManager::Get().GetRenderUnit(rc->renderUnitID);
+		SubMesh terrainMesh(m_mesh.verticesTBN, m_mesh.indices);
+		rendUnit.subMesh = terrainMesh;
+		m_createRenderMesh = false;
+	}
 	
-	auto rc = m_terrainMesh.GetComponent<RenderModelComp>();// ->visible = m_visible;
+	auto rc = m_chunkEntity.GetComponent<RenderModelComp>();// ->visible = m_visible;
 
 	auto& m = AssetManager::Get().GetRenderUnit(rc->renderUnitID);
 	if (m_visible)
@@ -93,4 +104,25 @@ void TerrainChunk::LoadTerrain(const TerrainMapDesc& desc)
 {
 	TerrainMapGenerator::AsyncGenerateTerrinMap(desc, m_coord);
 	m_checkForLoadedTerrainMap = true;
+}
+
+void TerrainChunk::OnReceive(TerrainMesh&& mesh)
+{
+	m_createRenderMesh = true;
+	m_mesh = std::move(mesh);
+}
+
+TerrainLODMesh::TerrainLODMesh(int lod) : m_lod(lod)
+{
+
+}
+
+void TerrainLODMesh::OnReceive(TerrainMesh mesh)
+{
+	m_hasMesh = true;
+}
+
+void TerrainLODMesh::RequestMesh(TerrainMap map)
+{
+	m_hasRequestedMesh = true;
 }

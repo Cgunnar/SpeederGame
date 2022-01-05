@@ -414,7 +414,7 @@ namespace
 #if (_WIN32_WINNT >= _WIN32_WINNT_WIN8) || defined(_WIN7_PLATFORM_UPDATE)
         if ((format == DXGI_FORMAT_R32G32B32_FLOAT) && d3dContext && textureView)
         {
-            // Special case test for optional device support for autogen mipchains for R32G32B32_FLOAT 
+            // Special case AsyncCreateTerrainMeshInternal for optional device support for autogen mipchains for R32G32B32_FLOAT 
             UINT fmtSupport = 0;
             hr = d3dDevice->CheckFormatSupport(DXGI_FORMAT_R32G32B32_FLOAT, &fmtSupport);
             if (FAILED(hr) || !(fmtSupport & D3D11_FORMAT_SUPPORT_MIP_AUTOGEN))

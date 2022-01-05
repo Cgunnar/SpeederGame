@@ -7,11 +7,12 @@ class TerrainScript : public rfe::NativeScriptComponent<TerrainScript>
 {
 public:
 	TerrainScript() = default;
+	~TerrainScript();
 	TerrainScript(TerrainMapDesc desc, uint32_t seed = 32);
 	void OnStart();
 	void OnUpdate(float dt);
 
-	static constexpr float viewDistance = 400;
+	static constexpr float viewDistance = 800;
 private:
 	void UpdateChunks(rfm::Vector2 viewPos);
 
@@ -21,7 +22,7 @@ private:
 	TerrainMapDesc m_mapDesc;
 	int m_chunkSize = 0;
 	int m_chunksVisibleInViewDist = 0;
-	std::unordered_map<rfm::Vector2I, TerrainChunk> m_chunkMap;
+	std::unordered_map<rfm::Vector2I, TerrainChunk*> m_chunkMap;
 	std::vector<rfm::Vector2I> m_prevFrameVisibleChunksCoord;
 };
 

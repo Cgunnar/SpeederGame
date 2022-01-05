@@ -352,7 +352,7 @@ CODE
       Note that io.NavInputs[] is cleared by EndFrame().
     - See 'enum ImGuiNavInput_' in imgui.h for a description of inputs. For each entry of io.NavInputs[], set the following values:
          0.0f= not held. 1.0f= fully held. Pass intermediate 0.0f..1.0f values for analog triggers/sticks.
-    - We use a simple >0.0f test for activation testing, and won't attempt to test for a dead-zone.
+    - We use a simple >0.0f AsyncCreateTerrainMeshInternal for activation testing, and won't attempt to AsyncCreateTerrainMeshInternal for a dead-zone.
       Your code will probably need to transform your raw inputs (such as e.g. remapping your 0.2..0.9 raw input range to 0.0..1.0 imgui range, etc.).
     - You can download PNG/PSD files depicting the gamepad controls for common controllers at: http://dearimgui.org/controls_sheets
     - If you need to share inputs between your game and the imgui parts, the easiest approach is to go all-or-nothing, with a buttons combo
@@ -1454,7 +1454,7 @@ const char* ImStrSkipBlank(const char* str)
 }
 
 // A) MSVC version appears to return -1 on overflow, whereas glibc appears to return total count (which may be >= buf_size).
-// Ideally we would test for only one of those limits at runtime depending on the behavior the vsnprintf(), but trying to deduct it at compile time sounds like a pandora can of worm.
+// Ideally we would AsyncCreateTerrainMeshInternal for only one of those limits at runtime depending on the behavior the vsnprintf(), but trying to deduct it at compile time sounds like a pandora can of worm.
 // B) When buf==NULL vsnprintf() will return the output size.
 #ifndef IMGUI_DISABLE_DEFAULT_FORMAT_FUNCTIONS
 
@@ -3227,9 +3227,9 @@ bool ImGui::IsItemHovered(ImGuiHoveredFlags flags)
 
     // Test if we are hovering the right window (our window could be behind another window)
     // [2021/03/02] Reworked / reverted the revert, finally. Note we want e.g. BeginGroup/ItemAdd/EndGroup to work as well. (#3851)
-    // [2017/10/16] Reverted commit 344d48be3 and testing RootWindow instead. I believe it is correct to NOT test for RootWindow but this leaves us unable
-    // to use IsItemHovered() after EndChild() itself. Until a solution is found I believe reverting to the test from 2017/09/27 is safe since this was
-    // the test that has been running for a long while.
+    // [2017/10/16] Reverted commit 344d48be3 and testing RootWindow instead. I believe it is correct to NOT AsyncCreateTerrainMeshInternal for RootWindow but this leaves us unable
+    // to use IsItemHovered() after EndChild() itself. Until a solution is found I believe reverting to the AsyncCreateTerrainMeshInternal from 2017/09/27 is safe since this was
+    // the AsyncCreateTerrainMeshInternal that has been running for a long while.
     if (g.HoveredWindow != window && (status_flags & ImGuiItemStatusFlags_HoveredWindow) == 0)
         if ((flags & ImGuiHoveredFlags_AllowWhenOverlapped) == 0)
             return false;
@@ -3278,7 +3278,7 @@ bool ImGui::ItemHoverable(const ImRect& bb, ImGuiID id)
     }
 
     // We exceptionally allow this function to be called with id==0 to allow using it for easy high-level
-    // hover test in widgets code. We could also decide to split this function is two.
+    // hover AsyncCreateTerrainMeshInternal in widgets code. We could also decide to split this function is two.
     if (id != 0)
         SetHoveredID(id);
 
@@ -3298,7 +3298,7 @@ bool ImGui::ItemHoverable(const ImRect& bb, ImGuiID id)
         // [DEBUG] Item Picker tool!
         // We perform the check here because SetHoveredID() is not frequently called (1~ time a frame), making
         // the cost of this tool near-zero. We can get slightly better call-stack and support picking non-hovered
-        // items if we perform the test in ItemAdd(), but that would incur a small runtime cost.
+        // items if we perform the AsyncCreateTerrainMeshInternal in ItemAdd(), but that would incur a small runtime cost.
         // #define IMGUI_DEBUG_TOOL_ITEM_PICKER_EX in imconfig.h if you want this check to also be performed in ItemAdd().
         if (g.DebugItemPickerActive && g.HoveredIdPreviousFrame == id)
             GetForegroundDrawList()->AddRect(bb.Min, bb.Max, IM_COL32(255, 255, 0, 255));
@@ -3507,7 +3507,7 @@ void ImGui::RemoveContextHook(ImGuiContext* ctx, ImGuiID hook_id)
             g.Hooks[n].Type = ImGuiContextHookType_PendingRemoval_;
 }
 
-// Call context hooks (used by e.g. test engine)
+// Call context hooks (used by e.g. AsyncCreateTerrainMeshInternal engine)
 // We assume a small number of hooks so all stored in same array
 void ImGui::CallContextHooks(ImGuiContext* ctx, ImGuiContextHookType hook_type)
 {
@@ -3651,7 +3651,7 @@ void ImGui::StartMouseMovingWindowOrNode(ImGuiWindow* window, ImGuiDockNode* nod
 // Note: moving window with the navigation keys (Square + d-pad / CTRL+TAB + Arrows) are processed in NavUpdateWindowing()
 // FIXME: We don't have strong guarantee that g.MovingWindow stay synched with g.ActiveId == g.MovingWindow->MoveId.
 // This is currently enforced by the fact that BeginDragDropSource() is setting all g.ActiveIdUsingXXXX flags to inhibit navigation inputs,
-// but if we should more thoroughly test cases where g.ActiveId or g.MovingWindow gets changed and not the other.
+// but if we should more thoroughly AsyncCreateTerrainMeshInternal cases where g.ActiveId or g.MovingWindow gets changed and not the other.
 void ImGui::UpdateMouseMovingWindowNewFrame()
 {
     ImGuiContext& g = *GImGui;
@@ -4015,7 +4015,7 @@ void ImGui::UpdateHoveredWindowAndCaptureFlags()
     const bool mouse_avail_to_imgui = (mouse_earliest_button_down == -1) || g.IO.MouseDownOwned[mouse_earliest_button_down];
 
     // If mouse was first clicked outside of ImGui bounds we also cancel out hovering.
-    // FIXME: For patterns of drag and drop across OS windows, we may need to rework/remove this test (first committed 311c0ca9 on 2015/02)
+    // FIXME: For patterns of drag and drop across OS windows, we may need to rework/remove this AsyncCreateTerrainMeshInternal (first committed 311c0ca9 on 2015/02)
     const bool mouse_dragging_extern_payload = g.DragDropActive && (g.DragDropSourceFlags & ImGuiDragDropFlags_SourceExtern) != 0;
     if (!mouse_avail_to_imgui && !mouse_dragging_extern_payload)
         clear_hovered_windows = true;
@@ -5016,7 +5016,7 @@ bool ImGui::IsMouseDoubleClicked(ImGuiMouseButton button)
 }
 
 // Return if a mouse click/drag went past the given threshold. Valid to call during the MouseReleased frame.
-// [Internal] This doesn't test if the button is pressed
+// [Internal] This doesn't AsyncCreateTerrainMeshInternal if the button is pressed
 bool ImGui::IsMouseDragPastThreshold(ImGuiMouseButton button, float lock_threshold)
 {
     ImGuiContext& g = *GImGui;
@@ -6366,7 +6366,7 @@ bool ImGui::Begin(const char* name, bool* p_open, ImGuiWindowFlags flags)
         // At this point we don't have a clipping rectangle setup yet, so we can use the title bar area for hit detection and drawing
         if (!(flags & ImGuiWindowFlags_NoTitleBar) && !(flags & ImGuiWindowFlags_NoCollapse) && !window->DockIsActive)
         {
-            // We don't use a regular button+id to test for double-click on title bar (mostly due to legacy reason, could be fixed), so verify that we don't have items over the title bar.
+            // We don't use a regular button+id to AsyncCreateTerrainMeshInternal for double-click on title bar (mostly due to legacy reason, could be fixed), so verify that we don't have items over the title bar.
             ImRect title_bar_rect = window->TitleBarRect();
             if (g.HoveredWindow == window && g.HoveredId == 0 && g.HoveredIdPreviousFrame == 0 && IsMouseHoveringRect(title_bar_rect.Min, title_bar_rect.Max) && g.IO.MouseDoubleClicked[0])
                 window->WantCollapseToggle = true;
@@ -6783,7 +6783,7 @@ bool ImGui::Begin(const char* name, bool* p_open, ImGuiWindowFlags flags)
         if (!(flags & ImGuiWindowFlags_NoTitleBar) && !window->DockIsActive)
             RenderWindowTitleBarContents(window, ImRect(title_bar_rect.Min.x + window->WindowBorderSize, title_bar_rect.Min.y, title_bar_rect.Max.x - window->WindowBorderSize, title_bar_rect.Max.y), name, p_open);
 
-        // Clear hit test shape every frame
+        // Clear hit AsyncCreateTerrainMeshInternal shape every frame
         window->HitTestHoleSize.x = window->HitTestHoleSize.y = 0;
 
         // Pressing CTRL+C while holding on a window copy its content to the clipboard
@@ -7056,7 +7056,7 @@ void ImGui::FocusTopMostWindowUnderOne(ImGuiWindow* under_this_window, ImGuiWind
     const int start_idx = ((under_this_window != NULL) ? FindWindowFocusIndex(under_this_window) : g.WindowsFocusOrder.Size) - 1;
     for (int i = start_idx; i >= 0; i--)
     {
-        // We may later decide to test for different NoXXXInputs based on the active navigation input (mouse vs nav) but that may feel more confusing to the user.
+        // We may later decide to AsyncCreateTerrainMeshInternal for different NoXXXInputs based on the active navigation input (mouse vs nav) but that may feel more confusing to the user.
         ImGuiWindow* window = g.WindowsFocusOrder[i];
         IM_ASSERT(window == window->RootWindow);
         if (window != ignore_window && window->WasActive)
@@ -7136,7 +7136,7 @@ void ImGui::PopItemFlag()
 //   We may rework this. Hypothetically, a future styling system may set a flag which make widgets use different colors.
 // - Feedback welcome at https://github.com/ocornut/imgui/issues/211
 // - You may trivially implement your own variation of this if needed.
-//   Here we test (CurrentItemFlags & ImGuiItemFlags_Disabled) to allow nested PushDisabled() calls.
+//   Here we AsyncCreateTerrainMeshInternal (CurrentItemFlags & ImGuiItemFlags_Disabled) to allow nested PushDisabled() calls.
 void ImGui::PushDisabled(bool disabled)
 {
     ImGuiContext& g = *GImGui;
@@ -7411,7 +7411,7 @@ void ImGui::SetWindowCollapsed(ImGuiWindow* window, bool collapsed, ImGuiCond co
 
 void ImGui::SetWindowHitTestHole(ImGuiWindow* window, const ImVec2& pos, const ImVec2& size)
 {
-    IM_ASSERT(window->HitTestHoleSize.x == 0);     // We don't support multiple holes/hit test filters
+    IM_ASSERT(window->HitTestHoleSize.x == 0);     // We don't support multiple holes/hit AsyncCreateTerrainMeshInternal filters
     window->HitTestHoleSize = ImVec2ih(size);
     window->HitTestHoleOffset = ImVec2ih(pos - window->Pos);
 }
@@ -8108,14 +8108,14 @@ bool ImGui::ItemAdd(const ImRect& bb, ImGuiID id, const ImRect* nav_bb_arg, ImGu
         IMGUI_TEST_ENGINE_ITEM_ADD(nav_bb_arg ? *nav_bb_arg : bb, id);
 #endif
 
-    // Clipping test
+    // Clipping AsyncCreateTerrainMeshInternal
     const bool is_clipped = IsClippedEx(bb, id, false);
     if (is_clipped)
         return false;
     //if (g.IO.KeyAlt) window->DrawList->AddRect(bb.Min, bb.Max, IM_COL32(255,255,0,120)); // [DEBUG]
 
     // Tab stop handling (previously was using internal ItemFocusable() api)
-    // FIXME-NAV: We would now want to move this above the clipping test, but this would require being able to scroll and currently this would mean an extra frame. (#4079, #343)
+    // FIXME-NAV: We would now want to move this above the clipping AsyncCreateTerrainMeshInternal, but this would require being able to scroll and currently this would mean an extra frame. (#4079, #343)
     if (flags & ImGuiItemAddFlags_Focusable)
         ItemFocusable(window, id);
 
@@ -8752,7 +8752,7 @@ bool ImGui::IsPopupOpen(ImGuiID id, ImGuiPopupFlags popup_flags)
     if (popup_flags & ImGuiPopupFlags_AnyPopupId)
     {
         // Return true if any popup is open at the current BeginPopup() level of the popup stack
-        // This may be used to e.g. test for another popups already opened to handle popups priorities at the same level.
+        // This may be used to e.g. AsyncCreateTerrainMeshInternal for another popups already opened to handle popups priorities at the same level.
         IM_ASSERT(id == 0);
         if (popup_flags & ImGuiPopupFlags_AnyPopupLevel)
             return g.OpenPopupStack.Size > 0;
@@ -8897,7 +8897,7 @@ void ImGui::ClosePopupsOverWindow(ImGuiWindow* ref_window, bool restore_focus_to
                 break;
         }
     }
-    if (popup_count_to_keep < g.OpenPopupStack.Size) // This test is not required but it allows to set a convenient breakpoint on the statement below
+    if (popup_count_to_keep < g.OpenPopupStack.Size) // This AsyncCreateTerrainMeshInternal is not required but it allows to set a convenient breakpoint on the statement below
     {
         IMGUI_DEBUG_LOG_POPUP("ClosePopupsOverWindow(\"%s\") -> ClosePopupToLevel(%d)\n", ref_window->Name, popup_count_to_keep);
         ClosePopupToLevel(popup_count_to_keep, restore_focus_to_window_under_popup);
@@ -9013,7 +9013,7 @@ bool ImGui::BeginPopupModal(const char* name, bool* p_open, ImGuiWindowFlags fla
 
     // Center modal windows by default for increased visibility
     // (this won't really last as settings will kick in, and is mostly for backward compatibility. user may do the same themselves)
-    // FIXME: Should test for (PosCond & window->SetWindowPosAllowFlags) with the upcoming window.
+    // FIXME: Should AsyncCreateTerrainMeshInternal for (PosCond & window->SetWindowPosAllowFlags) with the upcoming window.
     if ((g.NextWindowData.Flags & ImGuiNextWindowDataFlags_HasPos) == 0)
     {
         const ImGuiViewport* viewport = window->WasActive ? window->Viewport : GetMainViewport(); // FIXME-VIEWPORT: What may be our reference viewport?
@@ -9481,7 +9481,7 @@ static void ImGui::NavApplyItemToResult(ImGuiNavItemData* result, ImGuiWindow* w
 static void ImGui::NavProcessItem(ImGuiWindow* window, const ImRect& nav_bb, const ImGuiID id)
 {
     ImGuiContext& g = *GImGui;
-    //if (!g.IO.NavActive)  // [2017/10/06] Removed this possibly redundant test but I am not sure of all the side-effects yet. Some of the feature here will need to work regardless of using a _NoNavInputs flag.
+    //if (!g.IO.NavActive)  // [2017/10/06] Removed this possibly redundant AsyncCreateTerrainMeshInternal but I am not sure of all the side-effects yet. Some of the feature here will need to work regardless of using a _NoNavInputs flag.
     //    return;
 
     const ImGuiItemFlags item_flags = g.LastItemData.InFlags;
@@ -9627,7 +9627,7 @@ static inline void ImGui::NavUpdateAnyRequestFlag()
 // This needs to be called before we submit any widget (aka in or before Begin)
 void ImGui::NavInitWindow(ImGuiWindow* window, bool force_reinit)
 {
-    // FIXME: ChildWindow test here is wrong for docking
+    // FIXME: ChildWindow AsyncCreateTerrainMeshInternal here is wrong for docking
     ImGuiContext& g = *GImGui;
     IM_ASSERT(window == g.NavWindow);
 
@@ -10675,7 +10675,7 @@ bool ImGui::BeginDragDropTargetCustom(const ImRect& bb, ImGuiID id)
 // We don't use BeginDragDropTargetCustom() and duplicate its code because:
 // 1) we use LastItemRectHoveredRect which handles items that pushes a temporarily clip rectangle in their code. Calling BeginDragDropTargetCustom(LastItemRect) would not handle them.
 // 2) and it's faster. as this code may be very frequently called, we want to early out as fast as we can.
-// Also note how the HoveredWindow test is positioned differently in both functions (in both functions we optimize for the cheapest early out case)
+// Also note how the HoveredWindow AsyncCreateTerrainMeshInternal is positioned differently in both functions (in both functions we optimize for the cheapest early out case)
 bool ImGui::BeginDragDropTarget()
 {
     ImGuiContext& g = *GImGui;
@@ -10739,7 +10739,7 @@ const ImGuiPayload* ImGui::AcceptDragDropPayload(const char* type, ImGuiDragDrop
         window->DrawList->AddRect(r.Min - ImVec2(3.5f,3.5f), r.Max + ImVec2(3.5f, 3.5f), GetColorU32(ImGuiCol_DragDropTarget), 0.0f, 0, 2.0f);
 
     g.DragDropAcceptFrameCount = g.FrameCount;
-    payload.Delivery = was_accepted_previously && !IsMouseDown(g.DragDropMouseButton); // For extern drag sources affecting os window focus, it's easier to just test !IsMouseDown() instead of IsMouseReleased()
+    payload.Delivery = was_accepted_previously && !IsMouseDown(g.DragDropMouseButton); // For extern drag sources affecting os window focus, it's easier to just AsyncCreateTerrainMeshInternal !IsMouseDown() instead of IsMouseReleased()
     if (!payload.Delivery && !(flags & ImGuiDragDropFlags_AcceptBeforeDelivery))
         return NULL;
 
@@ -11487,7 +11487,7 @@ void ImGui::TranslateWindowsInViewport(ImGuiViewportP* viewport, const ImVec2& o
     ImGuiContext& g = *GImGui;
     IM_ASSERT(viewport->Window == NULL && (viewport->Flags & ImGuiViewportFlags_CanHostOtherWindows));
 
-    // 1) We test if ImGuiConfigFlags_ViewportsEnable was just toggled, which allows us to conveniently
+    // 1) We AsyncCreateTerrainMeshInternal if ImGuiConfigFlags_ViewportsEnable was just toggled, which allows us to conveniently
     // translate imgui windows from OS-window-local to absolute coordinates or vice-versa.
     // 2) If it's not going to fit into the new size, keep it at same absolute position.
     // One problem with this is that most Win32 applications doesn't update their render while dragging,
@@ -11877,7 +11877,7 @@ static void ImGui::WindowSelectViewport(ImGuiWindow* window)
     else
     {
         // Merge into host viewport?
-        // We cannot test window->ViewportOwned as it set lower in the function.
+        // We cannot AsyncCreateTerrainMeshInternal window->ViewportOwned as it set lower in the function.
         bool try_to_merge_into_host_viewport = (window->Viewport && window == window->Viewport->Window && g.ActiveId == 0);
         if (try_to_merge_into_host_viewport)
             UpdateTryMergeWindowIntoHostViewports(window);
@@ -12015,7 +12015,7 @@ void ImGui::WindowSyncOwnedViewport(ImGuiWindow* window, ImGuiWindow* parent_win
     window->Viewport->Flags = viewport_flags;
 
     // Update parent viewport ID
-    // (the !IsFallbackWindow test mimic the one done in WindowSelectViewport())
+    // (the !IsFallbackWindow AsyncCreateTerrainMeshInternal mimic the one done in WindowSelectViewport())
     if (window->WindowClass.ParentViewportId)
         window->Viewport->ParentViewportId = window->WindowClass.ParentViewportId;
     else if ((window_flags & (ImGuiWindowFlags_Popup | ImGuiWindowFlags_Tooltip)) && parent_window_in_stack && (!parent_window_in_stack->IsFallbackWindow || parent_window_in_stack->WasActive))
@@ -12198,7 +12198,7 @@ static int ImGui::FindPlatformMonitorForPos(const ImVec2& pos)
 
 // Search for the monitor with the largest intersection area with the given rectangle
 // We generally try to avoid searching loops but the monitor count should be very small here
-// FIXME-OPT: We could test the last monitor used for that viewport first, and early
+// FIXME-OPT: We could AsyncCreateTerrainMeshInternal the last monitor used for that viewport first, and early
 static int ImGui::FindPlatformMonitorForRect(const ImRect& rect)
 {
     ImGuiContext& g = *GImGui;
@@ -12540,7 +12540,7 @@ void ImGui::DockContextClearNodes(ImGuiContext* ctx, ImGuiID root_id, bool clear
     DockBuilderRemoveNodeChildNodes(root_id);
 }
 
-// [DEBUG] This function also acts as a defacto test to make sure we can rebuild from scratch without a glitch
+// [DEBUG] This function also acts as a defacto AsyncCreateTerrainMeshInternal to make sure we can rebuild from scratch without a glitch
 // (Different from DockSettingsHandler_ClearAll() + DockSettingsHandler_ApplyAll() because this reuses current settings!)
 void ImGui::DockContextRebuildNodes(ImGuiContext* ctx)
 {
@@ -13746,7 +13746,7 @@ static void ImGui::DockNodeUpdate(ImGuiDockNode* node)
         host_window->DrawList->ChannelsSetCurrent(1);
     }
 
-    // Register a hit-test hole in the window unless we are currently dragging a window that is compatible with our dockspace
+    // Register a hit-AsyncCreateTerrainMeshInternal hole in the window unless we are currently dragging a window that is compatible with our dockspace
     ImGuiDockNode* central_node = node->CentralNode;
     const bool central_node_hole = node->IsRootNode() && host_window && (node_flags & ImGuiDockNodeFlags_PassthruCentralNode) != 0 && central_node != NULL && central_node->IsEmpty();
     bool central_node_hole_register_hit_test_hole = central_node_hole;
@@ -14124,7 +14124,7 @@ static void ImGui::DockNodeUpdateTabBar(ImGuiDockNode* node, ImGuiWindow* host_w
     }
 
     // When clicking on the title bar outside of tabs, we still focus the selected tab for that node
-    // FIXME: TabItem use AllowItemOverlap so we manually perform a more specific test for now (hovered || held)
+    // FIXME: TabItem use AllowItemOverlap so we manually perform a more specific AsyncCreateTerrainMeshInternal for now (hovered || held)
     ImGuiID title_bar_id = host_window->GetID("#TITLEBAR");
     if (g.HoveredId == 0 || g.HoveredId == title_bar_id || g.ActiveId == title_bar_id)
     {
@@ -15630,7 +15630,7 @@ void ImGui::BeginDocked(ImGuiWindow* window, bool* p_open)
 
     // Fast path return. It is common for windows to hold on a persistent DockId but be the only visible window,
     // and never create neither a host window neither a tab bar.
-    // FIXME-DOCK: replace ->HostWindow NULL compare with something more explicit (~was initially intended as a first frame test)
+    // FIXME-DOCK: replace ->HostWindow NULL compare with something more explicit (~was initially intended as a first frame AsyncCreateTerrainMeshInternal)
     if (node->HostWindow == NULL)
     {
         if (node->State == ImGuiDockNodeState_HostWindowHiddenBecauseWindowsAreResizing)
@@ -15741,12 +15741,12 @@ void ImGui::BeginDockableDragDropTarget(ImGuiWindow* window)
         ImGuiDockNode* node = NULL;
         if (window->DockNodeAsHost)
         {
-            // Cannot assume that node will != NULL even though we passed the rectangle test: it depends on padding/spacing handled by DockNodeTreeFindVisibleNodeByPos().
+            // Cannot assume that node will != NULL even though we passed the rectangle AsyncCreateTerrainMeshInternal: it depends on padding/spacing handled by DockNodeTreeFindVisibleNodeByPos().
             node = DockNodeTreeFindVisibleNodeByPos(window->DockNodeAsHost, g.IO.MousePos);
 
             // There is an edge case when docking into a dockspace which only has _inactive_ nodes (because none of the windows are active)
             // In this case we need to fallback into any leaf mode, possibly the central node.
-            // FIXME-20181220: We should not have to test for IsLeafNode() here but we have another bug to fix first.
+            // FIXME-20181220: We should not have to AsyncCreateTerrainMeshInternal for IsLeafNode() here but we have another bug to fix first.
             if (node && node->IsDockSpace() && node->IsRootNode())
                 node = (node->CentralNode && node->IsLeafNode()) ? node->CentralNode : DockNodeTreeFindFallbackLeafNode(node);
         }
@@ -16984,7 +16984,7 @@ void ImGui::DebugNodeFont(ImFont* font)
         const float cell_spacing = GetStyle().ItemSpacing.y;
         for (unsigned int base = 0; base <= IM_UNICODE_CODEPOINT_MAX; base += 256)
         {
-            // Skip ahead if a large bunch of glyphs are not present in the font (test in chunks of 4k)
+            // Skip ahead if a large bunch of glyphs are not present in the font (AsyncCreateTerrainMeshInternal in chunks of 4k)
             // This is only a small optimization to reduce the number of iterations when IM_UNICODE_MAX_CODEPOINT
             // is large // (if ImWchar==ImWchar32 we will do at least about 272 queries here)
             if (!(base & 4095) && font->IsGlyphRangeUnused(base, base + 4095))

@@ -77,49 +77,37 @@ Resolution LowLvlGfx::GetResolution()
 	return s_dx11->m_resolution;
 }
 
-int LowLvlGfx::GetMemoryUsage()
+MemoryInfo LowLvlGfx::GetMemoryUsage()
 {
 
-	IDXGIDevice* pDXGIDevice = nullptr;
-	HRESULT hr = s_dx11->m_device->QueryInterface(__uuidof(IDXGIDevice), (void**)&pDXGIDevice);
+	IDXGIOutput* outPut = nullptr;
+	HRESULT hr = s_dx11->m_swapChain->GetContainingOutput(&outPut);
+	assert(SUCCEEDED(hr));
+	IDXGIAdapter4* pDXGIAdapter4 = nullptr;
+	hr = outPut->GetParent(__uuidof(IDXGIAdapter4), (void**)&pDXGIAdapter4);
 	assert(SUCCEEDED(hr));
 
-	IDXGIAdapter* pDXGIAdapter = nullptr;
-	hr = pDXGIDevice->GetAdapter(&pDXGIAdapter);
+	DXGI_ADAPTER_DESC3 Adesc;
+	hr = pDXGIAdapter4->GetDesc3(&Adesc);
 	assert(SUCCEEDED(hr));
 
-	IDXGIFactory6* pIDXGIFactory = nullptr;
-	hr = pDXGIAdapter->GetParent(__uuidof(IDXGIFactory6), (void**)&pIDXGIFactory);
-	assert(SUCCEEDED(hr));
-
-	DXGI_QUERY_VIDEO_MEMORY_INFO memInfo;
-
-	UINT i = 0;
-	IDXGIAdapter4* pAdapter;
-	std::vector <IDXGIAdapter4*> vAdapters;
-	while (pIDXGIFactory->EnumAdapterByGpuPreference(
-		i, DXGI_GPU_PREFERENCE ::DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, __uuidof(IDXGIAdapter4),
-		(void**)&pAdapter) != DXGI_ERROR_NOT_FOUND)
-	{
-		vAdapters.push_back(pAdapter);
-		DXGI_ADAPTER_DESC3 Adesc;
-		pAdapter->GetDesc3(&Adesc);
-		pAdapter->QueryVideoMemoryInfo(0, DXGI_MEMORY_SEGMENT_GROUP::DXGI_MEMORY_SEGMENT_GROUP_LOCAL, &memInfo);
-		++i;
-	}
-	for (auto& a : vAdapters)
-	{
-		a->Release();
-	}
+	DXGI_QUERY_VIDEO_MEMORY_INFO dxgimemInfo;
 
 	
-	//hr = pDXGIAdapter->QueryVideoMemoryInfo(0, DXGI_MEMORY_SEGMENT_GROUP::DXGI_MEMORY_SEGMENT_GROUP_LOCAL, &memInfo);
-
-	pIDXGIFactory->Release();
-	pDXGIAdapter->Release();
-	pDXGIDevice->Release();
+	hr = pDXGIAdapter4->QueryVideoMemoryInfo(0, DXGI_MEMORY_SEGMENT_GROUP::DXGI_MEMORY_SEGMENT_GROUP_LOCAL, &dxgimemInfo);
+	assert(SUCCEEDED(hr));
 	
-	return 0;
+	outPut->Release();
+	pDXGIAdapter4->Release();
+
+
+	MemoryInfo memInfo;
+	memInfo.adapterName = std::filesystem::path(Adesc.Description).string(); // wstr to str, with filesystem, haha
+	memInfo.adapterMemory = Adesc.DedicatedVideoMemory;
+	memInfo.memoryBudgetFromOS = dxgimemInfo.Budget;
+	memInfo.applicationMemoryUsage = dxgimemInfo.CurrentUsage;
+	
+	return memInfo;
 }
 
 Microsoft::WRL::ComPtr<IDXGISwapChain>& LowLvlGfx::SwapChain()

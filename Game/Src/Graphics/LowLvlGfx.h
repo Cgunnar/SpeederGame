@@ -15,7 +15,13 @@ struct BufferDesc
 
 };
 
-
+struct MemoryInfo
+{
+	std::string adapterName;
+	uint64_t adapterMemory;
+	uint64_t applicationMemoryUsage;
+	uint64_t memoryBudgetFromOS;
+};
 
 
 class LowLvlGfx
@@ -37,7 +43,7 @@ public:
 	static void LeaveFullScreen();
 	static bool IsFullScreen();
 	static Resolution GetResolution();
-	static int GetMemoryUsage();
+	static MemoryInfo GetMemoryUsage();
 	static Microsoft::WRL::ComPtr<IDXGISwapChain>& SwapChain();
 	static Microsoft::WRL::ComPtr<ID3D11Device>& Device();
 	static Microsoft::WRL::ComPtr<ID3D11DeviceContext>& Context();

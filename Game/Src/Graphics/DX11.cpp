@@ -14,9 +14,10 @@
 #pragma comment( lib, "dxgi.lib")
 
 
-//extern "C" {
-//	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
-//}
+extern "C" {
+	_declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+	__declspec(dllexport) int AmdPowerXpressRequestHighPerformance = 1;
+}
 
 
 using namespace Microsoft::WRL;
@@ -30,9 +31,8 @@ DX11::DX11(HWND hwnd, Resolution res) : m_resolution(res)
 	m_backBuffer = std::make_shared<Texture2D>();
 	m_zBuffer = std::make_shared<Texture2D>();
 	CreateRTVandDSV();
+
 	CheckMonitorRes();
-
-
 	//imgui
 	ImGui_ImplDX11_Init(m_device.Get(), m_context.Get());
 
@@ -149,57 +149,14 @@ void DX11::ResizeTarget(Resolution res)
 void DX11::CheckMonitorRes()
 {
 
-	IDXGIFactory6* pIDXGIFactory6 = nullptr;
-	HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory6), (void**)&pIDXGIFactory6);
-	
-
-	UINT i = 0;
-	IDXGIAdapter4* pDXGIAdapter4;
-	std::vector <IDXGIAdapter4*> vAdapters;
-	while (pIDXGIFactory6->EnumAdapterByGpuPreference(
-		i, DXGI_GPU_PREFERENCE::DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, __uuidof(IDXGIAdapter4),
-		(void**)&pDXGIAdapter4) != DXGI_ERROR_NOT_FOUND)
-	{
-		vAdapters.push_back(pDXGIAdapter4);
-		++i;
-	}
-
-	IDXGIOutput* pDXGIOutput;
-	std::vector <IDXGIOutput*> vOutputs;
-	;
-	for (auto& a : vAdapters)
-	{
-		i = 0;
-		while (a->EnumOutputs(i++, &pDXGIOutput) != DXGI_ERROR_NOT_FOUND)
-		{
-			vOutputs.push_back(pDXGIOutput);
-		}
-	}
-
-	for (auto& o : vOutputs)
-	{
-		o->Release();
-	}
-	for (auto& a : vAdapters)
-	{
-		a->Release();
-	}
-
-
-	pIDXGIFactory6->Release();
-
-	
-
-
-
 	m_nativeRes = {};
-	IDXGIOutput* outPut = nullptr;
-	hr = this->m_swapChain->GetContainingOutput(&outPut);
+	IDXGIOutput* outPut;
+	HRESULT hr = m_swapChain->GetContainingOutput(&outPut);
 	assert(SUCCEEDED(hr));
-
 	DXGI_FORMAT format = DXGI_FORMAT_B8G8R8A8_UNORM;
 
 	UINT numModes = 0;
+
 	hr = outPut->GetDisplayModeList(format, 0, &numModes, 0);
 	assert(SUCCEEDED(hr));
 	std::vector<DXGI_MODE_DESC> modeVec;
@@ -207,19 +164,27 @@ void DX11::CheckMonitorRes()
 	hr = outPut->GetDisplayModeList(format, 0, &numModes, modeVec.data());
 	assert(SUCCEEDED(hr));
 
-	/*Logger log = Logger::getLogger();
-	log.setFile("modeList.txt");*/
-	for (UINT i = 0; i < numModes; i++)
-	{
-		if (modeVec[i].Width >= m_nativeRes.width) m_nativeRes.width = modeVec[i].Width;
-		if (modeVec[i].Height >= m_nativeRes.height) m_nativeRes.height = modeVec[i].Height;
-	}
-	outPut->Release();
+	std::sort(modeVec.begin(), modeVec.end(), [](auto a, auto b) {
+		if (a.Width * a.Height > b.Width * b.Height) return true;
+		if (a.Width * a.Height < b.Width * b.Height) return false;
+		return (float)(a.RefreshRate.Numerator / (float)a.RefreshRate.Denominator) >
+			(float)(b.RefreshRate.Numerator / (float)b.RefreshRate.Denominator);
+		});
+
+	m_nativeRes.width = modeVec.front().Width;
+	m_nativeRes.height = modeVec.front().Height;
+	float hz = (float)modeVec.front().RefreshRate.Numerator / (float)modeVec.front().RefreshRate.Denominator;
 
 #ifdef DEBUG
-	std::string debugOut = "Monitor resolution: " + std::to_string(m_nativeRes.width) + "x" + std::to_string(m_nativeRes.height) + "\n";
-	std::cout << debugOut;
+	DXGI_OUTPUT_DESC outDesc;
+	outPut->GetDesc(&outDesc);
+	std::wstring name = outDesc.DeviceName;
+	std::wstring debugOut = name + L" Best Mode: resolution: " + std::to_wstring(m_nativeRes.width) + L"x" + std::to_wstring(m_nativeRes.height) +
+		L" hz: " + std::to_wstring(hz) + L"\n";
+	std::wcout << debugOut;
 #endif // DEBUG
+
+	outPut->Release();
 }
 
 uint32_t DX11::CreateShader(Microsoft::WRL::ComPtr<ID3DBlob> blob, ShaderType type)
@@ -340,6 +305,65 @@ bool DX11::IsFullScreen()
 	return (bool)this->m_fullScreen;
 }
 
+Microsoft::WRL::ComPtr<IDXGIOutput> DX11::GetOutPut()
+{
+	assert(false);
+	IDXGIFactory6* pIDXGIFactory6 = nullptr;
+	HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory6), (void**)&pIDXGIFactory6);
+
+
+	UINT index = 0;
+	IDXGIAdapter4* pDXGIAdapter4;
+	std::vector <IDXGIAdapter4*> vAdapters;
+	while (pIDXGIFactory6->EnumAdapterByGpuPreference(
+		index++, DXGI_GPU_PREFERENCE::DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, __uuidof(IDXGIAdapter4),
+		(void**)&pDXGIAdapter4) != DXGI_ERROR_NOT_FOUND)
+	{
+		vAdapters.push_back(pDXGIAdapter4);
+	}
+
+	IDXGIOutput* pDXGIOutput;
+	std::vector<IDXGIOutput*> vOutputs;
+	std::vector<UINT> adaptersWithOutPutIndex;
+	
+	for (UINT i = 0; i < vAdapters.size(); i++)
+	{
+		index = 0;
+		bool adapterHasOutput = false;
+		while (vAdapters[i]->EnumOutputs(index++, &pDXGIOutput) != DXGI_ERROR_NOT_FOUND)
+		{
+			DXGI_ADAPTER_DESC3 adapterDesc;
+			vAdapters[i]->GetDesc3(&adapterDesc);
+			DXGI_OUTPUT_DESC outDesc;
+			pDXGIOutput->GetDesc(&outDesc);
+			vOutputs.push_back(pDXGIOutput);
+			adapterHasOutput = true;
+		}
+
+		if (adapterHasOutput)
+		{
+			adaptersWithOutPutIndex.push_back(i);
+		}
+	}
+
+	assert(adaptersWithOutPutIndex.size() == 1);
+	
+	for (auto& o : vOutputs)
+	{
+		o->Release();
+	}
+	for (auto& a : vAdapters)
+	{
+		a->Release();
+	}
+
+
+	pIDXGIFactory6->Release();
+
+
+	return Microsoft::WRL::ComPtr<IDXGIOutput>();
+}
+
 
 
 void  DX11::CreateDeviceAndSwapChain(HWND hwnd, Resolution res)
@@ -362,7 +386,7 @@ void  DX11::CreateDeviceAndSwapChain(HWND hwnd, Resolution res)
 	deviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif // _DEBUG
 
-	hr = D3D11CreateDevice(pDXGIAdapter4, D3D_DRIVER_TYPE_UNKNOWN, nullptr, deviceFlags, nullptr, 0, D3D11_SDK_VERSION, &m_device, nullptr, &m_context);
+	hr = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, deviceFlags, nullptr, 0, D3D11_SDK_VERSION, &m_device, nullptr, &m_context);
 	assert(SUCCEEDED(hr));
 
 	DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
@@ -385,28 +409,10 @@ void  DX11::CreateDeviceAndSwapChain(HWND hwnd, Resolution res)
 	assert(SUCCEEDED(hr));
 #endif // D3D11_DEBUG
 
-
-
-	IDXGIDevice* pDXGIDevice = nullptr;
-	hr = m_device->QueryInterface(__uuidof(IDXGIDevice), (void**)&pDXGIDevice);
-	assert(SUCCEEDED(hr));
-
-	IDXGIAdapter* pDXGIAdapter = nullptr;
-	hr = pDXGIDevice->GetAdapter(&pDXGIAdapter);
-	assert(SUCCEEDED(hr));
-
-	IDXGIFactory* pIDXGIFactory = nullptr;
-	hr = pDXGIAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&pIDXGIFactory);
-	assert(SUCCEEDED(hr));
-
 	hr = pIDXGIFactory6->CreateSwapChain(m_device.Get(), &swapChainDesc, &m_swapChain);
 	assert(SUCCEEDED(hr));
 
 	pIDXGIFactory6->MakeWindowAssociation(hwnd, DXGI_MWA_NO_ALT_ENTER);
-
-	pIDXGIFactory->Release();
-	pDXGIAdapter->Release();
-	pDXGIDevice->Release();
 
 	pDXGIAdapter4->Release();
 	pIDXGIFactory6->Release();

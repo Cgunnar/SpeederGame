@@ -46,7 +46,7 @@ Application::~Application()
 
 void Application::Run()
 {
-	LowLvlGfx::GetMemoryUsage();
+	
 	bool running = true;
 	while (running)
 	{
@@ -68,6 +68,10 @@ void Application::Run()
 
 		m_scene->Update(static_cast<float>(FrameTimer::dt()));
 		
+		MemoryInfo memInfo = LowLvlGfx::GetMemoryUsage();
+		ImGui::Text(memInfo.adapterName.c_str());
+		ImGui::Text("vram usage: %ul", memInfo.applicationMemoryUsage);
+
 		m_renderer->RenderBegin(m_scene->GetCamera());
 		m_renderer->RenderSkyBox(m_scene->sky);
 		m_renderer->Render(m_scene->GetCamera(), m_scene->sunLight.GetComponent<DirectionalLightComp>()->dirLight);

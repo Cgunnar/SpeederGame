@@ -26,6 +26,7 @@ private:
 	HWND m_hWnd;
 	bool m_isClosed = false;
 	bool m_isStarting = true;
+	bool m_wasFullscreenWhenOnOutOfFocus = false;
 
 	std::vector<unsigned char> m_ridData;
 };

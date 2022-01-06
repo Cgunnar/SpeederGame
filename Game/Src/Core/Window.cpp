@@ -165,18 +165,25 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_ACTIVATEAPP:
 	{
 		DirectX::Keyboard::ProcessMessage(uMsg, wParam, lParam);
-		//DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
 
 		if (!Input::Valid()) return 0;
 		Mouse& mouse = Input::Get().GetMouse();
 		if (wParam)
 		{
-			//this->GetGraphics().SetFullScreen(this->GetGraphics().ShouldBeFullScreen());
+			if (LowLvlGfx::IsValid() && m_wasFullscreenWhenOnOutOfFocus)
+			{
+				LowLvlGfx::EnterFullScreen();
+			}
 			mouse.m_windowOutOfFocus = false; //window is a friend of mouse to fix alt tab
 			mouse.confineCursor(mouse.m_cursorIsConfined);
 		}
 		else
 		{
+			if (LowLvlGfx::IsValid())
+			{
+				m_wasFullscreenWhenOnOutOfFocus = LowLvlGfx::IsFullScreen();
+			}
+			
 			mouse.m_windowOutOfFocus = true;
 		}
 		return 0;
@@ -208,7 +215,6 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
 		mouse.m_mouseState0.LMBClicked = true;
 		mouse.m_mouseState0.LMBHeld = true;
-		//print("MousePos:  \n");
 		break;
 	}
 
@@ -228,7 +234,6 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
 		mouse.m_mouseState0.RMBClicked = true;
 		mouse.m_mouseState0.RMBHeld = true;
-		//print("MousePos:  \n");
 		break;
 	}
 
@@ -262,8 +267,6 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			if (rawMouseInput.data.mouse.lLastX || rawMouseInput.data.mouse.lLastY)
 			{
-				/*myMouse->m_mouseState.deltaX = static_cast<float>(rawMouseInput.data.mouse.lLastX);
-				myMouse->m_mouseState.deltaY = static_cast<float>(rawMouseInput.data.mouse.lLastY);*/
 				myMouse->m_mouseState0.deltaX += static_cast<float>(rawMouseInput.data.mouse.lLastX);
 				myMouse->m_mouseState0.deltaY += static_cast<float>(rawMouseInput.data.mouse.lLastY);
 			}
@@ -303,44 +306,8 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			m_firstActivate = true;
 			break;
 		}
-		//if (wParam == WA_INACTIVE)
-		//{
-		//	// Changes to absolute WITHOUT changing internal 'code'.
-		//	// This handles the case where the player alt+tabs without opening the menu
-		//	// Internal state --> relative but we purposefully set the mode to absolute
-		//	// So when we get back into the game, it returns back to relative.
-		//	Input::getInput().setModeAbsolute();
-		//	return 0;
-		//}
-		//if (wParam == WA_ACTIVE)
-		//{
-		//	// If alt+tabbed with relative --> get back in relative
-		//	if (Input::getInput().getLatestCode() == 2)
-		//		Input::getInput().SetMouseState(2);
-		//	else // If alt+tabbed with absolute --> get back in absolute
-		//		Input::getInput().SetMouseState(1);
-
-		//	return 0;
-		//}
 		return 0;
 	}
-	/*case WM_INPUT:
-	case WM_MOUSEMOVE:
-	case WM_LBUTTONDOWN:
-	case WM_LBUTTONUP:
-	case WM_RBUTTONDOWN:
-	case WM_RBUTTONUP:
-	case WM_MBUTTONDOWN:
-	case WM_MBUTTONUP:
-	case WM_MOUSEWHEEL:
-	case WM_XBUTTONDOWN:
-	case WM_XBUTTONUP:
-	case WM_MOUSEHOVER:
-	{
-		DirectX::Mouse::ProcessMessage(uMsg, wParam, lParam);
-		return 0;
-	}*/
-
 	}
 	return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }

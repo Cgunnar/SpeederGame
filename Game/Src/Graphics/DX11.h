@@ -99,6 +99,4 @@ class DX11
 
 	void ResizeTarget(Resolution res);
 	bool IsFullScreen();
-	Microsoft::WRL::ComPtr<IDXGIOutput> GetOutPut();
-
 };

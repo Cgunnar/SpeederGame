@@ -305,65 +305,6 @@ bool DX11::IsFullScreen()
 	return (bool)this->m_fullScreen;
 }
 
-Microsoft::WRL::ComPtr<IDXGIOutput> DX11::GetOutPut()
-{
-	assert(false);
-	IDXGIFactory6* pIDXGIFactory6 = nullptr;
-	HRESULT hr = CreateDXGIFactory(__uuidof(IDXGIFactory6), (void**)&pIDXGIFactory6);
-
-
-	UINT index = 0;
-	IDXGIAdapter4* pDXGIAdapter4;
-	std::vector <IDXGIAdapter4*> vAdapters;
-	while (pIDXGIFactory6->EnumAdapterByGpuPreference(
-		index++, DXGI_GPU_PREFERENCE::DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, __uuidof(IDXGIAdapter4),
-		(void**)&pDXGIAdapter4) != DXGI_ERROR_NOT_FOUND)
-	{
-		vAdapters.push_back(pDXGIAdapter4);
-	}
-
-	IDXGIOutput* pDXGIOutput;
-	std::vector<IDXGIOutput*> vOutputs;
-	std::vector<UINT> adaptersWithOutPutIndex;
-	
-	for (UINT i = 0; i < vAdapters.size(); i++)
-	{
-		index = 0;
-		bool adapterHasOutput = false;
-		while (vAdapters[i]->EnumOutputs(index++, &pDXGIOutput) != DXGI_ERROR_NOT_FOUND)
-		{
-			DXGI_ADAPTER_DESC3 adapterDesc;
-			vAdapters[i]->GetDesc3(&adapterDesc);
-			DXGI_OUTPUT_DESC outDesc;
-			pDXGIOutput->GetDesc(&outDesc);
-			vOutputs.push_back(pDXGIOutput);
-			adapterHasOutput = true;
-		}
-
-		if (adapterHasOutput)
-		{
-			adaptersWithOutPutIndex.push_back(i);
-		}
-	}
-
-	assert(adaptersWithOutPutIndex.size() == 1);
-	
-	for (auto& o : vOutputs)
-	{
-		o->Release();
-	}
-	for (auto& a : vAdapters)
-	{
-		a->Release();
-	}
-
-
-	pIDXGIFactory6->Release();
-
-
-	return Microsoft::WRL::ComPtr<IDXGIOutput>();
-}
-
 
 
 void  DX11::CreateDeviceAndSwapChain(HWND hwnd, Resolution res)

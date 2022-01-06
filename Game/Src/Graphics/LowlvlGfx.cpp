@@ -100,7 +100,6 @@ MemoryInfo LowLvlGfx::GetMemoryUsage()
 	outPut->Release();
 	pDXGIAdapter4->Release();
 
-
 	MemoryInfo memInfo;
 	memInfo.adapterName = std::filesystem::path(Adesc.Description).string(); // wstr to str, with filesystem, haha
 	memInfo.adapterMemory = Adesc.DedicatedVideoMemory;

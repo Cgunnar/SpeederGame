@@ -70,7 +70,7 @@ void Application::Run()
 		
 		MemoryInfo memInfo = LowLvlGfx::GetMemoryUsage();
 		ImGui::Text(memInfo.adapterName.c_str());
-		ImGui::Text("vram usage: %ul", memInfo.applicationMemoryUsage);
+		ImGui::Text("vram usage: %u MB", memInfo.applicationMemoryUsage / 1000000);
 
 		m_renderer->RenderBegin(m_scene->GetCamera());
 		m_renderer->RenderSkyBox(m_scene->sky);

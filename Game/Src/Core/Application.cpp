@@ -66,6 +66,14 @@ void Application::Run()
 			m_scene->GetCamera().GetComponent<CameraControllerScript>()->ToggleCameraLock();
 		}
 
+		if (Input::Get().keyPressed(Input::F11) && LowLvlGfx::IsValid())
+		{
+			if (LowLvlGfx::IsFullScreen())
+				LowLvlGfx::LeaveFullScreen();
+			else
+				LowLvlGfx::EnterFullScreen();
+		}
+
 		m_scene->Update(static_cast<float>(FrameTimer::dt()));
 		
 		MemoryInfo memInfo = LowLvlGfx::GetMemoryUsage();

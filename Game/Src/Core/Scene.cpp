@@ -28,9 +28,10 @@ Scene::Scene()
 	terrDesc.scale = 27.6f;
 	terrDesc.offset = {0,0};
 	terrDesc.seed = 32;
-	terrDesc.bioms.emplace_back("water", Vector3(0,0,1), 0.3f, true);
-	terrDesc.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.5);
-	terrDesc.bioms.emplace_back("mountain", 0.2f, 1);
+	terrDesc.bioms.emplace_back("water", Vector3(0,0,1), 0, true);
+	terrDesc.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.3f);
+	terrDesc.bioms.emplace_back("mountain", 0.2f, 0.5f);
+	terrDesc.bioms.emplace_back("mountain_snow", 0.9f, 0.95f);
 
 	m_terrain = EntityReg::CreateEntity();
 	m_terrain.AddComponent<TransformComp>()->transform.setScale(0.01f);

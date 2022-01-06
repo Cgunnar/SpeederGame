@@ -154,6 +154,7 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		auto res = GetClientSize();
 		assert(width == res.width && height == res.height);
 
+		if (res.width == 0 || res.height == 0) return 0; 
 		LowLvlGfx::OnResize(res);
 		if (Input::Valid())
 		{
@@ -279,17 +280,6 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	case WM_KEYDOWN:
 	case WM_SYSKEYDOWN:
 	{
-		if (wParam == VK_F11 && LowLvlGfx::IsValid())
-		{
-			if (LowLvlGfx::IsFullScreen())
-				LowLvlGfx::LeaveFullScreen();
-			else
-				LowLvlGfx::EnterFullScreen();
-		}
-		/*if (wParam == VK_ESCAPE && Input::Valid())
-		{
-			Input::getInput().SetMouseState();
-		}*/
 		DirectX::Keyboard::ProcessMessage(uMsg, wParam, lParam);
 		return 0;
 	}

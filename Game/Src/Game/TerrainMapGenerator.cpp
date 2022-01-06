@@ -40,12 +40,23 @@ TerrainMap TerrainMapGenerator::GenerateTerrinMap(const TerrainMapDesc& mapDesc)
 	colorMap.resize(chunkSize * (size_t)chunkSize);
 	for (int i = 0; i < chunkSize * chunkSize; i++)
 	{
-		for (auto& b : mapDesc.bioms)
+		for (int j = 0; j < mapDesc.bioms.size(); j++)
 		{
-			if (map.heightMap[i] <= b.threshold)
+			if (map.heightMap[i] >= mapDesc.bioms[j].threshold && j < mapDesc.bioms.size() - 1)
 			{
-				if(b.flat) map.heightMap[i] = b.threshold;
-				colorMap[i] = Vector4(b.color, 1);
+				if (map.heightMap[i] < mapDesc.bioms[(size_t)j + 1].threshold)
+				{
+					if(mapDesc.bioms[j].flat) map.heightMap[i] = mapDesc.bioms[j].threshold;
+					colorMap[i] = Vector4(mapDesc.bioms[j].color, 1);
+				}
+			}
+			else if (map.heightMap[i] >= mapDesc.bioms[j].threshold)
+			{
+				if (mapDesc.bioms[j].flat) map.heightMap[i] = mapDesc.bioms[j].threshold;
+				colorMap[i] = Vector4(mapDesc.bioms[j].color, 1);
+			}
+			else
+			{
 				break;
 			}
 		}
@@ -142,6 +153,7 @@ std::vector<float> TerrainMapGenerator::GenerateNoise(int width, int height, flo
 	for (int i = 0; i < height * width; i++)
 	{
 		float normNoise = (noise[i] + 1) / (2 * maxHeight / 2.0f);
+		//normNoise = std::clamp(normNoise, 0.0f, std::numeric_limits<float>::max());
 		noise[i] = normNoise;
  		//noise[i] = rfm::InvLerp(minNoise, maxNoise, noise[i]);
 	}

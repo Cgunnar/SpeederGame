@@ -34,7 +34,7 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, std::vector<LODinfo> l
 	m_material.name = "TerrainChunk " + std::to_string(coord.x) + ", " + std::to_string(coord.y);
 	m_material.baseColorFactor = 1;
 	m_material.emissiveFactor = 0;
-	m_material.properties = MaterialProperties::WIREFRAME;
+	//m_material.properties = MaterialProperties::WIREFRAME;
 	auto rc = m_chunkEntity.AddComponent<RenderModelComp>();
 	rc->SetRenderUnit(AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV), m_material, false);
 }
@@ -89,25 +89,8 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 			m_material.emissiveFactor = 0;
 
 			m_checkForLoadedTerrainMap = false;
-
-			/*TerrainMeshDesc meshDesc;
-			meshDesc.heightScaleFunc = [](float in) {return in <= 0.3f ? 0.3f * 0.3f : in * in; };
-			meshDesc.LOD = 0;
-
-			TerrainMeshGenerator::AsyncCreateTerrainMesh(*optMap, [&](TerrainMesh&& mesh) {
-				OnReceive(std::move(mesh));
-				}, meshDesc);*/
-
 		}
 	}
-
-	/*if (m_createRenderMesh)
-	{
-
-		m_chunkEntity.GetComponent<RenderModelComp>()->SetRenderUnit(SubMesh(m_mesh.verticesTBN, m_mesh.indices), m_material);
-		m_createRenderMesh = false;
-		m_mesh = TerrainMesh();
-	}*/
 
 	auto rc = m_chunkEntity.GetComponent<RenderModelComp>();// ->visible = m_visible;
 

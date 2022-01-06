@@ -19,7 +19,6 @@ private:
 		rfm::Vector2 offset, uint32_t seed);
 
 	static void AsyncGenerateTerrinMapInternal(const TerrainMapDesc& mapDesc, rfm::Vector2I coord);
-	static void JoinThreads();
 
 	static std::unordered_map<rfm::Vector2I, TerrainMap> s_terrainMapHolder;
 	static std::mutex s_mapMutex;

@@ -18,13 +18,10 @@ std::unordered_map<rfm::Vector2I, TerrainMap> TerrainMapGenerator::s_terrainMapH
 
 void TerrainMapGenerator::AsyncGenerateTerrinMapInternal(const TerrainMapDesc& mapDesc, rfm::Vector2I coord)
 {
-	//TerrainMap&& newMap = TerrainMapGenerator::GenerateTerrinMap(mapDesc);
-	TerrainMap newMap = TerrainMapGenerator::GenerateTerrinMap(mapDesc);
-
+	TerrainMap&& newMap = TerrainMapGenerator::GenerateTerrinMap(mapDesc);
 	assert(!s_terrainMapHolder.contains(coord));
 	s_mapMutex.lock();
-	//s_terrainMapHolder[coord] = std::move(newMap);
-	s_terrainMapHolder[coord] = newMap;
+	s_terrainMapHolder[coord] = std::move(newMap);
 	s_mapMutex.unlock();
 }
 
@@ -94,9 +91,9 @@ std::vector<float> TerrainMapGenerator::GenerateNoise(int width, int height, flo
 	Vector2* octRandOffsets = new Vector2[octaves]();
 	for (int i = 0; i < octaves; i++)
 	{
-		//octRandOffsets[i].x = GenRandFloat(-10000, 10000, seed + i);
+		octRandOffsets[i].x = GenRandFloat(-10000, 10000, seed + i);
+		octRandOffsets[i].y = GenRandFloat(-10000, 10000, octRandOffsets[i].x);
 		octRandOffsets[i].x += offset.x;
-		//octRandOffsets[i].y = GenRandFloat(-10000, 10000, seed + i);
 		octRandOffsets[i].y -= offset.y;
 	}
 

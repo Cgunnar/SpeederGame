@@ -318,8 +318,6 @@ void  DX11::CreateDeviceAndSwapChain(HWND hwnd, Resolution res)
 		__uuidof(IDXGIAdapter4), (void**)&pDXGIAdapter4);
 	DXGI_ADAPTER_DESC3 Adesc;
 	pDXGIAdapter4->GetDesc3(&Adesc);
-	DXGI_QUERY_VIDEO_MEMORY_INFO memInfo;
-	pDXGIAdapter4->QueryVideoMemoryInfo(0, DXGI_MEMORY_SEGMENT_GROUP::DXGI_MEMORY_SEGMENT_GROUP_LOCAL, &memInfo);
 	std::wcout << Adesc.Description << std::endl;
 
 	UINT deviceFlags = D3D11_CREATE_DEVICE_SINGLETHREADED;

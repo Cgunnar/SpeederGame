@@ -22,27 +22,27 @@ Scene::Scene()
 {
 	AssetManager& am = AssetManager::Get();
 
-	TerrainDesc terrDesc;
-	terrDesc.lacunarity = 2;
-	terrDesc.octaves = 4;
-	terrDesc.frequencyScale = 27.6f;
-	terrDesc.baseOffset = {0,0};
-	terrDesc.seed = 32;
-	terrDesc.heightScaleFunc = [](float in) {return in <= 0.3f ? 0.3f * 0.3f : in * in; };
-	terrDesc.heightScale = 10;
-	terrDesc.bioms.emplace_back("water", Vector3(0,0,1), 0, true);
-	terrDesc.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.3f);
-	terrDesc.bioms.emplace_back("mountain", 0.2f, 0.5f);
-	terrDesc.bioms.emplace_back("mountain_snow", 0.9f, 0.95f);
-	terrDesc.LODs.push_back({ .lod = 0, .visDistThrhold = 200 });
-	terrDesc.LODs.push_back({ .lod = 1, .visDistThrhold = 400 });
-	terrDesc.LODs.push_back({ .lod = 3, .visDistThrhold = 600 });
-	terrDesc.LODs.push_back({ .lod = 6, .visDistThrhold = 800 });
+	m_terrDesc.lacunarity = 2;
+	m_terrDesc.octaves = 8;
+	m_terrDesc.persistence = 0.5f;
+	m_terrDesc.frequencyScale = 50;
+	m_terrDesc.baseOffset = {0,0};
+	m_terrDesc.seed = 32;
+	m_terrDesc.heightScaleFunc = [](float in) {return in <= 0.3f ? 0.3f * 0.3f : in * in; };
+	m_terrDesc.heightScale = 50;
+	m_terrDesc.bioms.emplace_back("water", Vector3(0,0,1), 0, true);
+	m_terrDesc.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.3f);
+	m_terrDesc.bioms.emplace_back("mountain", 0.2f, 0.5f);
+	m_terrDesc.bioms.emplace_back("mountain_snow", 0.9f, 0.95f);
+	m_terrDesc.LODs.push_back({ .lod = 0, .visDistThrhold = 200 });
+	m_terrDesc.LODs.push_back({ .lod = 1, .visDistThrhold = 400 });
+	m_terrDesc.LODs.push_back({ .lod = 3, .visDistThrhold = 600 });
+	m_terrDesc.LODs.push_back({ .lod = 6, .visDistThrhold = 800 });
 
 	m_terrain = EntityReg::CreateEntity();
-	m_terrain.AddComponent<TransformComp>()->transform.setScale(0.2f);
+	m_terrain.AddComponent<TransformComp>()->transform.setScale(1.0f);
 	m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, -10, 0);
-	m_terrain.AddComponent<TerrainScript>(terrDesc);
+	m_terrain.AddComponent<TerrainScript>(m_terrDesc);
 
 
 	CreateEntityModel("Assets/Models/brick_wall/brick_wall.obj", {0, -1, 0}, { 90, 0, 0 }, 10);
@@ -76,9 +76,9 @@ Scene::Scene()
 
 
 	CreateEntityModel("Assets/Models/MetalRoughSpheres/glTF/pbrSpheres.gltf", { -2, 3, 4 }, { 0, 0, 0 }, 0.2f);
-	CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 4, 2, 2 }, 0, 0.03f);
+	/*CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 4, 2, 2 }, 0, 0.03f);
 	CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 3, 2, 4 }, { 0,-70, 0 }, 0.03f);
-	CreateEntityModel("Assets/Models/nanosuit/nanosuit.obj", { 2, 1, 5 }, 0, 0.1f);
+	CreateEntityModel("Assets/Models/nanosuit/nanosuit.obj", { 2, 1, 5 }, 0, 0.1f);*/
 
 
 	m_arrow = EntityReg::CreateEntity();
@@ -137,6 +137,18 @@ void Scene::Update(float dt)
 
 
 	EntityReg::RunScripts<CameraControllerScript, ShipContollerScript, TerrainScript>(dt);
+
+	if (Input::Get().keyPressed(Input::T))
+	{
+		if (m_terrain.GetComponent<TerrainScript>())
+		{
+			m_terrain.RemoveComponent<TerrainScript>();
+		}
+		else
+		{
+			m_terrain.AddComponent<TerrainScript>(m_terrDesc);
+		}
+	}
 
 	Transform followShip = m_ship.GetComponent<TransformComp>()->transform;
 	followShip.translateL(0, 1, -4);

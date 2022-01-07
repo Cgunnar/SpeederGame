@@ -136,7 +136,6 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		m_isClosed = true;
 		std::cout << "WM_CLOSE" << std::endl;
-		//Input::getInput().SetMouseState(2);
 		DestroyWindow(hwnd);
 		return 0;
 	}
@@ -206,8 +205,9 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (!Input::Valid()) return 0;
 		Mouse& mouse = Input::Get().GetMouse();
 		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
-		mouse.m_mouseState0.z += GET_WHEEL_DELTA_WPARAM(wParam);
-		break;
+		mouse.m_mouseState0.z += GET_WHEEL_DELTA_WPARAM(wParam)/120;
+		mouse.m_mouseState0.deltaZ += GET_WHEEL_DELTA_WPARAM(wParam)/120;
+		return 0;
 	}
 	case WM_LBUTTONDOWN:
 	{
@@ -216,7 +216,7 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
 		mouse.m_mouseState0.LMBClicked = true;
 		mouse.m_mouseState0.LMBHeld = true;
-		break;
+		return 0;
 	}
 
 	case WM_LBUTTONUP:
@@ -226,7 +226,7 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
 		mouse.m_mouseState0.LMBReleased = true;
 		mouse.m_mouseState0.LMBHeld = false;
-		break;
+		return 0;
 	}
 	case WM_RBUTTONDOWN:
 	{
@@ -235,7 +235,7 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
 		mouse.m_mouseState0.RMBClicked = true;
 		mouse.m_mouseState0.RMBHeld = true;
-		break;
+		return 0;
 	}
 
 	case WM_RBUTTONUP:
@@ -245,7 +245,7 @@ LRESULT Window::HandleMsg(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (!m_isStarting && !m_isClosed && mouse.m_showCursor && ImGui::GetIO().WantCaptureMouse) return 0;
 		mouse.m_mouseState0.RMBReleased = true;
 		mouse.m_mouseState0.RMBHeld = false;
-		break;
+		return 0;
 	}
 
 	case WM_INPUT:

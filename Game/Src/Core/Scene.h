@@ -5,8 +5,9 @@
 #include "StandardComponents.h"
 #include "RenderComponents.h"
 #include "GuiDebug.h"
-#include "TerrainGUI.h"
+#include "TerreinTypes.h"
 #include "SkyBox.h"
+
 
 class Scene
 {
@@ -21,7 +22,7 @@ public:
 	rfe::Entity sunLight;
 private:
 	rfe::Entity CreateEntityModel(const std::string path, rfm::Vector3 pos = { 0,0,0 }, rfm::Vector3 rotDeg = { 0,0,0 }, rfm::Vector3 scale = { 1,1,1 });
-
+	TerrainDesc m_terrDesc;
 	rfe::Entity m_camera;
 	rfe::Entity m_ship;
 	rfe::Entity m_arrow;

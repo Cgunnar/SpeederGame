@@ -659,13 +659,15 @@ namespace rfe
 	template<typename T>
 	inline void EntityComponentManager::RemoveComponent(EntityID entityID)
 	{
-		removeComponent(T::typeID, entityID);
+		RemoveComponent(T::typeID, entityID);
 	}
 
 	template<typename T>
 	class NativeScriptComponent : public Component<T>
 	{
 	public:
+		bool m_hasStarted = false;
+
 		//helpers functions
 		template<typename T>
 		T* GetComponent()
@@ -690,6 +692,11 @@ namespace rfe
 	{
 		for (auto& script : T::componentArray)
 		{
+			if (!script.m_hasStarted)
+			{
+				script.OnStart();
+				script.m_hasStarted = true;
+			}
 			script.OnUpdate(dt);
 		}
 	}
@@ -705,7 +712,9 @@ namespace rfe
 	{
 		for (auto& script : T::componentArray)
 		{
+			assert(!script.m_hasStarted);
 			script.OnStart();
+			script.m_hasStarted = true;
 		}
 	}
 

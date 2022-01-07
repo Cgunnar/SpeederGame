@@ -416,6 +416,7 @@ void PbrRenderer::RenderPBR_ALBEDO_NOR(RenderFlag flag)
 
 void PbrRenderer::HandleRenderFlag(RenderFlag flag)
 {
+
 	if (RenderFlag::none == flag)
 	{
 		LowLvlGfx::UnBindBlendState();
@@ -430,6 +431,10 @@ void PbrRenderer::HandleRenderFlag(RenderFlag flag)
 	{
 		LowLvlGfx::Bind(m_BlendState);
 	}
+	else
+	{
+		LowLvlGfx::UnBindBlendState();
+	}
 
 	if (((flag & RenderFlag::noBackFaceCull) != 0) && (flag & RenderFlag::wireframe) != 0)
 	{
@@ -442,6 +447,10 @@ void PbrRenderer::HandleRenderFlag(RenderFlag flag)
 	else if ((flag & RenderFlag::wireframe) != 0)
 	{
 		LowLvlGfx::Bind(m_wireframeRasterizer);
+	}
+	else
+	{
+		LowLvlGfx::UnBindRasterizer();
 	}
 
 	if ((flag & RenderFlag::sampler_linear_clamp) != 0)

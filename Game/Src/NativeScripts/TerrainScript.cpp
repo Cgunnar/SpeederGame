@@ -90,7 +90,8 @@ void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 			Vector2I viewedChunk = chunkCoord + Vector2I(x, y);
 			if (m_chunkMap.contains(viewedChunk))
 			{
-				m_chunkMap[viewedChunk]->Update(viewPos, m_maxViewDistance, GetComponent<TransformComp>()->transform);
+				m_chunkMap[viewedChunk]->Update(viewPos, m_maxViewDistance);
+				m_chunkMap[viewedChunk]->UpdateChunkTransform(GetComponent<TransformComp>()->transform);
 				if(m_chunkMap[viewedChunk]->m_visible) m_prevFrameVisibleChunksCoord.push_back(viewedChunk);
 			}
 			else

@@ -29,9 +29,9 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, Transform terrainTrans
 
 	float scale = terrainTransform.getScale().x;
 	m_chunkEntity = EntityReg::CreateEntity();
-	auto& chunkTransform = m_chunkEntity.AddComponent<TransformComp>()->transform;
-	chunkTransform.setTranslation(scale * Vector3(m_position.x, 0, m_position.y));
-	chunkTransform.setScale(scale);
+	m_chunkEntity.AddComponent<TransformComp>()->transform;
+	UpdateChunkTransform(terrainTransform);
+
 
 	m_material.baseColorFactor = 1;
 	m_material.emissiveFactor = 0;
@@ -40,12 +40,8 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, Transform terrainTrans
 	rc->SetRenderUnit(AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV), m_material, false);
 }
 
-void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist, Transform terrainTransform)
+void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 {
-	float scale = terrainTransform.getScale().x;
-	auto transform = m_chunkEntity.GetComponent<TransformComp>();
-	transform->transform.setTranslation(scale * Vector3(m_position.x, 0, m_position.y));
-	transform->transform.setScale(scale);
 	if (m_hasMap)
 	{
 		Vector3 viewPos3D = Vector3(viewPos.x, 0, viewPos.y);
@@ -108,6 +104,14 @@ void TerrainChunk::LoadTerrain(const TerrainMapDesc& desc)
 	d.offset += m_position;
 	TerrainMapGenerator::AsyncGenerateTerrinMap(d, m_coord);
 	m_checkForLoadedTerrainMap = true;
+}
+
+void TerrainChunk::UpdateChunkTransform(rfm::Transform transform)
+{
+	auto& chunkTransform = m_chunkEntity.GetComponent<TransformComp>()->transform;
+	chunkTransform = transform;
+	Transform T;	T.setTranslation(m_position.x, 0, m_position.y);
+	chunkTransform = chunkTransform * T;
 }
 
 rfm::Vector3 NearestPointOnEdgeFromPoint(rfm::Vector3 corners[4], rfm::Vector3 p)

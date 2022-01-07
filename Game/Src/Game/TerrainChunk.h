@@ -12,10 +12,10 @@ class TerrainChunk
 public:
 	TerrainChunk() = default;
 	TerrainChunk(rfm::Vector2I coord, int size, rfm::Transform terrainTransform, TerrainMeshDesc mapDesc, std::vector<LODinfo> lods);
-	void Update(rfm::Vector2 viewPos, float maxViewDist, rfm::Transform terrainTransform);
+	void Update(rfm::Vector2 viewPos, float maxViewDist);
 	void LoadTerrain(const TerrainMapDesc& desc);
+	void UpdateChunkTransform(rfm::Transform transform);
 private:
-
 	rfe::Entity m_chunkEntity;
 	rfm::Vector2I m_coord;
 	rfm::Vector2 m_position;

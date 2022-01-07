@@ -18,8 +18,11 @@ class DX11;
 namespace standardDescriptors
 {
 	extern const D3D11_SAMPLER_DESC g_sample_linear_wrap;
-	extern const D3D11_SAMPLER_DESC g_sample_anisotropic_wrap;
 	extern const D3D11_SAMPLER_DESC g_sample_linear_clamp;
+	extern const D3D11_SAMPLER_DESC g_sample_anisotropic_wrap;
+	extern const D3D11_SAMPLER_DESC g_sample_anisotropic_clamp;
+	extern const D3D11_SAMPLER_DESC g_sample_point_wrap;
+	extern const D3D11_SAMPLER_DESC g_sample_point_clamp;
 }
 
 struct alignas(16) PointLight

@@ -30,7 +30,7 @@ PbrRenderer::PbrRenderer(std::weak_ptr<SharedRenderResources> sharedRes) : m_sha
 	desc.usage = BufferDesc::USAGE::DYNAMIC;
 	m_pbrCB = LowLvlGfx::CreateConstantBuffer(desc);
 
-	m_samplerClamp = LowLvlGfx::Create(standardDescriptors::g_sample_linear_clamp);
+
 	//create blendstate
 	D3D11_BLEND_DESC blendDesc = {};
 	blendDesc.IndependentBlendEnable = TRUE;
@@ -69,9 +69,12 @@ PbrRenderer::PbrRenderer(std::weak_ptr<SharedRenderResources> sharedRes) : m_sha
 	rzDesc.CullMode = D3D11_CULL_BACK;
 	m_wireframeRasterizer = LowLvlGfx::Create(rzDesc);
 
-
-
-
+	m_linearWrapSampler = LowLvlGfx::Create(standardDescriptors::g_sample_linear_wrap);
+	m_linearClampSamplerDefault = LowLvlGfx::Create(standardDescriptors::g_sample_linear_clamp);
+	m_anisotropicWrapSampler = LowLvlGfx::Create(standardDescriptors::g_sample_anisotropic_wrap);
+	m_anisotropicClampSampler = LowLvlGfx::Create(standardDescriptors::g_sample_anisotropic_clamp);
+	m_pointWrapSampler = LowLvlGfx::Create(standardDescriptors::g_sample_point_wrap);
+	m_pointClampSampler = LowLvlGfx::Create(standardDescriptors::g_sample_point_clamp);
 
 	D3D11_SAMPLER_DESC samplerDesc = {
 		.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR,
@@ -87,7 +90,6 @@ PbrRenderer::PbrRenderer(std::weak_ptr<SharedRenderResources> sharedRes) : m_sha
 	};
 
 	m_shadowMapSampler = LowLvlGfx::Create(samplerDesc);
-	m_anisotropic_wrapSampler = LowLvlGfx::Create(standardDescriptors::g_sample_anisotropic_wrap);
 }
 
 void PbrRenderer::SetDiffuseIrradianceCubeMap(std::shared_ptr<Texture2D> irrMap)
@@ -154,11 +156,11 @@ void PbrRenderer::Render(const VP& viewAndProjMatrix, rfe::Entity& camera, Rende
 	LowLvlGfx::Bind(rendRes->m_shadowMapViewProjCB, ShaderType::PIXELSHADER, 4);
 	LowLvlGfx::Bind(rendRes->m_vpCB, ShaderType::VERTEXSHADER, 1);
 	LowLvlGfx::Bind(rendRes->m_vpCB, ShaderType::PIXELSHADER, 1);
-	LowLvlGfx::Bind(rendRes->m_linearWrapSampler, ShaderType::PIXELSHADER, 0);
-	LowLvlGfx::Bind(m_anisotropic_wrapSampler, ShaderType::PIXELSHADER, 3);
-	LowLvlGfx::Bind(m_samplerClamp, ShaderType::PIXELSHADER, 2);
+	
+	
+	LowLvlGfx::Bind(m_linearWrapSampler, ShaderType::PIXELSHADER, 0);
+	LowLvlGfx::Bind(m_linearClampSamplerDefault, ShaderType::PIXELSHADER, 2);
 	LowLvlGfx::Bind(m_shadowMapSampler, ShaderType::PIXELSHADER, 4);
-
 	LowLvlGfx::BindSRV(m_splitSumLookUpMap, ShaderType::PIXELSHADER, 4);
 	LowLvlGfx::BindSRV(m_specCubeMap, ShaderType::PIXELSHADER, 5);
 	LowLvlGfx::BindSRV(m_irradSkyMap, ShaderType::PIXELSHADER, 6);
@@ -418,6 +420,7 @@ void PbrRenderer::HandleRenderFlag(RenderFlag flag)
 	{
 		LowLvlGfx::UnBindBlendState();
 		LowLvlGfx::UnBindRasterizer();
+		LowLvlGfx::Bind(m_linearClampSamplerDefault, ShaderType::PIXELSHADER, 3);
 	}
 	if ((flag & RenderFlag::alphaToCov) != 0)
 	{
@@ -440,5 +443,31 @@ void PbrRenderer::HandleRenderFlag(RenderFlag flag)
 	{
 		LowLvlGfx::Bind(m_wireframeRasterizer);
 	}
+
+	if ((flag & RenderFlag::sampler_linear_clamp) != 0)
+	{
+		LowLvlGfx::Bind(m_linearClampSamplerDefault, ShaderType::PIXELSHADER, 3);
+	}
+	else if ((flag & RenderFlag::sampler_linear_wrap) != 0)
+	{
+		LowLvlGfx::Bind(m_linearWrapSampler, ShaderType::PIXELSHADER, 3);
+	}
+	else if ((flag & RenderFlag::sampler_anisotropic_wrap) != 0)
+	{
+		LowLvlGfx::Bind(m_anisotropicWrapSampler, ShaderType::PIXELSHADER, 3);
+	}
+	else if ((flag & RenderFlag::sampler_anisotropic_clamp) != 0)
+	{
+		LowLvlGfx::Bind(m_anisotropicClampSampler, ShaderType::PIXELSHADER, 3);
+	}
+	else if ((flag & RenderFlag::sampler_point_wrap) != 0)
+	{
+		LowLvlGfx::Bind(m_pointWrapSampler, ShaderType::PIXELSHADER, 3);
+	}
+	else if ((flag & RenderFlag::sampler_point_clamp) != 0)
+	{
+		LowLvlGfx::Bind(m_pointClampSampler, ShaderType::PIXELSHADER, 3);
+	}
+
 
 }

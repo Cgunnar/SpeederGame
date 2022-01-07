@@ -19,9 +19,13 @@ private:
 	std::shared_ptr<Texture2D> m_specCubeMap;
 	std::shared_ptr<Texture2D> m_splitSumLookUpMap;
 
-	Sampler m_samplerClamp;
+	Sampler m_linearClampSamplerDefault;
+	Sampler m_linearWrapSampler;
 	Sampler m_shadowMapSampler;
-	Sampler m_anisotropic_wrapSampler;
+	Sampler m_anisotropicWrapSampler;
+	Sampler m_anisotropicClampSampler;
+	Sampler m_pointWrapSampler;
+	Sampler m_pointClampSampler;
 	ConstantBuffer m_pbrCB;
 	Rasterizer m_noBackFaceCullRasterizer;
 	Rasterizer m_noBackFaceCullAndWireframeRasterizer;

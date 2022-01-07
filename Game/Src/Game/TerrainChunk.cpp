@@ -34,8 +34,9 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, std::vector<LODinfo> l
 	m_material.name = "TerrainChunk " + std::to_string(coord.x) + ", " + std::to_string(coord.y);
 	m_material.baseColorFactor = 1;
 	m_material.emissiveFactor = 0;
-	//m_material.properties = MaterialProperties::WIREFRAME;
-	m_material.flags = RenderFlag::wireframe;
+	//m_material.flags |= RenderFlag::wireframe;
+	//m_material.flags |= RenderFlag::sampler_anisotropic_clamp;
+	m_material.flags |= RenderFlag::sampler_point_clamp;
 	auto rc = m_chunkEntity.AddComponent<RenderModelComp>();
 	rc->SetRenderUnit(AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV), m_material, false);
 }

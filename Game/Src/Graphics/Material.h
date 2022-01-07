@@ -10,9 +10,13 @@ enum class RenderFlag
 	noBackFaceCull = 1 << 2,
 	alphaToCov = 1 << 3,
 	alphaBlend = 1 << 4,
-	sampler_wrap = 1 << 5,
-	sampler_clamp = 1 << 6,
-	end = 1 << 7,
+	sampler_linear_wrap = 1 << 5,
+	sampler_linear_clamp = 1 << 6,
+	sampler_anisotropic_wrap = 1 << 7,
+	sampler_anisotropic_clamp = 1 << 8,
+	sampler_point_wrap = 1 << 9,
+	sampler_point_clamp = 1 << 10,
+	end = 1 << 11,
 };
 inline RenderFlag operator &(RenderFlag l, RenderFlag r)
 {

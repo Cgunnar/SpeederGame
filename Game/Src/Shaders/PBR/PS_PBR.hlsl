@@ -9,10 +9,10 @@ TextureCube skyIrrMap : register(t6);
 Texture2D shadowMap : register(t7);
 
 
-SamplerState mySampler : register(s0);
+SamplerState linearWrapSampler : register(s0);
 SamplerState skyMapSampler : register(s1);
 SamplerState splitSumLookUpSampler : register(s2);
-SamplerState anisotropicWrapSampler : register(s3);
+SamplerState renderPassSpecificSampler : register(s3);
 SamplerState shadowMapSampler : register(s4);
 
 
@@ -168,14 +168,14 @@ float4 main(vs_out input) : SV_TARGET
     float alpha = albedoFactor.a;
     
 #ifdef ALBEDO_TEXTURE
-    float4 albedoTextureVal = albedoTexture.Sample(anisotropicWrapSampler, input.textureUV);
+    float4 albedoTextureVal = albedoTexture.Sample(renderPassSpecificSampler, input.textureUV);
     albedo *= albedoTextureVal.rgb;
     alpha *= albedoTextureVal.a;
 #endif
     
     
 #ifndef NO_METALLIC_ROUGHNESS_TEXTURE
-    float4 metallicRoughnessTextureVal = metallicRoughnessTexture.Sample(anisotropicWrapSampler, input.textureUV);
+    float4 metallicRoughnessTextureVal = metallicRoughnessTexture.Sample(renderPassSpecificSampler, input.textureUV);
     
     float ambientOcclusion = metallicRoughnessTextureVal.r;
     float metallic = metallicRoughnessTextureVal.b * metallicFactor;
@@ -190,13 +190,13 @@ float4 main(vs_out input) : SV_TARGET
     
     float3 emissive = emissiveFactor;
 #ifdef EMISSIVE
-    emissive *= emissiveTexture.Sample(anisotropicWrapSampler, input.textureUV).xyz;
+    emissive *= emissiveTexture.Sample(renderPassSpecificSampler, input.textureUV).xyz;
 #endif
     
     float3 normal = normalize(input.normal_world.xyz);
     
 #ifdef NORMAL_MAP
-    float3 normalTanSpace = normalMap.Sample(mySampler, input.textureUV).xyz;
+    float3 normalTanSpace = normalMap.Sample(renderPassSpecificSampler, input.textureUV).xyz;
     normal = NormalMap(normalTanSpace, input.tangent_world, input.biTangent_world, input.normal_world.xyz);
 #endif
     
@@ -240,7 +240,7 @@ float4 main(vs_out input) : SV_TARGET
     
     uint width, height, mipLevels;
     skyMap.GetDimensions(0, width, height, mipLevels);
-    float3 skySpecIrradiance = skyMap.SampleLevel(mySampler, reflect(-vDir, normal), roughness * mipLevels);
+    float3 skySpecIrradiance = skyMap.SampleLevel(linearWrapSampler, reflect(-vDir, normal), roughness * mipLevels);
     
     float3 specularAmbient = skySpecIrradiance * (F0 * specSplitSum.r + specSplitSum.g);
     

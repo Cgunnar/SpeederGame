@@ -12,6 +12,17 @@ using namespace rfm;
 
 rfm::Vector3 NearestPointOnEdgeFromPoint(rfm::Vector3 corners[4], rfm::Vector3 p);
 
+TerrainChunk::~TerrainChunk()
+{
+	for (auto& l : m_lodMeshes)
+	{
+		while (l.hasRequestedMesh && !l.hasMesh)
+		{
+			std::this_thread::yield();
+		}
+	}
+}
+
 TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, Transform terrainTransform, TerrainMeshDesc mapDesc, std::vector<LODinfo> lods)
 	: m_coord(coord), m_lods(lods), m_meshDesc(mapDesc)
 {

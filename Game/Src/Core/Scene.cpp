@@ -36,11 +36,11 @@ Scene::Scene()
 	m_terrDesc.bioms.emplace_back("mountain_snow", 0.9f, 0.95f);
 	m_terrDesc.LODs.push_back({ .lod = 0, .visDistThrhold = 200 });
 	m_terrDesc.LODs.push_back({ .lod = 1, .visDistThrhold = 400 });
-	m_terrDesc.LODs.push_back({ .lod = 3, .visDistThrhold = 600 });
-	m_terrDesc.LODs.push_back({ .lod = 6, .visDistThrhold = 800 });
+	//m_terrDesc.LODs.push_back({ .lod = 3, .visDistThrhold = 600 });
+	//m_terrDesc.LODs.push_back({ .lod = 6, .visDistThrhold = 800 });
 
 	m_terrain = EntityReg::CreateEntity();
-	m_terrain.AddComponent<TransformComp>()->transform.setScale(1.0f);
+	m_terrain.AddComponent<TransformComp>()->transform.setScale(0.2f);
 	m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, -10, 0);
 	m_terrain.AddComponent<TerrainScript>(m_terrDesc);
 
@@ -146,6 +146,13 @@ void Scene::Update(float dt)
 		}
 		else
 		{
+			auto guiInput = m_terrainGUI.GetValues();
+			m_terrDesc.baseOffset = guiInput.baseOffset;
+			m_terrDesc.frequencyScale = guiInput.frequencyScale;
+			m_terrDesc.lacunarity = guiInput.lacunarity;
+			m_terrDesc.octaves = guiInput.octaves;
+			m_terrDesc.persistence = guiInput.persistence;
+			m_terrDesc.heightScale = guiInput.heightScale;
 			m_terrain.AddComponent<TerrainScript>(m_terrDesc);
 		}
 	}
@@ -158,6 +165,7 @@ void Scene::Update(float dt)
 	m_quadContr.Show();
 	m_lightContr.Show();
 	m_dirlightContr.Show();
+	m_terrainGUI.Show();
 
 	m_pointLight.GetComponent<PointLightComp>()->pointLight.position = m_lightContr.slider1.value;
 	m_pointLight.GetComponent<PointLightComp>()->pointLight.color = m_lightContr.slider2.value;

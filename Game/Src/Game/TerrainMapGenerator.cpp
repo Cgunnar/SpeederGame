@@ -68,7 +68,10 @@ TerrainMap TerrainMapGenerator::GenerateTerrinMap(const TerrainMapDesc& mapDesc)
 
 void TerrainMapGenerator::AsyncGenerateTerrinMap(TerrainMapDesc mapDesc, rfm::Vector2I coord)
 {
-	assert(!s_terrainMapHolder.contains(coord));
+	if (s_terrainMapHolder.contains(coord))
+	{
+		s_terrainMapHolder.erase(coord);
+	}
 	
 	//s_terrainMapHolder[coord] = TerrainMapGenerator::GenerateTerrinMap(mapDesc);
 	WorkerThreads::AddTask(TerrainMapGenerator::AsyncGenerateTerrinMapInternal, mapDesc, coord);

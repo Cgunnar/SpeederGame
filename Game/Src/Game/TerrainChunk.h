@@ -11,6 +11,7 @@ class TerrainChunk
 	friend TerrainScript;
 public:
 	TerrainChunk() = default;
+	~TerrainChunk();
 	TerrainChunk(rfm::Vector2I coord, int size, rfm::Transform terrainTransform, TerrainMeshDesc mapDesc, std::vector<LODinfo> lods);
 	void Update(rfm::Vector2 viewPos, float maxViewDist);
 	void LoadTerrain(const TerrainMapDesc& desc);

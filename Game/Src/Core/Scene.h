@@ -5,6 +5,7 @@
 #include "StandardComponents.h"
 #include "RenderComponents.h"
 #include "GuiDebug.h"
+#include "TerrainGUI.h"
 #include "TerreinTypes.h"
 #include "SkyBox.h"
 
@@ -36,5 +37,6 @@ private:
 	GuiTest m_quadContr = GuiTest("quad controller");
 	GuiTest m_lightContr = GuiTest("pointLight controller");
 	GuiTest m_dirlightContr = GuiTest("dirLight controller");
+	TerrainGUI m_terrainGUI = TerrainGUI("terrain generation");
 };
 

@@ -32,7 +32,7 @@ TerrainMap TerrainMapGenerator::GenerateTerrinMap(const TerrainMapDesc& mapDesc)
 	TerrainMap map;
 	map.height = chunkSize;
 	map.width = chunkSize;
-	map.heightMap = GenerateNoise(chunkSize, chunkSize, mapDesc.scale, mapDesc.octaves,
+	map.heightMap = GenerateNoise(chunkSize, chunkSize, mapDesc.frequencyScale, mapDesc.octaves,
 		mapDesc.persistence, mapDesc.lacunarity, mapDesc.offset, mapDesc.seed);
 
 

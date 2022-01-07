@@ -5,7 +5,6 @@
 
 TerrainLODMesh::TerrainLODMesh(int lod) : m_lod(lod)
 {
-
 }
 
 void TerrainLODMesh::OnReceive(TerrainMesh&& mesh)
@@ -14,16 +13,14 @@ void TerrainLODMesh::OnReceive(TerrainMesh&& mesh)
 	hasMesh = true;
 }
 
-void TerrainLODMesh::RequestMesh(const TerrainMap& map)
+void TerrainLODMesh::RequestMesh(const TerrainMap& map, TerrainMeshDesc desc)
 {
 	hasRequestedMesh = true;
-	TerrainMeshDesc meshDesc;
-	meshDesc.heightScaleFunc = [](float in) {return in <= 0.3f ? 0.3f * 0.3f : in * in; };
-	meshDesc.LOD = this->m_lod;
+	desc.LOD = this->m_lod;
 
 	TerrainMeshGenerator::AsyncCreateTerrainMesh(map, [&](TerrainMesh&& mesh) {
 		OnReceive(std::move(mesh));
-		}, meshDesc);
+		}, desc);
 }
 
 void TerrainLODMesh::GenerateRenderMesh(MeshFormat format)

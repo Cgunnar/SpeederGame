@@ -18,7 +18,7 @@ struct Biom
 
 struct TerrainMapDesc
 {
-	float scale = 10;
+	float frequencyScale = 10;
 	int octaves = 1;
 	float persistence = 0.5f;
 	float lacunarity = 1;
@@ -43,6 +43,7 @@ struct TerrainMeshDesc
 };
 
 
+
 struct TerrainMesh
 {
 	static constexpr uint32_t vertexStride = sizeof(Vertex_POS_NOR_UV);
@@ -60,7 +61,7 @@ public:
 	TerrainLODMesh(int lod);
 	TerrainLODMesh() = default;
 	void OnReceive(TerrainMesh&& mesh);
-	void RequestMesh(const TerrainMap& map);
+	void RequestMesh(const TerrainMap& map, TerrainMeshDesc desc);
 	void GenerateRenderMesh(MeshFormat format = MeshFormat::POS_NOR_UV_TAN_BITAN);
 	TerrainMesh mesh;
 	MeshFormat meshFormat = MeshFormat::POS_NOR_UV_TAN_BITAN;
@@ -76,4 +77,20 @@ struct LODinfo
 {
 	int lod;
 	float visDistThrhold;
+};
+
+
+struct TerrainDesc
+{
+	float frequencyScale = 10;
+	float heightScale = 10;
+	int octaves = 1;
+	float persistence = 0.5f;
+	float lacunarity = 1;
+	rfm::Vector2 baseOffset;
+	uint32_t seed = 123456u;
+	std::vector<Biom> bioms;
+	std::vector<LODinfo> LODs;
+	rfm::Vector2 uvScale = { 0,0 }; //set to 0,0 to use width, height
+	std::function<float(float)> heightScaleFunc = [](float s) { return s; };
 };

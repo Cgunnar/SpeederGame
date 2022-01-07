@@ -12,8 +12,8 @@ using namespace rfm;
 
 rfm::Vector3 NearestPointOnEdgeFromPoint(rfm::Vector3 corners[4], rfm::Vector3 p);
 
-TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, float scale, std::vector<LODinfo> lods)
-	: m_coord(coord), m_lods(lods)
+TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, Transform terrainTransform, TerrainMeshDesc mapDesc, std::vector<LODinfo> lods)
+	: m_coord(coord), m_lods(lods), m_meshDesc(mapDesc)
 {
 	for (const auto& lod : m_lods)
 	{
@@ -27,22 +27,22 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, float scale, std::vect
 	m_corners[2] = Vector3(m_position.x + size / 2, 0, m_position.y + size / 2);
 	m_corners[3] = Vector3(m_position.x - size / 2, 0, m_position.y + size / 2);
 
+	float scale = terrainTransform.getScale().x;
 	m_chunkEntity = EntityReg::CreateEntity();
-	m_chunkEntity.AddComponent<TransformComp>()->transform.setTranslation(scale * Vector3(m_position.x, 0, m_position.y));
-	m_chunkEntity.GetComponent<TransformComp>()->transform.setScale(scale);
+	auto& chunkTransform = m_chunkEntity.AddComponent<TransformComp>()->transform;
+	chunkTransform.setTranslation(scale * Vector3(m_position.x, 0, m_position.y));
+	chunkTransform.setScale(scale);
 
-	m_material.name = "TerrainChunk " + std::to_string(coord.x) + ", " + std::to_string(coord.y);
 	m_material.baseColorFactor = 1;
 	m_material.emissiveFactor = 0;
-	//m_material.flags |= RenderFlag::wireframe;
-	//m_material.flags |= RenderFlag::sampler_anisotropic_clamp;
-	m_material.flags |= RenderFlag::sampler_point_clamp;
+	m_material.flags |= RenderFlag::sampler_anisotropic_clamp;
 	auto rc = m_chunkEntity.AddComponent<RenderModelComp>();
 	rc->SetRenderUnit(AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV), m_material, false);
 }
 
-void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist, float scale)
+void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist, Transform terrainTransform)
 {
+	float scale = terrainTransform.getScale().x;
 	auto transform = m_chunkEntity.GetComponent<TransformComp>();
 	transform->transform.setTranslation(scale * Vector3(m_position.x, 0, m_position.y));
 	transform->transform.setScale(scale);
@@ -52,10 +52,10 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist, float scale)
 		float viewDist = (viewPos3D - NearestPointOnEdgeFromPoint(m_corners, viewPos3D)).length();
 
 		m_visible = viewDist <= maxViewDist;
-
+		
 		if (m_visible)
 		{
-			m_chunkEntity.GetComponent<RenderModelComp>()->visible = true;
+			
 			assert(std::is_sorted(m_lods.begin(), m_lods.end(),
 				[](auto a, auto b) {return a.visDistThrhold < b.visDistThrhold; }));
 
@@ -78,10 +78,13 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist, float scale)
 				}
 				else if (!lodMesh.hasRequestedMesh)
 				{
-					lodMesh.RequestMesh(m_map);
+					lodMesh.RequestMesh(m_map, m_meshDesc);
+					if (m_prevLODindex == -1) m_visible = false;
 				}
 			}
 		}
+		m_chunkEntity.GetComponent<RenderModelComp>()->visible = m_visible;
+
 	}
 	else if (m_checkForLoadedTerrainMap)
 	{
@@ -97,35 +100,14 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist, float scale)
 			m_checkForLoadedTerrainMap = false;
 		}
 	}
-
-	auto rc = m_chunkEntity.GetComponent<RenderModelComp>();// ->visible = m_visible;
-
-
-	auto& m = AssetManager::Get().GetRenderUnit(rc->renderUnitID);
-	if (m_visible)
-	{
-		m.material.baseColorFactor = { 1,1,1,1};
-		m.material.emissiveFactor = { 0,0,0 };
-	}
-	else
-	{
-		m.material.baseColorFactor = { 1,0,0,1 };
-		m.material.emissiveFactor = { 1,0,0 };
-	}
 }
 
 void TerrainChunk::LoadTerrain(const TerrainMapDesc& desc)
 {
 	TerrainMapDesc d = desc;
-	d.offset = m_position;
+	d.offset += m_position;
 	TerrainMapGenerator::AsyncGenerateTerrinMap(d, m_coord);
 	m_checkForLoadedTerrainMap = true;
-}
-
-void TerrainChunk::OnReceive(TerrainMesh&& mesh)
-{
-	m_createRenderMesh = true;
-	m_mesh = std::move(mesh);
 }
 
 rfm::Vector3 NearestPointOnEdgeFromPoint(rfm::Vector3 corners[4], rfm::Vector3 p)

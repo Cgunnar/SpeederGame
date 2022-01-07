@@ -15,7 +15,7 @@ public:
 	static void Destroy();
 
 private:
-	static std::vector<float> GenerateNoise(int width, int height, float scale, int octaves, float persistance, float lacunarity,
+	static std::vector<float> GenerateNoise(int width, int height, float frequencyScale, int octaves, float persistance, float lacunarity,
 		rfm::Vector2 offset, uint32_t seed);
 
 	static void AsyncGenerateTerrinMapInternal(const TerrainMapDesc& mapDesc, rfm::Vector2I coord);

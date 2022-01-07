@@ -20,11 +20,28 @@ TerrainScript::~TerrainScript()
 	m_chunkMap.clear();
 }
 
-TerrainScript::TerrainScript(TerrainMapDesc desc) : m_mapDesc(desc)
+TerrainScript::TerrainScript(TerrainDesc desc)
 {	
-	m_lods.push_back({ .lod = 0, .visDistThrhold = 120 });
-	m_lods.push_back({ .lod = 3, .visDistThrhold = 240 });
-	m_lods.push_back({ .lod = 5, .visDistThrhold = 480 });
+	m_mapDesc.bioms = desc.bioms;
+	m_mapDesc.frequencyScale = desc.frequencyScale;
+	m_mapDesc.lacunarity = desc.lacunarity;
+	m_mapDesc.octaves = desc.octaves;
+	m_mapDesc.persistence = desc.persistence;
+	m_mapDesc.offset = desc.baseOffset;
+	m_mapDesc.seed = desc.seed;
+
+	m_meshDesc.heightScale = desc.heightScale;
+	m_meshDesc.heightScaleFunc = desc.heightScaleFunc;
+	m_meshDesc.uvScale = desc.uvScale;
+	
+	if (desc.LODs.empty())
+	{
+		m_lods.push_back({ .lod = 0, .visDistThrhold = 200 });
+	}
+	else
+	{
+		m_lods = desc.LODs;
+	}
 
 	m_maxViewDistance = std::max_element(m_lods.begin(), m_lods.end(), [](LODinfo lodA, LODinfo lodB) {
 		return lodA.visDistThrhold < lodB.visDistThrhold; })->visDistThrhold;
@@ -73,15 +90,14 @@ void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 			Vector2I viewedChunk = chunkCoord + Vector2I(x, y);
 			if (m_chunkMap.contains(viewedChunk))
 			{
-				m_chunkMap[viewedChunk]->Update(viewPos, m_maxViewDistance, s);
+				m_chunkMap[viewedChunk]->Update(viewPos, m_maxViewDistance, GetComponent<TransformComp>()->transform);
 				if(m_chunkMap[viewedChunk]->m_visible) m_prevFrameVisibleChunksCoord.push_back(viewedChunk);
 			}
 			else
 			{
-				m_chunkMap[viewedChunk] = new TerrainChunk(viewedChunk, m_chunkSize, s, m_lods);
+				m_chunkMap[viewedChunk] = new TerrainChunk(viewedChunk, m_chunkSize, GetComponent<TransformComp>()->transform, m_meshDesc, m_lods);
 				m_chunksToLoad.emplace(viewedChunk);
 			}
-			
 		}
 	}
 }

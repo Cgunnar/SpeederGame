@@ -40,13 +40,15 @@ void TerrainScript::OnUpdate(float dt)
 {
 	EntityID viewerID = EntityReg::GetComponentArray<PlayerComp>().front().GetEntity();
 	Transform viewerTransform = EntityReg::GetComponent<TransformComp>(viewerID)->transform;
-	float s = GetComponent<TransformComp>()->transform.getScale().x;
-	Vector2 viewerPos = Vector2(viewerTransform.getTranslation().x, viewerTransform.getTranslation().z) / s;
-	UpdateChunks(viewerPos);
+	
+	UpdateChunks({ viewerTransform.getTranslation().x, viewerTransform.getTranslation().z });
 }
 
 void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 {
+	float s = GetComponent<TransformComp>()->transform.getScale().x;
+	viewPos /= s;
+
 	Vector2I chunkCoord;
 	chunkCoord.x = static_cast<int>(round(viewPos.x / m_chunkSize));
 	chunkCoord.y = static_cast<int>(round(viewPos.y / m_chunkSize));
@@ -54,11 +56,7 @@ void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 
 	for (auto& c : m_prevFrameVisibleChunksCoord)
 	{
-		auto rc = m_chunkMap[c]->m_chunkEntity.GetComponent<RenderModelComp>();// ->visible = vis;
-
-		auto& m = AssetManager::Get().GetRenderUnit(rc->renderUnitID);
-		m.material.baseColorFactor = { 0,0,0, 1};
-		m.material.emissiveFactor = { 0,0,0 };
+		m_chunkMap[c]->m_chunkEntity.GetComponent<RenderModelComp>()->visible = false;
 	}
 	m_prevFrameVisibleChunksCoord.clear();
 
@@ -75,12 +73,12 @@ void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 			Vector2I viewedChunk = chunkCoord + Vector2I(x, y);
 			if (m_chunkMap.contains(viewedChunk))
 			{
-				m_chunkMap[viewedChunk]->Update(viewPos, m_maxViewDistance);
+				m_chunkMap[viewedChunk]->Update(viewPos, m_maxViewDistance, s);
 				if(m_chunkMap[viewedChunk]->m_visible) m_prevFrameVisibleChunksCoord.push_back(viewedChunk);
 			}
 			else
 			{
-				m_chunkMap[viewedChunk] = new TerrainChunk(viewedChunk, m_chunkSize, m_lods);
+				m_chunkMap[viewedChunk] = new TerrainChunk(viewedChunk, m_chunkSize, s, m_lods);
 				m_chunksToLoad.emplace(viewedChunk);
 			}
 			

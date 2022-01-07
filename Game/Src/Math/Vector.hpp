@@ -81,6 +81,7 @@ namespace rfm
 
 		float& operator[] (int index) noexcept;
 		Vector2& operator +=(const Vector2& other);
+		Vector2& operator /=(float scale);
 		float length() const;
 		void normalize();
 		float x = 0;

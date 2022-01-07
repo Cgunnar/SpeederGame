@@ -12,7 +12,7 @@ using namespace rfm;
 
 rfm::Vector3 NearestPointOnEdgeFromPoint(rfm::Vector3 corners[4], rfm::Vector3 p);
 
-TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, std::vector<LODinfo> lods)
+TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, float scale, std::vector<LODinfo> lods)
 	: m_coord(coord), m_lods(lods)
 {
 	for (const auto& lod : m_lods)
@@ -28,8 +28,8 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, std::vector<LODinfo> l
 	m_corners[3] = Vector3(m_position.x - size / 2, 0, m_position.y + size / 2);
 
 	m_chunkEntity = EntityReg::CreateEntity();
-	m_chunkEntity.AddComponent<TransformComp>()->transform.setTranslation(0.01f * Vector3(m_position.x, 0, m_position.y));
-	m_chunkEntity.GetComponent<TransformComp>()->transform.setScale(0.01f);
+	m_chunkEntity.AddComponent<TransformComp>()->transform.setTranslation(scale * Vector3(m_position.x, 0, m_position.y));
+	m_chunkEntity.GetComponent<TransformComp>()->transform.setScale(scale);
 
 	m_material.name = "TerrainChunk " + std::to_string(coord.x) + ", " + std::to_string(coord.y);
 	m_material.baseColorFactor = 1;
@@ -41,8 +41,11 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, std::vector<LODinfo> l
 	rc->SetRenderUnit(AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV), m_material, false);
 }
 
-void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
+void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist, float scale)
 {
+	auto transform = m_chunkEntity.GetComponent<TransformComp>();
+	transform->transform.setTranslation(scale * Vector3(m_position.x, 0, m_position.y));
+	transform->transform.setScale(scale);
 	if (m_hasMap)
 	{
 		Vector3 viewPos3D = Vector3(viewPos.x, 0, viewPos.y);
@@ -52,6 +55,7 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 
 		if (m_visible)
 		{
+			m_chunkEntity.GetComponent<RenderModelComp>()->visible = true;
 			assert(std::is_sorted(m_lods.begin(), m_lods.end(),
 				[](auto a, auto b) {return a.visDistThrhold < b.visDistThrhold; }));
 

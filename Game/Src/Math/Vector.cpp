@@ -306,6 +306,13 @@ namespace rfm
 		return *this;
 	}
 
+	Vector2& Vector2::operator /=(float scale)
+	{
+		this->x = this->x / scale;
+		this->y = this->y / scale;
+		return *this;
+	}
+
 	float Vector2::length() const
 	{
 		return sqrt(x * x + y * y);

@@ -34,7 +34,7 @@ Scene::Scene()
 	terrDesc.bioms.emplace_back("mountain_snow", 0.9f, 0.95f);
 
 	m_terrain = EntityReg::CreateEntity();
-	m_terrain.AddComponent<TransformComp>()->transform.setScale(0.01f);
+	m_terrain.AddComponent<TransformComp>()->transform.setScale(0.4f);
 	m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, 0, 0);
 	//m_terrain.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(terrainMesh, terrainMat));
 	m_terrain.AddComponent<TerrainScript>(terrDesc);
@@ -78,7 +78,7 @@ Scene::Scene()
 	terrainMatSand.SetMetallicRoughnessTexture("Assets/Textures/sand/metallic_roughness.png");
 	terrainMatSand.SetBaseColorTexture("Assets/Textures/sand/basecolor.jpg");
 	terrainMatSand.SetNormalTexture("Assets/Textures/sand/normal.jpg");
-
+	terrainMatSand.flags |= RenderFlag::sampler_anisotropic_wrap;
 	m_oldTerrain = EntityReg::CreateEntity();
 	m_oldTerrain.AddComponent<TransformComp>()->transform.setTranslation({ -64, -9, -64 });
 	

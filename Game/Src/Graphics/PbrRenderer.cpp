@@ -194,20 +194,20 @@ void PbrRenderer::RenderPBR_ALBEDO_METROUG_NOR(RenderFlag flag)
 	for (auto& unit : m_PBR_ALBEDO_METROUG_NOR)
 	{
 		const RenderUnit& rendUnit = assetMan.GetRenderUnit(unit.id);
-		const auto& matVariant = rendUnit.material.materialVariant;
-		auto albedoTex = assetMan.GetTexture2D(matVariant.baseColorTexture);
-		auto normalTex = assetMan.GetTexture2D(matVariant.normalTexture);
-		auto matallicRoughnessText = assetMan.GetTexture2D(matVariant.metallicRoughnessTexture);
+		const auto& mat = rendUnit.material;
+		auto albedoTex = assetMan.GetTexture2D(mat.baseColorTexture);
+		auto normalTex = assetMan.GetTexture2D(mat.normalTexture);
+		auto matallicRoughnessText = assetMan.GetTexture2D(mat.metallicRoughnessTexture);
 
 		LowLvlGfx::BindSRV(albedoTex, ShaderType::PIXELSHADER, 0);
 		LowLvlGfx::BindSRV(matallicRoughnessText, ShaderType::PIXELSHADER, 1);
 		LowLvlGfx::BindSRV(normalTex, ShaderType::PIXELSHADER, 2);
 
 		PbrMaterialCBStruct cMat;
-		cMat.albedoFactor = matVariant.baseColorFactor;
-		cMat.roughnessFactor = matVariant.roughnessFactor;
-		cMat.metallicFactor = matVariant.metallicFactor;
-		cMat.emissiveFactor = matVariant.emissiveFactor;
+		cMat.albedoFactor = mat.baseColorFactor;
+		cMat.roughnessFactor = mat.roughnessFactor;
+		cMat.metallicFactor = mat.metallicFactor;
+		cMat.emissiveFactor = mat.emissiveFactor;
 		LowLvlGfx::UpdateBuffer(m_pbrCB, &cMat);
 		LowLvlGfx::Bind(m_pbrCB, ShaderType::PIXELSHADER, 2);
 
@@ -234,18 +234,18 @@ void PbrRenderer::RenderPBR_ALBEDO_METROUG(RenderFlag flag)
 	for (auto& unit : m_PBR_ALBEDO_METROUG)
 	{
 		const RenderUnit& rendUnit = assetMan.GetRenderUnit(unit.id);
-		const auto& matVariant = rendUnit.material.materialVariant;
-		auto albedoTex = assetMan.GetTexture2D(matVariant.baseColorTexture);
-		auto matallicRoughnessText = assetMan.GetTexture2D(matVariant.metallicRoughnessTexture);
+		const auto& mat = rendUnit.material;
+		auto albedoTex = assetMan.GetTexture2D(mat.baseColorTexture);
+		auto matallicRoughnessText = assetMan.GetTexture2D(mat.metallicRoughnessTexture);
 
 		LowLvlGfx::BindSRV(albedoTex, ShaderType::PIXELSHADER, 0);
 		LowLvlGfx::BindSRV(matallicRoughnessText, ShaderType::PIXELSHADER, 1);
 
 		PbrMaterialCBStruct cMat;
-		cMat.albedoFactor = matVariant.baseColorFactor;
-		cMat.roughnessFactor = matVariant.roughnessFactor;
-		cMat.metallicFactor = matVariant.metallicFactor;
-		cMat.emissiveFactor = matVariant.emissiveFactor;
+		cMat.albedoFactor = mat.baseColorFactor;
+		cMat.roughnessFactor = mat.roughnessFactor;
+		cMat.metallicFactor = mat.metallicFactor;
+		cMat.emissiveFactor = mat.emissiveFactor;
 		LowLvlGfx::UpdateBuffer(m_pbrCB, &cMat);
 		LowLvlGfx::Bind(m_pbrCB, ShaderType::PIXELSHADER, 2);
 
@@ -273,11 +273,11 @@ void PbrRenderer::RenderPBR_ALBEDO_METROUG_NOR_EMIS(RenderFlag flag)
 	for (auto& unit : m_PBR_ALBEDO_METROUG_NOR_EMIS)
 	{
 		const RenderUnit& rendUnit = assetMan.GetRenderUnit(unit.id);
-		const auto& matVariant = rendUnit.material.materialVariant;
-		auto albedoTex = assetMan.GetTexture2D(matVariant.baseColorTexture);
-		auto normalTex = assetMan.GetTexture2D(matVariant.normalTexture);
-		auto matallicRoughnessText = assetMan.GetTexture2D(matVariant.metallicRoughnessTexture);
-		auto emissiveText = assetMan.GetTexture2D(matVariant.emissiveTexture);
+		const auto& mat = rendUnit.material;
+		auto albedoTex = assetMan.GetTexture2D(mat.baseColorTexture);
+		auto normalTex = assetMan.GetTexture2D(mat.normalTexture);
+		auto matallicRoughnessText = assetMan.GetTexture2D(mat.metallicRoughnessTexture);
+		auto emissiveText = assetMan.GetTexture2D(mat.emissiveTexture);
 
 		LowLvlGfx::BindSRV(albedoTex, ShaderType::PIXELSHADER, 0);
 		LowLvlGfx::BindSRV(matallicRoughnessText, ShaderType::PIXELSHADER, 1);
@@ -285,10 +285,10 @@ void PbrRenderer::RenderPBR_ALBEDO_METROUG_NOR_EMIS(RenderFlag flag)
 		LowLvlGfx::BindSRV(emissiveText, ShaderType::PIXELSHADER, 3);
 
 		PbrMaterialCBStruct cMat;
-		cMat.albedoFactor = matVariant.baseColorFactor;
-		cMat.roughnessFactor = matVariant.roughnessFactor;
-		cMat.metallicFactor = matVariant.metallicFactor;
-		cMat.emissiveFactor = matVariant.emissiveFactor;
+		cMat.albedoFactor = mat.baseColorFactor;
+		cMat.roughnessFactor = mat.roughnessFactor;
+		cMat.metallicFactor = mat.metallicFactor;
+		cMat.emissiveFactor = mat.emissiveFactor;
 		LowLvlGfx::UpdateBuffer(m_pbrCB, &cMat);
 		LowLvlGfx::Bind(m_pbrCB, ShaderType::PIXELSHADER, 2);
 
@@ -316,13 +316,13 @@ void PbrRenderer::RenderPBR_NO_TEXTURES(RenderFlag flag)
 	for (auto& unit : m_PBR_NO_TEXTURES)
 	{
 		const RenderUnit& rendUnit = assetMan.GetRenderUnit(unit.id);
-		const auto& matVariant = rendUnit.material.materialVariant;
+		const auto& mat = rendUnit.material;
 
 		PbrMaterialCBStruct cMat;
-		cMat.albedoFactor = matVariant.baseColorFactor;
-		cMat.roughnessFactor = matVariant.roughnessFactor;
-		cMat.metallicFactor = matVariant.metallicFactor;
-		cMat.emissiveFactor = matVariant.emissiveFactor;
+		cMat.albedoFactor = mat.baseColorFactor;
+		cMat.roughnessFactor = mat.roughnessFactor;
+		cMat.metallicFactor = mat.metallicFactor;
+		cMat.emissiveFactor = mat.emissiveFactor;
 		LowLvlGfx::UpdateBuffer(m_pbrCB, &cMat);
 		LowLvlGfx::Bind(m_pbrCB, ShaderType::PIXELSHADER, 2);
 
@@ -350,16 +350,16 @@ void PbrRenderer::RenderPBR_ALBEDO(RenderFlag flag)
 	for (auto& unit : m_PBR_ALBEDO)
 	{
 		const RenderUnit& rendUnit = assetMan.GetRenderUnit(unit.id);
-		const auto& matVariant = rendUnit.material.materialVariant;
-		auto albedoTex = assetMan.GetTexture2D(matVariant.baseColorTexture);
+		const auto& mat = rendUnit.material;
+		auto albedoTex = assetMan.GetTexture2D(mat.baseColorTexture);
 
 		LowLvlGfx::BindSRV(albedoTex, ShaderType::PIXELSHADER, 0);
 
 		PbrMaterialCBStruct cMat;
-		cMat.albedoFactor = matVariant.baseColorFactor;
-		cMat.roughnessFactor = matVariant.roughnessFactor;
-		cMat.metallicFactor = matVariant.metallicFactor;
-		cMat.emissiveFactor = matVariant.emissiveFactor;
+		cMat.albedoFactor = mat.baseColorFactor;
+		cMat.roughnessFactor = mat.roughnessFactor;
+		cMat.metallicFactor = mat.metallicFactor;
+		cMat.emissiveFactor = mat.emissiveFactor;
 		LowLvlGfx::UpdateBuffer(m_pbrCB, &cMat);
 		LowLvlGfx::Bind(m_pbrCB, ShaderType::PIXELSHADER, 2);
 
@@ -387,18 +387,18 @@ void PbrRenderer::RenderPBR_ALBEDO_NOR(RenderFlag flag)
 	for (auto& unit : m_PBR_ALBEDO_NOR)
 	{
 		const RenderUnit& rendUnit = assetMan.GetRenderUnit(unit.id);
-		const auto& matVariant = rendUnit.material.materialVariant;
-		auto albedoTex = assetMan.GetTexture2D(matVariant.baseColorTexture);
-		auto normalTex = assetMan.GetTexture2D(matVariant.normalTexture);
+		const auto& mat = rendUnit.material;
+		auto albedoTex = assetMan.GetTexture2D(mat.baseColorTexture);
+		auto normalTex = assetMan.GetTexture2D(mat.normalTexture);
 
 		LowLvlGfx::BindSRV(albedoTex, ShaderType::PIXELSHADER, 0);
 		LowLvlGfx::BindSRV(normalTex, ShaderType::PIXELSHADER, 2);
 
 		PbrMaterialCBStruct cMat;
-		cMat.albedoFactor = matVariant.baseColorFactor;
-		cMat.roughnessFactor = matVariant.roughnessFactor;
-		cMat.metallicFactor = matVariant.metallicFactor;
-		cMat.emissiveFactor = matVariant.emissiveFactor;
+		cMat.albedoFactor = mat.baseColorFactor;
+		cMat.roughnessFactor = mat.roughnessFactor;
+		cMat.metallicFactor = mat.metallicFactor;
+		cMat.emissiveFactor = mat.emissiveFactor;
 		LowLvlGfx::UpdateBuffer(m_pbrCB, &cMat);
 		LowLvlGfx::Bind(m_pbrCB, ShaderType::PIXELSHADER, 2);
 

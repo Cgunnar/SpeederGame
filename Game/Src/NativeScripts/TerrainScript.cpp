@@ -57,8 +57,8 @@ void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 		auto rc = m_chunkMap[c]->m_chunkEntity.GetComponent<RenderModelComp>();// ->visible = vis;
 
 		auto& m = AssetManager::Get().GetRenderUnit(rc->renderUnitID);
-		m.material.materialVariant.baseColorFactor = { 0,0,0 };
-		m.material.materialVariant.emissiveFactor = { 0,0,0 };
+		m.material.baseColorFactor = { 0,0,0, 1};
+		m.material.emissiveFactor = { 0,0,0 };
 	}
 	m_prevFrameVisibleChunksCoord.clear();
 

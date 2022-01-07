@@ -35,6 +35,7 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, std::vector<LODinfo> l
 	m_material.baseColorFactor = 1;
 	m_material.emissiveFactor = 0;
 	//m_material.properties = MaterialProperties::WIREFRAME;
+	m_material.flags = RenderFlag::wireframe;
 	auto rc = m_chunkEntity.AddComponent<RenderModelComp>();
 	rc->SetRenderUnit(AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV), m_material, false);
 }
@@ -98,13 +99,13 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 	auto& m = AssetManager::Get().GetRenderUnit(rc->renderUnitID);
 	if (m_visible)
 	{
-		m.material.materialVariant.baseColorFactor = { 1,1,1 };
-		m.material.materialVariant.emissiveFactor = { 0,0,0 };
+		m.material.baseColorFactor = { 1,1,1,1};
+		m.material.emissiveFactor = { 0,0,0 };
 	}
 	else
 	{
-		m.material.materialVariant.baseColorFactor = { 1,0,0 };
-		m.material.materialVariant.emissiveFactor = { 1,0,0 };
+		m.material.baseColorFactor = { 1,0,0,1 };
+		m.material.emissiveFactor = { 1,0,0 };
 	}
 }
 

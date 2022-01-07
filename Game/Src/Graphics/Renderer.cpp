@@ -170,13 +170,13 @@ void Renderer::SubmitToInternalRenderers(AssetManager& am, RenderPassEnum render
 {
 	auto ru = am.GetRenderUnit(unitID);
 
-	if ((ru.material.renderFlag & RenderFlag::alphaBlend) != 0)
+	if ((ru.material.flags & RenderFlag::alphaBlend) != 0)
 	{
-		m_transparentRenderUnits.push_back({ ru.material.renderFlag, renderPass, RendUnitIDAndTransform(unitID, worldMatrix, ru.material.type) });
+		m_transparentRenderUnits.push_back({ ru.material.flags, renderPass, RendUnitIDAndTransform(unitID, worldMatrix, ru.material.GetType()) });
 	}
 	else
 	{
-		m_renderPassesFlagged[ru.material.renderFlag].emplace_back(unitID, worldMatrix, ru.material.type);
+		m_renderPassesFlagged[ru.material.flags].emplace_back(unitID, worldMatrix, ru.material.GetType());
 	}
 }
 
@@ -203,15 +203,12 @@ void Renderer::SubmitAndRenderTransparentToInternalRenderers(const VP& viewAndPr
 		auto& traUnit = m_transparentRenderUnits[i];
 		if (traUnit.unit.type != previusType || previusRenderFlag != traUnit.rendFlag)
 		{
-			//m_phongRenderer.Render(viewAndProjMatrix, camera, previusRenderFlag);
 			m_pbrRenderer.Render(viewAndProjMatrix, camera, previusRenderFlag);
 		}
-		//m_phongRenderer.Submit(traUnit.unit.id, traUnit.unit.worldMatrix, traUnit.unit.type);
 		m_pbrRenderer.Submit(traUnit.unit.id, traUnit.unit.worldMatrix, traUnit.unit.type);
 		previusType = traUnit.unit.type;
 		previusRenderFlag = traUnit.rendFlag;
 	}
-	//m_phongRenderer.Render(viewAndProjMatrix, camera, previusRenderFlag);
 	m_pbrRenderer.Render(viewAndProjMatrix, camera, previusRenderFlag);
 
 	m_transparentRenderUnits.clear();
@@ -225,11 +222,9 @@ void Renderer::RenderAllPasses(const VP& viewAndProjMatrix, rfe::Entity& camera)
 		if (it.second.empty()) continue;
 		for (auto& unit : it.second)
 		{
-			//m_phongRenderer.Submit(unit.id, unit.worldMatrix, unit.type);
 			m_pbrRenderer.Submit(unit.id, unit.worldMatrix, unit.type);
 		}
 		it.second.clear();
-		//m_phongRenderer.Render(viewAndProjMatrix, camera, it.first);
 		m_pbrRenderer.Render(viewAndProjMatrix, camera, it.first);
 	}
 }
@@ -260,6 +255,4 @@ void Renderer::SetUpHdrRTV()
 	desc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
 	desc.Texture2D.MipSlice = 0;
 	LowLvlGfx::CreateRTV(s_sharedRenderResources->m_hdrRenderTarget);
-
-
 }

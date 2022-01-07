@@ -146,7 +146,7 @@ typedef size_t RenderUnitID;
 struct RenderUnit
 {
 	SubMesh subMesh;
-	MaterialVariant material;
+	Material material;
 };
 
 struct SubModel

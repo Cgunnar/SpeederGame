@@ -99,7 +99,7 @@ RenderUnit& AssetManager::GetRenderUnit(RenderUnitID id)
 
 RenderUnitID AssetManager::AddMesh(SubMesh mesh)
 {
-	m_renderUnits.push_back({ mesh, MaterialVariant() });
+	m_renderUnits.push_back({ mesh, Material() });
 	return m_renderUnits.size(); // RenderUnitID will always be index + 1
 }
 
@@ -111,7 +111,7 @@ RenderUnitID AssetManager::AddRenderUnit(RenderUnit renderUnit)
 
 RenderUnitID AssetManager::AddRenderUnit(const SubMesh& subMesh, const Material& material)
 {
-	m_renderUnits.push_back({ subMesh, MaterialVariant(material)});
+	m_renderUnits.push_back({ subMesh, material});
 	return m_renderUnits.size(); // RenderUnitID will always be index + 1
 }
 
@@ -150,35 +150,7 @@ void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subMo
 	for (auto m : subMeshTree.subMeshes)
 	{
 		RenderUnit ru;
-		MaterialProperties pbrP = m.pbrMaterial.properties;
-
-		ru.material = MaterialVariant(m.pbrMaterial);
-
-		//assert(ru.material.type != MaterialType::none); //some material is missing
-		if (ru.material.type == MaterialVariantEnum::none) //some material is missing
-		{
-			Material mat;
-			mat.emissiveFactor = rfm::Vector3(1, 0, 0);
-			mat.baseColorFactor = rfm::Vector4(1, 0, 0, 1);
-
-			ru.material.materialVariant = mat;
-			ru.material.type = MaterialVariantEnum::PBR_NO_TEXTURES;
-		}
-
-		if (m.pbrMaterial.blendMode == BlendMode::blend)
-		{
-			ru.material.renderFlag |= RenderFlag::alphaBlend;
-		}
-		else if (m.pbrMaterial.blendMode == BlendMode::mask)
-		{
-			ru.material.renderFlag |= RenderFlag::alphaToCov;
-		}
-
-		if ((m.pbrMaterial.properties & MaterialProperties::NO_BACKFACE_CULLING) != 0)
-		{
-			ru.material.renderFlag |= RenderFlag::noBackFaceCull;
-		}
-
+		ru.material = m.pbrMaterial;
 		ru.subMesh.ib = ib;
 		ru.subMesh.vb = vb;
 		ru.subMesh.baseVertexLocation = m.vertexStart;
@@ -195,7 +167,7 @@ void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subMo
 		subModel.subModels.push_back(newSubModel);
 	}
 	subModel.RenderUnitBegin = subModel.renderUnitIDs.empty() ? lowestIDinSubTree : subModel.renderUnitIDs.front();	// hope this works
-	subModel.RenderUnitEnd = largestIDinSubTree;				// hope this works
+	subModel.RenderUnitEnd = largestIDinSubTree;
 }
 
 GID AssetManager::LoadModel(const std::string& filePath)

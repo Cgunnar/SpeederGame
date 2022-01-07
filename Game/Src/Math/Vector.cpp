@@ -11,6 +11,9 @@ namespace rfm
 	Vector4::Vector4(float x, float y, float z, float w) : x(x), y(y), z(z), w(w)
 	{
 	}
+	Vector4::Vector4(float val) : x(val), y(val), z(val), w(val)
+	{
+	}
 	Vector4::Vector4(const Vector3& v3, float w)
 	{
 		this->x = v3.x;

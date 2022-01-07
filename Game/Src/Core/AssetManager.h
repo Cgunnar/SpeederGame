@@ -51,7 +51,7 @@ private:
 	AssimpLoader m_assimpLoader;
 	std::unordered_map<uint64_t, std::shared_ptr<Texture2D>> m_textures;
 	std::unordered_map<uint64_t, Model> m_models;
-	std::unordered_map<uint64_t, MaterialVariant> m_materials;
+	//std::unordered_map<uint64_t, Material> m_materials;
 	std::unordered_map<uint64_t, SubMesh> m_meshes;
 	std::vector<RenderUnit> m_renderUnits;
 	std::unordered_map<std::string, GID> m_filePathMap;

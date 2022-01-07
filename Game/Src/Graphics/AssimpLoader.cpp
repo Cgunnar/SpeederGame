@@ -213,7 +213,7 @@ Material AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const std::string& pat
 	if (!aiMat->Get(AI_MATKEY_TWOSIDED, twoSided))
 	{
 		if(twoSided)
-			pbrMat.properties = pbrMat.properties | MaterialProperties::NO_BACKFACE_CULLING;
+			pbrMat.flags |= RenderFlag::noBackFaceCull;
 	}
 
 	float metallicFactor;
@@ -234,18 +234,17 @@ Material AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const std::string& pat
 	{
 		if (alphaMode == aiString("MASK"))
 		{
-			pbrMat.blendMode = BlendMode::mask;
+			pbrMat.flags |= RenderFlag::alphaToCov;
 			float cutOf = 1;
 			if (!aiMat->Get(AI_MATKEY_GLTF_ALPHACUTOFF, cutOf))
 				pbrMat.maskCutOfValue = cutOf;
 		}
 		else if(alphaMode == aiString("BLEND"))
 		{
-			pbrMat.blendMode = BlendMode::blend;
+			pbrMat.flags |= RenderFlag::alphaBlend;
 		}
 		else if (alphaMode == aiString("OPAQUE"))
 		{
-			pbrMat.blendMode = BlendMode::opaque;
 		}
 	}
 
@@ -303,7 +302,7 @@ Material AssimpLoader::GetPbrMaterials(aiMaterial* aiMat, const std::string& pat
 		{
 			if (opacity < 1)
 			{
-				pbrMat.blendMode = BlendMode::blend;
+				pbrMat.flags |= RenderFlag::alphaBlend;
 			}
 		}
 		pbrMat.baseColorFactor = rfm::Vector4(colorDiff[0], colorDiff[1], colorDiff[2], opacity);

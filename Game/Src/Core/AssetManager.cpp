@@ -148,12 +148,9 @@ void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subMo
 	{
 		RenderUnit ru;
 		ru.material = m.pbrMaterial;
-		ru.subMesh = Mesh(vb, ib, m.indexStart);
+		ru.subMesh = Mesh(vb, ib, m.indexCount, m.indexStart, m.vertexStart);
 		ru.subMesh.ib = ib;
 		ru.subMesh.vb = vb;
-		/*ru.subMesh.baseVertexLocation = m.vertexStart;
-		ru.subMesh.startIndexLocation = m.indexStart;
-		ru.subMesh.indexCount = m.indexCount;*/
 		RenderUnitID ID = AddRenderUnit(ru);
 		largestIDinSubTree = ID + 1;
 		subModel.renderUnitIDs.push_back(ID);

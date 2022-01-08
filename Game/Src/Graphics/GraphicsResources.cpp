@@ -88,16 +88,29 @@ Mesh::Mesh(const std::vector<Vertex_POS_NOR_UV>& vertices, const std::vector<uin
 	vb = LowLvlGfx::CreateVertexBuffer(reinterpret_cast<const float*>(vertices.data()), (uint32_t)vertices.size() * sizeof(Vertex_POS_NOR_UV), (uint32_t)sizeof(Vertex_POS_NOR_UV));
 }
 
-Mesh::Mesh(VertexBuffer vertices, IndexBuffer indices, uint32_t startIndexLocation, uint32_t baseVertexLocation)
+Mesh::Mesh(VertexBuffer vertices, IndexBuffer indices, uint32_t indexCount, uint32_t startIndexLocation, uint32_t baseVertexLocation)
 {
-	this->startIndexLocation = startIndexLocation;
-	this->baseVertexLocation = baseVertexLocation;
 	this->ib = indices;
 	this->vb = vertices;
+	this->startIndexLocation = startIndexLocation;
+	this->baseVertexLocation = baseVertexLocation;
+	this->indexCount = indexCount;
+}
+
+Mesh::Mesh(VertexBuffer vertices, IndexBuffer indices)
+{
+	this->ib = indices;
+	this->vb = vertices;
+	this->startIndexLocation = ib.startIndexLocation;
+	this->baseVertexLocation = vb.baseVertexLocation;
+	this->indexCount = ib.indexCount;
 }
 
 Mesh::Mesh(const std::vector<Vertex_POS_NOR_UV_TAN_BITAN>& vertices, const std::vector<uint32_t>& indices)
 {
 	ib = LowLvlGfx::CreateIndexBuffer(indices.data(), static_cast<uint32_t>(indices.size()));
 	vb = LowLvlGfx::CreateVertexBuffer(reinterpret_cast<const float*>(vertices.data()), (uint32_t)vertices.size() * sizeof(Vertex_POS_NOR_UV_TAN_BITAN), (uint32_t)sizeof(Vertex_POS_NOR_UV_TAN_BITAN));
+	this->startIndexLocation = ib.startIndexLocation;
+	this->baseVertexLocation = vb.baseVertexLocation;
+	this->indexCount = ib.indexCount;
 }

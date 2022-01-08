@@ -75,6 +75,7 @@ private:
 	friend Mesh;
 	uint32_t vertexStride = 0;
 	uint32_t vertexCount = 0;
+	uint32_t baseVertexLocation = 0;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
 };
@@ -134,10 +135,11 @@ class Mesh
 public:
 	Mesh() = default;
 	Mesh(const std::vector<Vertex_POS_NOR_UV>& vertices, const std::vector<uint32_t>& indices);
-	Mesh(VertexBuffer vertices, IndexBuffer indices, uint32_t startIndexLocation, uint32_t baseVertexLocation);
+	Mesh(VertexBuffer vertices, IndexBuffer indices, uint32_t indexCount, uint32_t startIndexLocation, uint32_t baseVertexLocation);
+	Mesh(VertexBuffer vertices, IndexBuffer indices);
 	Mesh(const std::vector<Vertex_POS_NOR_UV_TAN_BITAN>& vertices, const std::vector<uint32_t>& indices);
 	uint32_t GetbaseVertexLocation() const { return baseVertexLocation; }
-	uint32_t GetIndexCount() const { return ib.indexCount; }
+	uint32_t GetIndexCount() const { return indexCount; }
 	uint32_t GetStartIndexLocation() const { return startIndexLocation; }
 	VertexBuffer vb;
 	IndexBuffer ib;
@@ -145,6 +147,7 @@ public:
 private:
 	uint32_t startIndexLocation = 0;
 	uint32_t baseVertexLocation = 0;
+	uint32_t indexCount = 0;
 	GID guid = GID::GenerateNew();
 };
 

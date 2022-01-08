@@ -56,7 +56,7 @@ Scene::Scene()
 	TerrainMeshDesc td;
 	td.uvScale = 1;
 	auto terMesh = tl.CreateTerrainMeshFromBMP("Assets/Textures/noiseTexture.bmp", td);
-	SubMesh terrainMesh3(terMesh.verticesTBN, terMesh.indices);
+	Mesh terrainMesh3(terMesh.verticesTBN, terMesh.indices);
 
 	Material terrainMatSand;
 	terrainMatSand.name = "terrainMaterial";
@@ -107,7 +107,7 @@ Scene::Scene()
 	rusteIronMat.SetMetallicRoughnessTexture("Assets/Textures/rustediron/metallic_roughness.png");
 	rusteIronMat.SetNormalTexture("Assets/Textures/rustediron/normal.png");
 
-	SubMesh quadMeshCopy2 = AssetManager::Get().GetMesh(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN);
+	Mesh quadMeshCopy2 = AssetManager::Get().GetMesh(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN);
 	m_ironSphere = EntityReg::CreateEntity();
 	m_ironSphere.AddComponent(TransformComp())->transform.setTranslation(0, 3, 1);
 	m_ironSphere.AddComponent(RenderModelComp(AssetManager::Get().AddRenderUnit(quadMeshCopy2, rusteIronMat)));

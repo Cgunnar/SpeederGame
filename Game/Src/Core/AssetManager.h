@@ -24,14 +24,14 @@ public:
 
 	std::shared_ptr<Texture2D> GetTexture2D(GID guid) const;
 	void RemoveTexture2D(GID guid);
-	const SubMesh& GetMesh(RenderUnitID id) const;
-	const SubMesh& GetMesh(SimpleMesh mesh) const;
-	const SubMesh& GetMesh(GID id) const;
+	const Mesh& GetMesh(RenderUnitID id) const;
+	const Mesh& GetMesh(SimpleMesh mesh) const;
+	const Mesh& GetMesh(GID id) const;
 	const RenderUnit& GetRenderUnit(RenderUnitID id) const;
 	RenderUnit& GetRenderUnit(RenderUnitID id);
-	RenderUnitID AddMesh(SubMesh mesh);
+	RenderUnitID AddMesh(Mesh mesh);
 	RenderUnitID AddRenderUnit(RenderUnit renderUnit);
-	RenderUnitID AddRenderUnit(const SubMesh& subMesh, const Material& material);
+	RenderUnitID AddRenderUnit(const Mesh& subMesh, const Material& material);
 	GID LoadMesh(const std::string& path, MeshFormat format);
 
 	GID LoadModel(const std::string& filePath);
@@ -53,7 +53,7 @@ private:
 	std::unordered_map<uint64_t, std::shared_ptr<Texture2D>> m_textures;
 	std::unordered_map<uint64_t, Model> m_models;
 	//std::unordered_map<uint64_t, Material> m_materials;
-	std::unordered_map<uint64_t, SubMesh> m_meshes;
+	std::unordered_map<uint64_t, Mesh> m_meshes;
 	std::vector<RenderUnit> m_renderUnits;
 	std::unordered_map<std::string, GID> m_filePathMap;
 	std::unordered_map<std::string, GID> m_meshFilePathMap;

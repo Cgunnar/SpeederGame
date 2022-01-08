@@ -192,7 +192,7 @@ VertexBuffer LowLvlGfx::CreateVertexBuffer(const float* data, uint32_t byteWidth
 {
 	VertexBuffer vs;
 	vs.vertexStride = stride;
-	vs.vertexOffset = offset;
+	vs.baseVertexLocation = offset;
 	vs.vertexCount = byteWidth / stride;
 	vs.vertexBuffer = ComPtr<ID3D11Buffer>();
 
@@ -225,7 +225,6 @@ IndexBuffer LowLvlGfx::CreateIndexBuffer(const uint32_t* data, uint32_t indexCou
 	subres.pSysMem = data;
 
 	IndexBuffer ib;
-	ib.startIndexLocation = 0;
 	ib.indexCount = indexCount;
 	HRESULT hr = s_dx11->m_device->CreateBuffer(&indexDesc, &subres, &ib.m_indexBuffer);
 	assert(SUCCEEDED(hr));
@@ -284,7 +283,7 @@ void LowLvlGfx::Bind(const Sampler& sampler, ShaderType shaderType, uint32_t bin
 
 void LowLvlGfx::Bind(const VertexBuffer& vertexBuffer)
 {
-	s_dx11->m_context->IASetVertexBuffers(0, 1, vertexBuffer.vertexBuffer.GetAddressOf(), &vertexBuffer.vertexStride, &vertexBuffer.vertexOffset);
+	s_dx11->m_context->IASetVertexBuffers(0, 1, vertexBuffer.vertexBuffer.GetAddressOf(), &vertexBuffer.vertexStride, &vertexBuffer.baseVertexLocation);
 }
 
 void LowLvlGfx::Bind(const IndexBuffer& indexBuffer)

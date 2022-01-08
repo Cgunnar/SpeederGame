@@ -65,7 +65,7 @@ public:
 	void GenerateRenderMesh(MeshFormat format = MeshFormat::POS_NOR_UV_TAN_BITAN);
 	TerrainMesh mesh;
 	MeshFormat meshFormat = MeshFormat::POS_NOR_UV_TAN_BITAN;
-	SubMesh renderMesh;
+	Mesh renderMesh;
 	bool hasRequestedMesh = false;
 	bool hasMesh = false;
 	bool hasRenderMesh = false;

@@ -29,11 +29,11 @@ void TerrainLODMesh::GenerateRenderMesh(MeshFormat format)
 	assert(!hasRenderMesh);
 	if (meshFormat == MeshFormat::POS_NOR_UV_TAN_BITAN)
 	{
-		renderMesh = SubMesh(mesh.verticesTBN, mesh.indices);
+		renderMesh = Mesh(mesh.verticesTBN, mesh.indices);
 	}
 	else
 	{
-		renderMesh = SubMesh(mesh.vertices, mesh.indices);
+		renderMesh = Mesh(mesh.vertices, mesh.indices);
 	}
 	this->mesh = TerrainMesh();
 	hasRenderMesh = true;

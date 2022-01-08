@@ -217,7 +217,7 @@ void PbrRenderer::RenderPBR_ALBEDO_METROUG_NOR(RenderFlag flag)
 		LowLvlGfx::Bind(rendRes->m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
 		LowLvlGfx::Bind(rendUnit.subMesh.vb);
 		LowLvlGfx::Bind(rendUnit.subMesh.ib);
-		LowLvlGfx::DrawIndexed(rendUnit.subMesh.indexCount, rendUnit.subMesh.startIndexLocation, rendUnit.subMesh.baseVertexLocation);
+		LowLvlGfx::DrawIndexed(rendUnit.subMesh.GetIndexCount(), rendUnit.subMesh.GetStartIndexLocation(), rendUnit.subMesh.GetbaseVertexLocation());
 	}
 
 	m_PBR_ALBEDO_METROUG_NOR.clear();
@@ -255,7 +255,7 @@ void PbrRenderer::RenderPBR_ALBEDO_METROUG(RenderFlag flag)
 		LowLvlGfx::Bind(rendRes->m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
 		LowLvlGfx::Bind(rendUnit.subMesh.vb);
 		LowLvlGfx::Bind(rendUnit.subMesh.ib);
-		LowLvlGfx::DrawIndexed(rendUnit.subMesh.indexCount, rendUnit.subMesh.startIndexLocation, rendUnit.subMesh.baseVertexLocation);
+		LowLvlGfx::DrawIndexed(rendUnit.subMesh.GetIndexCount(), rendUnit.subMesh.GetStartIndexLocation(), rendUnit.subMesh.GetbaseVertexLocation());
 	}
 
 	m_PBR_ALBEDO_METROUG.clear();
@@ -298,7 +298,7 @@ void PbrRenderer::RenderPBR_ALBEDO_METROUG_NOR_EMIS(RenderFlag flag)
 		LowLvlGfx::Bind(rendRes->m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
 		LowLvlGfx::Bind(rendUnit.subMesh.vb);
 		LowLvlGfx::Bind(rendUnit.subMesh.ib);
-		LowLvlGfx::DrawIndexed(rendUnit.subMesh.indexCount, rendUnit.subMesh.startIndexLocation, rendUnit.subMesh.baseVertexLocation);
+		LowLvlGfx::DrawIndexed(rendUnit.subMesh.GetIndexCount(), rendUnit.subMesh.GetStartIndexLocation(), rendUnit.subMesh.GetbaseVertexLocation());
 	}
 
 	m_PBR_ALBEDO_METROUG_NOR_EMIS.clear();
@@ -332,7 +332,7 @@ void PbrRenderer::RenderPBR_NO_TEXTURES(RenderFlag flag)
 		LowLvlGfx::Bind(rendRes->m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
 		LowLvlGfx::Bind(rendUnit.subMesh.vb);
 		LowLvlGfx::Bind(rendUnit.subMesh.ib);
-		LowLvlGfx::DrawIndexed(rendUnit.subMesh.indexCount, rendUnit.subMesh.startIndexLocation, rendUnit.subMesh.baseVertexLocation);
+		LowLvlGfx::DrawIndexed(rendUnit.subMesh.GetIndexCount(), rendUnit.subMesh.GetStartIndexLocation(), rendUnit.subMesh.GetbaseVertexLocation());
 	}
 
 	m_PBR_NO_TEXTURES.clear();
@@ -369,7 +369,7 @@ void PbrRenderer::RenderPBR_ALBEDO(RenderFlag flag)
 		LowLvlGfx::Bind(rendRes->m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
 		LowLvlGfx::Bind(rendUnit.subMesh.vb);
 		LowLvlGfx::Bind(rendUnit.subMesh.ib);
-		LowLvlGfx::DrawIndexed(rendUnit.subMesh.indexCount, rendUnit.subMesh.startIndexLocation, rendUnit.subMesh.baseVertexLocation);
+		LowLvlGfx::DrawIndexed(rendUnit.subMesh.GetIndexCount(), rendUnit.subMesh.GetStartIndexLocation(), rendUnit.subMesh.GetbaseVertexLocation());
 	}
 
 	m_PBR_ALBEDO.clear();
@@ -408,7 +408,7 @@ void PbrRenderer::RenderPBR_ALBEDO_NOR(RenderFlag flag)
 		LowLvlGfx::Bind(rendRes->m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
 		LowLvlGfx::Bind(rendUnit.subMesh.vb);
 		LowLvlGfx::Bind(rendUnit.subMesh.ib);
-		LowLvlGfx::DrawIndexed(rendUnit.subMesh.indexCount, rendUnit.subMesh.startIndexLocation, rendUnit.subMesh.baseVertexLocation);
+		LowLvlGfx::DrawIndexed(rendUnit.subMesh.GetIndexCount(), rendUnit.subMesh.GetStartIndexLocation(), rendUnit.subMesh.GetbaseVertexLocation());
 	}
 
 	m_PBR_ALBEDO_NOR.clear();

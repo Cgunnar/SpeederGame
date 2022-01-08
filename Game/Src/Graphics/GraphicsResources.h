@@ -64,7 +64,7 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_buffer;
 
 };
-
+class Mesh;
 class VertexBuffer
 {
 public:
@@ -72,9 +72,10 @@ public:
 	uint32_t GetVertexCount() const { return vertexCount; }
 private:
 	friend LowLvlGfx;
+	friend Mesh;
 	uint32_t vertexStride = 0;
 	uint32_t vertexCount = 0;
-	uint32_t vertexOffset = 0;
+	uint32_t baseVertexLocation = 0;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
 };
@@ -86,6 +87,7 @@ public:
 	uint32_t GetIndexCount() const { return indexCount; }
 private:
 	friend LowLvlGfx;
+	friend Mesh;
 	uint32_t indexCount = 0;
 	uint32_t startIndexLocation = 0;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> m_indexBuffer;
@@ -127,20 +129,22 @@ struct Rasterizer
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> rasterState;
 };
 
-class SubMesh
+class Mesh
 {
-
+	friend LowLvlGfx;
 public:
-	SubMesh() = default;
-	SubMesh(const std::vector<Vertex_POS_NOR_UV>& vertices, const std::vector<uint32_t>& indices);
-	SubMesh(const std::vector<Vertex_POS_NOR_UV_TAN_BITAN>& vertices, const std::vector<uint32_t>& indices);
+	Mesh() = default;
+	Mesh(const std::vector<Vertex_POS_NOR_UV>& vertices, const std::vector<uint32_t>& indices);
+	Mesh(VertexBuffer vertices, IndexBuffer indices, uint32_t startIndexLocation);
+	Mesh(const std::vector<Vertex_POS_NOR_UV_TAN_BITAN>& vertices, const std::vector<uint32_t>& indices);
+	uint32_t GetbaseVertexLocation() const { return vb.baseVertexLocation; }
+	uint32_t GetIndexCount() const { return ib.indexCount; }
+	uint32_t GetStartIndexLocation() const { return startIndexLocation; }
 	VertexBuffer vb;
 	IndexBuffer ib;
-	uint32_t indexCount = 0;
-	uint32_t startIndexLocation = 0;
-	int32_t baseVertexLocation = 0;
 	GID GetGID() const { return guid; }
 private:
+	uint32_t startIndexLocation = 0;
 	GID guid = GID::GenerateNew();
 };
 
@@ -148,7 +152,7 @@ typedef size_t RenderUnitID;
 
 struct RenderUnit
 {
-	SubMesh subMesh;
+	Mesh subMesh;
 	Material material;
 };
 

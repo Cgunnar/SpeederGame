@@ -72,22 +72,22 @@ void ShadowMappingPass::DrawFromDirLight(rfe::Entity camera, rfm::Vector3 lightD
 		{
 			for (RenderUnitID i = b; i < e; i++)
 			{
-				const SubMesh& mesh = am.GetRenderUnit(i).subMesh;
+				const Mesh& mesh = am.GetRenderUnit(i).subMesh;
 				Matrix mvp = m_vp * rt.worldMatrix;
 				LowLvlGfx::UpdateBuffer(rendRes->m_worldMatrixCB, &mvp);
 				LowLvlGfx::Bind(mesh.ib);
 				LowLvlGfx::Bind(mesh.vb);
-				LowLvlGfx::DrawIndexed(mesh.indexCount, mesh.startIndexLocation, mesh.baseVertexLocation);
+				LowLvlGfx::DrawIndexed(mesh.GetIndexCount(), mesh.GetStartIndexLocation(), mesh.GetbaseVertexLocation());
 			}
 		}
 		else
 		{
-			const SubMesh& mesh = am.GetRenderUnit(rt.rendComp.renderUnitID).subMesh;
+			const Mesh& mesh = am.GetRenderUnit(rt.rendComp.renderUnitID).subMesh;
 			Matrix mvp = m_vp * rt.worldMatrix;
 			LowLvlGfx::UpdateBuffer(rendRes->m_worldMatrixCB, &mvp);
 			LowLvlGfx::Bind(mesh.ib);
 			LowLvlGfx::Bind(mesh.vb);
-			LowLvlGfx::DrawIndexed(mesh.indexCount, mesh.startIndexLocation, mesh.baseVertexLocation);
+			LowLvlGfx::DrawIndexed(mesh.GetIndexCount(), mesh.GetStartIndexLocation(), mesh.GetbaseVertexLocation());
 		}
 	}
 }

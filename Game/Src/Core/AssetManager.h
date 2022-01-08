@@ -23,6 +23,7 @@ public:
 	static AssetManager& Get();
 
 	std::shared_ptr<Texture2D> GetTexture2D(GID guid) const;
+	void RemoveTexture2D(GID guid);
 	const SubMesh& GetMesh(RenderUnitID id) const;
 	const SubMesh& GetMesh(SimpleMesh mesh) const;
 	const SubMesh& GetMesh(GID id) const;

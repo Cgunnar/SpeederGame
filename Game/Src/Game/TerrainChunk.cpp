@@ -21,6 +21,7 @@ TerrainChunk::~TerrainChunk()
 			std::this_thread::yield();
 		}
 	}
+	AssetManager::Get().RemoveTexture2D(m_material.baseColorTexture);
 }
 
 TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, Transform terrainTransform, TerrainMeshDesc mapDesc, std::vector<LODinfo> lods)

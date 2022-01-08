@@ -65,6 +65,14 @@ std::shared_ptr<Texture2D> AssetManager::GetTexture2D(GID guid) const
 	return nullptr;
 }
 
+void AssetManager::RemoveTexture2D(GID guid)
+{
+	if (m_textures.contains(guid))
+	{
+		m_textures.erase(guid);
+	}
+}
+
 const SubMesh& AssetManager::GetMesh(RenderUnitID id) const
 {
 	assert(id > 0 && id - 1 < m_renderUnits.size());

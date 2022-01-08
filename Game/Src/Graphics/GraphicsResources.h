@@ -129,9 +129,11 @@ struct Rasterizer
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> rasterState;
 };
 
+class AssetManager;
 class Mesh
 {
 	friend LowLvlGfx;
+	friend AssetManager;
 public:
 	Mesh() = default;
 	Mesh(const std::vector<Vertex_POS_NOR_UV>& vertices, const std::vector<uint32_t>& indices);
@@ -155,7 +157,8 @@ typedef size_t RenderUnitID;
 
 struct RenderUnit
 {
-	Mesh subMesh;
+	Mesh GetMesh() const;
+	GID meshID;
 	Material material;
 };
 

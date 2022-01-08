@@ -1,6 +1,7 @@
 #include "pch.hpp"
 #include "GraphicsResources.h"
 #include "LowLvlGfx.h"
+#include "AssetManager.h"
 
 namespace standardDescriptors
 {
@@ -113,4 +114,10 @@ Mesh::Mesh(const std::vector<Vertex_POS_NOR_UV_TAN_BITAN>& vertices, const std::
 	this->startIndexLocation = ib.startIndexLocation;
 	this->baseVertexLocation = vb.baseVertexLocation;
 	this->indexCount = ib.indexCount;
+}
+
+Mesh RenderUnit::GetMesh() const
+{
+	Mesh mesh = AssetManager::Get().GetMesh(meshID);
+	return mesh;
 }

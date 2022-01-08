@@ -25,18 +25,19 @@ void AssetManager::Destroy()
 AssetManager::AssetManager()
 {
 	Geometry::Quad_POS_NOR_UV quad2;
-	m_renderUnits.push_back(RenderUnit());
-	Mesh& mesh = m_renderUnits.back().subMesh;
-	mesh.ib = LowLvlGfx::CreateIndexBuffer(quad2.IndexData(), quad2.indexCount);
-	mesh.vb = LowLvlGfx::CreateVertexBuffer(quad2.VertexData(), quad2.arraySize, quad2.vertexStride);
+	Mesh mesh = Mesh(LowLvlGfx::CreateVertexBuffer(quad2.VertexData(), quad2.arraySize, quad2.vertexStride),
+		LowLvlGfx::CreateIndexBuffer(quad2.IndexData(), quad2.indexCount));
+	mesh.guid = static_cast<uint64_t>(SimpleMesh::Quad_POS_NOR_UV);
+	AddMesh(mesh);
 
 	//-----------------------
 
 	Geometry::Sphere_POS_NOR_UV_TAN_BITAN sphere(16);
 	m_renderUnits.push_back(RenderUnit());
-	Mesh& sphereMesh = m_renderUnits.back().subMesh;
-	sphereMesh.ib = LowLvlGfx::CreateIndexBuffer(sphere.IndexData(), sphere.IndexCount());
-	sphereMesh.vb = LowLvlGfx::CreateVertexBuffer(sphere.VertexData(), sphere.ArraySize(), sphere.vertexStride);
+	mesh = Mesh(LowLvlGfx::CreateVertexBuffer(sphere.VertexData(), sphere.ArraySize(), sphere.vertexStride),
+		LowLvlGfx::CreateIndexBuffer(sphere.IndexData(), sphere.IndexCount()));
+	mesh.guid = static_cast<uint64_t>(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN);
+	AddMesh(mesh);
 }
 
 AssetManager::~AssetManager()
@@ -66,20 +67,19 @@ void AssetManager::RemoveTexture2D(GID guid)
 	}
 }
 
-const Mesh& AssetManager::GetMesh(RenderUnitID id) const
+Mesh AssetManager::GetMesh(RenderUnitID id) const
 {
 	assert(id > 0 && id - 1 < m_renderUnits.size());
-	return m_renderUnits[id - 1].subMesh;
+	return GetMesh(m_renderUnits[id - 1].meshID);
 }
 
-const Mesh& AssetManager::GetMesh(SimpleMesh mesh) const
+Mesh AssetManager::GetMesh(SimpleMesh mesh) const
 {
-	RenderUnitID id = static_cast<RenderUnitID>(mesh);
-	assert(id > 0 && id - 1 < m_renderUnits.size());
-	return m_renderUnits[id - 1].subMesh;
+	assert(m_meshes.contains(GID(mesh)));
+	return m_meshes.at(GID(mesh));
 }
 
-const Mesh& AssetManager::GetMesh(GID id) const
+Mesh AssetManager::GetMesh(GID id) const
 {
 	assert(m_meshes.contains(id));
 	return m_meshes.at(id);
@@ -98,10 +98,13 @@ RenderUnit& AssetManager::GetRenderUnit(RenderUnitID id)
 }
 
 
-RenderUnitID AssetManager::AddMesh(Mesh mesh)
+GID AssetManager::AddMesh(Mesh mesh)
 {
-	m_renderUnits.push_back({ mesh, Material() });
-	return m_renderUnits.size(); // RenderUnitID will always be index + 1
+	//m_renderUnits.push_back({ mesh, Material() });
+	//return m_renderUnits.size(); // RenderUnitID will always be index + 1
+	assert(!m_meshes.contains(mesh.GetGID()));
+	m_meshes[mesh.GetGID()] = mesh;
+	return mesh.GetGID();
 }
 
 RenderUnitID AssetManager::AddRenderUnit(RenderUnit renderUnit)
@@ -110,9 +113,16 @@ RenderUnitID AssetManager::AddRenderUnit(RenderUnit renderUnit)
 	return m_renderUnits.size(); // RenderUnitID will always be index + 1
 }
 
-RenderUnitID AssetManager::AddRenderUnit(const Mesh& subMesh, const Material& material)
+RenderUnitID AssetManager::AddRenderUnit(const Mesh& mesh, const Material& material)
 {
-	m_renderUnits.push_back({ subMesh, material});
+	GID meshID = AddMesh(mesh);
+	m_renderUnits.push_back({ meshID, material});
+	return m_renderUnits.size(); // RenderUnitID will always be index + 1
+}
+
+RenderUnitID AssetManager::AddRenderUnit(GID meshID, const Material& material)
+{
+	m_renderUnits.push_back({ meshID, material });
 	return m_renderUnits.size(); // RenderUnitID will always be index + 1
 }
 
@@ -148,9 +158,7 @@ void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subMo
 	{
 		RenderUnit ru;
 		ru.material = m.pbrMaterial;
-		ru.subMesh = Mesh(vb, ib, m.indexCount, m.indexStart, m.vertexStart);
-		ru.subMesh.ib = ib;
-		ru.subMesh.vb = vb;
+		ru.meshID = AssetManager::Get().AddMesh(Mesh(vb, ib, m.indexCount, m.indexStart, m.vertexStart));
 		RenderUnitID ID = AddRenderUnit(ru);
 		largestIDinSubTree = ID + 1;
 		subModel.renderUnitIDs.push_back(ID);

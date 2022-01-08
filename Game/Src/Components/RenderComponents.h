@@ -48,7 +48,15 @@ struct RenderModelComp : rfe::Component<RenderModelComp>
 
 	void SetRenderUnit(const Mesh& mesh, const Material& material, bool visible = true)
 	{
-		renderUnitID = AssetManager::Get().AddRenderUnit(mesh, material);
+		renderUnitID = AssetManager::Get().AddRenderUnit(mesh.GetGID(), material);
+		renderUnitBegin = 0;
+		renderUnitEnd = 0;
+		ModelID = 0;
+		this->visible = visible;
+	}
+	void SetRenderUnit(GID meshID, const Material& material, bool visible = true)
+	{
+		renderUnitID = AssetManager::Get().AddRenderUnit(meshID, material);
 		renderUnitBegin = 0;
 		renderUnitEnd = 0;
 		ModelID = 0;

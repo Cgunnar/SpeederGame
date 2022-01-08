@@ -3,11 +3,7 @@
 #include "GraphicsResources.h"
 #include "AssimpLoader.h"
 
-enum class SimpleMesh
-{
-	Quad_POS_NOR_UV = 1,
-	UVSphere_POS_NOR_UV_TAN_BITAN = 2,
-};
+
 
 
 
@@ -24,14 +20,15 @@ public:
 
 	std::shared_ptr<Texture2D> GetTexture2D(GID guid) const;
 	void RemoveTexture2D(GID guid);
-	const Mesh& GetMesh(RenderUnitID id) const;
-	const Mesh& GetMesh(SimpleMesh mesh) const;
-	const Mesh& GetMesh(GID id) const;
+	Mesh GetMesh(RenderUnitID id) const;
+	Mesh GetMesh(SimpleMesh mesh) const;
+	Mesh GetMesh(GID id) const;
 	const RenderUnit& GetRenderUnit(RenderUnitID id) const;
 	RenderUnit& GetRenderUnit(RenderUnitID id);
-	RenderUnitID AddMesh(Mesh mesh);
+	GID AddMesh(Mesh mesh);
 	RenderUnitID AddRenderUnit(RenderUnit renderUnit);
 	RenderUnitID AddRenderUnit(const Mesh& subMesh, const Material& material);
+	RenderUnitID AddRenderUnit(GID meshID, const Material& material);
 	GID LoadMesh(const std::string& path, MeshFormat format);
 
 	GID LoadModel(const std::string& filePath);

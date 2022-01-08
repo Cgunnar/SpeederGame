@@ -8,9 +8,16 @@ struct Resolution
 	uint32_t height = 0;
 };
 
+enum class SimpleMesh
+{
+	Quad_POS_NOR_UV = 1,
+	UVSphere_POS_NOR_UV_TAN_BITAN = 2,
+};
+
 struct GID
 {
 	GID(uint64_t id) : id(id){}
+	GID(SimpleMesh id) { this->id = static_cast<uint64_t>(id); };
 	GID() = default;
 
 	operator const uint64_t& () const { return id; }

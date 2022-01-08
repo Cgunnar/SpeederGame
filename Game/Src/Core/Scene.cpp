@@ -35,7 +35,7 @@ Scene::Scene()
 	m_terrDesc.bioms.emplace_back("mountain", 0.2f, 0.5f);
 	m_terrDesc.bioms.emplace_back("mountain_snow", 0.9f, 0.95f);
 	m_terrDesc.LODs.push_back({ .lod = 0, .visDistThrhold = 200 });
-	m_terrDesc.LODs.push_back({ .lod = 1, .visDistThrhold = 400 });
+	m_terrDesc.LODs.push_back({ .lod = 2, .visDistThrhold = 400 });
 	//m_terrDesc.LODs.push_back({ .lod = 3, .visDistThrhold = 600 });
 	//m_terrDesc.LODs.push_back({ .lod = 6, .visDistThrhold = 800 });
 
@@ -107,10 +107,9 @@ Scene::Scene()
 	rusteIronMat.SetMetallicRoughnessTexture("Assets/Textures/rustediron/metallic_roughness.png");
 	rusteIronMat.SetNormalTexture("Assets/Textures/rustediron/normal.png");
 
-	Mesh quadMeshCopy2 = AssetManager::Get().GetMesh(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN);
 	m_ironSphere = EntityReg::CreateEntity();
 	m_ironSphere.AddComponent(TransformComp())->transform.setTranslation(0, 3, 1);
-	m_ironSphere.AddComponent(RenderModelComp(AssetManager::Get().AddRenderUnit(quadMeshCopy2, rusteIronMat)));
+	m_ironSphere.AddComponent(RenderModelComp(AssetManager::Get().AddRenderUnit(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN, rusteIronMat)));
 
 
 	m_quadContr.slider1.ChangeDefaultValues({ 0,1,-1.2f });

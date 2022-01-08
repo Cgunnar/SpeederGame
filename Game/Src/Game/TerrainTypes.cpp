@@ -2,6 +2,7 @@
 #include "TerreinTypes.h"
 
 #include "TerrainMeshGenerator.h"
+#include "AssetManager.h"
 
 TerrainLODMesh::TerrainLODMesh(int lod) : m_lod(lod)
 {
@@ -29,11 +30,11 @@ void TerrainLODMesh::GenerateRenderMesh(MeshFormat format)
 	assert(!hasRenderMesh);
 	if (meshFormat == MeshFormat::POS_NOR_UV_TAN_BITAN)
 	{
-		renderMesh = Mesh(mesh.verticesTBN, mesh.indices);
+		renderMesh = AssetManager::Get().AddMesh(Mesh(mesh.verticesTBN, mesh.indices));
 	}
 	else
 	{
-		renderMesh = Mesh(mesh.vertices, mesh.indices);
+		renderMesh = AssetManager::Get().AddMesh(Mesh(mesh.vertices, mesh.indices));
 	}
 	this->mesh = TerrainMesh();
 	hasRenderMesh = true;

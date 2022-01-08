@@ -60,6 +60,7 @@ class TerrainLODMesh
 public:
 	TerrainLODMesh(int lod);
 	TerrainLODMesh() = default;
+	~TerrainLODMesh();
 	void OnReceive(TerrainMesh&& mesh);
 	void RequestMesh(const TerrainMap& map, TerrainMeshDesc desc);
 	void GenerateRenderMesh(MeshFormat format = MeshFormat::POS_NOR_UV_TAN_BITAN);

@@ -8,6 +8,11 @@ TerrainLODMesh::TerrainLODMesh(int lod) : m_lod(lod)
 {
 }
 
+TerrainLODMesh::~TerrainLODMesh()
+{
+	AssetManager::Get().RemoveMesh(renderMesh);
+}
+
 void TerrainLODMesh::OnReceive(TerrainMesh&& mesh)
 {
 	this->mesh = std::move(mesh);

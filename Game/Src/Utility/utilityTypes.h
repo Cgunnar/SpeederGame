@@ -20,6 +20,7 @@ struct GID
 	GID(SimpleMesh id) { this->id = static_cast<uint64_t>(id); };
 	GID() = default;
 
+	bool operator ==(int i) const { return id == i; }
 	operator const uint64_t& () const { return id; }
 	operator const bool () const { return id != 0; }
 

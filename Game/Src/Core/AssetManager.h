@@ -23,6 +23,7 @@ public:
 	Mesh GetMesh(RenderUnitID id) const;
 	Mesh GetMesh(SimpleMesh mesh) const;
 	Mesh GetMesh(GID id) const;
+	void RemoveMesh(GID id);
 	const RenderUnit& GetRenderUnit(RenderUnitID id) const;
 	RenderUnit& GetRenderUnit(RenderUnitID id);
 	GID AddMesh(Mesh mesh);

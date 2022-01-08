@@ -12,7 +12,7 @@ GuiTest::GuiTest(const std::string& name) : GuiDebug(name)
 {
 }
 
-void GuiTest::Show()
+bool GuiTest::Show()
 {
 	ImGui::Begin(m_name.c_str());
 
@@ -51,4 +51,5 @@ void GuiTest::Show()
 
 
 	ImGui::End();
+	return true;
 }

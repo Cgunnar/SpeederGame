@@ -37,7 +37,7 @@ class GuiDebug
 {
 public:
 	GuiDebug(const std::string& name);
-	virtual void Show() = 0;
+	virtual bool Show() = 0;
 
 protected:
 	std::string m_name;
@@ -47,7 +47,7 @@ class GuiTest : public GuiDebug
 {
 public:
 	GuiTest(const std::string& name);
-	virtual void Show() override;
+	virtual bool Show() override;
 
 	Slider slider1;
 	Slider slider2;

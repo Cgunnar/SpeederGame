@@ -138,23 +138,22 @@ void Scene::Update(float dt)
 
 	EntityReg::RunScripts<CameraControllerScript, ShipContollerScript, TerrainScript>(dt);
 
-	if (Input::Get().keyPressed(Input::T))
+	if (m_terrainGUI.Show())
 	{
 		if (m_terrain.GetComponent<TerrainScript>())
 		{
 			m_terrain.RemoveComponent<TerrainScript>();
 		}
-		else
-		{
-			auto guiInput = m_terrainGUI.GetValues();
-			m_terrDesc.baseOffset = guiInput.baseOffset;
-			m_terrDesc.frequencyScale = guiInput.frequencyScale;
-			m_terrDesc.lacunarity = guiInput.lacunarity;
-			m_terrDesc.octaves = guiInput.octaves;
-			m_terrDesc.persistence = guiInput.persistence;
-			m_terrDesc.heightScale = guiInput.heightScale;
-			m_terrain.AddComponent<TerrainScript>(m_terrDesc);
-		}
+		
+		auto guiInput = m_terrainGUI.GetValues();
+		m_terrDesc.baseOffset = guiInput.baseOffset;
+		m_terrDesc.frequencyScale = guiInput.frequencyScale;
+		m_terrDesc.lacunarity = guiInput.lacunarity;
+		m_terrDesc.octaves = guiInput.octaves;
+		m_terrDesc.persistence = guiInput.persistence;
+		m_terrDesc.heightScale = guiInput.heightScale;
+		m_terrain.AddComponent<TerrainScript>(m_terrDesc);
+		m_terrain.GetComponent<TransformComp>()->transform.setScale(guiInput.scale);
 	}
 
 	Transform followShip = m_ship.GetComponent<TransformComp>()->transform;
@@ -165,7 +164,7 @@ void Scene::Update(float dt)
 	m_quadContr.Show();
 	m_lightContr.Show();
 	m_dirlightContr.Show();
-	m_terrainGUI.Show();
+	
 
 	m_pointLight.GetComponent<PointLightComp>()->pointLight.position = m_lightContr.slider1.value;
 	m_pointLight.GetComponent<PointLightComp>()->pointLight.color = m_lightContr.slider2.value;

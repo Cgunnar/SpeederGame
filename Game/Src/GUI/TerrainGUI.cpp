@@ -8,22 +8,25 @@ TerrainGUI::TerrainGUI(const std::string& name) : GuiDebug(name)
 
 }
 
-void TerrainGUI::Show()
+bool TerrainGUI::Show()
 {
+	bool c = false;
 	ImGui::Begin(m_name.c_str());
 	
-	ImGui::SliderFloat("persistence", &m_values.persistence, 0, 1);
-	ImGui::SliderFloat("lacunarity", &m_values.lacunarity, 0, 3);
-	ImGui::SliderFloat("frequencyScale", &m_values.frequencyScale, 0.1f, 100);
-	ImGui::SliderFloat("heightScale", &m_values.heightScale, 1, 100);
-	ImGui::SliderFloat2("baseOffset", (float*)&m_values.baseOffset, -100, 100);
-	ImGui::SliderInt("octaves", &m_values.octaves, 1, 10);
-	static int seed = m_values.seed;
-	ImGui::SliderInt("seed", &seed, 0, 10);
+	c = c || ImGui::SliderFloat("scale", &m_values.scale, 0.01, 1);
+	c = c || ImGui::SliderFloat("persistence", &m_values.persistence, 0, 1);
+	c = c || ImGui::SliderFloat("lacunarity", &m_values.lacunarity, 0, 3);
+	c = c || ImGui::SliderFloat("frequencyScale", &m_values.frequencyScale, 0.1f, 100);
+	c = c || ImGui::SliderFloat("heightScale", &m_values.heightScale, 1, 100);
+	c = c || ImGui::SliderFloat2("baseOffset", (float*)&m_values.baseOffset, -50, 50);
+	c = c || ImGui::SliderInt("octaves", &m_values.octaves, 1, 10);
+	static int seed = 5;
+	c = c || ImGui::SliderInt("seed", &seed, 0, 10);
 	m_values.seed = seed;
 
 
 	ImGui::End();
+	return c;
 }
 
 TerrainGUIValues TerrainGUI::GetValues() const

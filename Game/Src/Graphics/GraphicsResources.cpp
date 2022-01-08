@@ -88,9 +88,10 @@ Mesh::Mesh(const std::vector<Vertex_POS_NOR_UV>& vertices, const std::vector<uin
 	vb = LowLvlGfx::CreateVertexBuffer(reinterpret_cast<const float*>(vertices.data()), (uint32_t)vertices.size() * sizeof(Vertex_POS_NOR_UV), (uint32_t)sizeof(Vertex_POS_NOR_UV));
 }
 
-Mesh::Mesh(VertexBuffer vertices, IndexBuffer indices, uint32_t startIndexLocation)
+Mesh::Mesh(VertexBuffer vertices, IndexBuffer indices, uint32_t startIndexLocation, uint32_t baseVertexLocation)
 {
 	this->startIndexLocation = startIndexLocation;
+	this->baseVertexLocation = baseVertexLocation;
 	this->ib = indices;
 	this->vb = vertices;
 }

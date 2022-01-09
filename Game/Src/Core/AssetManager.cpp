@@ -33,10 +33,16 @@ AssetManager::AssetManager()
 	//-----------------------
 
 	Geometry::Sphere_POS_NOR_UV_TAN_BITAN sphere(16);
-	m_renderUnits.push_back(RenderUnit());
 	mesh = Mesh(LowLvlGfx::CreateVertexBuffer(sphere.VertexData(), sphere.ArraySize(), sphere.vertexStride),
 		LowLvlGfx::CreateIndexBuffer(sphere.IndexData(), sphere.IndexCount()));
 	mesh.guid = static_cast<uint64_t>(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN);
+	AddMesh(mesh);
+
+	//----------------------
+	Geometry::AABB_POS_NOR_UV aabb(AABB({ 1,1,1 }));
+	mesh = Mesh(LowLvlGfx::CreateVertexBuffer(aabb.VertexData(), aabb.ArraySize(), aabb.vertexStride),
+		LowLvlGfx::CreateIndexBuffer(aabb.IndexData(), aabb.IndexCount()));
+	mesh.guid = static_cast<uint64_t>(SimpleMesh::BOX_POS_NOR_UV);
 	AddMesh(mesh);
 }
 

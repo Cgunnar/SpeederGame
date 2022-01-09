@@ -42,7 +42,7 @@ Scene::Scene()
 	m_terrain = EntityReg::CreateEntity();
 	m_terrain.AddComponent<TransformComp>()->transform.setScale(0.2f);
 	m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, -10, 0);
-	m_terrain.AddComponent<TerrainScript>(m_terrDesc);
+	//m_terrain.AddComponent<TerrainScript>(m_terrDesc);
 
 
 	CreateEntityModel("Assets/Models/brick_wall/brick_wall.obj", {0, -1, 0}, { 90, 0, 0 }, 10);
@@ -86,8 +86,15 @@ Scene::Scene()
 	m_arrow.AddComponent(TransformComp());
 	m_arrow.AddComponent(RenderModelComp("Assets/Models/Arrows/DXRefSys.obj"));
 
+
+
+	Material redWireFrame;
+	redWireFrame.emissiveFactor = { 1,0,0 };
+	redWireFrame.baseColorFactor = 0;
+	redWireFrame.flags = RenderFlag::wireframe | RenderFlag::noBackFaceCull;
 	m_ship = CreateEntityModel("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", { 0, 2, 3 });
 	m_ship.AddComponent<ShipContollerScript>();
+	m_ship.AddComponent<RenderUnitComp>(SimpleMesh::BOX_POS_NOR_UV, redWireFrame);
 
 	
 
@@ -138,7 +145,7 @@ void Scene::Update(float dt)
 
 	EntityReg::RunScripts<CameraControllerScript, ShipContollerScript, TerrainScript>(dt);
 
-	if (m_terrainGUI.Show())
+	/*if (m_terrainGUI.Show())
 	{
 		if (m_terrain.GetComponent<TerrainScript>())
 		{
@@ -154,7 +161,7 @@ void Scene::Update(float dt)
 		m_terrDesc.heightScale = guiInput.heightScale;
 		m_terrain.AddComponent<TerrainScript>(m_terrDesc);
 		m_terrain.GetComponent<TransformComp>()->transform.setScale(guiInput.scale);
-	}
+	}*/
 
 	Transform followShip = m_ship.GetComponent<TransformComp>()->transform;
 	followShip.translateL(0, 1, -4);

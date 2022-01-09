@@ -138,8 +138,22 @@ void Renderer::CopyFromECS()
 		{
 			EntityID entID = rendComp.GetEntityID();
 			assert(EntityReg::GetComponent<TransformComp>(entID));
-			m_rendCompAndTransformFromECS.push_back(
-				{ rendComp, EntityReg::GetComponent<TransformComp>(entID)->transform });
+			m_rendCompAndTransformFromECS.emplace_back(
+				EntityReg::GetComponent<TransformComp>(entID)->transform, rendComp.renderPass,
+				rendComp.renderUnitID, rendComp.renderUnitBegin, rendComp.renderUnitEnd);
+		}
+	}
+
+	const auto& rendUnitCompArray = rfe::EntityReg::GetComponentArray<RenderUnitComp>();
+	for (const auto& rendComp : rendUnitCompArray)
+	{
+		if (rendComp.visible)
+		{
+			EntityID entID = rendComp.GetEntityID();
+			assert(EntityReg::GetComponent<TransformComp>(entID));
+			m_rendCompAndTransformFromECS.emplace_back(
+				EntityReg::GetComponent<TransformComp>(entID)->transform,
+				rendComp.renderPass, rendComp.unitID);
 		}
 	}
 }
@@ -149,19 +163,17 @@ void Renderer::SubmitToRender(rfe::Entity& camera)
 	AssetManager& assetMan = AssetManager::Get();
 	for (const auto& rt : m_rendCompAndTransformFromECS)
 	{
-		RenderUnitID b = rt.rendComp.renderUnitBegin;
-		RenderUnitID e = rt.rendComp.renderUnitEnd;
-		assert(b <= e);
-		if (b | e)
+		assert(rt.begin <= rt.end);
+		if (rt.begin | rt.end)
 		{
-			for (RenderUnitID i = b; i < e; i++)
+			for (RenderUnitID i = rt.begin; i < rt.end; i++)
 			{
-				SubmitToInternalRenderers(assetMan, rt.rendComp.renderPass, i, rt.worldMatrix);
+				SubmitToInternalRenderers(assetMan, rt.renderPass, i, rt.worldMatrix);
 			}
 		}
 		else
 		{
-			SubmitToInternalRenderers(assetMan, rt.rendComp.renderPass, rt.rendComp.renderUnitID, rt.worldMatrix);
+			SubmitToInternalRenderers(assetMan, rt.renderPass, rt.id, rt.worldMatrix);
 		}
 	}
 }

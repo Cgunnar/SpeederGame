@@ -12,6 +12,7 @@ enum class SimpleMesh
 {
 	Quad_POS_NOR_UV = 1,
 	UVSphere_POS_NOR_UV_TAN_BITAN = 2,
+	BOX_POS_NOR_UV = 3,
 };
 
 struct GID

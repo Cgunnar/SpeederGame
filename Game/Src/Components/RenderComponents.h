@@ -6,7 +6,17 @@
 #include "AssetManager.h"
 #include "StandardComponents.h"
 
-
+struct RenderUnitComp : rfe::Component<RenderUnitComp>
+{
+	RenderUnitComp() = default;
+	RenderUnitComp(GID meshID, const Material& material)
+	{
+		unitID = AssetManager::Get().AddRenderUnit(meshID, material);
+	}
+	RenderUnitID unitID = 0;
+	RenderPassEnum renderPass;
+	bool visible = true;
+};
 
 struct RenderModelComp : rfe::Component<RenderModelComp>
 {
@@ -81,7 +91,11 @@ struct RenderModelComp : rfe::Component<RenderModelComp>
 
 struct RendCompAndTransform
 {
-	RenderModelComp rendComp;
+	RendCompAndTransform() = default;
+	RendCompAndTransform(rfm::Transform worldMatrix, RenderPassEnum renderPass, RenderUnitID id, RenderUnitID begin = 0, RenderUnitID end = 0)
+		: worldMatrix(worldMatrix), renderPass(renderPass), begin(begin), end(end), id(id) {}
+	RenderPassEnum renderPass;
+	RenderUnitID begin = 0, end = 0, id = 0;
 	rfm::Transform worldMatrix;
 };
 

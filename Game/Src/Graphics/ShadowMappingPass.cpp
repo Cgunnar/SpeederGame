@@ -65,12 +65,10 @@ void ShadowMappingPass::DrawFromDirLight(rfe::Entity camera, rfm::Vector3 lightD
 	AssetManager& am = AssetManager::Get();
 	for (const auto & rt : geometyToRender)
 	{
-		RenderUnitID b = rt.rendComp.renderUnitBegin;
-		RenderUnitID e = rt.rendComp.renderUnitEnd;
-		assert(b <= e);
-		if (b | e)
+		assert(rt.begin <= rt.end);
+		if (rt.begin | rt.end)
 		{
-			for (RenderUnitID i = b; i < e; i++)
+			for (RenderUnitID i = rt.begin; i < rt.end; i++)
 			{
 				Mesh mesh = am.GetRenderUnit(i).GetMesh();
 				Matrix mvp = m_vp * rt.worldMatrix;
@@ -82,7 +80,7 @@ void ShadowMappingPass::DrawFromDirLight(rfe::Entity camera, rfm::Vector3 lightD
 		}
 		else
 		{
-			Mesh mesh = am.GetRenderUnit(rt.rendComp.renderUnitID).GetMesh();
+			Mesh mesh = am.GetRenderUnit(rt.id).GetMesh();
 			Matrix mvp = m_vp * rt.worldMatrix;
 			LowLvlGfx::UpdateBuffer(rendRes->m_worldMatrixCB, &mvp);
 			LowLvlGfx::Bind(mesh.ib);

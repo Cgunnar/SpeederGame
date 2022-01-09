@@ -1,8 +1,8 @@
 #pragma once
-#include <cstdint>
-#include <vector>
+
 #include "RimfrostMath.hpp"
 #include "GraphicsUtilityTypes.h"
+#include "boundingVolumes.h"
 namespace Geometry
 {
 	void CalcTanAndBiTan(std::vector<Vertex_POS_NOR_UV_TAN_BITAN>& vertices, const std::vector<uint32_t>& indices);
@@ -76,6 +76,26 @@ namespace Geometry
 		static constexpr uint32_t vertexStride = sizeof(Vertex_POS_NOR_UV_TAN_BITAN);
 	private:
 		std::vector<Vertex_POS_NOR_UV_TAN_BITAN> vertices;
+		std::vector<uint32_t> indices;
+		uint32_t indexCount = 0;
+		uint32_t arraySize = 0;
+	};
+
+
+
+	class AABB_POS_NOR_UV
+	{
+	public:
+		AABB_POS_NOR_UV(AABB aabb);
+
+		const uint32_t IndexCount() const { return static_cast<uint32_t>(indices.size()); }
+		const uint32_t ArraySize() const { return static_cast<uint32_t>(vertices.size() * vertexStride); }
+		float* VertexData() { return (float*)vertices.data(); }
+		uint32_t* IndexData() { return (uint32_t*)indices.data(); }
+
+		static constexpr uint32_t vertexStride = sizeof(Vertex_POS_NOR_UV);
+	private:
+		std::vector<Vertex_POS_NOR_UV> vertices;
 		std::vector<uint32_t> indices;
 		uint32_t indexCount = 0;
 		uint32_t arraySize = 0;

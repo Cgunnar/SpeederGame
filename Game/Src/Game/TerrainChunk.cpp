@@ -54,6 +54,7 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, Transform terrainTrans
 
 void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 {
+	if (m_shouldBeRemoved) return;
 	if (m_hasMap)
 	{
 		Vector3 viewPos3D = Vector3(viewPos.x, 0, viewPos.y);
@@ -90,6 +91,15 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 					if (m_prevLODindex == -1) m_visible = false;
 				}
 			}
+		}
+		else if (viewDist > 2 * maxViewDist)
+		{
+			bool safeToRemove = true;
+			for (auto& l : m_lodMeshes)
+			{
+				safeToRemove = safeToRemove && (l.hasMesh || !l.hasRequestedMesh);
+			}
+			m_shouldBeRemoved = safeToRemove;
 		}
 		m_chunkEntity.GetComponent<RenderModelComp>()->visible = m_visible;
 

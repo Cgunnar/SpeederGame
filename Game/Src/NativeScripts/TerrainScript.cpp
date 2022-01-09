@@ -77,9 +77,30 @@ void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 	}
 	m_prevFrameVisibleChunksCoord.clear();
 
+	std::vector<Vector2I> removeChunks;
+	for (auto& it : m_chunkMap)
+	{
+		m_chunkMap[it.first]->Update(viewPos, m_maxViewDistance);
+		m_chunkMap[it.first]->UpdateChunkTransform(GetComponent<TransformComp>()->transform);
+		if (it.second->m_shouldBeRemoved)
+		{
+			removeChunks.push_back(it.first);
+		}
+		else
+		{
+			m_prevFrameVisibleChunksCoord.push_back(it.first);
+		}
+	}
+	for (auto& c : removeChunks)
+	{
+		delete m_chunkMap[c];
+		m_chunkMap.erase(c);
+	}
+
 	if (!m_chunksToLoad.empty())
 	{
 		m_chunkMap[m_chunksToLoad.front()]->LoadTerrain(m_mapDesc);
+		m_chunkMap[m_chunksToLoad.front()]->Update(viewPos, m_maxViewDistance);
 		m_chunksToLoad.pop();
 	}
 
@@ -88,13 +109,7 @@ void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 		for (int x = -m_chunksVisibleInViewDist; x <= m_chunksVisibleInViewDist; x++)
 		{
 			Vector2I viewedChunk = chunkCoord + Vector2I(x, y);
-			if (m_chunkMap.contains(viewedChunk))
-			{
-				m_chunkMap[viewedChunk]->Update(viewPos, m_maxViewDistance);
-				m_chunkMap[viewedChunk]->UpdateChunkTransform(GetComponent<TransformComp>()->transform);
-				if(m_chunkMap[viewedChunk]->m_visible) m_prevFrameVisibleChunksCoord.push_back(viewedChunk);
-			}
-			else
+			if (!m_chunkMap.contains(viewedChunk))
 			{
 				m_chunkMap[viewedChunk] = new TerrainChunk(viewedChunk, m_chunkSize, GetComponent<TransformComp>()->transform, m_meshDesc, m_lods);
 				m_chunksToLoad.emplace(viewedChunk);

@@ -26,6 +26,7 @@ private:
 	Material m_material;
 	std::vector<LODinfo> m_lods;
 	std::vector<TerrainLODMesh> m_lodMeshes;
+	bool m_shouldBeRemoved = false;
 	bool m_visible = false;
 	bool m_checkForLoadedTerrainMap = false;
 	bool m_createRenderMesh = false;

@@ -76,6 +76,7 @@ Scene::Scene()
 
 
 	CreateEntityModel("Assets/Models/MetalRoughSpheres/glTF/pbrSpheres.gltf", { -2, 3, 4 }, { 0, 0, 0 }, 0.2f);
+	//CreateEntityModel("Assets/Models/pbr/razor_crest/scene.gltf", { 4, 5, 0 }, { 0, 0, 0 }, 0.2f);
 	/*CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 4, 2, 2 }, 0, 0.03f);
 	CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 3, 2, 4 }, { 0,-70, 0 }, 0.03f);
 	CreateEntityModel("Assets/Models/nanosuit/nanosuit.obj", { 2, 1, 5 }, 0, 0.1f);*/

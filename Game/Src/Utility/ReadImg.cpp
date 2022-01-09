@@ -17,7 +17,9 @@ MyImageStruct::~MyImageStruct()
 void readImage(MyImageStruct& pImageStruct, const std::string& fileName, bool blendCheck)
 {
 	assert(std::filesystem::exists(fileName));
-	unsigned char* img = stbi_load(fileName.c_str(), &pImageStruct.width, &pImageStruct.height, &pImageStruct.bpp, STBI_rgb_alpha);
+	unsigned char* img = nullptr;
+	img = stbi_load(fileName.c_str(), &pImageStruct.width, &pImageStruct.height, &pImageStruct.bpp, STBI_rgb_alpha);
+	assert(img);
 	if (pImageStruct.bpp == 4 && blendCheck)
 	{
 		int size = pImageStruct.height * pImageStruct.width * 4;

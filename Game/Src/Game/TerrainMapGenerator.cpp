@@ -46,7 +46,7 @@ TerrainMap TerrainMapGenerator::GenerateTerrinMap(const TerrainMapDesc& mapDesc)
 			{
 				if (map.heightMap[i] < mapDesc.bioms[(size_t)j + 1].threshold)
 				{
-					if(mapDesc.bioms[j].flat) map.heightMap[i] = mapDesc.bioms[j].threshold;
+					if(mapDesc.bioms[j].flat) map.heightMap[i] = 0.99f * mapDesc.bioms[j+1].threshold;
 					colorMap[i] = Vector4(mapDesc.bioms[j].color, 1);
 				}
 			}

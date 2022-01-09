@@ -5,7 +5,11 @@
 
 TerrainGUI::TerrainGUI(const std::string& name) : GuiDebug(name)
 {
-
+	m_values.octaves = 8;
+	m_values.frequencyScale = 50;
+	m_values.lacunarity = 2;
+	m_values.heightScale = 50;
+	m_values.seed = 32;
 }
 
 bool TerrainGUI::Show()
@@ -20,7 +24,7 @@ bool TerrainGUI::Show()
 	c = c || ImGui::SliderFloat("heightScale", &m_values.heightScale, 1, 100);
 	c = c || ImGui::SliderFloat2("baseOffset", (float*)&m_values.baseOffset, -50, 50);
 	c = c || ImGui::SliderInt("octaves", &m_values.octaves, 1, 10);
-	static int seed = 5;
+	static int seed = m_values.seed;
 	c = c || ImGui::SliderInt("seed", &seed, 0, 10);
 	m_values.seed = seed;
 

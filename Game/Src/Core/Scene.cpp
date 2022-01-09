@@ -31,13 +31,13 @@ Scene::Scene()
 	m_terrDesc.heightScaleFunc = [](float in) {return in <= 0.3f ? 0.3f * 0.3f : in * in; };
 	m_terrDesc.heightScale = 50;
 	m_terrDesc.bioms.emplace_back("water", Vector3(0,0,1), 0, true);
-	m_terrDesc.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.3f);
+	m_terrDesc.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.4f);
 	m_terrDesc.bioms.emplace_back("mountain", 0.2f, 0.5f);
-	m_terrDesc.bioms.emplace_back("mountain_snow", 0.9f, 0.95f);
+	m_terrDesc.bioms.emplace_back("mountain_snow", 0.9f, 0.93f);
 	m_terrDesc.LODs.push_back({ .lod = 0, .visDistThrhold = 200 });
-	m_terrDesc.LODs.push_back({ .lod = 2, .visDistThrhold = 400 });
-	//m_terrDesc.LODs.push_back({ .lod = 3, .visDistThrhold = 600 });
-	//m_terrDesc.LODs.push_back({ .lod = 6, .visDistThrhold = 800 });
+	m_terrDesc.LODs.push_back({ .lod = 1, .visDistThrhold = 400 });
+	m_terrDesc.LODs.push_back({ .lod = 3, .visDistThrhold = 600 });
+	m_terrDesc.LODs.push_back({ .lod = 6, .visDistThrhold = 800 });
 
 	m_terrain = EntityReg::CreateEntity();
 	m_terrain.AddComponent<TransformComp>()->transform.setScale(0.2f);

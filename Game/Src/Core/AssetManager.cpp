@@ -25,23 +25,20 @@ void AssetManager::Destroy()
 AssetManager::AssetManager()
 {
 	Geometry::Quad_POS_NOR_UV quad2;
-	Mesh mesh = Mesh(LowLvlGfx::CreateVertexBuffer(quad2.VertexData(), quad2.arraySize, quad2.vertexStride),
-		LowLvlGfx::CreateIndexBuffer(quad2.IndexData(), quad2.indexCount));
+	Mesh mesh = Mesh(quad2.VertexData(), quad2.IndexData());
 	mesh.guid = static_cast<uint64_t>(SimpleMesh::Quad_POS_NOR_UV);
 	AddMesh(mesh);
 
 	//-----------------------
 
 	Geometry::Sphere_POS_NOR_UV_TAN_BITAN sphere(16);
-	mesh = Mesh(LowLvlGfx::CreateVertexBuffer(sphere.VertexData(), sphere.ArraySize(), sphere.vertexStride),
-		LowLvlGfx::CreateIndexBuffer(sphere.IndexData(), sphere.IndexCount()));
+	mesh = Mesh(sphere.VertexData(), sphere.IndexData());
 	mesh.guid = static_cast<uint64_t>(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN);
 	AddMesh(mesh);
 
 	//----------------------
-	Geometry::AABB_POS_NOR_UV aabb(AABB({ 1,1,1 }));
-	mesh = Mesh(LowLvlGfx::CreateVertexBuffer(aabb.VertexData(), aabb.ArraySize(), aabb.vertexStride),
-		LowLvlGfx::CreateIndexBuffer(aabb.IndexData(), aabb.IndexCount()));
+	Geometry::AABB_POS_NOR_UV aabb(AABB({ -0.5f,-0.5f,-0.5f }, { 0.5f,0.5f,0.5f }));
+	mesh = Mesh(aabb.VertexData(), aabb.IndexData());
 	mesh.guid = static_cast<uint64_t>(SimpleMesh::BOX_POS_NOR_UV);
 	AddMesh(mesh);
 }
@@ -151,11 +148,12 @@ GID AssetManager::LoadMesh(const std::string& path, MeshFormat format)
 
 	AssimpLoader a;
 	EngineMeshData engineMeshData = a.loadStaticModel(path);
-	
-	mesh.ib = LowLvlGfx::CreateIndexBuffer(engineMeshData.getIndicesData(), (uint32_t)engineMeshData.getIndicesCount());
-	mesh.vb = LowLvlGfx::CreateVertexBuffer(engineMeshData.getVertextBuffer(format),
+	Mesh m = Mesh(LowLvlGfx::CreateVertexBuffer(engineMeshData.getVertextBuffer(format),
 		engineMeshData.getVertexCount(format) * engineMeshData.getVertexSize(format),
-		(uint32_t)engineMeshData.getVertexSize(format));
+		(uint32_t)engineMeshData.getVertexSize(format)),
+		LowLvlGfx::CreateIndexBuffer(engineMeshData.getIndicesData(),
+			(uint32_t)engineMeshData.getIndicesCount()), { {0,0,0},{0,0,0} });
+	std::cout << "fix aabb for AssetManager::LoadMesh" << std::endl;
 
 	assert(!m_meshes.contains(mesh.GetGID()));
 	m_meshes[mesh.GetGID()] = mesh;
@@ -171,7 +169,7 @@ void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subMo
 	{
 		RenderUnit ru;
 		ru.material = m.pbrMaterial;
-		ru.meshID = AssetManager::Get().AddMesh(Mesh(vb, ib, m.indexCount, m.indexStart, m.vertexStart));
+		ru.meshID = AssetManager::Get().AddMesh(Mesh(vb, ib, m.indexCount, m.indexStart, m.vertexStart, m.aabb));
 		RenderUnitID ID = AddRenderUnit(ru);
 		largestIDinSubTree = ID + 1;
 		subModel.renderUnitIDs.push_back(ID);

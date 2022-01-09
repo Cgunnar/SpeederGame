@@ -94,7 +94,13 @@ Scene::Scene()
 	redWireFrame.flags = RenderFlag::wireframe | RenderFlag::noBackFaceCull;
 	m_ship = CreateEntityModel("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", { 0, 2, 3 });
 	m_ship.AddComponent<ShipContollerScript>();
-	m_ship.AddComponent<RenderUnitComp>(SimpleMesh::BOX_POS_NOR_UV, redWireFrame);
+	RenderUnitID b = m_ship.GetComponent<RenderModelComp>()->renderUnitBegin+1;
+	Mesh shipMesh = am.GetMesh(b);
+	AABB shipAABB = shipMesh.GetAABB();
+	Geometry::AABB_POS_NOR_UV shipBoundingBox(shipAABB);
+	Mesh boxMesh = Mesh(shipBoundingBox.VertexData(), shipBoundingBox.IndexData(), shipAABB);
+	GID boxMeshID = am.AddMesh(boxMesh);
+	m_ship.AddComponent<RenderUnitComp>(boxMeshID, redWireFrame);
 
 	
 

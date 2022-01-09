@@ -178,9 +178,11 @@ namespace Geometry
 
 	AABB_POS_NOR_UV::AABB_POS_NOR_UV(AABB aabb)
 	{
-		float x = aabb.widthHeightDepth.x / 2.0f;
-		float y = aabb.widthHeightDepth.y / 2.0f;
-		float z = aabb.widthHeightDepth.z / 2.0f;
+		Vector3 p = (aabb.min + aabb.max) / 2.0f;
+		Vector3 widthHeightDepth = aabb.max - aabb.min;
+		float x = abs(widthHeightDepth.x / 2.0f);
+		float y = abs(widthHeightDepth.y / 2.0f);
+		float z = abs(widthHeightDepth.z / 2.0f);
 
 		   //    v6----- v5
 		   //   /|      /|
@@ -192,44 +194,44 @@ namespace Geometry
 		std::vector<Vertex_POS_NOR_UV> vertices
 		{
 			//v0 front left top
-			{ Vector3(-x, y, -z),  Vector3(0, 0, -1),  Vector2(0, 0) },	//0
-			{ Vector3(-x, y, -z),  Vector3(-1, 0, 0),  Vector2(1, 0) },	//1
-			{ Vector3(-x, y, -z),  Vector3(0, 1, 0),   Vector2(0, 1) },	//2
+			{ p + Vector3(-x, y, -z),  Vector3(0, 0, -1),  Vector2(0, 0) },	//0
+			{ p + Vector3(-x, y, -z),  Vector3(-1, 0, 0),  Vector2(1, 0) },	//1
+			{ p + Vector3(-x, y, -z),  Vector3(0, 1, 0),   Vector2(0, 1) },	//2
 
 			//v1 front right bot
-			{ Vector3(x, -y, -z),  Vector3(0, 0, -1),  Vector2(1, 1) },	//3
-			{ Vector3(x, -y, -z),  Vector3(1, 0, 0),   Vector2(0, 1) },	//4
-			{ Vector3(x, -y, -z),  Vector3(0, -1, 0),  Vector2(1, 0) },	//5
+			{ p + Vector3(x, -y, -z),  Vector3(0, 0, -1),  Vector2(1, 1) },	//3
+			{ p + Vector3(x, -y, -z),  Vector3(1, 0, 0),   Vector2(0, 1) },	//4
+			{ p + Vector3(x, -y, -z),  Vector3(0, -1, 0),  Vector2(1, 0) },	//5
 
 			//v2 front left bot
-			{ Vector3(-x, -y, -z), Vector3(0, 0, -1),  Vector2(0, 1) },	//6
-			{ Vector3(-x, -y, -z), Vector3(-1, 0, 0),  Vector2(1, 1) },	//7
-			{ Vector3(-x, -y, -z), Vector3(0, -1, 0),  Vector2(0, 0) },	//8
+			{ p + Vector3(-x, -y, -z), Vector3(0, 0, -1),  Vector2(0, 1) },	//6
+			{ p + Vector3(-x, -y, -z), Vector3(-1, 0, 0),  Vector2(1, 1) },	//7
+			{ p + Vector3(-x, -y, -z), Vector3(0, -1, 0),  Vector2(0, 0) },	//8
 
 			//v3 front right top
-			{ Vector3(x, y, -z),   Vector3(0, 0, -1),  Vector2(1, 0) }, //9
-			{ Vector3(x, y, -z),   Vector3(1, 0, 0),   Vector2(0, 0) },	//10
-			{ Vector3(x, y, -z),   Vector3(0, 1, 0),   Vector2(1, 1) },	//11
+			{ p + Vector3(x, y, -z),   Vector3(0, 0, -1),  Vector2(1, 0) }, //9
+			{ p + Vector3(x, y, -z),   Vector3(1, 0, 0),   Vector2(0, 0) },	//10
+			{ p + Vector3(x, y, -z),   Vector3(0, 1, 0),   Vector2(1, 1) },	//11
 
 			//v4 back right bot
-			{ Vector3(x, -y, z),   Vector3(0, 0, 1),   Vector2(0, 1) }, //12
-			{ Vector3(x, -y, z),   Vector3(1, 0, 0),   Vector2(1, 1) },	//13
-			{ Vector3(x, -y, z),   Vector3(0, -1, 0),  Vector2(1, 1) },	//14
+			{ p + Vector3(x, -y, z),   Vector3(0, 0, 1),   Vector2(0, 1) }, //12
+			{ p + Vector3(x, -y, z),   Vector3(1, 0, 0),   Vector2(1, 1) },	//13
+			{ p + Vector3(x, -y, z),   Vector3(0, -1, 0),  Vector2(1, 1) },	//14
 
 			//v5 back right top
-			{ Vector3(x, y, z),    Vector3(0, 0, 1),   Vector2(0, 0) }, //15
-			{ Vector3(x, y, z),    Vector3(1, 0, 0),   Vector2(1, 0) },	//16
-			{ Vector3(x, y, z),    Vector3(0, 1, 0),   Vector2(1, 0) },	//17
+			{ p + Vector3(x, y, z),    Vector3(0, 0, 1),   Vector2(0, 0) }, //15
+			{ p + Vector3(x, y, z),    Vector3(1, 0, 0),   Vector2(1, 0) },	//16
+			{ p + Vector3(x, y, z),    Vector3(0, 1, 0),   Vector2(1, 0) },	//17
 
 			//v6 back left top
-			{ Vector3(-x, y, z),   Vector3(0, 0, 1),   Vector2(1, 0) }, //18
-			{ Vector3(-x, y, z),   Vector3(-1, 0, 0),  Vector2(0, 0) },	//19
-			{ Vector3(-x, y, z),   Vector3(0, 1, 0),   Vector2(0, 0) },	//20
+			{ p + Vector3(-x, y, z),   Vector3(0, 0, 1),   Vector2(1, 0) }, //18
+			{ p + Vector3(-x, y, z),   Vector3(-1, 0, 0),  Vector2(0, 0) },	//19
+			{ p + Vector3(-x, y, z),   Vector3(0, 1, 0),   Vector2(0, 0) },	//20
 
 			//v7 back left bot
-			{ Vector3(-x, -y, z),  Vector3(0, 0, 1),   Vector2(1, 1) }, //21
-			{ Vector3(-x, -y, z),  Vector3(-1, 0, 0),  Vector2(0, 1) },	//22
-			{ Vector3(-x, -y, z),  Vector3(0, -1, 0),  Vector2(0, 1) },	//23
+			{ p + Vector3(-x, -y, z),  Vector3(0, 0, 1),   Vector2(1, 1) }, //21
+			{ p + Vector3(-x, -y, z),  Vector3(-1, 0, 0),  Vector2(0, 1) },	//22
+			{ p + Vector3(-x, -y, z),  Vector3(0, -1, 0),  Vector2(0, 1) },	//23
 		};
 		this->vertices = vertices;
 

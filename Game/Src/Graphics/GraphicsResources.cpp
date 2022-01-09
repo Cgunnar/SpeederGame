@@ -2,6 +2,7 @@
 #include "GraphicsResources.h"
 #include "LowLvlGfx.h"
 #include "AssetManager.h"
+#include "boundingVolumes.h"
 
 namespace standardDescriptors
 {
@@ -83,37 +84,64 @@ namespace standardDescriptors
 	};
 }
 
-Mesh::Mesh(const std::vector<Vertex_POS_NOR_UV>& vertices, const std::vector<uint32_t>& indices)
+Mesh::Mesh(const std::vector<Vertex_POS_NOR_UV>& vertices, const std::vector<uint32_t>& indices, AABB aabb)
 {
 	ib = LowLvlGfx::CreateIndexBuffer(indices.data(), static_cast<uint32_t>(indices.size()));
 	vb = LowLvlGfx::CreateVertexBuffer(reinterpret_cast<const float*>(vertices.data()), (uint32_t)vertices.size() * sizeof(Vertex_POS_NOR_UV), (uint32_t)sizeof(Vertex_POS_NOR_UV));
+	this->startIndexLocation = ib.startIndexLocation;
+	this->baseVertexLocation = vb.baseVertexLocation;
+	this->indexCount = ib.indexCount;
+	this->m_aabb = aabb;
 }
 
-Mesh::Mesh(VertexBuffer vertices, IndexBuffer indices, uint32_t indexCount, uint32_t startIndexLocation, uint32_t baseVertexLocation)
+Mesh::Mesh(const std::vector<Vertex_POS_NOR_UV>& vertices, const std::vector<uint32_t>& indices, uint32_t indexCount, uint32_t startIndexLocation, uint32_t baseVertexLocation, AABB aabb)
+{
+	ib = LowLvlGfx::CreateIndexBuffer(indices.data(), static_cast<uint32_t>(indices.size()));
+	vb = LowLvlGfx::CreateVertexBuffer(reinterpret_cast<const float*>(vertices.data()), (uint32_t)vertices.size() * sizeof(Vertex_POS_NOR_UV), (uint32_t)sizeof(Vertex_POS_NOR_UV));
+	this->startIndexLocation = startIndexLocation;
+	this->baseVertexLocation = baseVertexLocation;
+	this->indexCount = indexCount;
+	this->m_aabb = aabb;
+}
+
+Mesh::Mesh(VertexBuffer vertices, IndexBuffer indices, uint32_t indexCount, uint32_t startIndexLocation, uint32_t baseVertexLocation, AABB aabb)
 {
 	this->ib = indices;
 	this->vb = vertices;
 	this->startIndexLocation = startIndexLocation;
 	this->baseVertexLocation = baseVertexLocation;
 	this->indexCount = indexCount;
+	this->m_aabb = aabb;
 }
 
-Mesh::Mesh(VertexBuffer vertices, IndexBuffer indices)
+Mesh::Mesh(VertexBuffer vertices, IndexBuffer indices, AABB aabb)
 {
 	this->ib = indices;
 	this->vb = vertices;
 	this->startIndexLocation = ib.startIndexLocation;
 	this->baseVertexLocation = vb.baseVertexLocation;
 	this->indexCount = ib.indexCount;
+	this->m_aabb = aabb;
 }
 
-Mesh::Mesh(const std::vector<Vertex_POS_NOR_UV_TAN_BITAN>& vertices, const std::vector<uint32_t>& indices)
+Mesh::Mesh(const std::vector<Vertex_POS_NOR_UV_TAN_BITAN>& vertices, const std::vector<uint32_t>& indices, AABB aabb)
 {
 	ib = LowLvlGfx::CreateIndexBuffer(indices.data(), static_cast<uint32_t>(indices.size()));
 	vb = LowLvlGfx::CreateVertexBuffer(reinterpret_cast<const float*>(vertices.data()), (uint32_t)vertices.size() * sizeof(Vertex_POS_NOR_UV_TAN_BITAN), (uint32_t)sizeof(Vertex_POS_NOR_UV_TAN_BITAN));
 	this->startIndexLocation = ib.startIndexLocation;
 	this->baseVertexLocation = vb.baseVertexLocation;
 	this->indexCount = ib.indexCount;
+	this->m_aabb = aabb;
+}
+
+Mesh::Mesh(const std::vector<Vertex_POS_NOR_UV_TAN_BITAN>& vertices, const std::vector<uint32_t>& indices, uint32_t indexCount, uint32_t startIndexLocation, uint32_t baseVertexLocation, AABB aabb)
+{
+	ib = LowLvlGfx::CreateIndexBuffer(indices.data(), static_cast<uint32_t>(indices.size()));
+	vb = LowLvlGfx::CreateVertexBuffer(reinterpret_cast<const float*>(vertices.data()), (uint32_t)vertices.size() * sizeof(Vertex_POS_NOR_UV_TAN_BITAN), (uint32_t)sizeof(Vertex_POS_NOR_UV_TAN_BITAN));
+	this->startIndexLocation = startIndexLocation;
+	this->baseVertexLocation = baseVertexLocation;
+	this->indexCount = indexCount;
+	this->m_aabb = aabb;
 }
 
 Mesh RenderUnit::GetMesh() const

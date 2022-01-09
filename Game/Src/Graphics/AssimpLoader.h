@@ -8,6 +8,7 @@
 #include <vector>
 #include "GraphicsUtilityTypes.h"
 #include "Material.h"
+#include "boundingVolumes.h"
 
 
 
@@ -35,9 +36,9 @@ struct EngineMeshSubset
 {
 	std::string name;
 	Material pbrMaterial;
+	AABB aabb;
 	unsigned int vertexCount;
 	unsigned int vertexStart;
-
 	unsigned int indexStart;
 	unsigned int indexCount;
 };

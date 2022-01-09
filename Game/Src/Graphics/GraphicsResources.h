@@ -9,6 +9,7 @@
 #include "utilityTypes.h"
 #include "GraphicsUtilityTypes.h"
 #include "Material.h"
+#include "boundingVolumes.h"
 
 class LowLvlGfx;
 class DX11;
@@ -136,17 +137,21 @@ class Mesh
 	friend AssetManager;
 public:
 	Mesh() = default;
-	Mesh(const std::vector<Vertex_POS_NOR_UV>& vertices, const std::vector<uint32_t>& indices);
-	Mesh(VertexBuffer vertices, IndexBuffer indices, uint32_t indexCount, uint32_t startIndexLocation, uint32_t baseVertexLocation);
-	Mesh(VertexBuffer vertices, IndexBuffer indices);
-	Mesh(const std::vector<Vertex_POS_NOR_UV_TAN_BITAN>& vertices, const std::vector<uint32_t>& indices);
+	Mesh(const std::vector<Vertex_POS_NOR_UV>& vertices, const std::vector<uint32_t>& indices, AABB aabb = { {0,0,0},{0,0,0} });
+	Mesh(const std::vector<Vertex_POS_NOR_UV>& vertices, const std::vector<uint32_t>& indices, uint32_t indexCount, uint32_t startIndexLocation, uint32_t baseVertexLocation, AABB aabb = { {0,0,0},{0,0,0} });
+	Mesh(VertexBuffer vertices, IndexBuffer indices, uint32_t indexCount, uint32_t startIndexLocation, uint32_t baseVertexLocation, AABB aabb);
+	Mesh(VertexBuffer vertices, IndexBuffer indices, AABB aabb);
+	Mesh(const std::vector<Vertex_POS_NOR_UV_TAN_BITAN>& vertices, const std::vector<uint32_t>& indices, AABB aabb = { {0,0,0},{0,0,0} });
+	Mesh(const std::vector<Vertex_POS_NOR_UV_TAN_BITAN>& vertices, const std::vector<uint32_t>& indices, uint32_t indexCount, uint32_t startIndexLocation, uint32_t baseVertexLocation, AABB aabb = { {0,0,0},{0,0,0} });
 	uint32_t GetbaseVertexLocation() const { return baseVertexLocation; }
 	uint32_t GetIndexCount() const { return indexCount; }
 	uint32_t GetStartIndexLocation() const { return startIndexLocation; }
+	AABB GetAABB() const { return m_aabb; }
 	VertexBuffer vb;
 	IndexBuffer ib;
 	GID GetGID() const { return guid; }
 private:
+	AABB m_aabb;
 	uint32_t startIndexLocation = 0;
 	uint32_t baseVertexLocation = 0;
 	uint32_t indexCount = 0;

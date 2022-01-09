@@ -41,10 +41,10 @@ namespace Geometry
 
 		uint32_t indexCount = 6;
 		uint32_t arraySize = 8 * 4 * 4;
-		uint32_t vertexStride = 8 * 4;
+		static constexpr uint32_t vertexStride = sizeof(Vertex_POS_NOR_UV);
 
-		float* VertexData() { return (float*)vertices.data(); }
-		uint32_t* IndexData() { return (uint32_t*)indices.data(); }
+		const std::vector<Vertex_POS_NOR_UV>& VertexData() { return vertices; }
+		const std::vector<uint32_t>& IndexData() { return indices; }
 	};
 
 	class Sphere_POS_NOR_UV
@@ -53,8 +53,8 @@ namespace Geometry
 		Sphere_POS_NOR_UV(int tessellation = 16, float radius = 1);
 		const uint32_t IndexCount() const { return static_cast<uint32_t>(indices.size()); }
 		const uint32_t ArraySize() const { return static_cast<uint32_t>(vertices.size() * vertexStride); }
-		float* VertexData() { return (float*)vertices.data(); }
-		uint32_t* IndexData() { return (uint32_t*)indices.data(); }
+		const std::vector<Vertex_POS_NOR_UV>& VertexData() { return vertices; }
+		const std::vector<uint32_t>& IndexData() { return indices; }
 
 		static constexpr uint32_t vertexStride = sizeof(Vertex_POS_NOR_UV);
 	private:
@@ -70,8 +70,8 @@ namespace Geometry
 		Sphere_POS_NOR_UV_TAN_BITAN(int tessellation = 16, float radius = 1);
 		const uint32_t IndexCount() const { return static_cast<uint32_t>(indices.size()); }
 		const uint32_t ArraySize() const { return static_cast<uint32_t>(vertices.size() * vertexStride); }
-		float* VertexData() { return (float*)vertices.data(); }
-		uint32_t* IndexData() { return (uint32_t*)indices.data(); }
+		const std::vector<Vertex_POS_NOR_UV_TAN_BITAN>& VertexData() { return vertices; }
+		const std::vector<uint32_t>& IndexData() { return indices; }
 
 		static constexpr uint32_t vertexStride = sizeof(Vertex_POS_NOR_UV_TAN_BITAN);
 	private:
@@ -90,8 +90,8 @@ namespace Geometry
 
 		const uint32_t IndexCount() const { return static_cast<uint32_t>(indices.size()); }
 		const uint32_t ArraySize() const { return static_cast<uint32_t>(vertices.size() * vertexStride); }
-		float* VertexData() { return (float*)vertices.data(); }
-		uint32_t* IndexData() { return (uint32_t*)indices.data(); }
+		const std::vector<Vertex_POS_NOR_UV>& VertexData() { return vertices; }
+		const std::vector<uint32_t>& IndexData() { return indices; }
 
 		static constexpr uint32_t vertexStride = sizeof(Vertex_POS_NOR_UV);
 	private:

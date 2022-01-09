@@ -33,7 +33,8 @@ EngineMeshData AssimpLoader::loadStaticModel(const std::string& filePath)
 		aiProcess_ConvertToLeftHanded |
 		aiProcess_GenNormals |
 		aiProcess_CalcTangentSpace |
-		aiProcess_PreTransformVertices
+		aiProcess_PreTransformVertices |
+		aiProcess_GenBoundingBoxes
 		//aiProcess_DropNormals		// Added 15/03/2021
 	);
 
@@ -181,10 +182,10 @@ EngineMeshSubset AssimpLoader::processMesh(aiMesh* mesh, const aiScene* scene, c
 	auto mtl = scene->mMaterials[mesh->mMaterialIndex];
 
 	Material pbrMaterial = GetPbrMaterials(mtl, path);
-
 	// Subset data
 	EngineMeshSubset subsetData = { };
-
+	subsetData.aabb.min = { mesh->mAABB.mMin.x, mesh->mAABB.mMin.y, mesh->mAABB.mMin.z };
+	subsetData.aabb.max = { mesh->mAABB.mMax.x, mesh->mAABB.mMax.y, mesh->mAABB.mMax.z };
 	subsetData.name = pbrMaterial.name;
 	subsetData.pbrMaterial = pbrMaterial;
 

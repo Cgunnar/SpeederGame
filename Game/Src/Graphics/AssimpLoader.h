@@ -47,7 +47,7 @@ struct SubMeshTree
 {
 	std::vector<SubMeshTree> nodes;
 	std::vector<EngineMeshSubset> subMeshes;
-	std::vector<size_t> subMeshesIndex;
+	//std::vector<size_t> subMeshesIndex;
 };
 
 
@@ -63,7 +63,7 @@ private:
 	bool hasNormalMap = false;
 
 public:
-	std::vector<EngineMeshSubset> subMeshesVector;
+	//std::vector<EngineMeshSubset> subMeshesVector;
 	SubMeshTree subsetsInfo;
 
 	bool hasNormalMaps() const
@@ -151,7 +151,7 @@ private:
 	std::vector<Vertex_POS_NOR_UV> m_vertices;
 	std::vector<Vertex_POS_NOR_UV_TAN_BITAN> m_verticesTBN;
 	std::vector<unsigned int> m_indices;
-	std::vector<EngineMeshSubset> m_subsets;
+	//std::vector<EngineMeshSubset> m_subsets;
 	// Keep track of submesh offset in m_vertices and m_indices respectively
 	unsigned int m_meshVertexCount;
 	unsigned int m_meshIndexCount;

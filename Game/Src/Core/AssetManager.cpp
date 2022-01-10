@@ -165,8 +165,10 @@ void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subMo
 {
 	static RenderUnitID largestIDinSubTree = 0;
 	RenderUnitID lowestIDinSubTree = m_renderUnits.size() + 1;
+	AABB aabb;
 	for (auto m : subMeshTree.subMeshes)
 	{
+		aabb = AABB::Merge(aabb, m.aabb);
 		RenderUnit ru;
 		ru.material = m.pbrMaterial;
 		ru.meshID = AssetManager::Get().AddMesh(Mesh(vb, ib, m.indexCount, m.indexStart, m.vertexStart, m.aabb));
@@ -178,8 +180,10 @@ void AssetManager::TraverseSubMeshTree(SubMeshTree& subMeshTree, SubModel& subMo
 	{
 		SubModel newSubModel;
 		TraverseSubMeshTree(subMeshTree.nodes[i], newSubModel, vb, ib);
+		aabb = AABB::Merge(aabb, newSubModel.aabb);
 		subModel.subModels.push_back(newSubModel);
 	}
+	subModel.aabb = aabb;
 	subModel.RenderUnitBegin = subModel.renderUnitIDs.empty() ? lowestIDinSubTree : subModel.renderUnitIDs.front();	// hope this works
 	subModel.RenderUnitEnd = largestIDinSubTree;
 }

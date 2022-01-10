@@ -166,6 +166,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClCompile Include="Src\Core\Source.cpp" />
     <ClCompile Include="Src\Core\Window.cpp" />
     <ClCompile Include="Src\Core\WorkerThreads.cpp" />
+    <ClCompile Include="Src\EngineStuff\boundingVolumes.cpp" />
     <ClCompile Include="Src\GUI\GuiDebug.cpp" />
     <ClCompile Include="Src\GUI\TerrainGUI.cpp" />
     <ClCompile Include="Src\Game\TerrainChunk.cpp" />

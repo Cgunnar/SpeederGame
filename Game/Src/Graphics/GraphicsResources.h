@@ -169,6 +169,7 @@ struct RenderUnit
 
 struct SubModel
 {
+	AABB aabb;
 	std::vector<SubModel> subModels;
 	std::vector<RenderUnitID> renderUnitIDs;
 	RenderUnitID RenderUnitBegin, RenderUnitEnd;	// begin is renderUnitIDs[0], end is the last RenderUnitID+1 in the the tree of submodels

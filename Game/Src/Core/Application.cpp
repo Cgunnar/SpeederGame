@@ -34,8 +34,8 @@ Application::Application()
 
 Application::~Application()
 {
-	WorkerThreads::Destroy();
 	delete m_scene;
+	WorkerThreads::Destroy();
 	delete m_renderer;
 	AssetManager::Destroy();
 	

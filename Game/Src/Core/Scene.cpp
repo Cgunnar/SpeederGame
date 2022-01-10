@@ -137,7 +137,7 @@ Scene::Scene()
 
 Scene::~Scene()
 {
-	TerrainMapGenerator::Destroy();
+	
 }
 
 void Scene::Update(float dt)

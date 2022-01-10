@@ -4,7 +4,8 @@
 
 struct CollisionPoint
 {
-	rfm::Vector3 point;
+	rfm::Vector3 intersectionPoint;
+	rfm::Vector3 pointRealPosition;
 	float penetration;
 	rfm::Vector3 normal;
 };

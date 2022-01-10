@@ -28,6 +28,9 @@
     <Filter Include="Src\NativeScripts">
       <UniqueIdentifier>{8B5E2726-F774-25BC-40EC-B0DDAC41F643}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Physics">
+      <UniqueIdentifier>{7FE3FC6A-EB98-7560-748D-6F37E0416C64}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Src\Shaders">
       <UniqueIdentifier>{E6043150-52BA-A945-DBAE-A31C4763A049}</UniqueIdentifier>
     </Filter>
@@ -54,6 +57,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Components\PhysicsComponents.h">
+      <Filter>Src\Components</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Components\RenderComponents.h">
       <Filter>Src\Components</Filter>
     </ClInclude>
@@ -174,6 +180,9 @@
     <ClInclude Include="Src\NativeScripts\TerrainScript.h">
       <Filter>Src\NativeScripts</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Physics\CollisionDetection.h">
+      <Filter>Src\Physics</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Utility\FileUtility.hpp">
       <Filter>Src\Utility</Filter>
     </ClInclude>
@@ -213,8 +222,6 @@
     <ClInclude Include="vendor\singleHeaders\stb_image.h">
       <Filter>vendor\singleHeaders</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Components\PhysicsComponents.h" />
-    <ClInclude Include="Src\Physics\CollisionDetection.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">
@@ -240,6 +247,9 @@
     </ClCompile>
     <ClCompile Include="Src\Core\WorkerThreads.cpp">
       <Filter>Src\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\EngineStuff\boundingVolumes.cpp">
+      <Filter>Src\EngineStuff</Filter>
     </ClCompile>
     <ClCompile Include="Src\GUI\GuiDebug.cpp">
       <Filter>Src\GUI</Filter>
@@ -313,6 +323,9 @@
     <ClCompile Include="Src\NativeScripts\TerrainScript.cpp">
       <Filter>Src\NativeScripts</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Physics\CollisionDetection.cpp">
+      <Filter>Src\Physics</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Utility\FrameTimer.cpp">
       <Filter>Src\Utility</Filter>
     </ClCompile>
@@ -334,7 +347,6 @@
     <ClCompile Include="vendor\imgui\backends\imgui_impl_win32.cpp">
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
-    <ClCompile Include="Src\EngineStuff\boundingVolumes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\CS\CS_convolute_DiffIrrCube.hlsl">

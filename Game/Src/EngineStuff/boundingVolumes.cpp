@@ -1,5 +1,6 @@
 #include "pch.hpp"
 #include "boundingVolumes.h"
+#include "RfextendedMath.hpp"
 using namespace rfm;
 
 AABB AABB::Merge(AABB a, AABB b)
@@ -33,7 +34,7 @@ std::array<rfm::Vector3, 8> AABB::GetPointsTransformed(rfm::Transform m) const
     points[3] = { max.x, min.y, min.z};
     points[4] = max;
     points[5] = { min.x, max.y, max.z };
-    points[6] = { max.x, max.y, max.z };
+    points[6] = { min.x, min.y, max.z };
     points[7] = { max.x, min.y, max.z };
 
     for (auto& p : points)
@@ -49,4 +50,17 @@ AABB operator*(rfm::Matrix m, AABB aabb)
     aabb.min = m * rfm::Vector4(aabb.min, 1);
     aabb.max = m * rfm::Vector4(aabb.max, 1);
     return aabb;
+}
+
+Plane::Plane(rfm::Vector3 normal, float d)
+{
+    this->normal = normalize(normal);
+    this->d = d;
+}
+
+Plane::Plane(Vector3 normal, Vector3 point)
+{
+    normal.normalize();
+    this->normal = normal;
+    this->d = -dot(normal, point);
 }

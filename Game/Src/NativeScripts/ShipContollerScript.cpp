@@ -5,6 +5,7 @@
 #include "PhysicsComponents.h"
 #include "Geometry.h"
 #include "AssetManager.h"
+#include "CollisionDetection.h"
 
 using namespace rfm;
 using namespace rfe;
@@ -60,23 +61,22 @@ void ShipScript::OnUpdate(float dt)
 	float g = 0.982f;
 	//fix real ecs systems later
 
+	Plane plane0 = Plane({ 0,1,0 }, 0);
 	Transform tr = GetComponent<TransformComp>()->transform;
 	AABB aabb = GetComponent<AABBComp>()->aabb;
 	RigidBody rg = GetComponent<RigidBodyComp>()->rigidBody;
 	Vector3 pos = tr.getTranslation();
 	
 
-
 	rg.velocity.y -= g*dt;
 
 	auto aabbPoints = aabb.GetPointsTransformed(tr);
-	for (auto& p : aabbPoints)
+	auto collPoints = colDetect::PlaneVSPoints(plane0, {aabbPoints.begin(), aabbPoints.end()});
+
+	for (auto& p : collPoints)
 	{
-		if (p.y <= 0)
-		{
-			rg.velocity.y = 0;
-			break;
-		}
+		rg.velocity.y = 0;
+		break;
 	}
 
 	pos += rg.velocity*dt;

@@ -13,6 +13,15 @@ struct RenderUnitComp : rfe::Component<RenderUnitComp>
 	{
 		unitID = AssetManager::Get().AddRenderUnit(meshID, material);
 	}
+	RenderUnitComp(Mesh mesh, const Material& material)
+	{
+		unitID = AssetManager::Get().AddRenderUnit(mesh, material);
+	}
+	/*void SetRenderUnit(GID meshID, const Material& material, bool visible = true)
+	{
+		unitID = AssetManager::Get().AddRenderUnit(meshID, material);
+		this->visible = visible;
+	}*/
 	RenderUnitID unitID = 0;
 	RenderPassEnum renderPass;
 	bool visible = true;

@@ -179,10 +179,10 @@ namespace Geometry
 	AABB_POS_NOR_UV::AABB_POS_NOR_UV(AABB aabb)
 	{
 		Vector3 p = (aabb.min + aabb.max) / 2.0f;
-		Vector3 widthHeightDepth = aabb.max - aabb.min;
-		float x = abs(widthHeightDepth.x / 2.0f);
-		float y = abs(widthHeightDepth.y / 2.0f);
-		float z = abs(widthHeightDepth.z / 2.0f);
+		Vector3 widthHeightDepth = aabb.GetWidthHeightDepth();
+		float x = widthHeightDepth.x / 2.0f;
+		float y = widthHeightDepth.y / 2.0f;
+		float z = widthHeightDepth.z / 2.0f;
 
 		   //    v6----- v5
 		   //   /|      /|

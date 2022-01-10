@@ -17,7 +17,6 @@ namespace rfm
 		Matrix(Vector4 columnVectors[4]);
 		~Matrix() = default;
 
-
 		Vector4& operator[] (int index) noexcept;		
 		const Vector4& operator[] (int index) const noexcept;		
 		
@@ -49,4 +48,34 @@ namespace rfm
 	Matrix operator+(const Matrix& l, const Matrix& r);
 	Matrix operator-(const Matrix& l, const Matrix& r);
 	Vector4 operator*(const Matrix& m, const Vector4& v);
+
+
+
+	class Matrix3
+	{
+	public:
+		Matrix3() = default;
+		Matrix3(Matrix m4x4);
+		Matrix3(float* mem);
+		Matrix3(float _00, float _01, float _02,
+			float _10, float _11, float _12,
+			float _20, float _21, float _22);
+		Matrix3(Vector3 columnVectors[3]);
+		~Matrix3() = default;
+
+
+		Vector3& operator[] (int index) noexcept;
+		const Vector3& operator[] (int index) const noexcept;
+
+
+
+	private:
+		Vector3 columns[3]{ Vector3(1, 0, 0),
+							Vector3(0, 1, 0),
+							Vector3(0, 0, 1)};
+	};
+
+	Matrix3 operator*(const Matrix3& l, const Matrix3& r);
+	Vector3 operator*(const Matrix3& m, const Vector3& v);
+	Matrix3 transpose(const Matrix3& matrix);
 }

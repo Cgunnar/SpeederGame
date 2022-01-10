@@ -116,6 +116,18 @@ namespace rfm
 			return this->x;
 		}
 	}
+	float Vector3::operator[](int index) const noexcept
+	{
+		switch (index)
+		{
+		case 0:	return this->x;
+		case 1:	return this->y;
+		case 2: return this->z;
+		default:
+			assert(false);
+			return this->x;
+		}
+	}
 	Vector3& Vector3::operator+=(const Vector3& other)
 	{
 		this->x = this->x + other.x;

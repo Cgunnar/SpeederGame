@@ -46,6 +46,7 @@ namespace rfm
 		~Vector3() = default;
 
 		float& operator[] (int index) noexcept;
+		float operator[] (int index) const noexcept;
 		Vector3& operator +=(const Vector3& other);
 		Vector3& operator -=(const Vector3& other);
 		Vector3& operator *=(const float& other);

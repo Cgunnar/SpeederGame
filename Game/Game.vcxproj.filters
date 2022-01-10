@@ -213,6 +213,8 @@
     <ClInclude Include="vendor\singleHeaders\stb_image.h">
       <Filter>vendor\singleHeaders</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Components\PhysicsComponents.h" />
+    <ClInclude Include="Src\Physics\CollisionDetection.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">

@@ -674,6 +674,11 @@ namespace rfe
 		{
 			return EntityReg::GetComponent<T>(this->GetEntityID());
 		}
+		template<typename T, typename... Args>
+		T* AddComponent(Args&& ...args)
+		{
+			return EntityReg::AddComponent<T>(this->GetEntityID(), std::forward<Args>(args)...);
+		}
 
 		void OnStart() {};
 

@@ -13,6 +13,8 @@
 #include "TerrainMeshGenerator.h"
 #include "TerrainScript.h"
 #include "TerrainMapGenerator.h"
+#include "PhysicsComponents.h"
+#include "FrameTimer.hpp"
 
 using namespace rfm;
 using namespace rfe;
@@ -88,18 +90,10 @@ Scene::Scene()
 
 
 
-	Material redWireFrame;
-	redWireFrame.emissiveFactor = { 1,0,0 };
-	redWireFrame.baseColorFactor = 0;
-	redWireFrame.flags = RenderFlag::wireframe | RenderFlag::noBackFaceCull;
-	m_ship = CreateEntityModel("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", { 0, 2, 3 });
+	
+	m_ship = CreateEntityModel("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", { 0, 10, 3 });
 	m_ship.AddComponent<ShipContollerScript>();
-	GID shipModelID = m_ship.GetComponent<RenderModelComp>()->ModelID;
-	AABB shipAABB = am.GetModel(shipModelID).aabb;
-	Geometry::AABB_POS_NOR_UV shipBoundingBox(shipAABB);
-	Mesh boxMesh = Mesh(shipBoundingBox.VertexData(), shipBoundingBox.IndexData(), shipAABB);
-	m_ship.AddComponent<RenderUnitComp>(boxMesh, redWireFrame);
-
+	m_ship.AddComponent<ShipScript>();
 	
 
 	m_pointLight = EntityReg::CreateEntity();
@@ -111,7 +105,13 @@ Scene::Scene()
 	sunLight.AddComponent<DirectionalLightComp>()->dirLight.color = { 1, 0.87f, 0.23f };
 
 	
-
+	m_plane = EntityReg::CreateEntity();
+	m_plane.AddComponent<TransformComp>()->transform.setRotationDeg(90, 0, 0);
+	m_plane.GetComponent<TransformComp>()->transform.setScale(10);
+	Material planeMat;
+	planeMat.baseColorFactor = Vector4(1, 1, 1, 0.5f);
+	planeMat.flags |= RenderFlag::alphaBlend;
+	m_plane.AddComponent<RenderUnitComp>(SimpleMesh::Quad_POS_NOR_UV, planeMat);
 
 
 	Material rusteIronMat;
@@ -132,7 +132,8 @@ Scene::Scene()
 	m_dirlightContr.slider1.ChangeDefaultValues({ -0.922f ,-0.176f, 1}, -1, 1);
 	m_dirlightContr.slider2.ChangeDefaultValues(sunLight.GetComponent<DirectionalLightComp>()->dirLight.color, 0, 1);
 
-	EntityReg::StartScripts<CameraControllerScript, ShipContollerScript, TerrainScript>();
+	FrameTimer::NewFrame();
+	EntityReg::StartScripts<CameraControllerScript, ShipScript, ShipContollerScript, TerrainScript>();
 }
 
 Scene::~Scene()
@@ -147,7 +148,7 @@ void Scene::Update(float dt)
 
 
 
-	EntityReg::RunScripts<CameraControllerScript, ShipContollerScript, TerrainScript>(dt);
+	EntityReg::RunScripts<CameraControllerScript, ShipScript, ShipContollerScript, TerrainScript>(dt);
 
 	/*if (m_terrainGUI.Show())
 	{

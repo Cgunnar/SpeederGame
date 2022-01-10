@@ -12,3 +12,11 @@ private:
 	float m_thrustSpeed = 3;
 };
 
+
+class ShipScript : public rfe::NativeScriptComponent<ShipScript>
+{
+public:
+	void OnStart();
+	void OnUpdate(float dt);
+private:
+};

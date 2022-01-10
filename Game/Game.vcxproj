@@ -103,6 +103,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Components\PhysicsComponents.h" />
     <ClInclude Include="Src\Components\RenderComponents.h" />
     <ClInclude Include="Src\Components\StandardComponents.h" />
     <ClInclude Include="Src\Core\Application.h" />
@@ -143,6 +144,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClInclude Include="Src\NativeScripts\NativeScriptCollection.h" />
     <ClInclude Include="Src\NativeScripts\ShipContollerScript.h" />
     <ClInclude Include="Src\NativeScripts\TerrainScript.h" />
+    <ClInclude Include="Src\Physics\CollisionDetection.h" />
     <ClInclude Include="Src\Utility\FileUtility.hpp" />
     <ClInclude Include="Src\Utility\FrameTimer.hpp" />
     <ClInclude Include="Src\Utility\RandGen.hpp" />

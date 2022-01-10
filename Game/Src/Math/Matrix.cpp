@@ -49,9 +49,8 @@ namespace rfm
 	Matrix inverse(const Matrix& matrix)
 	{
 		XMMATRIX inverse((float*)(&matrix[0]));
-		XMVECTOR det = XMMatrixDeterminant(inverse);
 		XMFLOAT4X4 f4x4invers;
-		XMStoreFloat4x4(&f4x4invers, XMMatrixInverse(&det, inverse));
+		XMStoreFloat4x4(&f4x4invers, XMMatrixInverse(nullptr, inverse));
 		
 		return Matrix((float*)f4x4invers.m);
 	}
@@ -208,6 +207,73 @@ namespace rfm
 	{
 		Matrix t = transpose(m);
 		return Vector4(dot4(t[0], v), dot4(t[1], v), dot4(t[2], v), dot4(t[3], v));
+	}
+
+	Matrix3 operator*(const Matrix3& l, const Matrix3& r)
+	{
+		Matrix3 lt = transpose(l);
+		Matrix3 result;
+
+		for (int i = 0; i < 3; i++)
+		{
+			result[i] = Vector3(dot(lt[0], r[i]), dot(lt[1], r[i]), dot(lt[2], r[i]));
+		}
+		return result;
+	}
+
+	Vector3 operator*(const Matrix3& m, const Vector3& v)
+	{
+		Matrix3 t = transpose(m);
+		return Vector3(dot(t[0], v), dot(t[1], v), dot(t[2], v));
+	}
+
+	Matrix3 transpose(const Matrix3& matrix)
+	{
+		Matrix3 t;
+		for (int col = 0; col < 3; col++)
+		{
+			for (int row = 0; row < 3; row++)
+			{
+				t[row][col] = matrix[col][row];
+			}
+		}
+		return t;
+	}
+
+	Matrix3::Matrix3(Matrix m4x4)
+	{
+		columns[0] = Vector3(m4x4[0]);
+		columns[1] = Vector3(m4x4[1]);
+		columns[2] = Vector3(m4x4[2]);
+	}
+
+	Matrix3::Matrix3(float* mem)
+	{
+		memcpy(this, mem, 3*sizeof(Vector3));
+	}
+
+	Matrix3::Matrix3(float _00, float _01, float _02, float _10, float _11, float _12, float _20, float _21, float _22)
+	{
+		columns[0][0] = _00; columns[0][1] = _01; columns[0][2] = _02;
+		columns[1][0] = _10; columns[1][1] = _11; columns[1][2] = _12;
+		columns[2][0] = _20; columns[2][1] = _21; columns[2][2] = _22;
+	}
+
+	Matrix3::Matrix3(Vector3 columnVectors[3])
+	{
+		columns[0] = columnVectors[0];
+		columns[1] = columnVectors[1];
+		columns[2] = columnVectors[2];
+	}
+
+	Vector3& Matrix3::operator[](int index) noexcept
+	{
+		return columns[index];
+	}
+
+	const Vector3& Matrix3::operator[](int index) const noexcept
+	{
+		return columns[index];
 	}
 
 }

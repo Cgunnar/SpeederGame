@@ -170,7 +170,7 @@ void Scene::Update(float dt)
 
 	Transform followShip = m_ship.GetComponent<TransformComp>()->transform;
 	followShip.translateL(0, 1, -4);
-	//m_camera.getComponent<TransformComp>()->transform = followShip;
+	m_camera.GetComponent<TransformComp>()->transform = followShip;
 
 
 	m_quadContr.Show();

@@ -16,18 +16,45 @@ void ShipContollerScript::OnUpdate(float dt)
 
 	if (gPad.IsConnected())
 	{
-		
-		auto& transform = GetComponent<TransformComp>()->transform;
-		transform.rotateDegL(
-			dt * gPad.thumbSticks.leftY * m_pitchSpeed,
-			dt * gPad.thumbSticks.rightX * m_yawSpeed,
-			dt * -gPad.thumbSticks.leftX * m_rollSpeed);
+		if (gPad.IsBPressed())
+		{
+			reset();
+		}
+		Transform tr = GetComponent<TransformComp>()->transform;
+		RigidBody rg = GetComponent<RigidBodyComp>()->rigidBody;
 
-		transform.translateL(0, 0, m_thrustSpeed * dt * gPad.triggers.right);
+		auto [shipTranslation, shipRotation, shipScale] = decomposeToTRS(tr);
 
-		if (gPad.IsAPressed()) Input::Get().GamePad().SetVibration(0, 1, 1);
-		else Input::Get().GamePad().SetVibration(0, 0, 0);
+		Vector3 deltaAngVel = Vector3(
+			-gPad.thumbSticks.leftY * m_pitchSpeed,
+			-gPad.thumbSticks.rightX * m_yawSpeed,
+			gPad.thumbSticks.leftX * m_rollSpeed);
+
+		deltaAngVel = shipRotation * deltaAngVel;
+
+		rg.angularVelocity += deltaAngVel * dt;
+
+		Vector3 deltaVelocity = Vector3(0, gPad.triggers.left * m_thrustSpeed, gPad.triggers.right * m_thrustSpeed);
+		deltaVelocity = shipRotation * deltaVelocity;
+		rg.velocity += deltaVelocity * dt;
+
+		GetComponent<RigidBodyComp>()->rigidBody = rg;
 	}
+}
+
+void ShipContollerScript::reset()
+{
+	Transform tr = GetComponent<TransformComp>()->transform;
+	RigidBody rg = GetComponent<RigidBodyComp>()->rigidBody;
+
+	rg.angularVelocity = { 0,0,0 };
+	rg.velocity = { 0,0,0 };
+	tr.setRotation(0, 0, 0);
+	tr.setTranslation(0, 10, 0);
+
+
+	GetComponent<TransformComp>()->transform = tr;
+	GetComponent<RigidBodyComp>()->rigidBody = rg;
 }
 
 void ShipScript::OnStart()
@@ -35,7 +62,7 @@ void ShipScript::OnStart()
 	Material redWireFrame;
 	redWireFrame.emissiveFactor = { 0,0,0 };
 	redWireFrame.baseColorFactor = { 1,0,0,1 };
-	//redWireFrame.flags = RenderFlag::wireframe | RenderFlag::noBackFaceCull;
+	redWireFrame.flags = RenderFlag::wireframe | RenderFlag::noBackFaceCull;
 	GID shipModelID = GetComponent<RenderModelComp>()->ModelID;
 	AABB shipAABB = AssetManager::Get().GetModel(shipModelID).aabb;
 	Geometry::AABB_POS_NOR_UV shipBoundingBox(shipAABB);

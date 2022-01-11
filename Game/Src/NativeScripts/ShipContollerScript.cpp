@@ -42,7 +42,7 @@ void ShipScript::OnStart()
 	Mesh boxMesh = Mesh(shipBoundingBox.VertexData(), shipBoundingBox.IndexData(), shipAABB);
 	AddComponent<RenderUnitComp>(boxMesh, redWireFrame);
 
-	GetComponent<TransformComp>()->transform.setRotationDeg(30, 0, 0);
+	GetComponent<TransformComp>()->transform.setRotationDeg(30, 0, 10);
 
 	Vector3 whd = shipAABB.GetWidthHeightDepth();
 	RigidBody rg;
@@ -58,7 +58,8 @@ void ShipScript::OnStart()
 
 void ShipScript::OnUpdate(float dt)
 {
-	float g = 0.982f;
+	//float g = 9.82f;
+	float g = 0.5f;
 	//fix real ecs systems later
 
 	Plane plane0 = Plane({ 0,1,0 }, 0);
@@ -73,16 +74,39 @@ void ShipScript::OnUpdate(float dt)
 	auto aabbPoints = aabb.GetPointsTransformed(tr);
 	auto collPoints = colDetect::PlaneVSPoints(plane0, {aabbPoints.begin(), aabbPoints.end()});
 
-	for (auto& p : collPoints)
+	if (!collPoints.empty())
 	{
-		rg.velocity.y = 0;
-		break;
+		float pen = collPoints.front().penetration;
+		tr.translateW(pen * collPoints.front().normal);
 	}
 
-	pos += rg.velocity*dt;
-	std::cout << pos.y << std::endl;
+	for (auto& p : collPoints)
+	{
+		Vector3 collPoint = p.intersectionPoint;
+		Vector3 normal = p.normal;
+		Vector3 r = collPoint - tr.getTranslation();
+		float C = dot(rg.velocity + cross(r, rg.angularVelocity), normal);
+		float invMass = 1.0f / rg.mass;
+		float invI = 1; // fix
 
-	tr.setTranslation(pos);
+		float eMass = 1.0f / (invMass + invI * dot(cross(normal, r), cross(normal, r)));
+		float lambda = -eMass * C;
+		rg.velocity = rg.velocity + invMass * lambda * normal;
+		rg.angularVelocity = rg.angularVelocity + invI * lambda * cross(normal, r);
+
+
+
+
+		//break;
+	}
+
+
+	tr.translateW(rg.velocity * dt);
+	if (rg.angularVelocity.length() > 0)
+	{
+		tr.rotateW(rotationMatrixFromNormal(normalize(rg.angularVelocity), -rg.angularVelocity.length() * dt));
+	}
+
 	GetComponent<RigidBodyComp>()->rigidBody = rg;
 	GetComponent<TransformComp>()->transform = tr;
 }

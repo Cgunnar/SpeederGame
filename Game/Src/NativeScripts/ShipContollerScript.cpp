@@ -86,8 +86,8 @@ void ShipScript::OnStart()
 
 void ShipScript::OnUpdate(float dt)
 {
-	//float g = 9.82f;
-	float g = 3.0f;
+	float g = 9.82f;
+	//float g = 3.0f;
 	//fix real ecs systems later
 
 	Plane plane0 = Plane({ 0,1,0 }, 0);
@@ -102,11 +102,7 @@ void ShipScript::OnUpdate(float dt)
 	auto aabbPoints = aabb.GetPointsTransformed(tr);
 	auto collPoints = colDetect::PlaneVSPoints(plane0, {aabbPoints.begin(), aabbPoints.end()});
 
-	/*if (!collPoints.empty())
-	{
-		float pen = collPoints.front().penetration;
-		tr.translateW(pen * collPoints.front().normal);
-	}*/
+	
 	float biasFactor = 0.02f; //[0.1, 0.3]?
 	int k = 10;
 	for (int i = 0; i < k; i++)

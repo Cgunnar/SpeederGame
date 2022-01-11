@@ -33,9 +33,9 @@ void ShipContollerScript::OnUpdate(float dt)
 void ShipScript::OnStart()
 {
 	Material redWireFrame;
-	redWireFrame.emissiveFactor = { 1,0,0 };
-	redWireFrame.baseColorFactor = 0;
-	redWireFrame.flags = RenderFlag::wireframe | RenderFlag::noBackFaceCull;
+	redWireFrame.emissiveFactor = { 0,0,0 };
+	redWireFrame.baseColorFactor = { 1,0,0,1 };
+	//redWireFrame.flags = RenderFlag::wireframe | RenderFlag::noBackFaceCull;
 	GID shipModelID = GetComponent<RenderModelComp>()->ModelID;
 	AABB shipAABB = AssetManager::Get().GetModel(shipModelID).aabb;
 	Geometry::AABB_POS_NOR_UV shipBoundingBox(shipAABB);
@@ -46,7 +46,7 @@ void ShipScript::OnStart()
 
 	Vector3 whd = shipAABB.GetWidthHeightDepth();
 	RigidBody rg;
-	rg.mass = 10;
+	rg.mass = 1.0f;
 	rg.momentOfInertia[0][0] = (1.0f / 12.0f) * rg.mass * (whd.y * whd.y + whd.z * whd.z);
 	rg.momentOfInertia[1][1] = (1.0f / 12.0f) * rg.mass * (whd.x * whd.x + whd.z * whd.z);
 	rg.momentOfInertia[2][2] = (1.0f / 12.0f) * rg.mass * (whd.x * whd.x + whd.y * whd.y);
@@ -59,7 +59,7 @@ void ShipScript::OnStart()
 void ShipScript::OnUpdate(float dt)
 {
 	//float g = 9.82f;
-	float g = 0.5f;
+	float g = 3.0f;
 	//fix real ecs systems later
 
 	Plane plane0 = Plane({ 0,1,0 }, 0);
@@ -85,19 +85,15 @@ void ShipScript::OnUpdate(float dt)
 		Vector3 collPoint = p.intersectionPoint;
 		Vector3 normal = p.normal;
 		Vector3 r = collPoint - tr.getTranslation();
-		float C = dot(rg.velocity + cross(r, rg.angularVelocity), normal);
+		float constraint = dot(rg.velocity + cross(r, rg.angularVelocity), normal);
 		float invMass = 1.0f / rg.mass;
-		float invI = 1; // fix
+		Matrix3 invI = inverse(rg.momentOfInertia);
 
-		float eMass = 1.0f / (invMass + invI * dot(cross(normal, r), cross(normal, r)));
-		float lambda = -eMass * C;
+		Vector3 physicsyStuff = invI * cross(normal, r);
+		float eMass = 1.0f / (invMass + dot(physicsyStuff, physicsyStuff));
+		float lambda = -eMass * constraint;
 		rg.velocity = rg.velocity + invMass * lambda * normal;
 		rg.angularVelocity = rg.angularVelocity + invI * lambda * cross(normal, r);
-
-
-
-
-		//break;
 	}
 
 

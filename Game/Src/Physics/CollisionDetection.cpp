@@ -16,7 +16,7 @@ std::vector<CollisionPoint> colDetect::PlaneVSPoints(Plane plane, std::vector<rf
             CollisionPoint cp;
             cp.normal = plane.normal;
             cp.penetration = -pen;
-            cp.intersectionPoint = p + plane.normal * pen;
+            cp.intersectionPoint = p + plane.normal * -pen;
             cp.pointRealPosition = p;
             colPoints.push_back(cp);
         }

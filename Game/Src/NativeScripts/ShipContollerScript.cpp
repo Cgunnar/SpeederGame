@@ -102,54 +102,60 @@ void ShipScript::OnUpdate(float dt)
 	auto aabbPoints = aabb.GetPointsTransformed(tr);
 	auto collPoints = colDetect::PlaneVSPoints(plane0, {aabbPoints.begin(), aabbPoints.end()});
 
-	if (!collPoints.empty())
+	/*if (!collPoints.empty())
 	{
 		float pen = collPoints.front().penetration;
 		tr.translateW(pen * collPoints.front().normal);
-	}
-	float grounded = !collPoints.empty();
-	for (auto& p : collPoints)
+	}*/
+	float biasFactor = 0.02f; //[0.1, 0.3]?
+	int k = 10;
+	for (int i = 0; i < k; i++)
 	{
-		//this runs for all collision points, this is naive and will lead to jitter
-		//but i dont know how to do it for real...
-		float my = 0.5f;
-		Vector3 collPoint = p.intersectionPoint;
-		Vector3 tangent = Vector3(0, 0, 1); // dont have this harcoded!
-		Vector3 biTangent = Vector3(-1, 0, 0); // dont have this harcoded!
-		Vector3 normal = p.normal;
-		Vector3 r = collPoint - tr.getTranslation();
+		float dti = dt / static_cast<float>(k);
+		for (auto& p : collPoints)
+		{
+			//this runs for all collision points, this is naive and will lead to jitter
+			//but i dont know how to do it for real...
+			float vBias = (biasFactor / dti) * std::max(0.0f, p.penetration - 0.001f);
+			float my = 0.5f;
+			Vector3 collPoint = p.pointRealPosition;
+			Vector3 tangent = Vector3(0, 0, 1); // dont have this harcoded!
+			Vector3 biTangent = Vector3(-1, 0, 0); // dont have this harcoded!
+			Vector3 normal = p.normal;
+			Vector3 r = collPoint - tr.getTranslation();
 
 
-		Matrix3 invI = inverse(rg.momentOfInertia);
-		float invMass = 1.0f / rg.mass;
-		Vector3 physicsyStuffN = invI * cross(normal, r);
-		Vector3 physicsyStuffT = invI * cross(tangent, r);
-		Vector3 physicsyStuffB = invI * cross(biTangent, r);
-		float eMassN = invMass + dot(physicsyStuffN, physicsyStuffN);
-		float eMassT = invMass + dot(physicsyStuffT, physicsyStuffT);
-		float eMassB = invMass + dot(physicsyStuffB, physicsyStuffB);
-		float constraintN = dot(rg.velocity + cross(r, rg.angularVelocity), normal);
-		float constraintT = dot(rg.velocity + cross(r, rg.angularVelocity), tangent);
-		float constraintB = dot(rg.velocity + cross(r, rg.angularVelocity), biTangent);
+			Matrix3 invI = inverse(rg.momentOfInertia);
+			float invMass = 1.0f / rg.mass;
+			Vector3 physicsyStuffN = invI * cross(normal, r);
+			Vector3 physicsyStuffT = invI * cross(tangent, r);
+			Vector3 physicsyStuffB = invI * cross(biTangent, r);
+			float eMassN = invMass + dot(physicsyStuffN, physicsyStuffN);
+			float eMassT = invMass + dot(physicsyStuffT, physicsyStuffT);
+			float eMassB = invMass + dot(physicsyStuffB, physicsyStuffB);
+			float constraintN = dot(rg.velocity + cross(r, rg.angularVelocity), normal);
+			float constraintT = dot(rg.velocity + cross(r, rg.angularVelocity), tangent);
+			float constraintB = dot(rg.velocity + cross(r, rg.angularVelocity), biTangent);
 
-		float lambdaN = std::max(-constraintN / eMassN, 0.0f);
-		float lambdaT = std::clamp( -constraintT/ eMassT, -my * lambdaN, my*lambdaN);
-		float lambdaB = std::clamp( -constraintB/ eMassT, -my * lambdaN, my*lambdaN);
-		
-		rg.velocity = rg.velocity + invMass * lambdaN * normal;
-		rg.angularVelocity = rg.angularVelocity + invI * lambdaN * cross(normal, r);
-		rg.velocity = rg.velocity + invMass * lambdaT * tangent;
-		rg.angularVelocity = rg.angularVelocity + invI * lambdaT * cross(tangent, r);
-		rg.velocity = rg.velocity + invMass * lambdaB * biTangent;
-		rg.angularVelocity = rg.angularVelocity + invI * lambdaB * cross(biTangent, r);
+			float lambdaN = std::max((-constraintN + vBias) / eMassN, 0.0f);
+			float lambdaT = std::clamp(-constraintT / eMassT, -my * lambdaN, my * lambdaN);
+			float lambdaB = std::clamp(-constraintB / eMassT, -my * lambdaN, my * lambdaN);
 
+			rg.velocity = rg.velocity + invMass * lambdaN * normal;
+			rg.angularVelocity = rg.angularVelocity + invI * lambdaN * cross(normal, r);
+			rg.velocity = rg.velocity + invMass * lambdaT * tangent;
+			rg.angularVelocity = rg.angularVelocity + invI * lambdaT * cross(tangent, r);
+			rg.velocity = rg.velocity + invMass * lambdaB * biTangent;
+			rg.angularVelocity = rg.angularVelocity + invI * lambdaB * cross(biTangent, r);
+
+		}
+		tr.translateW(rg.velocity * dti);
+		if (rg.angularVelocity.length() > 0)
+		{
+			tr.rotateW(rotationMatrixFromNormal(normalize(rg.angularVelocity), -rg.angularVelocity.length() * dti));
+		}
 	}
-
-	tr.translateW(rg.velocity * dt);
-	if (rg.angularVelocity.length() > 0)
-	{
-		tr.rotateW(rotationMatrixFromNormal(normalize(rg.angularVelocity), -rg.angularVelocity.length() * dt));
-	}
+	
 
 	GetComponent<RigidBodyComp>()->rigidBody = rg;
 	GetComponent<TransformComp>()->transform = tr;

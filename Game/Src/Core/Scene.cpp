@@ -118,9 +118,11 @@ Scene::Scene()
 	rusteIronMat.SetBaseColorTexture("Assets/Textures/rustediron/basecolor.png");
 	rusteIronMat.SetMetallicRoughnessTexture("Assets/Textures/rustediron/metallic_roughness.png");
 	rusteIronMat.SetNormalTexture("Assets/Textures/rustediron/normal.png");
+	rusteIronMat.metallicFactor = 1;
+	rusteIronMat.roughnessFactor = 1;
 
 	m_ironSphere = EntityReg::CreateEntity();
-	m_ironSphere.AddComponent(TransformComp())->transform.setTranslation(0, 3, 1);
+	m_ironSphere.AddComponent(TransformComp())->transform.setTranslation(-4, 3, 1);
 	m_ironSphere.AddComponent(RenderModelComp(AssetManager::Get().AddRenderUnit(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN, rusteIronMat)));
 
 

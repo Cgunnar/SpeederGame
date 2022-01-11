@@ -5,10 +5,12 @@
 
 namespace rfm
 {
+	class Matrix3;
 	class Matrix
 	{
 	public:
 		Matrix() = default;
+		Matrix(Matrix3 m);
 		Matrix(float* mem);
 		Matrix(float _00, float _01, float _02, float _03,
 				float _10, float _11, float _12, float _13, 

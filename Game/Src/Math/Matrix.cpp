@@ -11,6 +11,14 @@ namespace rfm
 		return XMMATRIX((float*)(&matrix[0]));
 	}
 
+	Matrix::Matrix(Matrix3 m)
+	{
+		columns[0] = Vector4(m[0], 0);
+		columns[1] = Vector4(m[1], 0);
+		columns[2] = Vector4(m[2], 0);
+		columns[3] = Vector4(0,0,0,1);
+	}
+
 	Matrix::Matrix(float* mem)
 	{
 		memcpy(this, mem, 64);

@@ -67,7 +67,7 @@ void ShipScript::OnUpdate(float dt)
 	AABB aabb = GetComponent<AABBComp>()->aabb;
 	RigidBody rg = GetComponent<RigidBodyComp>()->rigidBody;
 	Vector3 pos = tr.getTranslation();
-	
+
 
 	rg.velocity.y -= g*dt;
 

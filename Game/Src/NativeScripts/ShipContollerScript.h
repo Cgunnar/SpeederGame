@@ -9,9 +9,9 @@ public:
 private:
 	void reset();
 	float m_yawSpeed = rfm::DegToRad(20);
-	float m_pitchSpeed = rfm::DegToRad(40);
+	float m_pitchSpeed = rfm::DegToRad(80);
 	float m_rollSpeed = rfm::DegToRad(50);
-	float m_thrustSpeed = 3;
+	float m_thrustSpeed = 10;
 	bool m_docked = true;
 };
 
@@ -23,4 +23,5 @@ public:
 	void OnUpdate(float dt);
 	void OnFixedUpdate(float dt);
 private:
+	float m_friction = 0.7f;
 };

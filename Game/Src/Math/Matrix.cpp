@@ -64,14 +64,25 @@ namespace rfm
 	}
 	std::tuple<Matrix, Matrix, Matrix> decomposeToTRS(const Matrix& matrix)
 	{
+#ifdef DEBUG
+		for (int i = 0; i < 4; i++)
+		{
+			for (int j = 0; j < 4; j++)
+			{
+				assert(!isnan(matrix[i][j]));
+			}
+		}
+#endif // DEBUG
+
+		
+
 		XMVECTOR scale, rotationQuat, translation;
 		XMMatrixDecompose(&scale, &rotationQuat, &translation, getXMMatrix(matrix));
-
 		XMFLOAT4X4 S, R, T;
 		XMStoreFloat4x4(&S, { XMMatrixScalingFromVector(scale) });
 		XMStoreFloat4x4(&R, { XMMatrixRotationQuaternion(rotationQuat) });
 		XMStoreFloat4x4(&T, { XMMatrixTranslationFromVector(translation) });
-
+		
 		return std::make_tuple(Matrix((float*)T.m), Matrix((float*)R.m), Matrix((float*)S.m));
 	}
 	Matrix scaleMatrix(float x, float y, float z)

@@ -12,6 +12,7 @@ private:
 	float m_pitchSpeed = rfm::DegToRad(40);
 	float m_rollSpeed = rfm::DegToRad(50);
 	float m_thrustSpeed = 3;
+	bool m_docked = true;
 };
 
 

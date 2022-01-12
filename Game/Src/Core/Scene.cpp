@@ -109,7 +109,7 @@ Scene::Scene()
 	m_plane.AddComponent<TransformComp>()->transform.setRotationDeg(90, 0, 0);
 	m_plane.GetComponent<TransformComp>()->transform.setScale(10);
 	Material planeMat;
-	planeMat.baseColorFactor = Vector4(1, 1, 1, 0.5f);
+	planeMat.baseColorFactor = Vector4(1, 1, 1, 0.8f);
 	planeMat.flags |= RenderFlag::alphaBlend;
 	m_plane.AddComponent<RenderUnitComp>(SimpleMesh::Quad_POS_NOR_UV, planeMat);
 
@@ -175,7 +175,7 @@ void Scene::Update(float dt)
 	//m_camera.GetComponent<TransformComp>()->transform = followShip;
 
 
-	m_quadContr.Show();
+	/*m_quadContr.Show();
 	m_lightContr.Show();
 	m_dirlightContr.Show();
 	
@@ -184,7 +184,7 @@ void Scene::Update(float dt)
 	m_pointLight.GetComponent<PointLightComp>()->pointLight.color = m_lightContr.slider2.value;
 
 	sunLight.GetComponent<DirectionalLightComp>()->dirLight.dir = m_dirlightContr.slider1.value;
-	sunLight.GetComponent<DirectionalLightComp>()->dirLight.color = m_dirlightContr.slider2.value;
+	sunLight.GetComponent<DirectionalLightComp>()->dirLight.color = m_dirlightContr.slider2.value;*/
 
 }
 

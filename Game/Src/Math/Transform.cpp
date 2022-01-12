@@ -56,7 +56,6 @@ namespace rfm
 	void Transform::setRotation(const Matrix& rotationMatrix)
 	{
 		auto [T, R, S] = decomposeToTRS(m_matrix);
-
 		Matrix newMatrix = T * rotationMatrix * S;
 		m_matrix = newMatrix;
 	}

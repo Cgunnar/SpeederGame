@@ -47,7 +47,7 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, Transform terrainTrans
 
 	m_material.baseColorFactor = 1;
 	m_material.emissiveFactor = 0;
-	m_material.flags |= RenderFlag::sampler_anisotropic_clamp;
+	m_material.flags |= RenderFlag::sampler_anisotropic_clamp | RenderFlag::wireframe;
 	auto rc = m_chunkEntity.AddComponent<RenderModelComp>();
 	rc->SetRenderUnit(AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV), m_material, false);
 }
@@ -134,6 +134,33 @@ void TerrainChunk::UpdateChunkTransform(rfm::Transform transform)
 	chunkTransform = transform;
 	Transform T;	T.setTranslation(m_position.x, 0, m_position.y);
 	chunkTransform = chunkTransform * T;
+}
+
+Triangle TerrainChunk::TriangleAtLocation(Vector2 pos) const
+{
+	assert(!m_lodMeshes.empty());
+	if (!m_lodMeshes[0].hasRenderMesh)
+	{
+		return Triangle();
+	}
+
+	int px = static_cast<int>(120 + pos.x);
+	int py = static_cast<int>(120 - pos.y);
+
+	int index = 2*(py * 240 + px);
+	Triangle t0 = m_lodMeshes[0].mesh.triangles[index];
+	Triangle t1 = m_lodMeshes[0].mesh.triangles[index + 1];
+	Vector2 topLeft = { t0[0].x, t0[0].z };
+	Vector2 botRight = { t1[1].x, t1[1].z };
+
+	if ((pos - topLeft).length() <= (pos - botRight).length())
+	{
+		return t0;
+	}
+	else
+	{
+		return t1;
+	}
 }
 
 rfm::Vector3 NearestPointOnEdgeFromPoint(rfm::Vector3 corners[4], rfm::Vector3 p)

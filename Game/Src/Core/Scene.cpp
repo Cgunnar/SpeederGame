@@ -15,6 +15,7 @@
 #include "TerrainMapGenerator.h"
 #include "PhysicsComponents.h"
 #include "FrameTimer.hpp"
+#include "imgui.h"
 
 using namespace rfm;
 using namespace rfe;
@@ -42,8 +43,9 @@ Scene::Scene()
 	m_terrDesc.LODs.push_back({ .lod = 6, .visDistThrhold = 800 });
 
 	m_terrain = EntityReg::CreateEntity();
-	m_terrain.AddComponent<TransformComp>()->transform.setScale(0.2f);
-	m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, -10, 0);
+	m_terrain.AddComponent<TransformComp>();
+	//m_terrain.GetComponent<TransformComp>()->transform.setScale(0.2f);
+	//m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, -10, 0);
 	m_terrain.AddComponent<TerrainScript>(m_terrDesc);
 
 
@@ -123,10 +125,29 @@ Scene::Scene()
 
 	m_ironSphere = EntityReg::CreateEntity();
 	m_ironSphere.AddComponent(TransformComp())->transform.setTranslation(-4, 3, 1);
-	m_ironSphere.AddComponent(RenderModelComp(AssetManager::Get().AddRenderUnit(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN, rusteIronMat)));
+	m_ironSphere.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN, rusteIronMat));
 
+	Material debugSphereMat;
+	debugSphereMat.baseColorFactor = 0;
+	debugSphereMat.emissiveFactor = Vector3(1, 0, 0);
+	m_sphere0 = EntityReg::CreateEntity();
+	m_sphere0.AddComponent<TransformComp>()->transform.setScale(0.1f);
+	m_sphere0.AddComponent<RenderUnitComp>(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN, debugSphereMat);
 
-	m_quadContr.slider1.ChangeDefaultValues({ 0,1,-1.2f });
+	debugSphereMat.emissiveFactor = Vector3(0, 1, 0);
+	m_sphere1 = EntityReg::CreateEntity();
+	m_sphere1.AddComponent<TransformComp>()->transform.setScale(0.1f);
+	m_sphere1.AddComponent<RenderUnitComp>(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN, debugSphereMat);
+
+	debugSphereMat.emissiveFactor = Vector3(0, 0, 1);
+	m_sphere2 = EntityReg::CreateEntity();
+	m_sphere2.AddComponent<TransformComp>()->transform.setScale(0.1f);
+	m_sphere2.AddComponent<RenderUnitComp>(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN, debugSphereMat);
+
+	debugSphereMat.emissiveFactor = Vector3(1, 1, 0);
+	m_sphere3 = EntityReg::CreateEntity();
+	m_sphere3.AddComponent<TransformComp>()->transform.setScale(0.1f);
+	m_sphere3.AddComponent<RenderUnitComp>(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN, debugSphereMat);
 
 	m_lightContr.slider1.ChangeDefaultValues({ 0,2,-9 });
 	m_lightContr.slider2.ChangeDefaultValues({ 1,1,1 }, 0, 1);
@@ -172,10 +193,25 @@ void Scene::Update(float dt)
 
 	Transform followShip = m_ship.GetComponent<TransformComp>()->transform;
 	followShip.translateL(0, 1, -4);
-	m_camera.GetComponent<TransformComp>()->transform = followShip;
+	//m_camera.GetComponent<TransformComp>()->transform = followShip;
 
+	Vector3 camPos = m_camera.GetComponent<TransformComp>()->transform.getTranslation();
+	
+	Triangle tri = m_terrain.GetComponent<TerrainScript>()->GetTriangleAtPos({ camPos.x, camPos.z });
+	ImGui::Text("x:%f y:%f z:%f  v0 r", tri[0].x, tri[0].y, tri[0].z);
+	ImGui::Text("x:%f y:%f z:%f  v1 g", tri[1].x, tri[1].y, tri[1].z);
+	ImGui::Text("x:%f y:%f z:%f  v2 b", tri[2].x, tri[2].y, tri[2].z);
+	ImGui::Text("x:%f y:%f z:%f  camera", camPos.x, camPos.y, camPos.z);
 
-	/*m_quadContr.Show();
+	if(tri[0].z < camPos.z)
+	{
+		std::cout << "wrong triangle\n";
+	}
+
+	m_sphere0.GetComponent<TransformComp>()->transform.setTranslation(tri[0]);
+	m_sphere1.GetComponent<TransformComp>()->transform.setTranslation(tri[1]);
+	m_sphere2.GetComponent<TransformComp>()->transform.setTranslation(tri[2]);
+
 	m_lightContr.Show();
 	m_dirlightContr.Show();
 	
@@ -184,7 +220,7 @@ void Scene::Update(float dt)
 	m_pointLight.GetComponent<PointLightComp>()->pointLight.color = m_lightContr.slider2.value;
 
 	sunLight.GetComponent<DirectionalLightComp>()->dirLight.dir = m_dirlightContr.slider1.value;
-	sunLight.GetComponent<DirectionalLightComp>()->dirLight.color = m_dirlightContr.slider2.value;*/
+	sunLight.GetComponent<DirectionalLightComp>()->dirLight.color = m_dirlightContr.slider2.value;
 
 }
 

@@ -11,7 +11,7 @@ public:
 	TerrainScript(TerrainDesc desc);
 	void OnStart();
 	void OnUpdate(float dt);
-
+	Triangle GetTriangleAtPos(rfm::Vector2 pos) const;
 private:
 	void UpdateChunks(rfm::Vector2 viewPos);
 	float m_maxViewDistance = 0;

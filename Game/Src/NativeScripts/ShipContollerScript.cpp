@@ -7,6 +7,7 @@
 #include "AssetManager.h"
 #include "CollisionDetection.h"
 #include <algorithm>
+#include <NativeScriptCollection.h>
 
 using namespace rfm;
 using namespace rfe;
@@ -54,7 +55,7 @@ void ShipContollerScript::reset()
 
 	rg.angularVelocity = Vector3(0, 0, 0);
 	rg.velocity = { 0,0,0 };
-	tr.setRotationDeg(30, 0, 0);
+	tr.setRotationDeg(30, 0, 10);
 	tr.setTranslation(0, 5, 3);
 
 	GetComponent<TransformComp>()->transform = tr;
@@ -75,8 +76,7 @@ void ShipScript::OnStart()
 	GetComponent<TransformComp>()->transform.setRotationDeg(30, 0, 10);
 	Vector3 whd = shipAABB.GetWidthHeightDepth();
 	RigidBody rg;
-	//rg.mass = 0.1f;
-	rg.mass = 1000;
+	rg.mass = 2000;
 	rg.momentOfInertia[0][0] = (1.0f / 12.0f) * rg.mass * (whd.y * whd.y + whd.z * whd.z);
 	rg.momentOfInertia[1][1] = (1.0f / 12.0f) * rg.mass * (whd.x * whd.x + whd.z * whd.z);
 	rg.momentOfInertia[2][2] = (1.0f / 12.0f) * rg.mass * (whd.x * whd.x + whd.y * whd.y);
@@ -87,7 +87,9 @@ void ShipScript::OnStart()
 
 void ShipScript::OnUpdate(float dt)
 {
-	
+	Vector3 p = GetComponent<TransformComp>()->transform.getTranslation();
+	//float h = EntityReg::GetComponentArray<TerrainScript>().front().HeightOverTerrain(p);
+
 }
 struct sumP
 {
@@ -113,24 +115,26 @@ void ShipScript::OnFixedUpdate(float dt)
 	rigidBody.velocity.y -= 9.82 * dt;
 	Vector3 v = rigidBody.velocity;
 	Vector3 w = rigidBody.angularVelocity;
+	float biasFactor = 0.06f / (dt / static_cast<float>(kMax));
 	for (int k = 0; k < kMax; k++)
 	{
 		for (int i = 0; i < pointsUnderPlane.size(); i++)
 		{
+
+
 			auto& p = pointsUnderPlane[i];
 			Vector3 normal = p.normal;
 			Vector3 tangent = Vector3(0,0,1);
 			Vector3 biTangent = Vector3(1,0,0);
 			Vector3 r = p.pointRealPosition - transform.getTranslation();
-
-			float constraintN = dot(rigidBody.velocity + cross(r, rigidBody.angularVelocity), normal);
-			float constraintT = dot(rigidBody.velocity + cross(r, rigidBody.angularVelocity), tangent);
-			float constraintB = dot(rigidBody.velocity + cross(r, rigidBody.angularVelocity), biTangent);
+			Vector3 constaint = rigidBody.velocity + cross(r, rigidBody.angularVelocity);
+			float constraintN = dot(constaint, normal);
+			float constraintT = dot(constaint, tangent);
+			float constraintB = dot(constaint, biTangent);
 			float eMassN = invMass + dot(normal, cross(r, (invI * cross(normal, r))));
 			float eMassT = invMass + dot(tangent, cross(r, (invI * cross(tangent, r))));
 			float eMassB = invMass + dot(biTangent, cross(r, (invI * cross(biTangent, r))));
-			float b = 0.06f / (dt / (float)kMax);
-			b *= std::max(p.penetration - 0.01f, 0.0f);
+			float b = biasFactor * std::max(p.penetration - 0.01f, 0.0f);
 			float pCorrectedN = (-constraintN + b) / eMassN;
 			float pCorrectedT = (-constraintT) / eMassT;
 			float pCorrectedB = (-constraintB) / eMassB;

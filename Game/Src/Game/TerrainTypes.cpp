@@ -41,6 +41,8 @@ void TerrainLODMesh::GenerateRenderMesh(MeshFormat format)
 	{
 		renderMesh = AssetManager::Get().AddMesh(Mesh(mesh.vertices, mesh.indices));
 	}
-	this->mesh = TerrainMesh();
+	this->mesh.indices.clear();
+	this->mesh.vertices.clear();
+	this->mesh.verticesTBN.clear();
 	hasRenderMesh = true;
 }

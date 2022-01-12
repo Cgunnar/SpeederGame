@@ -61,6 +61,25 @@ void TerrainScript::OnUpdate(float dt)
 	UpdateChunks({ viewerTransform.getTranslation().x, viewerTransform.getTranslation().z });
 }
 
+Triangle TerrainScript::GetTriangleAtPos(Vector2 pos) const
+{
+	Vector2I chunkCoord;
+	chunkCoord.x = static_cast<int>(round(pos.x / m_chunkSize));
+	chunkCoord.y = static_cast<int>(round(pos.y / m_chunkSize));
+	if (!m_chunkMap.contains(chunkCoord))
+	{
+		std::cout << "chunk does not exist, return hight above y=0" << std::endl;
+		return Triangle();
+	}
+
+	TerrainChunk *chunk = m_chunkMap.at(chunkCoord);
+	Triangle triLocalToChunk = chunk->TriangleAtLocation(pos - chunk->m_position);
+	triLocalToChunk[0] += {chunk->m_position.x, 0, chunk->m_position.y};
+	triLocalToChunk[1] += {chunk->m_position.x, 0, chunk->m_position.y};
+	triLocalToChunk[2] += {chunk->m_position.x, 0, chunk->m_position.y};
+	return triLocalToChunk;
+}
+
 void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 {
 	float s = GetComponent<TransformComp>()->transform.getScale().x;

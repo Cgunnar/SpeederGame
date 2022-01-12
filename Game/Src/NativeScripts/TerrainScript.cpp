@@ -61,11 +61,14 @@ void TerrainScript::OnUpdate(float dt)
 	UpdateChunks({ viewerTransform.getTranslation().x, viewerTransform.getTranslation().z });
 }
 
-Triangle TerrainScript::GetTriangleAtPos(Vector2 pos) const
+Triangle TerrainScript::GetTriangleAtPos(Vector2 pos)
 {
+
 	Vector2I chunkCoord;
-	chunkCoord.x = static_cast<int>(round(pos.x / m_chunkSize));
-	chunkCoord.y = static_cast<int>(round(pos.y / m_chunkSize));
+	float s = GetComponent<TransformComp>()->transform.getScale().x;
+	Vector2 viewPos = pos / s;
+	chunkCoord.x = static_cast<int>(round(viewPos.x / m_chunkSize));
+	chunkCoord.y = static_cast<int>(round(viewPos.y / m_chunkSize));
 	if (!m_chunkMap.contains(chunkCoord))
 	{
 		std::cout << "chunk does not exist, return hight above y=0" << std::endl;
@@ -73,10 +76,10 @@ Triangle TerrainScript::GetTriangleAtPos(Vector2 pos) const
 	}
 
 	TerrainChunk *chunk = m_chunkMap.at(chunkCoord);
-	Triangle triLocalToChunk = chunk->TriangleAtLocation(pos - chunk->m_position);
-	triLocalToChunk[0] += {chunk->m_position.x, 0, chunk->m_position.y};
-	triLocalToChunk[1] += {chunk->m_position.x, 0, chunk->m_position.y};
-	triLocalToChunk[2] += {chunk->m_position.x, 0, chunk->m_position.y};
+	Triangle triLocalToChunk = chunk->TriangleAtLocation(pos - s*chunk->m_position);
+	triLocalToChunk[0] += s * Vector3(chunk->m_position.x, 0, chunk->m_position.y);
+	triLocalToChunk[1] += s * Vector3(chunk->m_position.x, 0, chunk->m_position.y);
+	triLocalToChunk[2] += s * Vector3(chunk->m_position.x, 0, chunk->m_position.y);
 	return triLocalToChunk;
 }
 

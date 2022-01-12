@@ -136,13 +136,21 @@ void TerrainChunk::UpdateChunkTransform(rfm::Transform transform)
 	chunkTransform = chunkTransform * T;
 }
 
-Triangle TerrainChunk::TriangleAtLocation(Vector2 pos) const
+Triangle TerrainChunk::TriangleAtLocation(Vector2 pos)
 {
 	assert(!m_lodMeshes.empty());
 	if (!m_lodMeshes[0].hasRenderMesh)
 	{
 		return Triangle();
 	}
+
+	auto chunkTransform = m_chunkEntity.GetComponent<TransformComp>()->transform;
+	float s = chunkTransform.getScale().x;
+	Vector3 pos3D = { pos.x, 0, pos.y };
+	pos3D = chunkTransform * Vector4(pos3D,1);
+
+	pos.x /= s;
+	pos.y /= s;
 
 	int px = static_cast<int>(120 + pos.x);
 	int py = static_cast<int>(120 - pos.y);
@@ -153,14 +161,17 @@ Triangle TerrainChunk::TriangleAtLocation(Vector2 pos) const
 	Vector2 topLeft = { t0[0].x, t0[0].z };
 	Vector2 botRight = { t1[1].x, t1[1].z };
 
+	Triangle tri;
 	if ((pos - topLeft).length() <= (pos - botRight).length())
-	{
-		return t0;
-	}
+		tri = t0;
 	else
-	{
-		return t1;
-	}
+		tri = t1;
+
+	tri[0] *= s;
+	tri[1] *= s;
+	tri[2] *= s;
+
+	return tri;
 }
 
 rfm::Vector3 NearestPointOnEdgeFromPoint(rfm::Vector3 corners[4], rfm::Vector3 p)

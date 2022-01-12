@@ -44,7 +44,7 @@ Scene::Scene()
 
 	m_terrain = EntityReg::CreateEntity();
 	m_terrain.AddComponent<TransformComp>();
-	//m_terrain.GetComponent<TransformComp>()->transform.setScale(0.2f);
+	m_terrain.GetComponent<TransformComp>()->transform.setScale(0.2f);
 	//m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, -10, 0);
 	m_terrain.AddComponent<TerrainScript>(m_terrDesc);
 
@@ -127,27 +127,28 @@ Scene::Scene()
 	m_ironSphere.AddComponent(TransformComp())->transform.setTranslation(-4, 3, 1);
 	m_ironSphere.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN, rusteIronMat));
 
+	float debugSphereScale = 0.1f;
 	Material debugSphereMat;
 	debugSphereMat.baseColorFactor = 0;
 	debugSphereMat.emissiveFactor = Vector3(1, 0, 0);
 	m_sphere0 = EntityReg::CreateEntity();
-	m_sphere0.AddComponent<TransformComp>()->transform.setScale(0.1f);
+	m_sphere0.AddComponent<TransformComp>()->transform.setScale(debugSphereScale);
 	m_sphere0.AddComponent<RenderUnitComp>(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN, debugSphereMat);
 
 	debugSphereMat.emissiveFactor = Vector3(0, 1, 0);
 	m_sphere1 = EntityReg::CreateEntity();
-	m_sphere1.AddComponent<TransformComp>()->transform.setScale(0.1f);
+	m_sphere1.AddComponent<TransformComp>()->transform.setScale(debugSphereScale);
 	m_sphere1.AddComponent<RenderUnitComp>(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN, debugSphereMat);
 
 	debugSphereMat.emissiveFactor = Vector3(0, 0, 1);
 	m_sphere2 = EntityReg::CreateEntity();
-	m_sphere2.AddComponent<TransformComp>()->transform.setScale(0.1f);
+	m_sphere2.AddComponent<TransformComp>()->transform.setScale(debugSphereScale);
 	m_sphere2.AddComponent<RenderUnitComp>(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN, debugSphereMat);
 
-	debugSphereMat.emissiveFactor = Vector3(1, 1, 0);
+	/*debugSphereMat.emissiveFactor = Vector3(1, 1, 0);
 	m_sphere3 = EntityReg::CreateEntity();
 	m_sphere3.AddComponent<TransformComp>()->transform.setScale(0.1f);
-	m_sphere3.AddComponent<RenderUnitComp>(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN, debugSphereMat);
+	m_sphere3.AddComponent<RenderUnitComp>(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN, debugSphereMat);*/
 
 	m_lightContr.slider1.ChangeDefaultValues({ 0,2,-9 });
 	m_lightContr.slider2.ChangeDefaultValues({ 1,1,1 }, 0, 1);

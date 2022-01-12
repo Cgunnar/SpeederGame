@@ -91,7 +91,7 @@ Scene::Scene()
 
 
 	
-	m_ship = CreateEntityModel("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", { 0, 10, 3 });
+	m_ship = CreateEntityModel("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", { 0, 5, 3 });
 	m_ship.AddComponent<ShipContollerScript>();
 	m_ship.AddComponent<ShipScript>();
 	

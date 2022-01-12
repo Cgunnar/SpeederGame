@@ -24,7 +24,7 @@ namespace rfe
 	class EntityComponentManager;
 	class EntityReg;
 	class ECSSerializer;
-
+	constexpr double timeStep = 1.0 / 200.0;
 
 	class Entity
 	{
@@ -684,6 +684,7 @@ namespace rfe
 
 		//On update functions
 		void OnUpdate(float dt) {};
+		void OnFixedUpdate(float dt) {};
 	};
 
 	template<typename... T>
@@ -704,6 +705,17 @@ namespace rfe
 			}
 			script.OnUpdate(dt);
 		}
+		static float deltaTime = 0;
+		deltaTime += dt;
+		while (timeStep < deltaTime)
+		{
+			for (auto& script : T::componentArray)
+			{
+				script.OnFixedUpdate(timeStep);
+			}
+			deltaTime -= timeStep;
+		}
+		
 	}
 
 	template<typename ...T>

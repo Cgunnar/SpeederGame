@@ -21,5 +21,6 @@ class ShipScript : public rfe::NativeScriptComponent<ShipScript>
 public:
 	void OnStart();
 	void OnUpdate(float dt);
+	void OnFixedUpdate(float dt);
 private:
 };

@@ -55,7 +55,7 @@ void ShipContollerScript::reset()
 	rg.angularVelocity = Vector3(0, 0, 0);
 	rg.velocity = { 0,0,0 };
 	tr.setRotationDeg(30, 0, 0);
-	tr.setTranslation(0, 10, 3);
+	tr.setTranslation(0, 5, 3);
 
 	GetComponent<TransformComp>()->transform = tr;
 	GetComponent<RigidBodyComp>()->rigidBody = rg;
@@ -71,12 +71,12 @@ void ShipScript::OnStart()
 	Geometry::AABB_POS_NOR_UV shipBoundingBox(shipAABB);
 	Mesh boxMesh = Mesh(shipBoundingBox.VertexData(), shipBoundingBox.IndexData(), shipAABB);
 	AddComponent<RenderUnitComp>(boxMesh, redWireFrame);
-	GetComponent<TransformComp>()->transform.setRotationDeg(30, 0, 0);
 
+	GetComponent<TransformComp>()->transform.setRotationDeg(30, 0, 10);
 	Vector3 whd = shipAABB.GetWidthHeightDepth();
 	RigidBody rg;
 	//rg.mass = 0.1f;
-	rg.mass = 10.0f;
+	rg.mass = 2000;
 	rg.momentOfInertia[0][0] = (1.0f / 12.0f) * rg.mass * (whd.y * whd.y + whd.z * whd.z);
 	rg.momentOfInertia[1][1] = (1.0f / 12.0f) * rg.mass * (whd.x * whd.x + whd.z * whd.z);
 	rg.momentOfInertia[2][2] = (1.0f / 12.0f) * rg.mass * (whd.x * whd.x + whd.y * whd.y);
@@ -87,20 +87,26 @@ void ShipScript::OnStart()
 
 void ShipScript::OnUpdate(float dt)
 {
+	
+}
+
+void ShipScript::OnFixedUpdate(float dt)
+{
 	Plane plane0 = Plane({ 0,1,0 }, 0);
 	AABB aabb = GetComponent<AABBComp>()->aabb;
 	Transform transform = GetComponent<TransformComp>()->transform;
 	RigidBody rigidBody = GetComponent<RigidBodyComp>()->rigidBody;
 
 	auto aabbPoints = aabb.GetPointsTransformed(transform);
-	auto pointsUnderPlane = colDetect::PlaneVSPoints(plane0, {aabbPoints.begin(), aabbPoints.end()});
+	auto pointsUnderPlane = colDetect::PlaneVSPoints(plane0, { aabbPoints.begin(), aabbPoints.end() });
 	std::vector<float> sumP;
 	sumP.resize(pointsUnderPlane.size(), 0);
 	const int kMax = 20;
-
 	Matrix3 invI = inverse(rigidBody.momentOfInertia);
 	float invMass = 1.0f / rigidBody.mass;
 	rigidBody.velocity.y -= 9.82 * dt;
+	Vector3 v = rigidBody.velocity;
+	Vector3 w = rigidBody.angularVelocity;
 	for (int k = 0; k < kMax; k++)
 	{
 		for (int i = 0; i < pointsUnderPlane.size(); i++)
@@ -109,10 +115,18 @@ void ShipScript::OnUpdate(float dt)
 			Vector3 normal = p.normal;
 			Vector3 r = p.pointRealPosition - transform.getTranslation();
 
+			/*Vector3 invIcrossNormR = invI * cross(normal, r);
+			float constraint = dot(rigidBody.velocity + cross(r, rigidBody.angularVelocity), normal);
+			float eMass = invMass + dot(invIcrossNormR, invIcrossNormR);*/
+
 			Vector3 invIcrossNormR = invI * cross(normal, r);
 			float constraint = dot(rigidBody.velocity + cross(r, rigidBody.angularVelocity), normal);
-			float eMass = invMass + dot(invIcrossNormR, invIcrossNormR);
-			float pCorrected = -constraint / eMass;
+			float eMass = invMass + dot(invIcrossNormR, invIcrossNormR); 
+			float rn = dot(r, normal);
+			eMass = invMass + dot(normal, cross(r, (invI * cross(normal, r))));
+			float b = 0.02 / (dt / (float)kMax);
+			b *= std::max(p.penetration - 0.01f, 0.0f);
+			float pCorrected = (-constraint + b) / eMass;
 
 			float oldP = sumP[i];
 			sumP[i] += pCorrected;

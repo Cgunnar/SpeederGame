@@ -45,6 +45,7 @@ Scene::Scene()
 	m_terrain = EntityReg::CreateEntity();
 	m_terrain.AddComponent<TransformComp>();
 	m_terrain.GetComponent<TransformComp>()->transform.setScale(0.2f);
+	m_terrain.GetComponent<TransformComp>()->transform.setRotationDeg(0, 90, 0);
 	//m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, -10, 0);
 	m_terrain.AddComponent<TerrainScript>(m_terrDesc);
 
@@ -204,10 +205,10 @@ void Scene::Update(float dt)
 	ImGui::Text("x:%f y:%f z:%f  v2 b", tri[2].x, tri[2].y, tri[2].z);
 	ImGui::Text("x:%f y:%f z:%f  camera", camPos.x, camPos.y, camPos.z);
 
-	if(tri[0].z < camPos.z)
+	/*if(tri[0].z < camPos.z)
 	{
 		std::cout << "wrong triangle\n";
-	}
+	}*/
 
 	m_sphere0.GetComponent<TransformComp>()->transform.setTranslation(tri[0]);
 	m_sphere1.GetComponent<TransformComp>()->transform.setTranslation(tri[1]);

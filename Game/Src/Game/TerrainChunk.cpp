@@ -47,7 +47,7 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, Transform terrainTrans
 
 	m_material.baseColorFactor = 1;
 	m_material.emissiveFactor = 0;
-	m_material.flags |= RenderFlag::sampler_anisotropic_clamp | RenderFlag::wireframe;
+	m_material.flags |= RenderFlag::sampler_anisotropic_wrap | RenderFlag::wireframe;
 	auto rc = m_chunkEntity.AddComponent<RenderModelComp>();
 	rc->SetRenderUnit(AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV), m_material, false);
 }
@@ -146,11 +146,9 @@ Triangle TerrainChunk::TriangleAtLocation(Vector2 pos)
 
 	auto chunkTransform = m_chunkEntity.GetComponent<TransformComp>()->transform;
 	float s = chunkTransform.getScale().x;
-	Vector3 pos3D = { pos.x, 0, pos.y };
-	pos3D = chunkTransform * Vector4(pos3D,1);
 
-	pos.x /= s;
-	pos.y /= s;
+	/*pos.x /= s;
+	pos.y /= s;*/
 
 	int px = static_cast<int>(120 + pos.x);
 	int py = static_cast<int>(120 - pos.y);
@@ -167,9 +165,9 @@ Triangle TerrainChunk::TriangleAtLocation(Vector2 pos)
 	else
 		tri = t1;
 
-	tri[0] *= s;
+	/*tri[0] *= s;
 	tri[1] *= s;
-	tri[2] *= s;
+	tri[2] *= s;*/
 
 	return tri;
 }

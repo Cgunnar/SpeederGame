@@ -63,12 +63,20 @@ void TerrainScript::OnUpdate(float dt)
 
 Triangle TerrainScript::GetTriangleAtPos(Vector2 pos)
 {
-
+	Transform terrainTransform = GetComponent<TransformComp>()->transform;
+	float s = terrainTransform.getScale().x;
+	Vector3 localPos = inverse(terrainTransform) * Vector4(pos.x, 0, pos.y, 1);
+	static Vector2I oldChunkCoord;
 	Vector2I chunkCoord;
-	float s = GetComponent<TransformComp>()->transform.getScale().x;
-	Vector2 viewPos = pos / s;
+	Vector2 viewPos = {localPos.x, localPos.z};
+	Vector2 viewPos2 = pos / s;
 	chunkCoord.x = static_cast<int>(round(viewPos.x / m_chunkSize));
 	chunkCoord.y = static_cast<int>(round(viewPos.y / m_chunkSize));
+	if(chunkCoord != oldChunkCoord)
+	{
+		std::cout << "enter chunk: " << chunkCoord.x << ", " << chunkCoord.y << std::endl;
+		oldChunkCoord = chunkCoord;
+	}
 	if (!m_chunkMap.contains(chunkCoord))
 	{
 		std::cout << "chunk does not exist, return hight above y=0" << std::endl;
@@ -76,10 +84,16 @@ Triangle TerrainScript::GetTriangleAtPos(Vector2 pos)
 	}
 
 	TerrainChunk *chunk = m_chunkMap.at(chunkCoord);
-	Triangle triLocalToChunk = chunk->TriangleAtLocation(pos - s*chunk->m_position);
-	triLocalToChunk[0] += s * Vector3(chunk->m_position.x, 0, chunk->m_position.y);
+	Transform chunkTransform = chunk->m_chunkEntity.GetComponent<TransformComp>()->transform;
+	Triangle triLocalToChunk = chunk->TriangleAtLocation(viewPos - chunk->m_position/s);assert(false)//fix transfrom on viewPos or some other value to keep it form going out of range
+	triLocalToChunk[0] = chunkTransform * Vector4(triLocalToChunk[0], 1);
+	triLocalToChunk[1] = chunkTransform * Vector4(triLocalToChunk[1], 1);
+	triLocalToChunk[2] = chunkTransform * Vector4(triLocalToChunk[2], 1);
+	/*triLocalToChunk[1] += s * Vector3(chunk->m_position.x, 0, chunk->m_position.y);
+	triLocalToChunk[2] += s * Vector3(chunk->m_position.x, 0, chunk->m_position.y);*/
+	/*triLocalToChunk[0] += s * Vector3(chunk->m_position.x, 0, chunk->m_position.y);
 	triLocalToChunk[1] += s * Vector3(chunk->m_position.x, 0, chunk->m_position.y);
-	triLocalToChunk[2] += s * Vector3(chunk->m_position.x, 0, chunk->m_position.y);
+	triLocalToChunk[2] += s * Vector3(chunk->m_position.x, 0, chunk->m_position.y);*/
 	return triLocalToChunk;
 }
 

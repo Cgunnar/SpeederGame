@@ -56,27 +56,21 @@ void TerrainScript::OnStart()
 void TerrainScript::OnUpdate(float dt)
 {
 	EntityID viewerID = EntityReg::GetComponentArray<PlayerComp>().front().GetEntity();
-	Transform viewerTransform = EntityReg::GetComponent<TransformComp>(viewerID)->transform;
-	
-	UpdateChunks({ viewerTransform.getTranslation().x, viewerTransform.getTranslation().z });
+	const Transform& viewerTransform = EntityReg::GetComponent<TransformComp>(viewerID)->transform;
+	const Transform& terrainTransform = GetComponent<TransformComp>()->transform;
+
+	Vector3 viewPosInTerrainSpace = inverse(terrainTransform) * Vector4(viewerTransform.getTranslation(), 1);
+	UpdateChunks({ viewPosInTerrainSpace.x, viewPosInTerrainSpace.z });
 }
 
 Triangle TerrainScript::GetTriangleAtPos(Vector2 pos)
 {
 	Transform terrainTransform = GetComponent<TransformComp>()->transform;
-	float s = terrainTransform.getScale().x;
 	Vector3 localPos = inverse(terrainTransform) * Vector4(pos.x, 0, pos.y, 1);
-	static Vector2I oldChunkCoord;
 	Vector2I chunkCoord;
 	Vector2 viewPos = {localPos.x, localPos.z};
-	Vector2 viewPos2 = pos / s;
 	chunkCoord.x = static_cast<int>(round(viewPos.x / m_chunkSize));
 	chunkCoord.y = static_cast<int>(round(viewPos.y / m_chunkSize));
-	if(chunkCoord != oldChunkCoord)
-	{
-		std::cout << "enter chunk: " << chunkCoord.x << ", " << chunkCoord.y << std::endl;
-		oldChunkCoord = chunkCoord;
-	}
 	if (!m_chunkMap.contains(chunkCoord))
 	{
 		std::cout << "chunk does not exist, return hight above y=0" << std::endl;
@@ -84,26 +78,17 @@ Triangle TerrainScript::GetTriangleAtPos(Vector2 pos)
 	}
 
 	TerrainChunk *chunk = m_chunkMap.at(chunkCoord);
-	Transform chunkTransform = chunk->m_chunkEntity.GetComponent<TransformComp>()->transform;
-	Vector3 posInChunkSpace = inverse(chunkTransform) * Vector4(pos.x, 0, pos.y, 1);
-	//Triangle triLocalToChunk = chunk->TriangleAtLocation(viewPos - chunk->m_position/s);
-	Triangle triLocalToChunk = chunk->TriangleAtLocation({ posInChunkSpace.x, posInChunkSpace.z });
-	triLocalToChunk[0] = chunkTransform * Vector4(triLocalToChunk[0], 1);
-	triLocalToChunk[1] = chunkTransform * Vector4(triLocalToChunk[1], 1);
-	triLocalToChunk[2] = chunkTransform * Vector4(triLocalToChunk[2], 1);
-	/*triLocalToChunk[1] += s * Vector3(chunk->m_position.x, 0, chunk->m_position.y);
-	triLocalToChunk[2] += s * Vector3(chunk->m_position.x, 0, chunk->m_position.y);*/
-	/*triLocalToChunk[0] += s * Vector3(chunk->m_position.x, 0, chunk->m_position.y);
-	triLocalToChunk[1] += s * Vector3(chunk->m_position.x, 0, chunk->m_position.y);
-	triLocalToChunk[2] += s * Vector3(chunk->m_position.x, 0, chunk->m_position.y);*/
+	//Transform chunkTransform = chunk->m_chunkEntity.GetComponent<TransformComp>()->transform;
+	//Vector3 posInChunkSpace = inverse(chunkTransform) * Vector4(pos.x, 0, pos.y, 1);
+	Triangle triLocalToChunk = chunk->TriangleAtLocation(pos);
+	//triLocalToChunk[0] = chunkTransform * Vector4(triLocalToChunk[0], 1);
+	//triLocalToChunk[1] = chunkTransform * Vector4(triLocalToChunk[1], 1);
+	//triLocalToChunk[2] = chunkTransform * Vector4(triLocalToChunk[2], 1);
 	return triLocalToChunk;
 }
 
 void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 {
-	float s = GetComponent<TransformComp>()->transform.getScale().x;
-	viewPos /= s;
-
 	Vector2I chunkCoord;
 	chunkCoord.x = static_cast<int>(round(viewPos.x / m_chunkSize));
 	chunkCoord.y = static_cast<int>(round(viewPos.y / m_chunkSize));

@@ -25,7 +25,7 @@ TerrainChunk::~TerrainChunk()
 }
 
 TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, Transform terrainTransform, TerrainMeshDesc mapDesc, std::vector<LODinfo> lods)
-	: m_coord(coord), m_lods(lods), m_meshDesc(mapDesc)
+	: m_coord(coord), m_lods(lods), m_meshDesc(mapDesc), m_chunkSize(size)
 {
 	for (const auto& lod : m_lods)
 	{
@@ -132,7 +132,8 @@ void TerrainChunk::UpdateChunkTransform(rfm::Transform transform)
 {
 	auto& chunkTransform = m_chunkEntity.GetComponent<TransformComp>()->transform;
 	chunkTransform = transform;
-	Transform T;	T.setTranslation(m_position.x, 0, m_position.y);
+	Transform T;	
+	T.setTranslation(m_position.x, 0, m_position.y);
 	chunkTransform = chunkTransform * T;
 }
 
@@ -141,19 +142,17 @@ Triangle TerrainChunk::TriangleAtLocation(Vector2 pos)
 	assert(!m_lodMeshes.empty());
 	if (!m_lodMeshes[0].hasRenderMesh)
 	{
+		std::cout << "lod 0 has not loaded" << std::endl;
 		return Triangle();
 	}
 
-	auto chunkTransform = m_chunkEntity.GetComponent<TransformComp>()->transform;
-	float s = chunkTransform.getScale().x;
+	const Transform& chunkTransform = m_chunkEntity.GetComponent<TransformComp>()->transform;
+	Vector3 toLocalSpae = inverse(chunkTransform) * Vector4(pos.x, 0, pos.y, 1);
+	pos = { toLocalSpae.x, toLocalSpae.z };
+	int px = static_cast<int>(m_chunkSize / 2 + pos.x);
+	int py = static_cast<int>(m_chunkSize / 2 - pos.y);
 
-	/*pos.x /= s;
-	pos.y /= s;*/
-
-	int px = static_cast<int>(120 + pos.x);
-	int py = static_cast<int>(120 - pos.y);
-
-	int index = 2*(py * 240 + px);
+	int index = 2 * (py * m_chunkSize + px);
 	Triangle t0 = m_lodMeshes[0].mesh.triangles[index];
 	Triangle t1 = m_lodMeshes[0].mesh.triangles[index + 1];
 	Vector2 topLeft = { t0[0].x, t0[0].z };
@@ -165,9 +164,9 @@ Triangle TerrainChunk::TriangleAtLocation(Vector2 pos)
 	else
 		tri = t1;
 
-	/*tri[0] *= s;
-	tri[1] *= s;
-	tri[2] *= s;*/
+	tri[0] = chunkTransform * Vector4(tri[0], 1);
+	tri[1] = chunkTransform * Vector4(tri[1], 1);
+	tri[2] = chunkTransform * Vector4(tri[2], 1);
 
 	return tri;
 }

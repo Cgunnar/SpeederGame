@@ -137,7 +137,7 @@ void TerrainChunk::UpdateChunkTransform(rfm::Transform transform)
 	chunkTransform = chunkTransform * T;
 }
 
-Triangle TerrainChunk::TriangleAtLocation(Vector2 pos)
+Triangle TerrainChunk::TriangleAtLocation(Vector3 pos)
 {
 	assert(!m_lodMeshes.empty());
 	if (!m_lodMeshes[0].hasRenderMesh)
@@ -147,10 +147,10 @@ Triangle TerrainChunk::TriangleAtLocation(Vector2 pos)
 	}
 
 	const Transform& chunkTransform = m_chunkEntity.GetComponent<TransformComp>()->transform;
-	Vector3 toLocalSpae = inverse(chunkTransform) * Vector4(pos.x, 0, pos.y, 1);
-	pos = { toLocalSpae.x, toLocalSpae.z };
-	int px = static_cast<int>(m_chunkSize / 2 + pos.x);
-	int py = static_cast<int>(m_chunkSize / 2 - pos.y);
+	Vector3 toLocalSpae = inverse(chunkTransform) * Vector4(pos, 1);
+	Vector2 localPos = { toLocalSpae.x, toLocalSpae.z };
+	int px = static_cast<int>(m_chunkSize / 2 + localPos.x);
+	int py = static_cast<int>(m_chunkSize / 2 - localPos.y);
 
 	int index = 2 * (py * m_chunkSize + px);
 	Triangle t0 = m_lodMeshes[0].mesh.triangles[index];
@@ -159,7 +159,7 @@ Triangle TerrainChunk::TriangleAtLocation(Vector2 pos)
 	Vector2 botRight = { t1[1].x, t1[1].z };
 
 	Triangle tri;
-	if ((pos - topLeft).length() <= (pos - botRight).length())
+	if ((localPos - topLeft).length() <= (localPos - botRight).length())
 		tri = t0;
 	else
 		tri = t1;

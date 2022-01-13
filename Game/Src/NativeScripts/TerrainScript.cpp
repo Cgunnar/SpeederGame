@@ -7,10 +7,6 @@
 using namespace rfm;
 using namespace rfe;
 
-
-
-
-
 TerrainScript::~TerrainScript()
 {
 	for (auto c : m_chunkMap)
@@ -63,10 +59,10 @@ void TerrainScript::OnUpdate(float dt)
 	UpdateChunks({ viewPosInTerrainSpace.x, viewPosInTerrainSpace.z });
 }
 
-Triangle TerrainScript::GetTriangleAtPos(Vector2 pos)
+Triangle TerrainScript::GetTriangleAtPos(Vector3 pos)
 {
 	Transform terrainTransform = GetComponent<TransformComp>()->transform;
-	Vector3 localPos = inverse(terrainTransform) * Vector4(pos.x, 0, pos.y, 1);
+	Vector3 localPos = inverse(terrainTransform) * Vector4(pos, 1);
 	Vector2I chunkCoord;
 	Vector2 viewPos = {localPos.x, localPos.z};
 	chunkCoord.x = static_cast<int>(round(viewPos.x / m_chunkSize));
@@ -78,12 +74,7 @@ Triangle TerrainScript::GetTriangleAtPos(Vector2 pos)
 	}
 
 	TerrainChunk *chunk = m_chunkMap.at(chunkCoord);
-	//Transform chunkTransform = chunk->m_chunkEntity.GetComponent<TransformComp>()->transform;
-	//Vector3 posInChunkSpace = inverse(chunkTransform) * Vector4(pos.x, 0, pos.y, 1);
 	Triangle triLocalToChunk = chunk->TriangleAtLocation(pos);
-	//triLocalToChunk[0] = chunkTransform * Vector4(triLocalToChunk[0], 1);
-	//triLocalToChunk[1] = chunkTransform * Vector4(triLocalToChunk[1], 1);
-	//triLocalToChunk[2] = chunkTransform * Vector4(triLocalToChunk[2], 1);
 	return triLocalToChunk;
 }
 

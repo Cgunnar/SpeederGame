@@ -16,7 +16,7 @@ public:
 	void Update(rfm::Vector2 viewPos, float maxViewDist);
 	void LoadTerrain(const TerrainMapDesc& desc);
 	void UpdateChunkTransform(rfm::Transform transform);
-	Triangle TriangleAtLocation(rfm::Vector2 pos);
+	Triangle TriangleAtLocation(rfm::Vector3 pos);
 private:
 	rfe::Entity m_chunkEntity;
 	rfm::Vector2I m_coord;

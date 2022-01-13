@@ -44,9 +44,9 @@ Scene::Scene()
 
 	m_terrain = EntityReg::CreateEntity();
 	m_terrain.AddComponent<TransformComp>();
-	m_terrain.GetComponent<TransformComp>()->transform.setScale(0.2f);
-	m_terrain.GetComponent<TransformComp>()->transform.setRotationDeg(0, 90, 0);
-	//m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, -10, 0);
+	m_terrain.GetComponent<TransformComp>()->transform.setScale(1.4f);
+	m_terrain.GetComponent<TransformComp>()->transform.setRotationDeg(0, 30, 0);
+	m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, -10, 0);
 	m_terrain.AddComponent<TerrainScript>(m_terrDesc);
 
 
@@ -168,11 +168,6 @@ Scene::~Scene()
 
 void Scene::Update(float dt)
 {
-
-	
-
-
-
 	EntityReg::RunScripts<CameraControllerScript, ShipScript, ShipContollerScript, TerrainScript>(dt);
 
 	/*if (m_terrainGUI.Show())
@@ -198,17 +193,7 @@ void Scene::Update(float dt)
 	//m_camera.GetComponent<TransformComp>()->transform = followShip;
 
 	Vector3 camPos = m_camera.GetComponent<TransformComp>()->transform.getTranslation();
-	
-	Triangle tri = m_terrain.GetComponent<TerrainScript>()->GetTriangleAtPos({ camPos.x, camPos.z });
-	ImGui::Text("x:%f y:%f z:%f  v0 r", tri[0].x, tri[0].y, tri[0].z);
-	ImGui::Text("x:%f y:%f z:%f  v1 g", tri[1].x, tri[1].y, tri[1].z);
-	ImGui::Text("x:%f y:%f z:%f  v2 b", tri[2].x, tri[2].y, tri[2].z);
-	ImGui::Text("x:%f y:%f z:%f  camera", camPos.x, camPos.y, camPos.z);
-
-	/*if(tri[0].z < camPos.z)
-	{
-		std::cout << "wrong triangle\n";
-	}*/
+	Triangle tri = m_terrain.GetComponent<TerrainScript>()->GetTriangleAtPos(camPos);
 
 	m_sphere0.GetComponent<TransformComp>()->transform.setTranslation(tri[0]);
 	m_sphere1.GetComponent<TransformComp>()->transform.setTranslation(tri[1]);

@@ -85,7 +85,9 @@ Triangle TerrainScript::GetTriangleAtPos(Vector2 pos)
 
 	TerrainChunk *chunk = m_chunkMap.at(chunkCoord);
 	Transform chunkTransform = chunk->m_chunkEntity.GetComponent<TransformComp>()->transform;
-	Triangle triLocalToChunk = chunk->TriangleAtLocation(viewPos - chunk->m_position/s);assert(false)//fix transfrom on viewPos or some other value to keep it form going out of range
+	Vector3 posInChunkSpace = inverse(chunkTransform) * Vector4(pos.x, 0, pos.y, 1);
+	//Triangle triLocalToChunk = chunk->TriangleAtLocation(viewPos - chunk->m_position/s);
+	Triangle triLocalToChunk = chunk->TriangleAtLocation({ posInChunkSpace.x, posInChunkSpace.z });
 	triLocalToChunk[0] = chunkTransform * Vector4(triLocalToChunk[0], 1);
 	triLocalToChunk[1] = chunkTransform * Vector4(triLocalToChunk[1], 1);
 	triLocalToChunk[2] = chunkTransform * Vector4(triLocalToChunk[2], 1);

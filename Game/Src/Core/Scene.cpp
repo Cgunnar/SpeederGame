@@ -44,7 +44,7 @@ Scene::Scene()
 
 	m_terrain = EntityReg::CreateEntity();
 	m_terrain.AddComponent<TransformComp>();
-	m_terrain.GetComponent<TransformComp>()->transform.setScale(1.4f);
+	m_terrain.GetComponent<TransformComp>()->transform.setScale(0.5f);
 	m_terrain.GetComponent<TransformComp>()->transform.setRotationDeg(0, 30, 0);
 	m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, -10, 0);
 	m_terrain.AddComponent<TerrainScript>(m_terrDesc);
@@ -94,7 +94,7 @@ Scene::Scene()
 
 
 	
-	m_ship = CreateEntityModel("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", { 0, 5, 3 });
+	m_ship = CreateEntityModel("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", { 0, 10, 3 });
 	m_ship.AddComponent<ShipContollerScript>();
 	m_ship.AddComponent<ShipScript>();
 	
@@ -190,7 +190,7 @@ void Scene::Update(float dt)
 
 	Transform followShip = m_ship.GetComponent<TransformComp>()->transform;
 	followShip.translateL(0, 1, -4);
-	//m_camera.GetComponent<TransformComp>()->transform = followShip;
+	m_camera.GetComponent<TransformComp>()->transform = followShip;
 
 	Vector3 camPos = m_camera.GetComponent<TransformComp>()->transform.getTranslation();
 	Triangle tri = m_terrain.GetComponent<TerrainScript>()->GetTriangleAtPos(camPos);

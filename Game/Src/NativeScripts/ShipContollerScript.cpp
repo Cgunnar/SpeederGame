@@ -21,6 +21,11 @@ void ShipContollerScript::OnUpdate(float dt)
 		if (gPad.IsBPressed())
 		{
 			reset();
+			m_docked = true;
+		}
+		if (gPad.IsAPressed())
+		{
+			m_docked = false;
 		}
 		Transform tr = GetComponent<TransformComp>()->transform;
 		RigidBody rg = GetComponent<RigidBodyComp>()->rigidBody;
@@ -98,35 +103,61 @@ struct sumP
 	float b = 0;
 };
 
+struct ConstraintInfo
+{
+	CollisionPoint cp;
+	Vector3 tangent;
+	Vector3 biTangent;
+	sumP sumP;
+};
+
 void ShipScript::OnFixedUpdate(float dt)
 {
+	if (EntityReg::GetComponentArray<ShipContollerScript>().front().m_docked)
+		return;
 	Plane plane0 = Plane({ 0,1,0 }, 0);
 	AABB aabb = GetComponent<AABBComp>()->aabb;
 	Transform transform = GetComponent<TransformComp>()->transform;
 	RigidBody rigidBody = GetComponent<RigidBodyComp>()->rigidBody;
 
 	auto aabbPoints = aabb.GetPointsTransformed(transform);
-	auto pointsUnderPlane = colDetect::PlaneVSPoints(plane0, { aabbPoints.begin(), aabbPoints.end() });
+
+	auto& terrain = EntityReg::GetComponentArray<TerrainScript>().front();
+	std::vector<ConstraintInfo> constraints;
+	for (auto& p : aabbPoints)
+	{
+		ConstraintInfo c;
+
+		Triangle tri = terrain.GetTriangleAtPos(p);
+		Plane plane = Plane(tri.normal, tri[0]);
+		auto colPoint = colDetect::PlaneVSPoints(plane, { p });
+		if (colPoint.empty()) continue;
+		c.cp = colPoint.front();
+		c.tangent = tri[1] - tri[0];
+		c.biTangent = cross(c.cp.normal, c.tangent);
+
+		constraints.push_back(c);
+	}
+
+	//auto pointsUnderPlane = colDetect::PlaneVSPoints(plane0, { aabbPoints.begin(), aabbPoints.end() });
 	std::vector<sumP> sumP;
-	sumP.resize(pointsUnderPlane.size());
-	const int kMax = 20;
+	//sumP.resize(pointsUnderPlane.size());
+	const int kMax = 30;
 	Matrix3 invI = inverse(rigidBody.momentOfInertia);
 	float invMass = 1.0f / rigidBody.mass;
 	rigidBody.velocity.y -= 9.82 * dt;
 	Vector3 v = rigidBody.velocity;
 	Vector3 w = rigidBody.angularVelocity;
-	float biasFactor = 0.06f / (dt / static_cast<float>(kMax));
+	float biasFactor = 0.005f / (dt / static_cast<float>(kMax));
 	for (int k = 0; k < kMax; k++)
 	{
-		for (int i = 0; i < pointsUnderPlane.size(); i++)
+		//for (int i = 0; i < pointsUnderPlane.size(); i++)
+		for (auto& c : constraints)
 		{
-
-
-			auto& p = pointsUnderPlane[i];
-			Vector3 normal = p.normal;
-			Vector3 tangent = Vector3(0,0,1);
-			Vector3 biTangent = Vector3(1,0,0);
-			Vector3 r = p.pointRealPosition - transform.getTranslation();
+			Vector3 normal = c.cp.normal;
+			Vector3 tangent = c.tangent;
+			Vector3 biTangent = c.biTangent;
+			Vector3 r = c.cp.pointRealPosition - transform.getTranslation();
 			Vector3 constaint = rigidBody.velocity + cross(r, rigidBody.angularVelocity);
 			float constraintN = dot(constaint, normal);
 			float constraintT = dot(constaint, tangent);
@@ -134,26 +165,26 @@ void ShipScript::OnFixedUpdate(float dt)
 			float eMassN = invMass + dot(normal, cross(r, (invI * cross(normal, r))));
 			float eMassT = invMass + dot(tangent, cross(r, (invI * cross(tangent, r))));
 			float eMassB = invMass + dot(biTangent, cross(r, (invI * cross(biTangent, r))));
-			float b = biasFactor * std::max(p.penetration - 0.01f, 0.0f);
+			float b = biasFactor * std::max(c.cp.penetration - 0.05f, 0.0f);
 			float pCorrectedN = (-constraintN + b) / eMassN;
 			float pCorrectedT = (-constraintT) / eMassT;
 			float pCorrectedB = (-constraintB) / eMassB;
 
-			float oldP = sumP[i].n;
-			sumP[i].n = std::max(sumP[i].n + pCorrectedN, 0.0f);
-			pCorrectedN = sumP[i].n - oldP;
+			float oldP = c.sumP.n;
+			c.sumP.n = std::max(c.sumP.n + pCorrectedN, 0.0f);
+			pCorrectedN = c.sumP.n - oldP;
 			rigidBody.velocity += invMass * pCorrectedN * normal;
 			rigidBody.angularVelocity += invI * pCorrectedN * cross(normal, r);
 
-			oldP = sumP[i].t;
-			sumP[i].t = std::clamp(sumP[i].t + pCorrectedT, -m_friction * sumP[i].n, m_friction * sumP[i].n);
-			pCorrectedT = sumP[i].t - oldP;
+			oldP = c.sumP.t;
+			c.sumP.t = std::clamp(c.sumP.t + pCorrectedT, -m_friction * c.sumP.n, m_friction * c.sumP.n);
+			pCorrectedT = c.sumP.t - oldP;
 			rigidBody.velocity += invMass * pCorrectedT * tangent;
 			rigidBody.angularVelocity += invI * pCorrectedT * cross(tangent, r);
 
-			oldP = sumP[i].b;
-			sumP[i].b = std::clamp(sumP[i].b + pCorrectedB, -m_friction * sumP[i].n, m_friction * sumP[i].n);
-			pCorrectedB = sumP[i].b - oldP;
+			oldP = c.sumP.b;
+			c.sumP.b = std::clamp(c.sumP.b + pCorrectedB, -m_friction * c.sumP.n, m_friction * c.sumP.n);
+			pCorrectedB = c.sumP.b - oldP;
 			rigidBody.velocity += invMass * pCorrectedB * biTangent;
 			rigidBody.angularVelocity += invI * pCorrectedB * cross(biTangent, r);
 		}
@@ -167,3 +198,75 @@ void ShipScript::OnFixedUpdate(float dt)
 	GetComponent<RigidBodyComp>()->rigidBody = rigidBody;
 	GetComponent<TransformComp>()->transform = transform;
 }
+
+
+
+//void ShipScript::OnFixedUpdate(float dt)
+//{
+//	Plane plane0 = Plane({ 0,1,0 }, 0);
+//	AABB aabb = GetComponent<AABBComp>()->aabb;
+//	Transform transform = GetComponent<TransformComp>()->transform;
+//	RigidBody rigidBody = GetComponent<RigidBodyComp>()->rigidBody;
+//
+//	auto aabbPoints = aabb.GetPointsTransformed(transform);
+//	auto pointsUnderPlane = colDetect::PlaneVSPoints(plane0, { aabbPoints.begin(), aabbPoints.end() });
+//	std::vector<sumP> sumP;
+//	sumP.resize(pointsUnderPlane.size());
+//	const int kMax = 20;
+//	Matrix3 invI = inverse(rigidBody.momentOfInertia);
+//	float invMass = 1.0f / rigidBody.mass;
+//	rigidBody.velocity.y -= 9.82 * dt;
+//	Vector3 v = rigidBody.velocity;
+//	Vector3 w = rigidBody.angularVelocity;
+//	float biasFactor = 0.06f / (dt / static_cast<float>(kMax));
+//	for (int k = 0; k < kMax; k++)
+//	{
+//		for (int i = 0; i < pointsUnderPlane.size(); i++)
+//		{
+//
+//
+//			auto& p = pointsUnderPlane[i];
+//			Vector3 normal = p.normal;
+//			Vector3 tangent = Vector3(0, 0, 1);
+//			Vector3 biTangent = Vector3(1, 0, 0);
+//			Vector3 r = p.pointRealPosition - transform.getTranslation();
+//			Vector3 constaint = rigidBody.velocity + cross(r, rigidBody.angularVelocity);
+//			float constraintN = dot(constaint, normal);
+//			float constraintT = dot(constaint, tangent);
+//			float constraintB = dot(constaint, biTangent);
+//			float eMassN = invMass + dot(normal, cross(r, (invI * cross(normal, r))));
+//			float eMassT = invMass + dot(tangent, cross(r, (invI * cross(tangent, r))));
+//			float eMassB = invMass + dot(biTangent, cross(r, (invI * cross(biTangent, r))));
+//			float b = biasFactor * std::max(p.penetration - 0.01f, 0.0f);
+//			float pCorrectedN = (-constraintN + b) / eMassN;
+//			float pCorrectedT = (-constraintT) / eMassT;
+//			float pCorrectedB = (-constraintB) / eMassB;
+//
+//			float oldP = sumP[i].n;
+//			sumP[i].n = std::max(sumP[i].n + pCorrectedN, 0.0f);
+//			pCorrectedN = sumP[i].n - oldP;
+//			rigidBody.velocity += invMass * pCorrectedN * normal;
+//			rigidBody.angularVelocity += invI * pCorrectedN * cross(normal, r);
+//
+//			oldP = sumP[i].t;
+//			sumP[i].t = std::clamp(sumP[i].t + pCorrectedT, -m_friction * sumP[i].n, m_friction * sumP[i].n);
+//			pCorrectedT = sumP[i].t - oldP;
+//			rigidBody.velocity += invMass * pCorrectedT * tangent;
+//			rigidBody.angularVelocity += invI * pCorrectedT * cross(tangent, r);
+//
+//			oldP = sumP[i].b;
+//			sumP[i].b = std::clamp(sumP[i].b + pCorrectedB, -m_friction * sumP[i].n, m_friction * sumP[i].n);
+//			pCorrectedB = sumP[i].b - oldP;
+//			rigidBody.velocity += invMass * pCorrectedB * biTangent;
+//			rigidBody.angularVelocity += invI * pCorrectedB * cross(biTangent, r);
+//		}
+//	}
+//
+//	transform.translateW(rigidBody.velocity * dt); //update the position
+//	if (rigidBody.angularVelocity.length() > 0) //update the rotation
+//		transform.rotateW(rotationMatrixFromNormal(
+//			normalize(rigidBody.angularVelocity), -rigidBody.angularVelocity.length() * dt));
+//
+//	GetComponent<RigidBodyComp>()->rigidBody = rigidBody;
+//	GetComponent<TransformComp>()->transform = transform;
+//}

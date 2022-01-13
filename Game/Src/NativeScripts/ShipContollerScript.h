@@ -6,13 +6,13 @@ class ShipContollerScript : public rfe::NativeScriptComponent<ShipContollerScrip
 {
 public:
 	void OnUpdate(float dt);
+	bool m_docked = true;
 private:
 	void reset();
 	float m_yawSpeed = rfm::DegToRad(20);
 	float m_pitchSpeed = rfm::DegToRad(80);
 	float m_rollSpeed = rfm::DegToRad(50);
 	float m_thrustSpeed = 14;
-	bool m_docked = true;
 };
 
 

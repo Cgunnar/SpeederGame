@@ -8,7 +8,7 @@
 #include "GraphicsHelperFunctions.h"
 #include "GraphicsResources.h"
 #include "CameraControllerScript.h"
-#include "ShipContollerScript.h"
+#include "ShipScript.h"
 #include "Input.h"
 #include "TerrainMeshGenerator.h"
 #include "TerrainScript.h"
@@ -95,7 +95,6 @@ Scene::Scene()
 
 	
 	m_ship = CreateEntityModel("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", { 0, 10, 3 });
-	m_ship.AddComponent<ShipContollerScript>();
 	m_ship.AddComponent<ShipScript>();
 	
 
@@ -158,7 +157,7 @@ Scene::Scene()
 	m_dirlightContr.slider2.ChangeDefaultValues(sunLight.GetComponent<DirectionalLightComp>()->dirLight.color, 0, 1);
 
 	FrameTimer::NewFrame();
-	EntityReg::StartScripts<CameraControllerScript, ShipScript, ShipContollerScript, TerrainScript>();
+	EntityReg::StartScripts<CameraControllerScript, ShipScript, TerrainScript>();
 }
 
 Scene::~Scene()
@@ -168,7 +167,7 @@ Scene::~Scene()
 
 void Scene::Update(float dt)
 {
-	EntityReg::RunScripts<CameraControllerScript, ShipScript, ShipContollerScript, TerrainScript>(dt);
+	EntityReg::RunScripts<CameraControllerScript, ShipScript, TerrainScript>(dt);
 
 	/*if (m_terrainGUI.Show())
 	{
@@ -188,7 +187,7 @@ void Scene::Update(float dt)
 		m_terrain.GetComponent<TransformComp>()->transform.setScale(guiInput.scale);
 	}*/
 
-	Transform followShip = m_ship.GetComponent<ShipContollerScript>()->GetCameraFollowTransform();
+	Transform followShip = m_ship.GetComponent<ShipScript>()->GetCameraFollowTransform();
 	m_camera.GetComponent<TransformComp>()->transform = followShip;
 
 	Vector3 camPos = m_camera.GetComponent<TransformComp>()->transform.getTranslation();

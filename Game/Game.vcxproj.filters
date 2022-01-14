@@ -174,7 +174,7 @@
     <ClInclude Include="Src\NativeScripts\NativeScriptCollection.h">
       <Filter>Src\NativeScripts</Filter>
     </ClInclude>
-    <ClInclude Include="Src\NativeScripts\ShipContollerScript.h">
+    <ClInclude Include="Src\NativeScripts\ShipScript.h">
       <Filter>Src\NativeScripts</Filter>
     </ClInclude>
     <ClInclude Include="Src\NativeScripts\TerrainScript.h">
@@ -223,7 +223,6 @@
       <Filter>vendor\singleHeaders</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\rfmFunctions.h" />
-    <ClInclude Include="Src\NativeScripts\BoxPhysicsTestScript.h" />
     <ClInclude Include="Src\Physics\PhysicsTypes.h" />
   </ItemGroup>
   <ItemGroup>
@@ -320,7 +319,7 @@
     <ClCompile Include="Src\NativeScripts\CameraControllerScript.cpp">
       <Filter>Src\NativeScripts</Filter>
     </ClCompile>
-    <ClCompile Include="Src\NativeScripts\ShipContollerScript.cpp">
+    <ClCompile Include="Src\NativeScripts\ShipScript.cpp">
       <Filter>Src\NativeScripts</Filter>
     </ClCompile>
     <ClCompile Include="Src\NativeScripts\TerrainScript.cpp">
@@ -350,7 +349,6 @@
     <ClCompile Include="vendor\imgui\backends\imgui_impl_win32.cpp">
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
-    <ClCompile Include="Src\NativeScripts\BoxPhysicsTestScript.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\CS\CS_convolute_DiffIrrCube.hlsl">

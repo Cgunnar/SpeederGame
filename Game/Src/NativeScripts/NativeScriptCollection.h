@@ -1,4 +1,4 @@
 #pragma once
 #include "CameraControllerScript.h"
-#include "ShipContollerScript.h"
+#include "ShipScript.h"
 #include "TerrainScript.h"

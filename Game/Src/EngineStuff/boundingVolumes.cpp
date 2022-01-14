@@ -3,6 +3,22 @@
 #include "RfextendedMath.hpp"
 using namespace rfm;
 
+AABB::AABB(const std::vector<rfm::Vector3>& points)
+{
+    min = std::numeric_limits<float>::max();
+    max = std::numeric_limits<float>::min();
+    for (const auto& p : points)
+    {
+        if (p.x < min.x) min.x = p.x;
+        if (p.y < min.y) min.y = p.y;
+        if (p.z < min.z) min.z = p.z;
+
+        if (p.x > max.x) max.x = p.x;
+        if (p.y > max.y) max.y = p.y;
+        if (p.z > max.z) max.z = p.z;
+    }
+}
+
 AABB AABB::Merge(AABB a, AABB b)
 {
     if (a.max.x < b.max.x) a.max.x = b.max.x;
@@ -45,12 +61,12 @@ std::array<rfm::Vector3, 8> AABB::GetPointsTransformed(rfm::Transform m) const
     return points;
 }
 
-AABB operator*(rfm::Matrix m, AABB aabb)
-{
-    aabb.min = m * rfm::Vector4(aabb.min, 1);
-    aabb.max = m * rfm::Vector4(aabb.max, 1);
-    return aabb;
-}
+//AABB operator*(rfm::Matrix m, AABB aabb)
+//{
+//    aabb.min = m * rfm::Vector4(aabb.min, 1);
+//    aabb.max = m * rfm::Vector4(aabb.max, 1);
+//    return aabb;
+//}
 
 Plane::Plane(rfm::Vector3 normal, float d)
 {

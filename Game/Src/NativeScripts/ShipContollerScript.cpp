@@ -123,8 +123,24 @@ void ShipScript::OnFixedUpdate(float dt)
 	auto aabbPoints = aabb.GetPointsTransformed(transform);
 
 	auto& terrain = EntityReg::GetComponentArray<TerrainScript>().front();
+	std::vector<Vector3> points{ aabbPoints.begin(), aabbPoints.end() };
+	//points.push_back((points[0] + points[1]) * 0.5f);//8
+	//points.push_back((points[1] + points[2]) * 0.5f);//9
+	//points.push_back((points[2] + points[3]) * 0.5f);//10
+	//points.push_back((points[3] + points[0]) * 0.5f);//11
+
+	//points.push_back((points[8] + points[10]) * 0.5f);//12
+
+	//points.push_back((0.25f*points[8] + 0.75f*points[10]) * 0.5f);//13
+	//points.push_back((0.75f*points[8] + 0.25f*points[10]) * 0.5f);//14
+
+	//points.push_back((0.25f*points[9] + 0.75f*points[11]) * 0.5f);//15
+	//points.push_back((0.75f*points[9] + 0.25f*points[11]) * 0.5f);//15
+
+
+
 	std::vector<ConstraintInfo> constraints;
-	for (auto& p : aabbPoints)
+	for (auto& p : points)
 	{
 		ConstraintInfo c;
 
@@ -142,13 +158,13 @@ void ShipScript::OnFixedUpdate(float dt)
 	//auto pointsUnderPlane = colDetect::PlaneVSPoints(plane0, { aabbPoints.begin(), aabbPoints.end() });
 	std::vector<sumP> sumP;
 	//sumP.resize(pointsUnderPlane.size());
-	const int kMax = 30;
+	const int kMax = 8;
 	Matrix3 invI = inverse(rigidBody.momentOfInertia);
 	float invMass = 1.0f / rigidBody.mass;
 	rigidBody.velocity.y -= 9.82 * dt;
 	Vector3 v = rigidBody.velocity;
 	Vector3 w = rigidBody.angularVelocity;
-	float biasFactor = 0.005f / (dt / static_cast<float>(kMax));
+	float biasFactor = 0.01f / (dt / static_cast<float>(kMax));
 	for (int k = 0; k < kMax; k++)
 	{
 		//for (int i = 0; i < pointsUnderPlane.size(); i++)
@@ -165,7 +181,7 @@ void ShipScript::OnFixedUpdate(float dt)
 			float eMassN = invMass + dot(normal, cross(r, (invI * cross(normal, r))));
 			float eMassT = invMass + dot(tangent, cross(r, (invI * cross(tangent, r))));
 			float eMassB = invMass + dot(biTangent, cross(r, (invI * cross(biTangent, r))));
-			float b = biasFactor * std::max(c.cp.penetration - 0.05f, 0.0f);
+			float b = biasFactor * std::max(c.cp.penetration - 0.1f, 0.0f);
 			float pCorrectedN = (-constraintN + b) / eMassN;
 			float pCorrectedT = (-constraintT) / eMassT;
 			float pCorrectedB = (-constraintB) / eMassB;

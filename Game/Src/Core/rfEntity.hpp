@@ -24,7 +24,7 @@ namespace rfe
 	class EntityComponentManager;
 	class EntityReg;
 	class ECSSerializer;
-	constexpr double timeStep = 1.0 / 200.0;
+	constexpr double timeStep = 1.0 / 100.0;
 
 	class Entity
 	{

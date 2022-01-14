@@ -29,13 +29,13 @@ std::array<rfm::Vector3, 8> AABB::GetPointsTransformed(rfm::Transform m) const
 {
     std::array<rfm::Vector3, 8> points;
     points[0] = min;
-    points[1] = { min.x, max.y, min.z};
-    points[2] = { max.x, max.y, min.z};
+    points[1] = { min.x, min.y, max.z};
+    points[2] = { max.x, min.y, max.z};
     points[3] = { max.x, min.y, min.z};
-    points[4] = max;
+    points[4] = { min.x, max.y, min.z };
     points[5] = { min.x, max.y, max.z };
-    points[6] = { min.x, min.y, max.z };
-    points[7] = { max.x, min.y, max.z };
+    points[6] = max;
+    points[7] = { max.x, max.y, min.z };
 
     for (auto& p : points)
     {

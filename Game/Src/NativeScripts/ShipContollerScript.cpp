@@ -39,7 +39,7 @@ void ShipContollerScript::OnUpdate(float dt)
 
 		Vector3 deltaAngVel = Vector3(
 			-gPad.thumbSticks.leftY * m_pitchSpeed,
-			-gPad.thumbSticks.rightX * m_yawSpeed,
+			0,
 			gPad.thumbSticks.leftX * m_rollSpeed);
 
 		deltaAngVel = shipRotation * deltaAngVel;
@@ -51,7 +51,23 @@ void ShipContollerScript::OnUpdate(float dt)
 		rg.velocity += deltaVelocity * dt;
 
 		GetComponent<RigidBodyComp>()->rigidBody = rg;
+
+
+
+
+		m_cameraPitch += gPad.thumbSticks.rightY * dt;
+		m_cameraYaw += gPad.thumbSticks.rightX * dt;
+
+		tr.setRotation(0, 0, 0);
+		m_followCamera = tr;
+		m_followCamera.rotateL(-m_cameraPitch, m_cameraYaw, 0);
+		m_followCamera.translateL(0, 0, -m_cameraArmLength);
+
 	}
+}
+Matrix ShipContollerScript::GetCameraFollowTransform()
+{
+	return m_followCamera;
 }
 void ShipContollerScript::reset()
 {
@@ -96,20 +112,7 @@ void ShipScript::OnUpdate(float dt)
 	//float h = EntityReg::GetComponentArray<TerrainScript>().front().HeightOverTerrain(p);
 
 }
-struct sumP
-{
-	float n = 0;
-	float t = 0;
-	float b = 0;
-};
 
-struct ConstraintInfo
-{
-	CollisionPoint cp;
-	Vector3 tangent;
-	Vector3 biTangent;
-	sumP sumP;
-};
 
 void ShipScript::OnFixedUpdate(float dt)
 {
@@ -145,11 +148,12 @@ void ShipScript::OnFixedUpdate(float dt)
 		ConstraintInfo c;
 
 		Triangle tri = terrain.GetTriangleAtPos(p);
+		if (!tri) return;
 		Plane plane = Plane(tri.normal, tri[0]);
 		auto colPoint = colDetect::PlaneVSPoints(plane, { p });
 		if (colPoint.empty()) continue;
 		c.cp = colPoint.front();
-		c.tangent = tri[1] - tri[0];
+		c.tangent = normalize(tri[1] - tri[0]);
 		c.biTangent = cross(c.cp.normal, c.tangent);
 
 		constraints.push_back(c);
@@ -158,13 +162,13 @@ void ShipScript::OnFixedUpdate(float dt)
 	//auto pointsUnderPlane = colDetect::PlaneVSPoints(plane0, { aabbPoints.begin(), aabbPoints.end() });
 	std::vector<sumP> sumP;
 	//sumP.resize(pointsUnderPlane.size());
-	const int kMax = 8;
+	const int kMax = 20;
 	Matrix3 invI = inverse(rigidBody.momentOfInertia);
 	float invMass = 1.0f / rigidBody.mass;
 	rigidBody.velocity.y -= 9.82 * dt;
 	Vector3 v = rigidBody.velocity;
 	Vector3 w = rigidBody.angularVelocity;
-	float biasFactor = 0.01f / (dt / static_cast<float>(kMax));
+	float biasFactor = 0.03f * static_cast<float>(kMax) / dt;
 	for (int k = 0; k < kMax; k++)
 	{
 		//for (int i = 0; i < pointsUnderPlane.size(); i++)

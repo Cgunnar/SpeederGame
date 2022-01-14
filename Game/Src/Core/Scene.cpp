@@ -188,8 +188,7 @@ void Scene::Update(float dt)
 		m_terrain.GetComponent<TransformComp>()->transform.setScale(guiInput.scale);
 	}*/
 
-	Transform followShip = m_ship.GetComponent<TransformComp>()->transform;
-	followShip.translateL(0, 1, -4);
+	Transform followShip = m_ship.GetComponent<ShipContollerScript>()->GetCameraFollowTransform();
 	m_camera.GetComponent<TransformComp>()->transform = followShip;
 
 	Vector3 camPos = m_camera.GetComponent<TransformComp>()->transform.getTranslation();

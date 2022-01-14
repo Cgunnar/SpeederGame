@@ -139,8 +139,7 @@ void TerrainChunk::UpdateChunkTransform(rfm::Transform transform)
 
 Triangle TerrainChunk::TriangleAtLocation(Vector3 pos)
 {
-	assert(!m_lodMeshes.empty());
-	if (!m_lodMeshes[0].hasRenderMesh)
+	if (m_lodMeshes.empty() || !m_lodMeshes[0].hasRenderMesh)
 	{
 		std::cout << "lod 0 has not loaded" << std::endl;
 		return Triangle();

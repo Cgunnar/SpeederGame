@@ -45,6 +45,7 @@ struct Triangle
 	rfm::Vector3 position[3];
 	rfm::Vector3 normal;
 	rfm::Vector3& operator[](int index) { return position[index]; }
+	operator bool() { return normal.length() > 0; }
 };
 
 struct Vertex_POS_UV

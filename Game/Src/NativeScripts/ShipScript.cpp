@@ -154,12 +154,10 @@ void ShipScript::OnFixedUpdate(float dt)
 		constraints.push_back(c);
 	}
 
-	const int kMax = 20;
+	const int kMax = 8;
 	Matrix3 invI = inverse(rigidBody.momentOfInertia);
 	float invMass = 1.0f / rigidBody.mass;
 	
-	Vector3 v = rigidBody.velocity;
-	Vector3 w = rigidBody.angularVelocity;
 	float biasFactor = 0.03f * static_cast<float>(kMax) / dt;
 	for (int k = 0; k < kMax; k++)
 	{
@@ -168,6 +166,7 @@ void ShipScript::OnFixedUpdate(float dt)
 			Vector3 constraint = rigidBody.velocity + cross(c.r, rigidBody.angularVelocity);
 			float constraintN = dot(constraint, c.normal);
 			float constraintT = dot(constraint, c.tangent);
+			//0.8 is just some hardcoded cof to make it bounce more
 			float eMassN = invMass * 0.8f + dot(c.normal, cross(c.r, (invI * cross(c.normal, c.r))));
 			float eMassT = invMass + dot(c.tangent, cross(c.r, (invI * cross(c.tangent, c.r))));
 			float b = biasFactor * std::max(c.pen - 0.02f, 0.0f);

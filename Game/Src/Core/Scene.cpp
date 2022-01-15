@@ -127,7 +127,7 @@ Scene::Scene()
 	m_ironSphere.AddComponent(TransformComp())->transform.setTranslation(-4, 3, 1);
 	m_ironSphere.AddComponent<RenderModelComp>(AssetManager::Get().AddRenderUnit(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN, rusteIronMat));
 
-	float debugSphereScale = 0.1f;
+	/*float debugSphereScale = 0.1f;
 	Material debugSphereMat;
 	debugSphereMat.baseColorFactor = 0;
 	debugSphereMat.emissiveFactor = Vector3(1, 0, 0);
@@ -143,7 +143,7 @@ Scene::Scene()
 	debugSphereMat.emissiveFactor = Vector3(0, 0, 1);
 	m_sphere2 = EntityReg::CreateEntity();
 	m_sphere2.AddComponent<TransformComp>()->transform.setScale(debugSphereScale);
-	m_sphere2.AddComponent<RenderUnitComp>(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN, debugSphereMat);
+	m_sphere2.AddComponent<RenderUnitComp>(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN, debugSphereMat);*/
 
 	/*debugSphereMat.emissiveFactor = Vector3(1, 1, 0);
 	m_sphere3 = EntityReg::CreateEntity();
@@ -187,15 +187,7 @@ void Scene::Update(float dt)
 		m_terrain.GetComponent<TransformComp>()->transform.setScale(guiInput.scale);
 	}*/
 
-	Transform followShip = m_ship.GetComponent<ShipScript>()->GetCameraFollowTransform();
-	m_camera.GetComponent<TransformComp>()->transform = followShip;
-
-	Vector3 camPos = m_camera.GetComponent<TransformComp>()->transform.getTranslation();
-	Triangle tri = m_terrain.GetComponent<TerrainScript>()->GetTriangleAtPos(camPos);
-
-	m_sphere0.GetComponent<TransformComp>()->transform.setTranslation(tri[0]);
-	m_sphere1.GetComponent<TransformComp>()->transform.setTranslation(tri[1]);
-	m_sphere2.GetComponent<TransformComp>()->transform.setTranslation(tri[2]);
+	m_camera.GetComponent<TransformComp>()->transform = m_ship.GetComponent<ShipScript>()->GetCameraFollowTransform();;
 
 	m_lightContr.Show();
 	m_dirlightContr.Show();

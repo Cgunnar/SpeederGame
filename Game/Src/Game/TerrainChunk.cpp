@@ -47,7 +47,7 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, Transform terrainTrans
 
 	m_material.baseColorFactor = 1;
 	m_material.emissiveFactor = 0;
-	m_material.flags |= RenderFlag::sampler_anisotropic_clamp | RenderFlag::wireframe;
+	m_material.flags |= RenderFlag::sampler_anisotropic_clamp;
 	auto rc = m_chunkEntity.AddComponent<RenderModelComp>();
 	rc->SetRenderUnit(AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV), m_material, false);
 }

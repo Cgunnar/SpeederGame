@@ -3,7 +3,7 @@
 #include "TerreinTypes.h"
 struct TerrainGUIValues
 {
-	float scale = 0.2f;
+	float scale = 1;
 	float frequencyScale = 10;
 	float heightScale = 10;
 	int octaves = 1;
@@ -21,6 +21,7 @@ class TerrainGUI : public GuiDebug
 {
 	TerrainGUIValues m_values;
 public:
+	TerrainGUIValues m_valuesDefault;
 	TerrainGUI(const std::string& name);
 	virtual bool Show() override;
 	TerrainGUIValues GetValues() const;

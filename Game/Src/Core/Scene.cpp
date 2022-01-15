@@ -26,17 +26,17 @@ Scene::Scene()
 	AssetManager& am = AssetManager::Get();
 
 	m_terrDesc.lacunarity = 2;
-	m_terrDesc.octaves = 8;
+	m_terrDesc.octaves = 10;
 	m_terrDesc.persistence = 0.5f;
-	m_terrDesc.frequencyScale = 50;
+	m_terrDesc.frequencyScale = 100;
 	m_terrDesc.baseOffset = {0,0};
-	m_terrDesc.seed = 32;
-	m_terrDesc.heightScaleFunc = [](float in) {return in <= 0.3f ? 0.3f * 0.3f : in * in; };
-	m_terrDesc.heightScale = 50;
-	m_terrDesc.bioms.emplace_back("water", Vector3(0,0,1), 0, true);
+	m_terrDesc.seed = 10;
+	m_terrDesc.heightScale = 150;
+	m_terrDesc.heightScaleFunc = [](float h) {return h < 0.4f ? 0.0f : 1.0f - sqrt(1.0f - (h-0.4f)*(h-0.4f)); };
+	m_terrDesc.bioms.emplace_back("water", Vector3(0,0,1), 0, !true);
 	m_terrDesc.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.4f);
-	m_terrDesc.bioms.emplace_back("mountain", 0.2f, 0.5f);
-	m_terrDesc.bioms.emplace_back("mountain_snow", 0.9f, 0.93f);
+	m_terrDesc.bioms.emplace_back("mountain", 0.2f, 0.55f);
+	m_terrDesc.bioms.emplace_back("mountain_snow", 0.9f, 0.94f);
 	m_terrDesc.LODs.push_back({ .lod = 0, .visDistThrhold = 200 });
 	m_terrDesc.LODs.push_back({ .lod = 1, .visDistThrhold = 400 });
 	m_terrDesc.LODs.push_back({ .lod = 3, .visDistThrhold = 600 });
@@ -44,7 +44,7 @@ Scene::Scene()
 
 	m_terrain = EntityReg::CreateEntity();
 	m_terrain.AddComponent<TransformComp>();
-	m_terrain.GetComponent<TransformComp>()->transform.setScale(0.5f);
+	//m_terrain.GetComponent<TransformComp>()->transform.setScale(f);
 	m_terrain.GetComponent<TransformComp>()->transform.setRotationDeg(0, 0, 0);
 	m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, -10, 0);
 	m_terrain.AddComponent<TerrainScript>(m_terrDesc);
@@ -52,7 +52,7 @@ Scene::Scene()
 
 	CreateEntityModel("Assets/Models/brick_wall/brick_wall.obj", {0, -1, 0}, { 90, 0, 0 }, 10);
 	m_camera = EntityReg::CreateEntity();
-	m_camera.AddComponent<TransformComp>()->transform.setTranslation(0, 2, -4);
+	m_camera.AddComponent<TransformComp>()->transform.setTranslation(0, 10, -4);
 	m_camera.AddComponent<CameraControllerScript>();
 	m_camera.AddComponent<PlayerComp>(); // for now the camera is the player
 
@@ -64,14 +64,14 @@ Scene::Scene()
 	Mesh terrainMesh3(terMesh.verticesTBN, terMesh.indices);
 
 	Material terrainMatSand;
-	terrainMatSand.name = "terrainMaterial";
+	terrainMatSand.name = "terrainSandMaterial";
 	terrainMatSand.emissiveFactor = 0;
 	terrainMatSand.SetMetallicRoughnessTexture("Assets/Textures/sand/metallic_roughness.png");
 	terrainMatSand.SetBaseColorTexture("Assets/Textures/sand/basecolor.jpg");
 	terrainMatSand.SetNormalTexture("Assets/Textures/sand/normal.jpg");
 	terrainMatSand.flags |= RenderFlag::sampler_anisotropic_wrap;
 	m_oldTerrain = EntityReg::CreateEntity();
-	m_oldTerrain.AddComponent<TransformComp>()->transform.setTranslation({ -64, -9, -64 });
+	m_oldTerrain.AddComponent<TransformComp>()->transform.setTranslation({ 100, 0, 0 });
 	
 	
 	m_oldTerrain.AddComponent<RenderModelComp>(am.AddRenderUnit(terrainMesh3, terrainMatSand));
@@ -181,11 +181,12 @@ void Scene::Update(float dt)
 		m_terrDesc.octaves = guiInput.octaves;
 		m_terrDesc.persistence = guiInput.persistence;
 		m_terrDesc.heightScale = guiInput.heightScale;
+		m_terrDesc.seed = guiInput.seed;
 		m_terrain.AddComponent<TerrainScript>(m_terrDesc);
 		m_terrain.GetComponent<TransformComp>()->transform.setScale(guiInput.scale);
 	}*/
 
-	m_camera.GetComponent<TransformComp>()->transform = m_ship.GetComponent<ShipScript>()->GetCameraFollowTransform();;
+	//m_camera.GetComponent<TransformComp>()->transform = m_ship.GetComponent<ShipScript>()->GetCameraFollowTransform();;
 
 	m_dirlightContr.Show();
 

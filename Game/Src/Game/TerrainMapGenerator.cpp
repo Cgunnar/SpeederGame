@@ -155,7 +155,7 @@ std::vector<float> TerrainMapGenerator::GenerateNoise(int width, int height, flo
 
 	for (int i = 0; i < height * width; i++)
 	{
-		float normNoise = (noise[i] + 1) / (2 * maxHeight / 2.0f);
+		float normNoise = std::max(0.0f ,(noise[i] + 1) / (2 * maxHeight / 2.0f));
 		//normNoise = std::clamp(normNoise, 0.0f, std::numeric_limits<float>::max());
 		noise[i] = normNoise;
  		//noise[i] = rfm::InvLerp(minNoise, maxNoise, noise[i]);

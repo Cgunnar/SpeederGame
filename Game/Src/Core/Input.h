@@ -45,7 +45,6 @@ public:
 	static void Destroy();
 	static bool Valid();
 	void SetNewWidthAndHight(int width, int height);
-
 	
 	//rfm::Vector2 mousePos();
 	//void mouseMovement(float& m_pitch, float& m_yaw);
@@ -61,6 +60,8 @@ public:
 	long double getTime();
 	Mouse& GetMouse();
 	DirectX::GamePad& GamePad();
+	DirectX::GamePad::State GamePadState() const;
+	DirectX::GamePad::State OldGamePadState() const;
 	//void setModeAbsolute();
 
 	/*void ShowMouseCursor(bool yn);
@@ -78,6 +79,8 @@ private:
 	//std::unique_ptr<DirectX::Mouse> m_xtkmouse;
 	std::unique_ptr<Mouse> m_myMouse;
 	std::unique_ptr<DirectX::GamePad> m_gamePad;
+	DirectX::GamePad::State m_gamePadState;
+	DirectX::GamePad::State m_gamePadStatePrevFrame;
 	DirectX::Keyboard::KeyboardStateTracker m_keys;
 	DirectX::Mouse::ButtonStateTracker m_mouseButtons;
 	//bool m_mouseMode;

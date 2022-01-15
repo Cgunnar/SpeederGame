@@ -1,6 +1,7 @@
 #pragma once
 #include "NativeScript.h"
 #include "RimfrostMath.hpp"
+#include "PhysicsComponents.h"
 
 class ShipScript : public rfe::NativeScriptComponent<ShipScript>
 {
@@ -11,6 +12,8 @@ public:
 	rfm::Matrix GetCameraFollowTransform();
 private:
 	void reset();
+	void DockShip();
+	void UnDockShip();
 	bool m_docked = true;
 	float m_yawSpeed = rfm::DegToRad(20);
 	float m_pitchSpeed = rfm::DegToRad(80);
@@ -21,6 +24,7 @@ private:
 	rfm::Vector3 m_controllInputXYZ;
 
 	rfm::Transform m_followCamera;
+	RigidBody m_rigidBodyDockCopy;
 	float m_cameraYaw = 0;
 	float m_cameraPitch = 0;
 	float m_cameraArmLength = 4;

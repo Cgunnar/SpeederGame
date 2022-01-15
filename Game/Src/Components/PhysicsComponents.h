@@ -14,8 +14,11 @@ struct RigidBody
 	rfm::Vector3 angularVelocity;
 	float mass;
 	rfm::Vector3 velocity;
+	float frictionCof;
 };
 struct RigidBodyComp : rfe::Component<RigidBodyComp>
 {
+	RigidBodyComp() = default;
+	RigidBodyComp(const RigidBody& rg) : rigidBody(rg){}
 	RigidBody rigidBody;
 };

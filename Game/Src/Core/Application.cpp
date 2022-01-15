@@ -50,14 +50,14 @@ void Application::Run()
 	bool running = true;
 	while (running)
 	{
-		FrameTimer::NewFrame();
+		double dt = FrameTimer::NewFrame();
 		running = m_window->Win32MsgPump();
 		if (!running)
 		{
 			break;
 		}
 		LowLvlGfx::BeginFrame();
-		Input::Get().update(FrameTimer::dt());
+		Input::Get().update(dt);
 
 		if (Input::Get().keyPressed(Input::Esc))
 		{
@@ -74,7 +74,8 @@ void Application::Run()
 				LowLvlGfx::EnterFullScreen();
 		}
 
-		m_scene->Update(static_cast<float>(FrameTimer::dt()));
+		m_physicsEngine.Run(dt);
+		m_scene->Update(static_cast<float>(dt));
 		
 		MemoryInfo memInfo = LowLvlGfx::GetMemoryUsage();
 		ImGui::Text(memInfo.adapterName.c_str());

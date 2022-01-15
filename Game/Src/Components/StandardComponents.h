@@ -17,6 +17,11 @@ struct PlayerComp : rfe::Component<PlayerComp>
 	
 };
 
+struct CameraComp : rfe::Component<CameraComp>
+{
+
+};
+
 struct ChildComp : rfe::Component<ChildComp>
 {
 	std::vector<rfe::Entity> children;

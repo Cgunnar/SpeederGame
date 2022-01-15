@@ -234,6 +234,8 @@ void Input::update(long double dt)
 
 	m_myMouse->update();
 	m_keys.Update(kb);
+	m_gamePadStatePrevFrame = m_gamePadState;
+	m_gamePadState = GamePad().GetState(0);
 	//m_mouseButtons.Update(mouse);
 }
 
@@ -260,6 +262,16 @@ Mouse& Input::GetMouse()
 DirectX::GamePad& Input::GamePad()
 {
 	return *m_gamePad;
+}
+
+DirectX::GamePad::State Input::GamePadState() const
+{
+	return m_gamePadState;
+}
+
+DirectX::GamePad::State Input::OldGamePadState() const
+{
+	return m_gamePadStatePrevFrame;
 }
 
 //void Input::ShowMouseCursor(bool yn)

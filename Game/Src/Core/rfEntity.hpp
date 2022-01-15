@@ -679,6 +679,11 @@ namespace rfe
 		{
 			return EntityReg::AddComponent<T>(this->GetEntityID(), std::forward<Args>(args)...);
 		}
+		template<typename T>
+		void RemoveComponent()
+		{
+			EntityReg::RemoveComponent<T>(this->GetEntityID());
+		}
 
 		void OnStart() {};
 
@@ -711,7 +716,7 @@ namespace rfe
 		{
 			for (auto& script : T::componentArray)
 			{
-				script.OnFixedUpdate(timeStep);
+				script.OnFixedUpdate(static_cast<float>(timeStep));
 			}
 			deltaTime -= timeStep;
 		}

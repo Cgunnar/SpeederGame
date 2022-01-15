@@ -224,6 +224,8 @@
     </ClInclude>
     <ClInclude Include="Src\Math\rfmFunctions.h" />
     <ClInclude Include="Src\Physics\PhysicsTypes.h" />
+    <ClInclude Include="Src\Physics\PhysicsEngine.h" />
+    <ClInclude Include="Src\Physics\TerrainVsBoxPhysics.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">
@@ -349,6 +351,8 @@
     <ClCompile Include="vendor\imgui\backends\imgui_impl_win32.cpp">
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Physics\PhysicsEngine.cpp" />
+    <ClCompile Include="Src\Physics\TerrainVsBoxPhysics.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\CS\CS_convolute_DiffIrrCube.hlsl">

@@ -2,6 +2,7 @@
 #include "Window.h"
 #include "Renderer.h"
 #include "Scene.h"
+#include "PhysicsEngine.h"
 //#include "AssetManager.h
 
 class Application
@@ -16,5 +17,6 @@ private:
 	Window* m_window = nullptr;
 	Renderer* m_renderer = nullptr;
 	Scene* m_scene = nullptr;
+	PhysicsEngine m_physicsEngine = PhysicsEngine(1.0 / 120.0);
 };
 

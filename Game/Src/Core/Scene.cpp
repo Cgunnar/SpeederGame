@@ -51,10 +51,16 @@ Scene::Scene()
 
 
 	CreateEntityModel("Assets/Models/brick_wall/brick_wall.obj", {0, -1, 0}, { 90, 0, 0 }, 10);
+
+
+	m_ship = CreateEntityModel("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", { 0, 10, 3 });
+	m_ship.AddComponent<ShipScript>();
+	m_ship.AddComponent<PlayerComp>();
+
 	m_camera = EntityReg::CreateEntity();
 	m_camera.AddComponent<TransformComp>()->transform.setTranslation(0, 10, -4);
 	m_camera.AddComponent<CameraControllerScript>();
-	m_camera.AddComponent<PlayerComp>(); // for now the camera is the player
+	m_camera.AddComponent<CameraComp>();
 
 	
 	TerrainMeshGenerator tl;
@@ -90,13 +96,6 @@ Scene::Scene()
 	m_arrow = EntityReg::CreateEntity();
 	m_arrow.AddComponent(TransformComp());
 	m_arrow.AddComponent(RenderModelComp("Assets/Models/Arrows/DXRefSys.obj"));
-
-
-
-	
-	m_ship = CreateEntityModel("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", { 0, 10, 3 });
-	m_ship.AddComponent<ShipScript>();
-	
 
 	m_pointLight = EntityReg::CreateEntity();
 	m_pointLight.AddComponent<TransformComp>();
@@ -186,7 +185,7 @@ void Scene::Update(float dt)
 		m_terrain.GetComponent<TransformComp>()->transform.setScale(guiInput.scale);
 	}*/
 
-	//m_camera.GetComponent<TransformComp>()->transform = m_ship.GetComponent<ShipScript>()->GetCameraFollowTransform();;
+	m_camera.GetComponent<TransformComp>()->transform = m_ship.GetComponent<ShipScript>()->GetCameraFollowTransform();;
 
 	m_dirlightContr.Show();
 

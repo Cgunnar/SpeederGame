@@ -96,25 +96,25 @@ void Renderer::Render(rfe::Entity& camera, DirectionalLight dirLight)
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_dirLightCB, &dirLight);
 
 	CopyFromECS();
+	SubmitToRender();
 
 	//shadowMapping
-	m_shadowPass.DrawFromDirLight(camera, dirLight.dir, m_rendCompAndTransformFromECS);
+	m_shadowPass.Bind(camera, dirLight.dir);
+	for (auto& [flag, units] : m_renderPassesFlagged)
+	{
+		if (units.empty()) continue;
+		if ((flag & RenderFlag::wireframe) != 0) continue;
+		m_shadowPass.DrawFromDirLight(units);
+	}
+	
 
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_shadowMapViewProjCB, m_shadowPass.GetViewProjectionMatrix());
 
 	//main rendering
 	LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }, LowLvlGfx::GetDepthBuffer());
 	LowLvlGfx::SetViewPort(LowLvlGfx::GetResolution());
-	SubmitToRender();
 
 	RenderAllPasses(m_vp, camera);
-
-	/*m_phongRenderer.PreProcess(m_vp, camera, RenderFlag::none);
-	m_phongRenderer.Render(m_vp, camera, RenderFlag::none);
-
-	m_pbrRenderer.PreProcess(m_vp, camera, RenderFlag::none);
-	m_pbrRenderer.Render(m_vp, camera, RenderFlag::none);*/
-
 	SubmitAndRenderTransparentToInternalRenderers(m_vp, camera);
 
 }

@@ -44,7 +44,7 @@ ShadowMappingPass::ShadowMappingPass(std::weak_ptr<SharedRenderResources> shared
 	LowLvlGfx::CreateDSV(rendRes->shadowMap, &depthDesc);
 }
 
-void ShadowMappingPass::DrawFromDirLight(rfe::Entity camera, rfm::Vector3 lightDirection, const std::vector<RendCompAndTransform>& geometyToRender)
+void ShadowMappingPass::Bind(rfe::Entity camera, rfm::Vector3 lightDirection)
 {
 	Vector3 cameraPos = camera.GetComponent<TransformComp>()->transform.getTranslation();
 	m_projectionMatrix = OrthographicProjectionMatrix(64, 64, 0.01f, 500);
@@ -53,7 +53,6 @@ void ShadowMappingPass::DrawFromDirLight(rfe::Entity camera, rfm::Vector3 lightD
 
 	lightDirection.normalize();
 	m_vp = m_projectionMatrix * LookAt(cameraPos - lightDirection * 50, cameraPos);
-
 	LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	LowLvlGfx::SetViewPort({ m_res, m_res });
 	LowLvlGfx::ClearDSV(rendRes->shadowMap);
@@ -61,32 +60,21 @@ void ShadowMappingPass::DrawFromDirLight(rfe::Entity camera, rfm::Vector3 lightD
 	LowLvlGfx::Bind(m_vertexShader);
 	LowLvlGfx::Bind(m_emptyPixelShader);
 	LowLvlGfx::Bind(rendRes->m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
+}
+
+void ShadowMappingPass::DrawFromDirLight(const std::vector<RendUnitIDAndTransform>& geometyToRender)
+{
+	auto rendRes = m_sharedRenderResources.lock();
 
 	AssetManager& am = AssetManager::Get();
 	for (const auto & rt : geometyToRender)
 	{
-		assert(rt.begin <= rt.end);
-		if (rt.begin | rt.end)
-		{
-			for (RenderUnitID i = rt.begin; i < rt.end; i++)
-			{
-				Mesh mesh = am.GetRenderUnit(i).GetMesh();
-				Matrix mvp = m_vp * rt.worldMatrix;
-				LowLvlGfx::UpdateBuffer(rendRes->m_worldMatrixCB, &mvp);
-				LowLvlGfx::Bind(mesh.ib);
-				LowLvlGfx::Bind(mesh.vb);
-				LowLvlGfx::DrawIndexed(mesh.GetIndexCount(), mesh.GetStartIndexLocation(), mesh.GetbaseVertexLocation());
-			}
-		}
-		else
-		{
-			Mesh mesh = am.GetRenderUnit(rt.id).GetMesh();
-			Matrix mvp = m_vp * rt.worldMatrix;
-			LowLvlGfx::UpdateBuffer(rendRes->m_worldMatrixCB, &mvp);
-			LowLvlGfx::Bind(mesh.ib);
-			LowLvlGfx::Bind(mesh.vb);
-			LowLvlGfx::DrawIndexed(mesh.GetIndexCount(), mesh.GetStartIndexLocation(), mesh.GetbaseVertexLocation());
-		}
+		Mesh mesh = am.GetRenderUnit(rt.id).GetMesh();
+		Matrix mvp = m_vp * rt.worldMatrix;
+		LowLvlGfx::UpdateBuffer(rendRes->m_worldMatrixCB, &mvp);
+		LowLvlGfx::Bind(mesh.ib);
+		LowLvlGfx::Bind(mesh.vb);
+		LowLvlGfx::DrawIndexed(mesh.GetIndexCount(), mesh.GetStartIndexLocation(), mesh.GetbaseVertexLocation());
 	}
 }
 

@@ -3,7 +3,6 @@
 #include "RimfrostMath.hpp"
 #include "rfEntity.hpp"
 #include "AssetManager.h"
-//#include "PhongRenderer.h"
 #include "PbrRenderer.h"
 #include "SharedRendererResources.h"
 #include "RenderComponents.h"
@@ -27,7 +26,7 @@ private:
 	static std::shared_ptr<SharedRenderResources> s_sharedRenderResources;
 
 	void CopyFromECS();
-	void SubmitToRender(rfe::Entity& camera);
+	void SubmitToRender();
 	void SubmitToInternalRenderers(AssetManager& am, RenderPassEnum renderPass, RenderUnitID unitID, const rfm::Transform& worldMatrix);
 	//void SubmitOpaqueToInternalRenderers(RenderPassEnum renderPass, RenderUnitID unitID, const rfm::Transform& worldMatrix, MaterialType type);
 	void SubmitAndRenderTransparentToInternalRenderers(const VP& viewAndProjMatrix, rfe::Entity& camera);

@@ -40,6 +40,7 @@ private:
 	Shader m_PS_PBR_AL_NOR;
 
 	bool m_prePocessed = false;
+	void DrawGeometry(const Mesh& mesh, ConstantBuffer& cb, const void* transform);
 	void RenderPBR_ALBEDO_METROUG_NOR(RenderFlag flag);
 	void RenderPBR_ALBEDO_METROUG(RenderFlag flag);
 	void RenderPBR_ALBEDO_METROUG_NOR_EMIS(RenderFlag flag);

@@ -181,6 +181,15 @@ void PbrRenderer::Render(const VP& viewAndProjMatrix, rfe::Entity& camera, Rende
 	m_prePocessed = false;
 }
 
+void PbrRenderer::DrawGeometry(const Mesh& mesh, ConstantBuffer& cb, const void* transform)
+{
+	LowLvlGfx::UpdateBuffer(cb, transform);
+	LowLvlGfx::Bind(cb, ShaderType::VERTEXSHADER, 0);
+	LowLvlGfx::Bind(mesh.vb);
+	LowLvlGfx::Bind(mesh.ib);
+	LowLvlGfx::DrawIndexed(mesh.GetIndexCount(), mesh.GetStartIndexLocation(), mesh.GetbaseVertexLocation());
+}
+
 void PbrRenderer::RenderPBR_ALBEDO_METROUG_NOR(RenderFlag flag)
 {
 	if (m_PBR_ALBEDO_METROUG_NOR.empty()) return;
@@ -213,12 +222,7 @@ void PbrRenderer::RenderPBR_ALBEDO_METROUG_NOR(RenderFlag flag)
 		LowLvlGfx::UpdateBuffer(m_pbrCB, &cMat);
 		LowLvlGfx::Bind(m_pbrCB, ShaderType::PIXELSHADER, 2);
 
-		LowLvlGfx::UpdateBuffer(rendRes->m_worldMatrixCB, &unit.worldMatrix);
-		LowLvlGfx::Bind(rendRes->m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
-		Mesh mesh = rendUnit.GetMesh();
-		LowLvlGfx::Bind(mesh.vb);
-		LowLvlGfx::Bind(mesh.ib);
-		LowLvlGfx::DrawIndexed(mesh.GetIndexCount(), mesh.GetStartIndexLocation(), mesh.GetbaseVertexLocation());
+		DrawGeometry(rendUnit.GetMesh(), rendRes->m_worldMatrixCB, &unit.worldMatrix);
 	}
 
 	m_PBR_ALBEDO_METROUG_NOR.clear();
@@ -252,12 +256,7 @@ void PbrRenderer::RenderPBR_ALBEDO_METROUG(RenderFlag flag)
 		LowLvlGfx::UpdateBuffer(m_pbrCB, &cMat);
 		LowLvlGfx::Bind(m_pbrCB, ShaderType::PIXELSHADER, 2);
 
-		LowLvlGfx::UpdateBuffer(rendRes->m_worldMatrixCB, &unit.worldMatrix);
-		LowLvlGfx::Bind(rendRes->m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
-		Mesh mesh = rendUnit.GetMesh();
-		LowLvlGfx::Bind(mesh.vb);
-		LowLvlGfx::Bind(mesh.ib);
-		LowLvlGfx::DrawIndexed(mesh.GetIndexCount(), mesh.GetStartIndexLocation(), mesh.GetbaseVertexLocation());
+		DrawGeometry(rendUnit.GetMesh(), rendRes->m_worldMatrixCB, &unit.worldMatrix);
 	}
 
 	m_PBR_ALBEDO_METROUG.clear();
@@ -296,12 +295,7 @@ void PbrRenderer::RenderPBR_ALBEDO_METROUG_NOR_EMIS(RenderFlag flag)
 		LowLvlGfx::UpdateBuffer(m_pbrCB, &cMat);
 		LowLvlGfx::Bind(m_pbrCB, ShaderType::PIXELSHADER, 2);
 
-		LowLvlGfx::UpdateBuffer(rendRes->m_worldMatrixCB, &unit.worldMatrix);
-		LowLvlGfx::Bind(rendRes->m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
-		Mesh mesh = rendUnit.GetMesh();
-		LowLvlGfx::Bind(mesh.vb);
-		LowLvlGfx::Bind(mesh.ib);
-		LowLvlGfx::DrawIndexed(mesh.GetIndexCount(), mesh.GetStartIndexLocation(), mesh.GetbaseVertexLocation());
+		DrawGeometry(rendUnit.GetMesh(), rendRes->m_worldMatrixCB, &unit.worldMatrix);
 	}
 
 	m_PBR_ALBEDO_METROUG_NOR_EMIS.clear();
@@ -331,12 +325,7 @@ void PbrRenderer::RenderPBR_NO_TEXTURES(RenderFlag flag)
 		LowLvlGfx::UpdateBuffer(m_pbrCB, &cMat);
 		LowLvlGfx::Bind(m_pbrCB, ShaderType::PIXELSHADER, 2);
 
-		LowLvlGfx::UpdateBuffer(rendRes->m_worldMatrixCB, &unit.worldMatrix);
-		LowLvlGfx::Bind(rendRes->m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
-		Mesh mesh = rendUnit.GetMesh();
-		LowLvlGfx::Bind(mesh.vb);
-		LowLvlGfx::Bind(mesh.ib);
-		LowLvlGfx::DrawIndexed(mesh.GetIndexCount(), mesh.GetStartIndexLocation(), mesh.GetbaseVertexLocation());
+		DrawGeometry(rendUnit.GetMesh(), rendRes->m_worldMatrixCB, &unit.worldMatrix);
 	}
 
 	m_PBR_NO_TEXTURES.clear();
@@ -369,12 +358,7 @@ void PbrRenderer::RenderPBR_ALBEDO(RenderFlag flag)
 		LowLvlGfx::UpdateBuffer(m_pbrCB, &cMat);
 		LowLvlGfx::Bind(m_pbrCB, ShaderType::PIXELSHADER, 2);
 
-		LowLvlGfx::UpdateBuffer(rendRes->m_worldMatrixCB, &unit.worldMatrix);
-		LowLvlGfx::Bind(rendRes->m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
-		Mesh mesh = rendUnit.GetMesh();
-		LowLvlGfx::Bind(mesh.vb);
-		LowLvlGfx::Bind(mesh.ib);
-		LowLvlGfx::DrawIndexed(mesh.GetIndexCount(), mesh.GetStartIndexLocation(), mesh.GetbaseVertexLocation());
+		DrawGeometry(rendUnit.GetMesh(), rendRes->m_worldMatrixCB, &unit.worldMatrix);
 	}
 
 	m_PBR_ALBEDO.clear();
@@ -409,12 +393,7 @@ void PbrRenderer::RenderPBR_ALBEDO_NOR(RenderFlag flag)
 		LowLvlGfx::UpdateBuffer(m_pbrCB, &cMat);
 		LowLvlGfx::Bind(m_pbrCB, ShaderType::PIXELSHADER, 2);
 
-		LowLvlGfx::UpdateBuffer(rendRes->m_worldMatrixCB, &unit.worldMatrix);
-		LowLvlGfx::Bind(rendRes->m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
-		Mesh mesh = rendUnit.GetMesh();
-		LowLvlGfx::Bind(mesh.vb);
-		LowLvlGfx::Bind(mesh.ib);
-		LowLvlGfx::DrawIndexed(mesh.GetIndexCount(), mesh.GetStartIndexLocation(), mesh.GetbaseVertexLocation());
+		DrawGeometry(rendUnit.GetMesh(), rendRes->m_worldMatrixCB, &unit.worldMatrix);
 	}
 
 	m_PBR_ALBEDO_NOR.clear();

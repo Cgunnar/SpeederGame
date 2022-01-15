@@ -105,7 +105,7 @@ void Renderer::Render(rfe::Entity& camera, DirectionalLight dirLight)
 	//main rendering
 	LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }, LowLvlGfx::GetDepthBuffer());
 	LowLvlGfx::SetViewPort(LowLvlGfx::GetResolution());
-	SubmitToRender(camera);
+	SubmitToRender();
 
 	RenderAllPasses(m_vp, camera);
 
@@ -158,7 +158,7 @@ void Renderer::CopyFromECS()
 	}
 }
 
-void Renderer::SubmitToRender(rfe::Entity& camera)
+void Renderer::SubmitToRender()
 {
 	AssetManager& assetMan = AssetManager::Get();
 	for (const auto& rt : m_rendCompAndTransformFromECS)
@@ -229,15 +229,15 @@ void Renderer::SubmitAndRenderTransparentToInternalRenderers(const VP& viewAndPr
 
 void Renderer::RenderAllPasses(const VP& viewAndProjMatrix, rfe::Entity& camera)
 {
-	for (auto& it : m_renderPassesFlagged)
+	for (auto& [flag, units] : m_renderPassesFlagged)
 	{
-		if (it.second.empty()) continue;
-		for (auto& unit : it.second)
+		if (units.empty()) continue;
+		for (auto& unit : units)
 		{
 			m_pbrRenderer.Submit(unit.id, unit.worldMatrix, unit.type);
 		}
-		it.second.clear();
-		m_pbrRenderer.Render(viewAndProjMatrix, camera, it.first);
+		units.clear();
+		m_pbrRenderer.Render(viewAndProjMatrix, camera, flag);
 	}
 }
 

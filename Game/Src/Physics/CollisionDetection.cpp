@@ -24,3 +24,18 @@ std::vector<CollisionPoint> colDetect::PlaneVSPoints(Plane plane, std::vector<rf
     std::sort(colPoints.begin(), colPoints.end(), [](auto a, auto b) { return a.penetration > b.penetration; });
     return colPoints;
 }
+
+CollisionPoint colDetect::PlaneVSPoint(Plane plane, rfm::Vector3 point)
+{
+
+    CollisionPoint cp;
+    float pen = dot(plane.normal, point) + plane.d;
+    if (pen <= 0)
+    {
+        cp.normal = plane.normal;
+        cp.penetration = -pen;
+        cp.intersectionPoint = point + plane.normal * -pen;
+        cp.pointRealPosition = point;
+    }
+    return cp;
+}

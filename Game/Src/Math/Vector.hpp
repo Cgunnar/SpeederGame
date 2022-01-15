@@ -53,6 +53,7 @@ namespace rfm
 		//operator DirectX::XMVECTOR() const { return { x, y, z, 0 }; };
 		float length() const;
 		void normalize();
+		std::string ToString(int precision = 2) const;
 		float x, y, z;
 	};
 	float dot(const Vector3& v, const Vector3& u);

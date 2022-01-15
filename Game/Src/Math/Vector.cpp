@@ -163,6 +163,17 @@ namespace rfm
 		*this = f * *this;
 	}
 
+	std::string Vector3::ToString(int precision) const
+	{
+		double pi = 3.14159265359;
+		std::stringstream strs;
+		strs << std::fixed << std::setprecision(precision) << x
+			<< " " << std::fixed << std::setprecision(precision) << y
+			<< " " << std::fixed << std::setprecision(precision) << z;
+		std::string str = strs.str();
+		return str;
+	}
+
 	float dot(const Vector3& v, const Vector3& u)
 	{
 		return v.x * u.x + v.y * u.y + v.z * u.z;

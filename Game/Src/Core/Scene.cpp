@@ -45,7 +45,7 @@ Scene::Scene()
 	m_terrain = EntityReg::CreateEntity();
 	m_terrain.AddComponent<TransformComp>();
 	m_terrain.GetComponent<TransformComp>()->transform.setScale(0.5f);
-	m_terrain.GetComponent<TransformComp>()->transform.setRotationDeg(0, 30, 0);
+	m_terrain.GetComponent<TransformComp>()->transform.setRotationDeg(0, 0, 0);
 	m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, -10, 0);
 	m_terrain.AddComponent<TerrainScript>(m_terrDesc);
 

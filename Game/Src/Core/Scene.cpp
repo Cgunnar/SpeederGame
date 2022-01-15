@@ -150,8 +150,6 @@ Scene::Scene()
 	m_sphere3.AddComponent<TransformComp>()->transform.setScale(0.1f);
 	m_sphere3.AddComponent<RenderUnitComp>(SimpleMesh::UVSphere_POS_NOR_UV_TAN_BITAN, debugSphereMat);*/
 
-	m_lightContr.slider1.ChangeDefaultValues({ 0,2,-9 });
-	m_lightContr.slider2.ChangeDefaultValues({ 1,1,1 }, 0, 1);
 
 	m_dirlightContr.slider1.ChangeDefaultValues({ -0.922f ,-0.176f, 1}, -1, 1);
 	m_dirlightContr.slider2.ChangeDefaultValues(sunLight.GetComponent<DirectionalLightComp>()->dirLight.color, 0, 1);
@@ -189,12 +187,7 @@ void Scene::Update(float dt)
 
 	m_camera.GetComponent<TransformComp>()->transform = m_ship.GetComponent<ShipScript>()->GetCameraFollowTransform();;
 
-	m_lightContr.Show();
 	m_dirlightContr.Show();
-	
-
-	m_pointLight.GetComponent<PointLightComp>()->pointLight.position = m_lightContr.slider1.value;
-	m_pointLight.GetComponent<PointLightComp>()->pointLight.color = m_lightContr.slider2.value;
 
 	sunLight.GetComponent<DirectionalLightComp>()->dirLight.dir = m_dirlightContr.slider1.value;
 	sunLight.GetComponent<DirectionalLightComp>()->dirLight.color = m_dirlightContr.slider2.value;

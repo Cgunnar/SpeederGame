@@ -39,7 +39,6 @@ private:
 
 	std::vector<rfe::Entity> m_entities;
 
-	GuiTest m_lightContr = GuiTest("pointLight controller");
 	GuiTest m_dirlightContr = GuiTest("dirLight controller");
 	TerrainGUI m_terrainGUI = TerrainGUI("terrain generation");
 };

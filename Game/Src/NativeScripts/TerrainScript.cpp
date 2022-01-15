@@ -83,7 +83,7 @@ void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 	Vector2I chunkCoord;
 	chunkCoord.x = static_cast<int>(round(viewPos.x / m_chunkSize));
 	chunkCoord.y = static_cast<int>(round(viewPos.y / m_chunkSize));
-
+	Transform transform = GetComponent<TransformComp>()->transform;
 
 	for (auto& c : m_prevFrameVisibleChunksCoord)
 	{
@@ -92,17 +92,17 @@ void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 	m_prevFrameVisibleChunksCoord.clear();
 
 	std::vector<Vector2I> removeChunks;
-	for (auto& it : m_chunkMap)
+	for (auto& [coord, chunk] : m_chunkMap)
 	{
-		m_chunkMap[it.first]->Update(viewPos, m_maxViewDistance);
-		m_chunkMap[it.first]->UpdateChunkTransform(GetComponent<TransformComp>()->transform);
-		if (it.second->m_shouldBeRemoved)
+		m_chunkMap[coord]->Update(viewPos, m_maxViewDistance);
+		m_chunkMap[coord]->UpdateChunkTransform(transform);
+		if (chunk->m_shouldBeRemoved)
 		{
-			removeChunks.push_back(it.first);
+			removeChunks.push_back(coord);
 		}
 		else
 		{
-			m_prevFrameVisibleChunksCoord.push_back(it.first);
+			m_prevFrameVisibleChunksCoord.push_back(coord);
 		}
 	}
 	for (auto& c : removeChunks)
@@ -118,15 +118,35 @@ void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 		m_chunksToLoad.pop();
 	}
 
-	for (int y = -m_chunksVisibleInViewDist; y <= m_chunksVisibleInViewDist; y++)
+	
+	for (int y = 0; y <= m_chunksVisibleInViewDist; y++)
 	{
-		for (int x = -m_chunksVisibleInViewDist; x <= m_chunksVisibleInViewDist; x++)
+		for (int x = 0; x <= m_chunksVisibleInViewDist; x++)
 		{
-			Vector2I viewedChunk = chunkCoord + Vector2I(x, y);
-			if (!m_chunkMap.contains(viewedChunk))
+			Vector2I viewedChunk0 = chunkCoord + Vector2I(x, y);
+			Vector2I viewedChunk1 = chunkCoord + Vector2I(-x, y);
+			Vector2I viewedChunk2 = chunkCoord + Vector2I(x, -y);
+			Vector2I viewedChunk3 = chunkCoord + Vector2I(-x, -y);
+			if (!m_chunkMap.contains(viewedChunk0))
 			{
-				m_chunkMap[viewedChunk] = new TerrainChunk(viewedChunk, m_chunkSize, GetComponent<TransformComp>()->transform, m_meshDesc, m_lods);
-				m_chunksToLoad.emplace(viewedChunk);
+				m_chunkMap[viewedChunk0] = new TerrainChunk(viewedChunk0, m_chunkSize, transform, m_meshDesc, m_lods);
+				m_chunksToLoad.emplace(viewedChunk0);
+			}
+			if (y == 0 && x == 0) continue;
+			if (!m_chunkMap.contains(viewedChunk1))
+			{
+				m_chunkMap[viewedChunk1] = new TerrainChunk(viewedChunk1, m_chunkSize, transform, m_meshDesc, m_lods);
+				m_chunksToLoad.emplace(viewedChunk1);
+			}
+			if (!m_chunkMap.contains(viewedChunk2))
+			{
+				m_chunkMap[viewedChunk2] = new TerrainChunk(viewedChunk2, m_chunkSize, transform, m_meshDesc, m_lods);
+				m_chunksToLoad.emplace(viewedChunk2);
+			}
+			if (!m_chunkMap.contains(viewedChunk3))
+			{
+				m_chunkMap[viewedChunk3] = new TerrainChunk(viewedChunk3, m_chunkSize, transform, m_meshDesc, m_lods);
+				m_chunksToLoad.emplace(viewedChunk3);
 			}
 		}
 	}

@@ -7,9 +7,9 @@ TerrainGUI::TerrainGUI(const std::string& name) : GuiDebug(name)
 {
 	m_valuesDefault.octaves = 10;
 	m_valuesDefault.scale = 1;
-	m_valuesDefault.frequencyScale = 100;
+	m_valuesDefault.frequencyScale = 150;
 	m_valuesDefault.lacunarity = 2;
-	m_valuesDefault.heightScale = 150;
+	m_valuesDefault.heightScale = 100;
 	m_valuesDefault.seed = 10;
 	m_values = m_valuesDefault;
 }

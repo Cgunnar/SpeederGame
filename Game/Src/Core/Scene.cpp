@@ -28,15 +28,16 @@ Scene::Scene()
 	m_terrDesc.lacunarity = 2;
 	m_terrDesc.octaves = 10;
 	m_terrDesc.persistence = 0.5f;
-	m_terrDesc.frequencyScale = 100;
+	m_terrDesc.frequencyScale = 150;
 	m_terrDesc.baseOffset = {0,0};
 	m_terrDesc.seed = 10;
-	m_terrDesc.heightScale = 150;
+	m_terrDesc.heightScale = 100;
 	//m_terrDesc.heightScaleFunc = [](float h) {return h < 0.4f ? 0.0f : 1.0f - sqrt(1.0f - (h-0.4f)*(h-0.4f)); };
-	m_terrDesc.bioms.emplace_back("water", Vector3(0,0,1), 0, !true);
-	m_terrDesc.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.4f);
+	/*m_terrDesc.bioms.emplace_back("water", Vector3(0,0,1), 0, !true);
+	m_terrDesc.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.3f);
 	m_terrDesc.bioms.emplace_back("mountain", 0.2f, 0.55f);
-	m_terrDesc.bioms.emplace_back("mountain_snow", 0.9f, 0.94f);
+	m_terrDesc.bioms.emplace_back("mountain_snow", 0.9f, 0.94f);*/
+	m_terrDesc.bioms.emplace_back("mountain", 0.2f, 0.0f);
 	m_terrDesc.LODs.push_back({ .lod = 0, .visDistThrhold = 200 });
 	m_terrDesc.LODs.push_back({ .lod = 1, .visDistThrhold = 400 });
 	m_terrDesc.LODs.push_back({ .lod = 3, .visDistThrhold = 600 });
@@ -46,7 +47,7 @@ Scene::Scene()
 	m_terrain.AddComponent<TransformComp>();
 	//m_terrain.GetComponent<TransformComp>()->transform.setScale(f);
 	m_terrain.GetComponent<TransformComp>()->transform.setRotationDeg(0, 0, 0);
-	m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, -10, 0);
+	m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, -30, 0);
 	m_terrain.AddComponent<TerrainScript>(m_terrDesc);
 
 
@@ -166,7 +167,7 @@ void Scene::Update(float dt)
 {
 	EntityReg::RunScripts<CameraControllerScript, ShipScript, TerrainScript>(dt);
 
-	if (m_terrainGUI.Show())
+	/*if (m_terrainGUI.Show())
 	{
 		if (m_terrain.GetComponent<TerrainScript>())
 		{
@@ -183,9 +184,9 @@ void Scene::Update(float dt)
 		m_terrDesc.seed = guiInput.seed;
 		m_terrain.AddComponent<TerrainScript>(m_terrDesc);
 		m_terrain.GetComponent<TransformComp>()->transform.setScale(guiInput.scale);
-	}
+	}*/
 
-	static bool shipCam = true;
+	static bool shipCam = false;
 	if (Input::Get().keyPressed(Input::Y)) shipCam = !shipCam;
 	if (shipCam) m_camera.GetComponent<TransformComp>()->transform = m_ship.GetComponent<ShipScript>()->GetCameraFollowTransform();;
 

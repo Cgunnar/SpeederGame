@@ -95,6 +95,7 @@ namespace rfm
 	Vector2 operator +(const Vector2& l, const Vector2& r);
 	Vector2 operator -(const Vector2& l, const Vector2& r);
 	Vector2 operator *(float scale, const Vector2& v);
+	Vector2 operator *(const Vector2& v, float scale);
 	Vector2 operator /(const Vector2& v, float scale);
 
 	class Vector2I

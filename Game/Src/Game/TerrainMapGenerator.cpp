@@ -8,13 +8,14 @@
 #include "RandGen.hpp"
 #include "UtilityFunctions.h"
 #include "WorkerThreads.h"
+#include "Hydraulic_Erosion.h"
 
 using namespace rfm;
 
 std::mutex TerrainMapGenerator::s_mapMutex;
 
 std::unordered_map<rfm::Vector2I, TerrainMap> TerrainMapGenerator::s_terrainMapHolder;
-
+bool TerrainMapGenerator::s_initialized = false;
 
 void TerrainMapGenerator::AsyncGenerateTerrinMapInternal(const TerrainMapDesc& mapDesc, rfm::Vector2I coord)
 {
@@ -26,6 +27,17 @@ void TerrainMapGenerator::AsyncGenerateTerrinMapInternal(const TerrainMapDesc& m
 }
 
 
+void TerrainMapGenerator::Init()
+{
+	ErosionSimulator::InitializeBrush(chunkSize, 3);
+	s_initialized = true;
+}
+
+bool TerrainMapGenerator::IsInitialized()
+{
+	return s_initialized;
+}
+
 TerrainMap TerrainMapGenerator::GenerateTerrinMap(const TerrainMapDesc& mapDesc)
 {
 
@@ -35,6 +47,7 @@ TerrainMap TerrainMapGenerator::GenerateTerrinMap(const TerrainMapDesc& mapDesc)
 	map.heightMap = GenerateNoise(chunkSize, chunkSize, mapDesc.frequencyScale, mapDesc.octaves,
 		mapDesc.persistence, mapDesc.lacunarity, mapDesc.offset, mapDesc.seed);
 
+	ErosionSimulator::Erode(map);
 
 	std::vector<Vector4> colorMap;
 	colorMap.resize(chunkSize * (size_t)chunkSize);

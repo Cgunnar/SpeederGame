@@ -24,7 +24,7 @@ using namespace rfe;
 Scene::Scene()
 {
 	AssetManager& am = AssetManager::Get();
-
+	
 	m_terrDesc.lacunarity = 2;
 	m_terrDesc.octaves = 10;
 	m_terrDesc.persistence = 0.5f;
@@ -39,9 +39,9 @@ Scene::Scene()
 	m_terrDesc.bioms.emplace_back("mountain_snow", 0.9f, 0.94f);*/
 	m_terrDesc.bioms.emplace_back("mountain", 0.2f, 0.0f);
 	m_terrDesc.LODs.push_back({ .lod = 0, .visDistThrhold = 200 });
-	m_terrDesc.LODs.push_back({ .lod = 1, .visDistThrhold = 400 });
-	m_terrDesc.LODs.push_back({ .lod = 3, .visDistThrhold = 600 });
-	m_terrDesc.LODs.push_back({ .lod = 6, .visDistThrhold = 800 });
+	//m_terrDesc.LODs.push_back({ .lod = 1, .visDistThrhold = 400 });
+	//m_terrDesc.LODs.push_back({ .lod = 3, .visDistThrhold = 600 });
+	//m_terrDesc.LODs.push_back({ .lod = 6, .visDistThrhold = 800 });
 
 	m_terrain = EntityReg::CreateEntity();
 	m_terrain.AddComponent<TransformComp>();

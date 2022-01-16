@@ -267,6 +267,11 @@ namespace rfm
 		return Vector2(scale * v.x, scale * v.y);
 	}
 
+	Vector2 operator*(const Vector2& v, float scale)
+	{
+		return Vector2(scale * v.x, scale * v.y);
+	}
+
 	Vector2 operator/(const Vector2& v, float scale)
 	{
 		return Vector2(v.x / scale, v.y / scale);

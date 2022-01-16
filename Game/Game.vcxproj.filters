@@ -226,6 +226,7 @@
     <ClInclude Include="Src\Physics\PhysicsTypes.h" />
     <ClInclude Include="Src\Physics\PhysicsEngine.h" />
     <ClInclude Include="Src\Physics\TerrainVsBoxPhysics.h" />
+    <ClInclude Include="Src\Game\Hydraulic_Erosion.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">
@@ -353,6 +354,7 @@
     </ClCompile>
     <ClCompile Include="Src\Physics\PhysicsEngine.cpp" />
     <ClCompile Include="Src\Physics\TerrainVsBoxPhysics.cpp" />
+    <ClCompile Include="Src\Game\Hydraulic_Erosion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\CS\CS_convolute_DiffIrrCube.hlsl">

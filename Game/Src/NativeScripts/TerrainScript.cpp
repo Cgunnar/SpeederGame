@@ -45,6 +45,7 @@ TerrainScript::TerrainScript(TerrainDesc desc)
 
 void TerrainScript::OnStart()
 {
+	if (!TerrainMapGenerator::IsInitialized()) TerrainMapGenerator::Init();
 	m_chunkSize = TerrainMapGenerator::chunkSize - 1;
 	m_chunksVisibleInViewDist = static_cast<int>(round(m_maxViewDistance / m_chunkSize));
 }

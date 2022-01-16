@@ -32,7 +32,7 @@ Scene::Scene()
 	m_terrDesc.baseOffset = {0,0};
 	m_terrDesc.seed = 10;
 	m_terrDesc.heightScale = 150;
-	m_terrDesc.heightScaleFunc = [](float h) {return h < 0.4f ? 0.0f : 1.0f - sqrt(1.0f - (h-0.4f)*(h-0.4f)); };
+	//m_terrDesc.heightScaleFunc = [](float h) {return h < 0.4f ? 0.0f : 1.0f - sqrt(1.0f - (h-0.4f)*(h-0.4f)); };
 	m_terrDesc.bioms.emplace_back("water", Vector3(0,0,1), 0, !true);
 	m_terrDesc.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.4f);
 	m_terrDesc.bioms.emplace_back("mountain", 0.2f, 0.55f);
@@ -166,7 +166,7 @@ void Scene::Update(float dt)
 {
 	EntityReg::RunScripts<CameraControllerScript, ShipScript, TerrainScript>(dt);
 
-	/*if (m_terrainGUI.Show())
+	if (m_terrainGUI.Show())
 	{
 		if (m_terrain.GetComponent<TerrainScript>())
 		{
@@ -183,9 +183,11 @@ void Scene::Update(float dt)
 		m_terrDesc.seed = guiInput.seed;
 		m_terrain.AddComponent<TerrainScript>(m_terrDesc);
 		m_terrain.GetComponent<TransformComp>()->transform.setScale(guiInput.scale);
-	}*/
+	}
 
-	m_camera.GetComponent<TransformComp>()->transform = m_ship.GetComponent<ShipScript>()->GetCameraFollowTransform();;
+	static bool shipCam = true;
+	if (Input::Get().keyPressed(Input::Y)) shipCam = !shipCam;
+	if (shipCam) m_camera.GetComponent<TransformComp>()->transform = m_ship.GetComponent<ShipScript>()->GetCameraFollowTransform();;
 
 	m_dirlightContr.Show();
 

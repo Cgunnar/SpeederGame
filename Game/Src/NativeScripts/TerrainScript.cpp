@@ -51,7 +51,7 @@ void TerrainScript::OnStart()
 
 void TerrainScript::OnUpdate(float dt)
 {
-	EntityID viewerID = EntityReg::GetComponentArray<PlayerComp>().front().GetEntity();
+	EntityID viewerID = EntityReg::GetComponentArray<CameraComp>().front().GetEntity();
 	const Transform& viewerTransform = EntityReg::GetComponent<TransformComp>(viewerID)->transform;
 	const Transform& terrainTransform = GetComponent<TransformComp>()->transform;
 

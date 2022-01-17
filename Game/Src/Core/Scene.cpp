@@ -37,15 +37,15 @@ Scene::Scene()
 	m_terrDesc.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.3f);
 	m_terrDesc.bioms.emplace_back("mountain", 0.2f, 0.55f);
 	m_terrDesc.bioms.emplace_back("mountain_snow", 0.9f, 0.94f);*/
-	m_terrDesc.bioms.emplace_back("mountain", 0.2f, 0.0f);
+	m_terrDesc.bioms.emplace_back("mountain", Vector3(0.2f, 0.2f, 0.2f), 0.0f);
 	m_terrDesc.LODs.push_back({ .lod = 0, .visDistThrhold = 200 });
-	//m_terrDesc.LODs.push_back({ .lod = 1, .visDistThrhold = 400 });
-	//m_terrDesc.LODs.push_back({ .lod = 3, .visDistThrhold = 600 });
-	//m_terrDesc.LODs.push_back({ .lod = 6, .visDistThrhold = 800 });
+	m_terrDesc.LODs.push_back({ .lod = 1, .visDistThrhold = 400 });
+	m_terrDesc.LODs.push_back({ .lod = 2, .visDistThrhold = 600 });
+	m_terrDesc.LODs.push_back({ .lod = 3, .visDistThrhold = 800 });
 
 	m_terrain = EntityReg::CreateEntity();
 	m_terrain.AddComponent<TransformComp>();
-	//m_terrain.GetComponent<TransformComp>()->transform.setScale(f);
+	m_terrain.GetComponent<TransformComp>()->transform.setScale(0.6f);
 	m_terrain.GetComponent<TransformComp>()->transform.setRotationDeg(0, 0, 0);
 	m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, -30, 0);
 	m_terrain.AddComponent<TerrainScript>(m_terrDesc);

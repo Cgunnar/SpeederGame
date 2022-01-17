@@ -19,6 +19,10 @@ private:
 	static std::vector<float> GenerateNoise(int width, int height, float frequencyScale, int octaves, float persistance, float lacunarity,
 		rfm::Vector2 offset, uint32_t seed);
 
+	static void BlendEdge(TerrainMap& centerMap, TerrainMap& leftMap, TerrainMap& rightMap, TerrainMap& upMap, TerrainMap& downMap,
+		TerrainMap& leftUpMap, TerrainMap& righUptMap, TerrainMap& leftDownMap, TerrainMap& rightDownMap);
+	//static void BlendEdge(TerrainMap& centerMap, const TerrainMap& leftMap, const TerrainMap& rightMap, const TerrainMap& upMap, const TerrainMap& downMap,
+	//	const TerrainMap& leftUpMap, const TerrainMap& righUptMap, const TerrainMap& leftDownMap, const TerrainMap& rightDownMap);
 	static void AsyncGenerateTerrinMapInternal(const TerrainMapDesc& mapDesc, rfm::Vector2I coord);
 	static bool s_initialized;
 	static std::unordered_map<rfm::Vector2I, TerrainMap> s_terrainMapHolder;

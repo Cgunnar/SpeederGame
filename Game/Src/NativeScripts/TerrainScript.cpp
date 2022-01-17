@@ -120,9 +120,9 @@ void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 	}
 
 	
-	for (int y = 0; y <= m_chunksVisibleInViewDist; y++)
+	for (int y = 0; y <= m_chunksVisibleInViewDist + 1; y++)
 	{
-		for (int x = 0; x <= m_chunksVisibleInViewDist; x++)
+		for (int x = 0; x <= m_chunksVisibleInViewDist + 1; x++)
 		{
 			Vector2I viewedChunk0 = chunkCoord + Vector2I(x, y);
 			Vector2I viewedChunk1 = chunkCoord + Vector2I(-x, y);

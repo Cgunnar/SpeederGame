@@ -41,21 +41,25 @@ constexpr float inertia = 0.05f;
 constexpr float sedimentCapacityFactor = 4.0f;
 constexpr float minSedimentCapacity = 0.01f;
 constexpr float depositSpeed = 0.3f;
-constexpr float erodeSpeed = 0.3f;
+constexpr float erodeSpeed = 0.4f;
+//constexpr float erodeSpeed = 0.3f;
 constexpr float evaporateSpeed = .01f;
-constexpr float gravity = 4;
+constexpr float gravity = 5;
+//constexpr float gravity = 4;
 
 constexpr float initialWaterVolume = 1;
 constexpr float initialSpeed = 1;
-constexpr int maxDropletLifetime = 30;
+//constexpr int maxDropletLifetime = 30;
+constexpr int maxDropletLifetime = 25;
 constexpr int erosionRadius = 3;
 constexpr unsigned int seed = 42;
 
 void ErosionSimulator::Erode(TerrainMap& map)
 {
-	
+
 	assert(s_brush.initialized && s_brush.size == map.width);
-	int MaxIterations = 50000;
+	int MaxIterations = 40000;
+	//int MaxIterations = 50000;
 	for (int iterations = 0; iterations < MaxIterations; iterations++)
 	{
 		Vector2 pos = { GenRandFloat(0, map.width - 1, seed + iterations),
@@ -119,7 +123,7 @@ void ErosionSimulator::Erode(TerrainMap& map)
 			}
 
 			// Update droplet's speed and water content
-			speed = sqrt(std::max(0.0f,speed * speed + deltaHeight * gravity));
+			speed = sqrt(std::max(0.0f, speed * speed + deltaHeight * gravity));
 			water *= (1 - evaporateSpeed);
 		}
 	}

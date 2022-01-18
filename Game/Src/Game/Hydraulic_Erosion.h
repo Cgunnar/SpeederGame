@@ -1,12 +1,18 @@
 #pragma once
 #include "TerreinTypes.h"
-
+#include "RimfrostMath.hpp"
+struct HeightAndGradient
+{
+	float height = 0;
+	rfm::Vector2 grad;
+};
 
 class ErosionSimulator
 {
 public:
 	static void Init(int radius);
 	static void Erode(TerrainMap& map);
+	static HeightAndGradient CalculateHeightAndGradient(const std::vector<float>& nodes, rfm::Vector2 pos);
 private:
 
 	static void InitializeBrush(int radius);

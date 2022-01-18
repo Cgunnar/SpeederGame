@@ -44,7 +44,8 @@ struct TerrainMeshDesc
 	float heightScale = 10;
 	int LOD = 0;
 	rfm::Vector2 uvScale = { 0,0 }; //set to 0,0 to use width, height
-	std::function<float(float)> heightScaleFunc = [](float s) { return s; };
+	float funktionParmK = 0;
+	std::function<float(float, float)> heightScaleFunc = [](float s, float k) { return s; };
 };
 
 
@@ -98,5 +99,6 @@ struct TerrainDesc
 	std::vector<Biom> bioms;
 	std::vector<LODinfo> LODs;
 	rfm::Vector2 uvScale = { 0,0 }; //set to 0,0 to use width, height
-	std::function<float(float)> heightScaleFunc = [](float s) { return s; };
+	float funktionParmK = 0;
+	std::function<float(float, float)> heightScaleFunc = [](float s, float k) { return s; };
 };

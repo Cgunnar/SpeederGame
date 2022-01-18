@@ -26,13 +26,14 @@ Scene::Scene()
 	AssetManager& am = AssetManager::Get();
 	
 	m_terrDesc.lacunarity = 2;
-	m_terrDesc.octaves = 10;
+	m_terrDesc.octaves = 8;
 	m_terrDesc.persistence = 0.5f;
 	m_terrDesc.frequencyScale = 150;
 	m_terrDesc.baseOffset = {0,0};
 	m_terrDesc.seed = 10;
 	m_terrDesc.heightScale = 100;
-	//m_terrDesc.heightScaleFunc = [](float h) {return h < 0.4f ? 0.0f : 1.0f - sqrt(1.0f - (h-0.4f)*(h-0.4f)); };
+	m_terrDesc.funktionParmK = 0;
+	//m_terrDesc.heightScaleFunc = [](float h, float k) {return h < k ? 0.0f : 1.0f - sqrt(std::max(0.0f, 1.0f - (h-k)*(h-k))); };
 	/*m_terrDesc.bioms.emplace_back("water", Vector3(0,0,1), 0, !true);
 	m_terrDesc.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.3f);
 	m_terrDesc.bioms.emplace_back("mountain", 0.2f, 0.55f);

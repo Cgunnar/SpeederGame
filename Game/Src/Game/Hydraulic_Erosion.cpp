@@ -30,12 +30,8 @@ using namespace rfm;
 ErosionSimulator::BrushIndicesAndWeights ErosionSimulator::s_brush;
 
 
-struct HeightAndGradient
-{
-	float height = 0;
-	Vector2 grad;
-};
-HeightAndGradient CalculateHeightAndGradient(const std::vector<float>& nodes, Vector2 pos);
+
+
 float CalculateHeight(const std::vector<float>& nodes, Vector2 pos);
 
 constexpr float inertia = 0.05f;
@@ -51,7 +47,7 @@ constexpr float initialSpeed = 1;
 constexpr int maxDropletLifetime = 25;
 constexpr int erosionRadius = 3;
 constexpr unsigned int seed = 421212;
-constexpr int MaxIterations = 40000;
+constexpr int MaxIterations = 150000;
 
 void ErosionSimulator::Init(int radius)
 {
@@ -135,7 +131,8 @@ void ErosionSimulator::Erode(TerrainMap& map)
 }
 
 
-HeightAndGradient CalculateHeightAndGradient(const std::vector<float>& nodes, Vector2 pos) {
+HeightAndGradient ErosionSimulator::CalculateHeightAndGradient(const std::vector<float>& nodes, Vector2 pos)
+{
 	int coordX = static_cast<int>(pos.x);
 	int coordY = static_cast<int>(pos.y);
 

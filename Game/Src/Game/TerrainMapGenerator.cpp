@@ -124,6 +124,7 @@ std::optional<TerrainMap> TerrainMapGenerator::GetTerrainMap(rfm::Vector2I coord
 				s_terrainMapHolder[coord + Vector2I(0, -1)], s_terrainMapHolder[coord + Vector2I(-1, 1)],
 				s_terrainMapHolder[coord + Vector2I(1, 1)], s_terrainMapHolder[coord + Vector2I(-1, -1)],
 				s_terrainMapHolder[coord + Vector2I(1, -1)]);
+			//map.blendedEdges = true;
 		}
 	}
 	s_mapMutex.unlock();

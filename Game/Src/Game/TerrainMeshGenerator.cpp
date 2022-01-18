@@ -87,7 +87,7 @@ TerrainMesh TerrainMeshGenerator::CreateTerrainMeshFromHeightMapMemory(const flo
 
             Vertex_POS_NOR_UV v;
             v.position.x = static_cast<float>(x) - static_cast<float>(width-1) / 2.0f;
-            v.position.y = desc.heightScaleFunc(hightMap[y * width + x]) * desc.heightScale;
+            v.position.y = desc.heightScaleFunc(hightMap[y * width + x], desc.funktionParmK) * desc.heightScale;
             v.position.z = static_cast<float>(height-1) / 2.0f - static_cast<float>(y);
             v.uv = rfm::Vector2(static_cast<float>(x) / desc.uvScale.x , static_cast<float>(y) / desc.uvScale.y);
             mesh.vertices.push_back(v);

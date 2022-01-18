@@ -5,15 +5,14 @@
 class ErosionSimulator
 {
 public:
-
-	static void InitializeBrush(int mapSize, int radius);
+	static void Init(int radius);
 	static void Erode(TerrainMap& map);
 private:
 
+	static void InitializeBrush(int radius);
 	struct BrushIndicesAndWeights
 	{
 		bool initialized = false;
-		int size = 0;
 		std::vector<std::vector<int>> indices;
 		std::vector<std::vector<float>> weights;
 	};

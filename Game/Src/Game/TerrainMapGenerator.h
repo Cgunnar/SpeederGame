@@ -4,10 +4,10 @@
 #include "TerreinTypes.h"
 
 
+constexpr int chunkSize = 241;
 class TerrainMapGenerator
 {
 public:
-	static constexpr int chunkSize = 241;
 	static void Init();
 	static bool IsInitialized();
 	static TerrainMap GenerateTerrinMap(const TerrainMapDesc& mapDesc);

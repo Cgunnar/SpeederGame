@@ -23,7 +23,7 @@ using namespace rfm;
 
 Application::Application()
 {
-	WorkerThreads::Init();
+	WorkerThreads::Init(10);
 	m_window = new Window();
 	LowLvlGfx::Init(m_window->GetHwnd(), m_window->GetClientSize());
 	

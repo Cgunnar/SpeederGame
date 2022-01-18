@@ -203,6 +203,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClCompile Include="Src\Physics\CollisionDetection.cpp" />
     <ClCompile Include="Src\Physics\TerrainVsBoxPhysics.cpp" />
     <ClCompile Include="Src\Utility\FrameTimer.cpp" />
+    <ClCompile Include="Src\Utility\RandGen.cpp" />
     <ClCompile Include="Src\Utility\ReadImg.cpp" />
     <ClCompile Include="Src\Utility\Timer.cpp" />
     <ClCompile Include="Src\Utility\UtilityFunctions.cpp" />

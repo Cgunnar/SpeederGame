@@ -34,7 +34,7 @@ void TerrainMapGenerator::AsyncGenerateTerrinMapInternal(const TerrainMapDesc& m
 
 void TerrainMapGenerator::Init()
 {
-	ErosionSimulator::InitializeBrush(chunkSize, 3);
+	ErosionSimulator::Init(3);
 	s_initialized = true;
 }
 
@@ -56,10 +56,7 @@ TerrainMap TerrainMapGenerator::GenerateTerrinMap(const TerrainMapDesc& mapDesc)
 	map.width = chunkSize;
 	map.heightMap = GenerateNoise(chunkSize, chunkSize, mapDesc.frequencyScale, mapDesc.octaves,
 		mapDesc.persistence, mapDesc.lacunarity, mapDesc.offset, mapDesc.seed);
-	Timer timer;
 	ErosionSimulator::Erode(map);
-	auto t = timer.stop();
-	std::cout << t << " " << timer.durationToString() << std::endl;
 
 	std::vector<Vector4> colorMap;
 	colorMap.resize(chunkSize * (size_t)chunkSize);

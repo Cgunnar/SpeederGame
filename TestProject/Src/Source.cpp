@@ -2,42 +2,47 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <random>
+#include <algorithm>
 
-#pragma warning(push, 0)
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
-#pragma warning(pop)
 
-#include "PerlinNoise.hpp"
+
+class Vector2
+{
+public:
+	Vector2(float x, float y) : x(x), y(y) {}
+	Vector2(float val = 0) : x(val), y(val) {}
+	float x = 0;
+	float y = 0;
+};
+
+float GenRandFloat(float min, float max, unsigned int seed)
+{
+	//std::ranlux48_base eng(seed);
+	//std::minstd_rand eng(seed);
+	//std::mt19937 eng(seed);
+	std::ranlux48 eng(seed);
+	std::uniform_real_distribution<> distr(min, max);
+	auto t = static_cast<float>(distr(eng));
+	return t;
+}
 
 int main()
 {
-	constexpr uint32_t width = 1024;
-	constexpr uint32_t height = 1024;
-
-	const siv::PerlinNoise::seed_type seed = 123456u;
-
-	const siv::PerlinNoise perlin{ seed };
-	unsigned char* noise = new unsigned char[width * height]();
-	for (int y = 0; y < height; ++y)
+	unsigned int seed = 42;
+	std::vector<Vector2> randVec;
+	int maxIt = 25;
+	for (int i = 0; i < maxIt; i++)
 	{
-		for (int x = 0; x < width; ++x)
-		{
-			noise[y * width + x] = static_cast<unsigned char>(255 * perlin.octave2D_01((x * 0.01), (y * 0.01), 1));
-		}
+		Vector2 v;
+		v.x = GenRandFloat(0, 240, seed + i); 
+		v.y = GenRandFloat(0, 240, seed + i + v.x);
+		randVec.push_back(v);
 	}
-	
-	/*if (!stbi_write_bmp("testNoise.bmp", width, height, STBI_grey, noise))
+	std::sort(randVec.begin(), randVec.end(), [](auto a, auto b) {return a.x < b.x; });
+	for (auto& f : randVec)
 	{
-		std::cout << "write error" << std::endl;
-	}*/
-	if (!stbi_write_png("testNoise.png", width, height, STBI_grey, noise, width * STBI_grey))
-	{
-		std::cout << "write error" << std::endl;
+		std::cout << f.x << " " << f.y << std::endl;
 	}
-
-	delete[] noise;
 	return 0;
 }

@@ -17,7 +17,7 @@ private:
 	std::queue<rfm::Vector2I> m_chunksToLoad;
 	TerrainMapDesc m_mapDesc;
 	TerrainMeshDesc m_meshDesc;
-	int m_chunkSize = 0;
+	int m_chunkMeshSize = 0;
 	int m_chunksVisibleInViewDist = 0;
 	std::unordered_map<rfm::Vector2I, TerrainChunk*> m_chunkMap;
 	std::vector<rfm::Vector2I> m_prevFrameVisibleChunksCoord;

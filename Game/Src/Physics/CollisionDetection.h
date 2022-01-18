@@ -7,8 +7,8 @@
 
 namespace colDetect
 {
-	std::vector<CollisionPoint> PlaneVSPoints(Plane plane, std::vector<rfm::Vector3> points);
-	CollisionPoint PlaneVSPoint(Plane plane, rfm::Vector3 point);
+	std::vector<CollisionPoint> PlaneVSPoints(rfm::Plane plane, std::vector<rfm::Vector3> points);
+	CollisionPoint PlaneVSPoint(rfm::Plane plane, rfm::Vector3 point);
 
 }
 

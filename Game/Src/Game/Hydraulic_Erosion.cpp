@@ -47,7 +47,7 @@ constexpr float initialSpeed = 1;
 constexpr int maxDropletLifetime = 25;
 constexpr int erosionRadius = 3;
 constexpr unsigned int seed = 421212;
-constexpr int MaxIterations = 150000;
+constexpr int MaxIterations = 50000;
 
 void ErosionSimulator::Init(int radius)
 {

@@ -5,6 +5,8 @@
 #include "PhysicsComponents.h"
 #include "Geometry.h"
 #include "AssetManager.h"
+#include "RfextendedMath.hpp"
+#include "imgui.h"
 
 using namespace rfm;
 using namespace rfe;
@@ -14,7 +16,7 @@ void ShipScript::OnStart()
 	Material redWireFrame;
 	redWireFrame.emissiveFactor = { 1,0,0 };
 	redWireFrame.baseColorFactor = { 0,0,0,1 };
-	redWireFrame.flags = RenderFlag::wireframe | RenderFlag::noBackFaceCull; //lol the shadowmap dont check this flag
+	redWireFrame.flags = RenderFlag::wireframe | RenderFlag::noBackFaceCull;
 	AABB shipAABB = AssetManager::Get().GetModel(GetComponent<RenderModelComp>()->ModelID).aabb;
 	Geometry::AABB_POS_NOR_UV shipBoundingBox(shipAABB);
 	Mesh boxMesh = Mesh(shipBoundingBox.VertexData(), shipBoundingBox.IndexData(), shipAABB);
@@ -60,6 +62,9 @@ void ShipScript::OnUpdate(float dt)
 
 		m_cameraPitch += gPad.thumbSticks.rightY * dt;
 		m_cameraYaw += gPad.thumbSticks.rightX * dt;
+
+
+		ImGui::Text("aoa: %f", rfm::RadToDeg(CalcAOA()));
 	}
 }
 
@@ -111,4 +116,19 @@ void ShipScript::UnDockShip()
 	m_docked = false;
 	if (GetComponent<RigidBodyComp>()) return;
 	AddComponent<RigidBodyComp>(m_rigidBodyDockCopy);
+}
+
+float ShipScript::CalcAOA()
+{
+	if (m_docked) return 0;
+	const RigidBody& rg = GetComponent<RigidBodyComp>()->rigidBody;
+	const Transform& tr = GetComponent<TransformComp>()->transform;
+
+	//velocity forward and up
+	Vector3 fwUpVelocityDir = rfm::ProjectVectorOnPlane(rg.velocity, Plane(tr.right()));
+	if (fwUpVelocityDir.length() == 0) return 0;
+	fwUpVelocityDir.normalize();
+	float angle = acos(dot(fwUpVelocityDir, tr.forward()));
+	if(dot(fwUpVelocityDir, tr.up()) > 0) angle*=-1;
+	return angle;
 }

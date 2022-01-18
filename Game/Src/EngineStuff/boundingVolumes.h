@@ -15,10 +15,3 @@ struct AABB
 };
 //AABB operator*(rfm::Matrix m, AABB aabb);
 
-struct Plane
-{
-	Plane(rfm::Vector3 normal = rfm::Vector3(0, 1, 0), float d = 0);
-	Plane(rfm::Vector3 normal, rfm::Vector3 point);
-	rfm::Vector3 normal;
-	float d;
-};

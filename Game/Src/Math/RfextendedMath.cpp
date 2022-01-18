@@ -46,6 +46,13 @@ namespace rfm
 		return std::pair<Vector3, Vector3>(L1CP, L2CP);
 	}
 
+	Vector3 ProjectVectorOnPlane(Vector3 v, Plane p)
+	{
+		v -= dot(v, p.normal) * p.normal;
+		assert(dot(v, p.normal) == 0);
+		return v;
+	}
+
 	Vector3 planeIntersectLine(Vector4 plane, Vector3 linePoint1, Vector3 linePoint2)
 	{
 		DirectX::XMVECTOR XMplane{ plane.x, plane.y, plane.z, plane.w };

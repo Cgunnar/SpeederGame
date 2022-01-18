@@ -14,6 +14,8 @@ private:
 	void reset();
 	void DockShip();
 	void UnDockShip();
+	float CalcAOA();
+
 	bool m_docked = true;
 	float m_yawSpeed = rfm::DegToRad(20);
 	float m_pitchSpeed = rfm::DegToRad(80);

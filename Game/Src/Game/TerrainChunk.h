@@ -30,7 +30,6 @@ private:
 	int m_chunkSize = 0;
 	bool m_shouldBeRemoved = false;
 	bool m_visible = false;
-	bool m_checkForLoadedTerrainMap = false;
 	bool m_createRenderMesh = false;
 	int m_prevLODindex = -1;
 	bool m_hasMap = false;

@@ -13,6 +13,7 @@ public:
 	static TerrainMap GenerateTerrinMap(const TerrainMapDesc& mapDesc);
 	static void AsyncGenerateTerrinMap(TerrainMapDesc mapDesc, rfm::Vector2I coord);
 	static std::optional<TerrainMap> GetTerrainMap(rfm::Vector2I coord);
+	static void RemoveTerrainMap(rfm::Vector2I coord);
 	static void Destroy();
 
 private:

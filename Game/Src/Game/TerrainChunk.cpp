@@ -21,6 +21,7 @@ TerrainChunk::~TerrainChunk()
 			std::this_thread::yield();
 		}
 	}
+	TerrainMapGenerator::RemoveTerrainMap(m_coord);
 	AssetManager::Get().RemoveTexture2D(m_material.baseColorTexture);
 }
 
@@ -104,19 +105,17 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 		m_chunkEntity.GetComponent<RenderModelComp>()->visible = m_visible;
 
 	}
-	else if (m_checkForLoadedTerrainMap)
+	else
 	{
 		auto optMap = TerrainMapGenerator::GetTerrainMap(m_coord);
 		if (optMap)
 		{
 			std::cout << "LoadedMap\n";
 			m_map = *optMap;
-			m_hasMap = true;
 			m_material.baseColorTexture = AssetManager::Get().LoadTex2DFromMemoryR8G8B8A8(
 				optMap->colorMapRGBA.data(), optMap->width, optMap->height, LoadTexFlag::GenerateMips);
 			m_material.emissiveFactor = 0;
-
-			m_checkForLoadedTerrainMap = false;
+			m_hasMap = true;
 		}
 	}
 }
@@ -126,7 +125,6 @@ void TerrainChunk::LoadTerrain(const TerrainMapDesc& desc)
 	TerrainMapDesc d = desc;
 	d.offset += m_position;
 	TerrainMapGenerator::AsyncGenerateTerrinMap(d, m_coord);
-	m_checkForLoadedTerrainMap = true;
 }
 
 void TerrainChunk::UpdateChunkTransform(rfm::Transform transform)

@@ -90,15 +90,14 @@ TerrainMap TerrainMapGenerator::GenerateTerrinMap(const TerrainMapDesc& mapDesc)
 
 void TerrainMapGenerator::AsyncGenerateTerrinMap(TerrainMapDesc mapDesc, rfm::Vector2I coord)
 {
-	if (s_terrainMapHolder.contains(coord))
+	if (s_terrainMapHolder.contains(coord)) //does this need to be locked to prevent ub? No two chunks can have the same coord
 	{
-		//s_terrainMapHolder.erase(coord);
+		assert(false);
 		return;
 	}
 	
 	//s_terrainMapHolder[coord] = TerrainMapGenerator::GenerateTerrinMap(mapDesc);
 	WorkerThreads::AddTask(TerrainMapGenerator::AsyncGenerateTerrinMapInternal, mapDesc, coord);
-	return;
 }
 
 std::optional<TerrainMap> TerrainMapGenerator::GetTerrainMap(rfm::Vector2I coord)
@@ -113,13 +112,13 @@ std::optional<TerrainMap> TerrainMapGenerator::GetTerrainMap(rfm::Vector2I coord
 		if (map.blendedEdges)
 		{
 			outOpt = std::make_optional(s_terrainMapHolder[coord]);
-			std::cout << "TerrainMapGenerator::GetTerrainMap fix så that terrainMaps are deleted when unloaded" << std::endl;
 		}
 		else if (s_terrainMapHolder.contains(coord + Vector2I(0, 1)) && s_terrainMapHolder.contains(coord + Vector2I(0, -1)) &&
 			s_terrainMapHolder.contains(coord + Vector2I(1, 0)) && s_terrainMapHolder.contains(coord + Vector2I(-1, 0)) &&
 			s_terrainMapHolder.contains(coord + Vector2I(-1, 1)) && s_terrainMapHolder.contains(coord + Vector2I(1, 1)) &&
 			s_terrainMapHolder.contains(coord + Vector2I(-1, -1)) && s_terrainMapHolder.contains(coord + Vector2I(1, -1)))
 		{
+			//hope this function is not to slow to hog the mutex for to long
 			BlendEdge(s_terrainMapHolder[coord], s_terrainMapHolder[coord + Vector2I(-1, 0)],
 				s_terrainMapHolder[coord + Vector2I(1, 0)], s_terrainMapHolder[coord + Vector2I(0, 1)],
 				s_terrainMapHolder[coord + Vector2I(0, -1)], s_terrainMapHolder[coord + Vector2I(-1, 1)],
@@ -129,6 +128,14 @@ std::optional<TerrainMap> TerrainMapGenerator::GetTerrainMap(rfm::Vector2I coord
 	}
 	s_mapMutex.unlock();
 	return outOpt;
+}
+
+void TerrainMapGenerator::RemoveTerrainMap(rfm::Vector2I coord)
+{
+	s_mapMutex.lock();
+	if(s_terrainMapHolder.contains(coord))
+		s_terrainMapHolder.erase(coord);
+	s_mapMutex.unlock();
 }
 
 //void TerrainMapGenerator::BlendEdge(TerrainMap& centerMap, const TerrainMap& leftMap, const TerrainMap& rightMap, const TerrainMap& upMap, const TerrainMap& downMap, const TerrainMap& leftUpMap, const TerrainMap& righUptMap, const TerrainMap& leftDownMap, const TerrainMap& rightDownMap)

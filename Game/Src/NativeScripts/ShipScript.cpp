@@ -72,60 +72,8 @@ void ShipScript::OnUpdate(float dt)
 		ImGui::Text("aos: %f", rfm::RadToDeg(CalcAOS(GetRigidBody().velocity)));
 
 
-
-
-		//should be fixed
-
-		if(!m_docked)
-		{
-			RigidBody& rigidBody = GetComponent<RigidBodyComp>()->rigidBody;
-			Transform& transform = GetTransform();
-			Matrix3 rot = transform.getRotationMatrix();
-			Matrix3 rotT = transpose(rot);
-			rigidBody.velocity += m_controllInputXYZ * dt;
-			rigidBody.angularVelocity += m_controllInputPYR * dt;
-
-			Vector3 airVelocity = rigidBody.velocity - Vector3(0, 0, 0); // - winds Velocity
-			if (airVelocity.length() > 1)
-			{
-				float aoa = CalcAOA(airVelocity);
-
-				float dynamicPressure = 0.5f * AirDensity * airVelocity.length() * airVelocity.length();
-
-				float Cm = -0.0025f * aoa;
-
-				Vector3 airVelDir = normalize(airVelocity);
-				float area = abs(dot(transform.up(), airVelDir)) * m_topArea +
-					abs(dot(transform.right(), airVelDir)) * m_sideArea +
-					abs(dot(transform.forward(), airVelDir)) * m_frontArea;
-
-				float drag = dynamicPressure * area * m_Cd;
-
-				Vector3 dragForce = drag * -airVelDir;
-
-				
-
-				float pitchDampening = m_Cmq * m_chord * m_chord * m_liftSurfaceArea * dynamicPressure / (2 * airVelocity.length());
-				float rollDampening = m_Clp * m_wingspann * m_wingspann * m_liftSurfaceArea * dynamicPressure / (2 * airVelocity.length());
-				float yawDampening = m_Cnr * m_wingspann * m_wingspann * m_liftSurfaceArea * dynamicPressure / (2 * airVelocity.length());
-
-				Vector3 angVelLocal = rotT * rigidBody.angularVelocity;
-
-				Vector3 localMoment;
-				localMoment.x = angVelLocal.x * pitchDampening;
-				localMoment.y = angVelLocal.y * yawDampening;
-				localMoment.z = angVelLocal.z * rollDampening;
-
-				Vector3 localAngAcc = inverse(rigidBody.momentOfInertia) * localMoment;
-
-				Vector3 angularAcc = rot * localAngAcc;
-				rigidBody.angularVelocity += angularAcc * dt;
-				rigidBody.velocity += (dragForce / rigidBody.mass) * dt;
-
-				ImGui::Text("velocity: %s", rigidBody.velocity.ToString().c_str());
-			}
-
-		}
+		ImGui::Text("velocity: %s", GetRigidBody().velocity.ToString().c_str());
+		
 
 
 	}
@@ -134,47 +82,56 @@ void ShipScript::OnUpdate(float dt)
 
 void ShipScript::OnFixedUpdate(float dt)
 {
-	//if (!m_docked)
-	//{
-	//	RigidBody& rigidBody = GetComponent<RigidBodyComp>()->rigidBody;
-	//	Transform& transform = GetTransform();
-	//	rigidBody.velocity += m_controllInputXYZ * dt;
-	//	rigidBody.angularVelocity += m_controllInputPYR * dt;
+	if (!m_docked)
+	{
+		RigidBody& rigidBody = GetComponent<RigidBodyComp>()->rigidBody;
+		Transform& transform = GetTransform();
+		Matrix3 rot = transform.getRotationMatrix();
+		Matrix3 rotT = transpose(rot);
+		rigidBody.velocity += m_controllInputXYZ * dt;
+		rigidBody.angularVelocity += m_controllInputPYR * dt;
 
-	//	Vector3 airVelocity = rigidBody.velocity - Vector3(0, 0, 0); // - winds Velocity
-	//	if (airVelocity.length() > 0)
-	//	{
-	//		float aoa = CalcAOA(airVelocity);
+		Vector3 airVelocity = rigidBody.velocity - Vector3(0, 0, 0); // - winds Velocity
+		if (airVelocity.length() > 1)
+		{
+			float aoa = CalcAOA(airVelocity);
 
-	//		float dynamicPressure = 0.5f * AirDensity * airVelocity.length() * airVelocity.length();
+			float dynamicPressure = 0.5f * AirDensity * airVelocity.length() * airVelocity.length();
 
-	//		float Cm = -0.0025f * aoa;
+			float Cm = -0.0025f * aoa;
+
+			Vector3 airVelDir = normalize(airVelocity);
+			float area = abs(dot(transform.up(), airVelDir)) * m_topArea +
+				abs(dot(transform.right(), airVelDir)) * m_sideArea +
+				abs(dot(transform.forward(), airVelDir)) * m_frontArea;
+
+			float drag = dynamicPressure * area * m_Cd;
+
+			Vector3 dragForce = drag * -airVelDir;
 
 
 
-	//		float pitchDampening = m_Cmq * m_chord * m_chord * m_surfaceArea * dynamicPressure / (2*airVelocity.length());
-	//		float rollDampening = m_Clp * m_wingspann * m_wingspann * m_surfaceArea * dynamicPressure / (2 * airVelocity.length());
-	//		float yawDampening = m_Cnr * m_wingspann * m_wingspann * m_surfaceArea * dynamicPressure / (2 * airVelocity.length());
-	//		
-	//		Vector3 angVelLocal = inverse((Matrix3)transform.getRotationMatrix()) * rigidBody.angularVelocity;
-	//		if (isnan(angVelLocal.x))
-	//		{
-	//			std::cout << "nan\n";
-	//		}
+			float pitchDampening = m_Cmq * m_chord * m_chord * m_liftSurfaceArea * dynamicPressure / (2 * airVelocity.length());
+			float rollDampening = m_Clp * m_wingspann * m_wingspann * m_liftSurfaceArea * dynamicPressure / (2 * airVelocity.length());
+			float yawDampening = m_Cnr * m_wingspann * m_wingspann * m_liftSurfaceArea * dynamicPressure / (2 * airVelocity.length());
 
-	//		ImGui::Text("localAngVel: %f %f %f", angVelLocal.x, angVelLocal.y, angVelLocal.z);
-	//		Vector3 localMoment;
-	//		localMoment.x = angVelLocal.x * pitchDampening;
-	//		localMoment.y = angVelLocal.y * yawDampening;
-	//		localMoment.z = angVelLocal.z * rollDampening;
+			Vector3 angVelLocal = rotT * rigidBody.angularVelocity;
 
-	//		Vector3 globalMoment = (Matrix3)transform.getRotationMatrix() * localMoment;
-	//		Vector3 angularAcc = rigidBody.momentOfInertia * globalMoment;
-	//		//rigidBody.angularVelocity += angularAcc * dt;
+			Vector3 localMoment;
+			localMoment.x = angVelLocal.x * pitchDampening;
+			localMoment.y = angVelLocal.y * yawDampening;
+			localMoment.z = angVelLocal.z * rollDampening;
 
-	//	}
+			Vector3 localAngAcc = inverse(rigidBody.momentOfInertia) * localMoment;
 
-	//}
+			Vector3 angularAcc = rot * localAngAcc;
+			rigidBody.angularVelocity += angularAcc * dt;
+			rigidBody.velocity += (dragForce / rigidBody.mass) * dt;
+
+			
+		}
+
+	}
 }
 
 

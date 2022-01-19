@@ -145,7 +145,8 @@ namespace rfm
 	}
 	Matrix rotationMatrixFromNormal(Vector3 normal, float angle)
 	{
-		assert(abs(normal.length() - 1) < 0.00001f);
+		normal.normalize();
+		assert(abs(normal.length() - 1.0f) < 0.01f);
 		XMVECTOR XMnormal{ normal.x, normal.y, normal.z };
 		XMFLOAT4X4 XMrot;
 		XMStoreFloat4x4(&XMrot, DirectX::XMMatrixRotationNormal(XMnormal, angle));

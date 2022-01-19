@@ -149,7 +149,9 @@ Triangle TerrainChunk::TriangleAtLocation(Vector3 pos)
 	Vector2 localPos = { toLocalSpae.x, toLocalSpae.z };
 	int px = static_cast<int>(m_chunkSize / 2 + localPos.x);
 	int py = static_cast<int>(m_chunkSize / 2 - localPos.y);
-
+	if (px == m_chunkSize) px = m_chunkSize - 1;
+	if (py == m_chunkSize) py = m_chunkSize - 1;
+	assert(px < m_chunkSize && py < m_chunkSize);
 	int index = 2 * (py * m_chunkSize + px);
 	Triangle t0 = m_lodMeshes[0].mesh.triangles[index];
 	Triangle t1 = m_lodMeshes[0].mesh.triangles[index + 1];

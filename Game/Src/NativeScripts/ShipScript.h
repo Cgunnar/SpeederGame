@@ -36,10 +36,15 @@ private:
 	float m_friction = 0.7f;
 
 	//airplane stuff
-	float m_Cmq = -0.7; //pitchdampeningCof
+	float m_Cd = 0.2f; //drag cof
+	float m_Cmq = -0.7f; //pitchdampeningCof
 	float m_Clp = -0.1f; //rolldampeningCof
 	float m_Cnr = -0.2f; //yawdampeningCof
 	float m_chord = 5;
 	float m_wingspann = 8;
-	float m_surfaceArea = 20;
+	float m_liftSurfaceArea = 20;
+
+	float m_frontArea = 4;
+	float m_topArea = 32;
+	float m_sideArea = 12;
 };

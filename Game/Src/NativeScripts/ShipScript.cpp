@@ -32,7 +32,7 @@ void ShipScript::OnStart()
 
 	AddComponent<AABBComp>()->aabb = shipAABB;
 }
-
+constexpr float AirDensity = 1.225f;
 void ShipScript::OnUpdate(float dt)
 {
 	auto gPad = Input::Get().GamePadState();
@@ -50,12 +50,16 @@ void ShipScript::OnUpdate(float dt)
 		Transform tr = GetComponent<TransformComp>()->transform;
 		
 		auto [shipTranslation, shipRotation, shipScale] = decomposeToTRS(tr);
-		m_controllInputPRY = Vector3(
+		m_controllInputPYR = Vector3(
 			-gPad.thumbSticks.leftY * m_pitchSpeed,
 			0,
 			gPad.thumbSticks.leftX * m_rollSpeed);
 
-		m_controllInputPRY = shipRotation * m_controllInputPRY;
+
+		if (gPad.IsLeftShoulderPressed()) m_controllInputPYR.y += m_yawSpeed;
+		if (gPad.IsRightShoulderPressed()) m_controllInputPYR.y -= m_yawSpeed;
+
+		m_controllInputPYR = shipRotation * m_controllInputPYR;
 
 		m_controllInputXYZ = Vector3(0, gPad.triggers.left * m_thrustSpeed, gPad.triggers.right * m_thrustSpeed);
 		m_controllInputXYZ = shipRotation * m_controllInputXYZ;
@@ -64,19 +68,100 @@ void ShipScript::OnUpdate(float dt)
 		m_cameraYaw += gPad.thumbSticks.rightX * dt;
 
 
-		ImGui::Text("aoa: %f", rfm::RadToDeg(CalcAOA()));
+		ImGui::Text("aoa: %f", rfm::RadToDeg(CalcAOA(GetRigidBody().velocity)));
+		ImGui::Text("aos: %f", rfm::RadToDeg(CalcAOS(GetRigidBody().velocity)));
+
+
+
+
+		//should be fixed
+
+		if(!m_docked)
+		{
+			RigidBody& rigidBody = GetComponent<RigidBodyComp>()->rigidBody;
+			Transform& transform = GetTransform();
+			rigidBody.velocity += m_controllInputXYZ * dt;
+			rigidBody.angularVelocity += m_controllInputPYR * dt;
+
+			Vector3 airVelocity = rigidBody.velocity - Vector3(0, 0, 0); // - winds Velocity
+			if (airVelocity.length() > 1)
+			{
+				float aoa = CalcAOA(airVelocity);
+
+				float dynamicPressure = 0.5f * AirDensity * airVelocity.length() * airVelocity.length();
+
+				float Cm = -0.0025f * aoa;
+
+
+
+				float pitchDampening = m_Cmq * m_chord * m_chord * m_surfaceArea * dynamicPressure / (2 * airVelocity.length());
+				float rollDampening = m_Clp * m_wingspann * m_wingspann * m_surfaceArea * dynamicPressure / (2 * airVelocity.length());
+				float yawDampening = m_Cnr * m_wingspann * m_wingspann * m_surfaceArea * dynamicPressure / (2 * airVelocity.length());
+
+				Vector3 angVelLocal = transpose((Matrix3)transform.getRotationMatrix()) * rigidBody.angularVelocity;
+
+				Vector3 localMoment;
+				localMoment.x = angVelLocal.x * pitchDampening;
+				localMoment.y = angVelLocal.y * yawDampening;
+				localMoment.z = angVelLocal.z * rollDampening;
+
+				Vector3 localAngAcc = inverse(rigidBody.momentOfInertia) * localMoment;
+
+				Vector3 angularAcc = (Matrix3)transform.getRotationMatrix() * localAngAcc;
+				rigidBody.angularVelocity += angularAcc * dt;
+
+			}
+
+		}
+
+
 	}
 }
 
 
 void ShipScript::OnFixedUpdate(float dt)
 {
-	if (!m_docked)
-	{
-		RigidBody& rigidBody = GetComponent<RigidBodyComp>()->rigidBody;
-		rigidBody.velocity += m_controllInputXYZ * dt;
-		rigidBody.angularVelocity += m_controllInputPRY * dt;
-	}
+	//if (!m_docked)
+	//{
+	//	RigidBody& rigidBody = GetComponent<RigidBodyComp>()->rigidBody;
+	//	Transform& transform = GetTransform();
+	//	rigidBody.velocity += m_controllInputXYZ * dt;
+	//	rigidBody.angularVelocity += m_controllInputPYR * dt;
+
+	//	Vector3 airVelocity = rigidBody.velocity - Vector3(0, 0, 0); // - winds Velocity
+	//	if (airVelocity.length() > 0)
+	//	{
+	//		float aoa = CalcAOA(airVelocity);
+
+	//		float dynamicPressure = 0.5f * AirDensity * airVelocity.length() * airVelocity.length();
+
+	//		float Cm = -0.0025f * aoa;
+
+
+
+	//		float pitchDampening = m_Cmq * m_chord * m_chord * m_surfaceArea * dynamicPressure / (2*airVelocity.length());
+	//		float rollDampening = m_Clp * m_wingspann * m_wingspann * m_surfaceArea * dynamicPressure / (2 * airVelocity.length());
+	//		float yawDampening = m_Cnr * m_wingspann * m_wingspann * m_surfaceArea * dynamicPressure / (2 * airVelocity.length());
+	//		
+	//		Vector3 angVelLocal = inverse((Matrix3)transform.getRotationMatrix()) * rigidBody.angularVelocity;
+	//		if (isnan(angVelLocal.x))
+	//		{
+	//			std::cout << "nan\n";
+	//		}
+
+	//		ImGui::Text("localAngVel: %f %f %f", angVelLocal.x, angVelLocal.y, angVelLocal.z);
+	//		Vector3 localMoment;
+	//		localMoment.x = angVelLocal.x * pitchDampening;
+	//		localMoment.y = angVelLocal.y * yawDampening;
+	//		localMoment.z = angVelLocal.z * rollDampening;
+
+	//		Vector3 globalMoment = (Matrix3)transform.getRotationMatrix() * localMoment;
+	//		Vector3 angularAcc = rigidBody.momentOfInertia * globalMoment;
+	//		//rigidBody.angularVelocity += angularAcc * dt;
+
+	//	}
+
+	//}
 }
 
 
@@ -118,17 +203,45 @@ void ShipScript::UnDockShip()
 	AddComponent<RigidBodyComp>(m_rigidBodyDockCopy);
 }
 
-float ShipScript::CalcAOA()
+float ShipScript::CalcAOA(rfm::Vector3 airVelocity)
 {
 	if (m_docked) return 0;
-	const RigidBody& rg = GetComponent<RigidBodyComp>()->rigidBody;
-	const Transform& tr = GetComponent<TransformComp>()->transform;
+
+	const Transform& tr = GetTransform();
 
 	//velocity forward and up
-	Vector3 fwUpVelocityDir = rfm::ProjectVectorOnPlane(rg.velocity, Plane(tr.right()));
+	Vector3 fwUpVelocityDir = rfm::ProjectVectorOnPlane(airVelocity, Plane(tr.right()));
 	if (fwUpVelocityDir.length() == 0) return 0;
 	fwUpVelocityDir.normalize();
 	float angle = acos(dot(fwUpVelocityDir, tr.forward()));
 	if(dot(fwUpVelocityDir, tr.up()) > 0) angle*=-1;
 	return angle;
+}
+
+float ShipScript::CalcAOS(rfm::Vector3 airVelocity)
+{
+	if (m_docked) return 0;
+
+	const Transform& tr = GetTransform();
+
+	//velocity forward and right
+	Vector3 fwRgVelocityDir = rfm::ProjectVectorOnPlane(airVelocity, Plane(tr.up()));
+	if (fwRgVelocityDir.length() == 0) return 0;
+	fwRgVelocityDir.normalize();
+	float angle = acos(dot(fwRgVelocityDir, tr.forward()));
+	if (dot(fwRgVelocityDir, tr.right()) < 0) angle *= -1;
+	return angle;
+}
+
+RigidBody& ShipScript::GetRigidBody()
+{
+	if (m_docked)
+		return m_rigidBodyDockCopy;
+	else
+		return GetComponent<RigidBodyComp>()->rigidBody;
+}
+
+Transform& ShipScript::GetTransform()
+{
+	return GetComponent<TransformComp>()->transform;
 }

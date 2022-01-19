@@ -37,7 +37,9 @@ namespace phySys
 	void RespondToCollision(float dt, vector<ConstraintInfo>& constraints, Transform& transform, RigidBody& rigidBody)
 	{
 		const int kMax = 8;
-		Matrix3 invI = inverse(rigidBody.momentOfInertia);
+		Matrix3 rot = (Matrix3)transform.getRotationMatrix();
+		Matrix I = transpose(rot) * rigidBody.momentOfInertia * rot; //transform moment of inertia to worldSpace
+		Matrix3 invI = inverse(I);
 		float invMass = 1.0f / rigidBody.mass;
 
 		float biasFactor = 0.03f * static_cast<float>(kMax) / dt;

@@ -49,7 +49,8 @@ namespace rfm
 	Vector3 ProjectVectorOnPlane(Vector3 v, Plane p)
 	{
 		v -= dot(v, p.normal) * p.normal;
-		assert(dot(v, p.normal) == 0);
+		float d = dot(v, p.normal);
+		assert(abs(d) < 0.001f);
 		return v;
 	}
 

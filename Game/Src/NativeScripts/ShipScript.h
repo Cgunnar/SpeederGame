@@ -20,9 +20,9 @@ private:
 	rfm::Transform& GetTransform();
 
 	bool m_docked = true;
-	float m_yawSpeed = rfm::DegToRad(20);
-	float m_pitchSpeed = rfm::DegToRad(80);
-	float m_rollSpeed = rfm::DegToRad(50);
+	float m_yawSpeed = rfm::DegToRad(30);
+	float m_pitchSpeed = rfm::DegToRad(100);
+	float m_rollSpeed = rfm::DegToRad(70);
 	float m_thrustSpeed = 14;
 
 	rfm::Vector3 m_controllInputPYR;

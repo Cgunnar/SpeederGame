@@ -230,13 +230,18 @@ namespace rfm
 
 	Matrix3 operator*(const Matrix3& l, const Matrix3& r)
 	{
-		Matrix3 lt = transpose(l);
 		Matrix3 result;
+		result[0][0] = l[0][0] * r[0][0] + l[1][0] * r[0][1] + l[2][0] * r[0][2];
+		result[0][1] = l[0][1] * r[0][0] + l[1][1] * r[0][1] + l[2][1] * r[0][2];
+		result[0][2] = l[0][2] * r[0][0] + l[1][2] * r[0][1] + l[2][2] * r[0][2];
 
-		for (int i = 0; i < 3; i++)
-		{
-			result[i] = Vector3(dot(lt[0], r[i]), dot(lt[1], r[i]), dot(lt[2], r[i]));
-		}
+		result[1][0] = l[0][0] * r[1][0] + l[1][0] * r[1][1] + l[2][0] * r[1][2];
+		result[1][1] = l[0][1] * r[1][0] + l[1][1] * r[1][1] + l[2][1] * r[1][2];
+		result[1][2] = l[0][2] * r[1][0] + l[1][2] * r[1][1] + l[2][2] * r[1][2];
+
+		result[2][0] = l[0][0] * r[2][0] + l[1][0] * r[2][1] + l[2][0] * r[2][2];
+		result[2][1] = l[0][1] * r[2][0] + l[1][1] * r[2][1] + l[2][1] * r[2][2];
+		result[2][2] = l[0][2] * r[2][0] + l[1][2] * r[2][1] + l[2][2] * r[2][2];
 		return result;
 	}
 
@@ -246,17 +251,12 @@ namespace rfm
 		return Vector3(dot(t[0], v), dot(t[1], v), dot(t[2], v));
 	}
 
-	Matrix3 transpose(const Matrix3& matrix)
+	Matrix3 transpose(Matrix3 matrix)
 	{
-		Matrix3 t;
-		for (int col = 0; col < 3; col++)
-		{
-			for (int row = 0; row < 3; row++)
-			{
-				t[row][col] = matrix[col][row];
-			}
-		}
-		return t;
+		std::swap(matrix[0][1], matrix[1][0]);
+		std::swap(matrix[0][2], matrix[2][0]);
+		std::swap(matrix[1][2], matrix[2][1]);
+		return matrix;
 	}
 
 	Matrix3::Matrix3(Matrix m4x4)

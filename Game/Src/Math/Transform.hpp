@@ -39,7 +39,7 @@ namespace rfm
 		Vector3 getTranslation() const;
 		Vector3 getScale() const;
 
-		Matrix getRotationMatrix() const;
+		Matrix3 getRotationMatrix() const;
 
 		Vector3 forward() const;
 		Vector3 up() const;

@@ -29,7 +29,7 @@ void CameraControllerScript::OnUpdate(float dt)
 	Transform& cameraTransform = GetComponent<TransformComp>()->transform;
 	cameraTransform.setRotation(m_pitch, m_yaw, 0);
 
-	moveDir = cameraTransform.getRotationMatrix() * Vector4(moveDir, 0);
+	moveDir = cameraTransform.getRotationMatrix() * moveDir;
 
 	if (in.keyBeingPressed(Input::Space)) moveDir += {0, 1, 0};
 	if (in.keyBeingPressed(Input::C)) moveDir += {0, -1, 0};

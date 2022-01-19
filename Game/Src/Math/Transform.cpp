@@ -45,7 +45,7 @@ namespace rfm
 
 	void Transform::translateL(const Vector3& position)
 	{
-		translateW(this->getRotationMatrix() * Vector4(position, 0));
+		translateW(this->getRotationMatrix() * Vector3(position));
 	}
 
 	void Transform::setRotation(float x, float y, float z)
@@ -132,7 +132,7 @@ namespace rfm
 		scale.z = S[2][2];
 		return scale;
 	}
-	Matrix Transform::getRotationMatrix() const
+	Matrix3 Transform::getRotationMatrix() const
 	{
 		return std::get<1>(decomposeToTRS(m_matrix));
 	}

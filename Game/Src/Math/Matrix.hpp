@@ -3,6 +3,8 @@
 #include <tuple>
 #include "Vector.hpp"
 
+// Matrix[col][row]
+
 namespace rfm
 {
 	class Matrix3;
@@ -19,6 +21,7 @@ namespace rfm
 		Matrix(Vector4 columnVectors[4]);
 		~Matrix() = default;
 
+		// Matrix[col][row]
 		Vector4& operator[] (int index) noexcept;		
 		const Vector4& operator[] (int index) const noexcept;		
 		
@@ -65,7 +68,7 @@ namespace rfm
 		Matrix3(Vector3 columnVectors[3]);
 		~Matrix3() = default;
 
-
+		// Matrix[col][row]
 		Vector3& operator[] (int index) noexcept;
 		const Vector3& operator[] (int index) const noexcept;
 
@@ -79,5 +82,5 @@ namespace rfm
 
 	Matrix3 operator*(const Matrix3& l, const Matrix3& r);
 	Vector3 operator*(const Matrix3& m, const Vector3& v);
-	Matrix3 transpose(const Matrix3& matrix);
+	Matrix3 transpose(Matrix3 matrix);
 }

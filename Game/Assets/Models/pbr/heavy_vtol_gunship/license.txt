@@ -1,0 +1,11 @@
+Model Information:
+* title:	Heavy VTOL gunship
+* source:	https://sketchfab.com/3d-models/heavy-vtol-gunship-86d336e0fa6f40329de8cda4a71d8a17
+* author:	Kai Xiang (https://sketchfab.com/kirikom9000)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Heavy VTOL gunship" (https://sketchfab.com/3d-models/heavy-vtol-gunship-86d336e0fa6f40329de8cda4a71d8a17) by Kai Xiang (https://sketchfab.com/kirikom9000) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

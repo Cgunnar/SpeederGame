@@ -34,8 +34,6 @@ private:
 	rfe::Entity m_sphere2;
 	rfe::Entity m_sphere3;
 	rfe::Entity m_pointLight;
-	rfe::Entity m_oldTerrain;
-	rfe::Entity m_plane;
 
 	std::vector<rfe::Entity> m_entities;
 

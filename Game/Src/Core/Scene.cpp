@@ -39,10 +39,11 @@ Scene::Scene()
 	m_terrDesc.bioms.emplace_back("mountain", 0.2f, 0.55f);
 	m_terrDesc.bioms.emplace_back("mountain_snow", 0.9f, 0.94f);*/
 	m_terrDesc.bioms.emplace_back("mountain", Vector3(0.2f, 0.2f, 0.2f), 0.0f);
-	m_terrDesc.LODs.push_back({ .lod = 0, .visDistThrhold = 200 });
-	m_terrDesc.LODs.push_back({ .lod = 1, .visDistThrhold = 400 });
-	m_terrDesc.LODs.push_back({ .lod = 2, .visDistThrhold = 600 });
-	m_terrDesc.LODs.push_back({ .lod = 3, .visDistThrhold = 800 });
+	m_terrDesc.LODs.push_back({ .lod = 0, .visDistThrhold = 800 });
+	m_terrDesc.LODs.push_back({ .lod = 1, .visDistThrhold = 1200 });
+	m_terrDesc.LODs.push_back({ .lod = 2, .visDistThrhold = 1600 });
+	m_terrDesc.LODs.push_back({ .lod = 3, .visDistThrhold = 2000 });
+	//m_terrDesc.LODs.push_back({ .lod = 4, .visDistThrhold = 3000 });
 
 	m_terrain = EntityReg::CreateEntity();
 	m_terrain.AddComponent<TransformComp>();
@@ -64,36 +65,15 @@ Scene::Scene()
 	m_camera.AddComponent<CameraControllerScript>();
 	m_camera.AddComponent<CameraComp>();
 
-	
-	TerrainMeshGenerator tl;
-	TerrainMeshDesc td;
-	td.uvScale = 1;
-	auto terMesh = tl.CreateTerrainMeshFromBMP("Assets/Textures/noiseTexture.bmp", td);
-	Mesh terrainMesh3(terMesh.verticesTBN, terMesh.indices);
-
-	Material terrainMatSand;
-	terrainMatSand.name = "terrainSandMaterial";
-	terrainMatSand.emissiveFactor = 0;
-	terrainMatSand.SetMetallicRoughnessTexture("Assets/Textures/sand/metallic_roughness.png");
-	terrainMatSand.SetBaseColorTexture("Assets/Textures/sand/basecolor.jpg");
-	terrainMatSand.SetNormalTexture("Assets/Textures/sand/normal.jpg");
-	terrainMatSand.flags |= RenderFlag::sampler_anisotropic_wrap;
-	m_oldTerrain = EntityReg::CreateEntity();
-	m_oldTerrain.AddComponent<TransformComp>()->transform.setTranslation({ 100, 0, 0 });
-	
-	
-	m_oldTerrain.AddComponent<RenderModelComp>(am.AddRenderUnit(terrainMesh3, terrainMatSand));
-
 
 	sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr");
 
 
-	//CreateEntityModel("Assets/Models/MetalRoughSpheres/glTF/pbrSpheres.gltf", { -2, 3, 4 }, { 0, 0, 0 }, 0.2f);
-	//CreateEntityModel("Assets/Models/pbr/razor_crest/scene.gltf", { 4, 5, 0 }, { 0, 0, 0 }, 0.2f);
-	/*CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 4, 2, 2 }, 0, 0.03f);
+	/*CreateEntityModel("Assets/Models/MetalRoughSpheres/glTF/pbrSpheres.gltf", {-2, 3, 4}, {0, 0, 0}, 0.2f);
+	CreateEntityModel("Assets/Models/pbr/razor_crest/scene.gltf", { 4, 5, 0 }, { 0, 0, 0 }, 0.2f);
+	CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 4, 2, 2 }, 0, 0.03f);
 	CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 3, 2, 4 }, { 0,-70, 0 }, 0.03f);
 	CreateEntityModel("Assets/Models/nanosuit/nanosuit.obj", { 2, 1, 5 }, 0, 0.1f);*/
-
 
 	m_arrow = EntityReg::CreateEntity();
 	m_arrow.AddComponent(TransformComp());
@@ -106,15 +86,6 @@ Scene::Scene()
 	sunLight = EntityReg::CreateEntity();
 	sunLight.AddComponent<TransformComp>();
 	sunLight.AddComponent<DirectionalLightComp>()->dirLight.color = { 1, 0.87f, 0.23f };
-
-	
-	m_plane = EntityReg::CreateEntity();
-	m_plane.AddComponent<TransformComp>()->transform.setRotationDeg(90, 0, 0);
-	m_plane.GetComponent<TransformComp>()->transform.setScale(10);
-	Material planeMat;
-	planeMat.baseColorFactor = Vector4(1, 1, 1, 0.8f);
-	planeMat.flags |= RenderFlag::alphaBlend;
-	m_plane.AddComponent<RenderUnitComp>(SimpleMesh::Quad_POS_NOR_UV, planeMat);
 
 
 	Material rusteIronMat;
@@ -168,7 +139,7 @@ void Scene::Update(float dt)
 {
 	EntityReg::RunScripts<CameraControllerScript, ShipScript, TerrainScript>(dt);
 
-	/*if (m_terrainGUI.Show())
+	if (m_terrainGUI.Show())
 	{
 		if (m_terrain.GetComponent<TerrainScript>())
 		{
@@ -183,9 +154,10 @@ void Scene::Update(float dt)
 		m_terrDesc.persistence = guiInput.persistence;
 		m_terrDesc.heightScale = guiInput.heightScale;
 		m_terrDesc.seed = guiInput.seed;
+		m_terrDesc.erosionIterations = guiInput.erosionIterations;
 		m_terrain.AddComponent<TerrainScript>(m_terrDesc);
 		m_terrain.GetComponent<TransformComp>()->transform.setScale(guiInput.scale);
-	}*/
+	}
 
 	static bool shipCam = false;
 	if (Input::Get().keyPressed(Input::Y)) shipCam = !shipCam;

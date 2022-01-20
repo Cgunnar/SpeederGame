@@ -110,7 +110,6 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 		auto optMap = TerrainMapGenerator::GetTerrainMap(m_coord);
 		if (optMap)
 		{
-			std::cout << "LoadedMap\n";
 			m_map = *optMap;
 			m_material.baseColorTexture = AssetManager::Get().LoadTex2DFromMemoryR8G8B8A8(
 				optMap->colorMapRGBA.data(), optMap->width, optMap->height, LoadTexFlag::GenerateMips);

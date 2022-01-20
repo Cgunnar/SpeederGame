@@ -10,24 +10,39 @@
 #include "WorkerThreads.h"
 #include "Hydraulic_Erosion.h"
 #include "Timer.hpp"
+#include "FrameTimer.hpp"
 
 using namespace rfm;
 
 std::mutex TerrainMapGenerator::s_mapMutex;
 
-std::unordered_map<rfm::Vector2I, TerrainMap> TerrainMapGenerator::s_terrainMapHolder;
+std::unordered_map<rfm::Vector2I, TerrainMapGenerator::TerrainMapAndMetaData> TerrainMapGenerator::s_terrainMapHolder;
 bool TerrainMapGenerator::s_initialized = false;
 
 
 
 
 
-void TerrainMapGenerator::AsyncGenerateTerrinMapInternal(const TerrainMapDesc& mapDesc, rfm::Vector2I coord)
+void TerrainMapGenerator::AsyncGenerateTerrinMapInternal(const TerrainMapDesc& mapDesc, rfm::Vector2I coord, uint64_t frameNumber)
 {
-	TerrainMap&& newMap = TerrainMapGenerator::GenerateTerrinMap(mapDesc);
+	TerrainMap newMap = TerrainMapGenerator::GenerateTerrinMap(mapDesc);
 	s_mapMutex.lock();
-	assert(!s_terrainMapHolder.contains(coord));
-	s_terrainMapHolder[coord] = std::move(newMap);
+	if (s_terrainMapHolder.contains(coord))
+	{
+		uint64_t thisframe = FrameTimer::frame();
+		if (thisframe >= s_terrainMapHolder[coord].frameRequested)
+		{
+			s_terrainMapHolder[coord].map = newMap;
+			s_terrainMapHolder[coord].desc = mapDesc;
+			s_terrainMapHolder[coord].frameRequested = frameNumber;
+		}
+	}
+	else
+	{
+		s_terrainMapHolder[coord].map = newMap;
+		s_terrainMapHolder[coord].desc = mapDesc;
+		s_terrainMapHolder[coord].frameRequested = frameNumber;
+	}
 	s_mapMutex.unlock();
 }
 
@@ -56,7 +71,7 @@ TerrainMap TerrainMapGenerator::GenerateTerrinMap(const TerrainMapDesc& mapDesc)
 	map.width = chunkSize;
 	map.heightMap = GenerateNoise(chunkSize, chunkSize, mapDesc.frequencyScale, mapDesc.octaves,
 		mapDesc.persistence, mapDesc.lacunarity, mapDesc.offset, mapDesc.seed);
-	ErosionSimulator::Erode(map);
+	ErosionSimulator::Erode(map, mapDesc.erosionIterations);
 
 	std::vector<Vector4> colorMap;
 	colorMap.resize(chunkSize * (size_t)chunkSize);
@@ -90,14 +105,15 @@ TerrainMap TerrainMapGenerator::GenerateTerrinMap(const TerrainMapDesc& mapDesc)
 
 void TerrainMapGenerator::AsyncGenerateTerrinMap(TerrainMapDesc mapDesc, rfm::Vector2I coord)
 {
+	s_mapMutex.lock();
 	if (s_terrainMapHolder.contains(coord)) //does this need to be locked to prevent ub? No two chunks can have the same coord
 	{
-		assert(false);
-		return;
+		s_terrainMapHolder.erase(coord);
 	}
-	
+	s_mapMutex.unlock();
+
 	//s_terrainMapHolder[coord] = TerrainMapGenerator::GenerateTerrinMap(mapDesc);
-	WorkerThreads::AddTask(TerrainMapGenerator::AsyncGenerateTerrinMapInternal, mapDesc, coord);
+	WorkerThreads::AddTask(TerrainMapGenerator::AsyncGenerateTerrinMapInternal, mapDesc, coord, FrameTimer::frame());
 }
 
 std::optional<TerrainMap> TerrainMapGenerator::GetTerrainMap(rfm::Vector2I coord)
@@ -109,9 +125,9 @@ std::optional<TerrainMap> TerrainMapGenerator::GetTerrainMap(rfm::Vector2I coord
 		//outOpt = std::make_optional(std::move(s_terrainMapHolder[coord]));
 		//s_terrainMapHolder.erase(coord);
 		auto& map = s_terrainMapHolder[coord];
-		if (map.blendedEdges)
+		if (map.map.blendedEdges)
 		{
-			outOpt = std::make_optional(s_terrainMapHolder[coord]);
+			outOpt = std::make_optional(s_terrainMapHolder[coord].map);
 		}
 		else if (s_terrainMapHolder.contains(coord + Vector2I(0, 1)) && s_terrainMapHolder.contains(coord + Vector2I(0, -1)) &&
 			s_terrainMapHolder.contains(coord + Vector2I(1, 0)) && s_terrainMapHolder.contains(coord + Vector2I(-1, 0)) &&
@@ -119,11 +135,11 @@ std::optional<TerrainMap> TerrainMapGenerator::GetTerrainMap(rfm::Vector2I coord
 			s_terrainMapHolder.contains(coord + Vector2I(-1, -1)) && s_terrainMapHolder.contains(coord + Vector2I(1, -1)))
 		{
 			//hope this function is not to slow to hog the mutex for to long
-			BlendEdge(s_terrainMapHolder[coord], s_terrainMapHolder[coord + Vector2I(-1, 0)],
-				s_terrainMapHolder[coord + Vector2I(1, 0)], s_terrainMapHolder[coord + Vector2I(0, 1)],
-				s_terrainMapHolder[coord + Vector2I(0, -1)], s_terrainMapHolder[coord + Vector2I(-1, 1)],
-				s_terrainMapHolder[coord + Vector2I(1, 1)], s_terrainMapHolder[coord + Vector2I(-1, -1)],
-				s_terrainMapHolder[coord + Vector2I(1, -1)]);
+			BlendEdge(s_terrainMapHolder[coord].map, s_terrainMapHolder[coord + Vector2I(-1, 0)].map,
+				s_terrainMapHolder[coord + Vector2I(1, 0)].map, s_terrainMapHolder[coord + Vector2I(0, 1)].map,
+				s_terrainMapHolder[coord + Vector2I(0, -1)].map, s_terrainMapHolder[coord + Vector2I(-1, 1)].map,
+				s_terrainMapHolder[coord + Vector2I(1, 1)].map, s_terrainMapHolder[coord + Vector2I(-1, -1)].map,
+				s_terrainMapHolder[coord + Vector2I(1, -1)].map);
 			//map.blendedEdges = true;
 		}
 	}
@@ -303,9 +319,9 @@ std::vector<float> TerrainMapGenerator::GenerateNoise(int width, int height, flo
 	for (int i = 0; i < height * width; i++)
 	{
 		float normNoise = std::max(0.0f ,(noise[i] + 1) / (2 * maxHeight / 2.0f));
-		//normNoise = std::clamp(normNoise, 0.0f, std::numeric_limits<float>::max());
+		//auto f = [](float h, float k) {return h < k ? 0.0f : 1.0f - sqrt(std::max(0.0f, 1.0f - (h - k) * (h - k))); };
+		//normNoise = scale / 150  * f(normNoise, 0);
 		noise[i] = normNoise;
- 		//noise[i] = rfm::InvLerp(minNoise, maxNoise, noise[i]);
 	}
 	
 

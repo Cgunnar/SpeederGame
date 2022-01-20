@@ -24,9 +24,15 @@ private:
 		TerrainMap& leftUpMap, TerrainMap& righUptMap, TerrainMap& leftDownMap, TerrainMap& rightDownMap);
 	//static void BlendEdge(TerrainMap& centerMap, const TerrainMap& leftMap, const TerrainMap& rightMap, const TerrainMap& upMap, const TerrainMap& downMap,
 	//	const TerrainMap& leftUpMap, const TerrainMap& righUptMap, const TerrainMap& leftDownMap, const TerrainMap& rightDownMap);
-	static void AsyncGenerateTerrinMapInternal(const TerrainMapDesc& mapDesc, rfm::Vector2I coord);
+	static void AsyncGenerateTerrinMapInternal(const TerrainMapDesc& mapDesc, rfm::Vector2I coord, uint64_t frameNumber);
 	static bool s_initialized;
-	static std::unordered_map<rfm::Vector2I, TerrainMap> s_terrainMapHolder;
+	struct TerrainMapAndMetaData
+	{
+		TerrainMap map;
+		TerrainMapDesc desc;
+		uint64_t frameRequested;
+	};
+	static std::unordered_map<rfm::Vector2I, TerrainMapAndMetaData> s_terrainMapHolder;
 	static std::mutex s_mapMutex;
 };
 

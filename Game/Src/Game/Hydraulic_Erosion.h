@@ -11,7 +11,7 @@ class ErosionSimulator
 {
 public:
 	static void Init(int radius);
-	static void Erode(TerrainMap& map);
+	static void Erode(TerrainMap& map, int maxIterations);
 	static HeightAndGradient CalculateHeightAndGradient(const std::vector<float>& nodes, rfm::Vector2 pos);
 private:
 

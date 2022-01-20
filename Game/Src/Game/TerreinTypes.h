@@ -22,6 +22,7 @@ struct TerrainMapDesc
 	int octaves = 1;
 	float persistence = 0.5f;
 	float lacunarity = 1;
+	int erosionIterations = 20000;
 	rfm::Vector2 offset;
 	uint32_t seed = 123456u;
 	std::vector<Biom> bioms;
@@ -94,6 +95,7 @@ struct TerrainDesc
 	int octaves = 1;
 	float persistence = 0.5f;
 	float lacunarity = 1;
+	int erosionIterations = 50000;
 	rfm::Vector2 baseOffset;
 	uint32_t seed = 123456u;
 	std::vector<Biom> bioms;

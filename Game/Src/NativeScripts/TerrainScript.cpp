@@ -25,6 +25,7 @@ TerrainScript::TerrainScript(TerrainDesc desc)
 	m_mapDesc.persistence = desc.persistence;
 	m_mapDesc.offset = desc.baseOffset;
 	m_mapDesc.seed = desc.seed;
+	m_mapDesc.erosionIterations = desc.erosionIterations;
 
 	m_meshDesc.heightScale = desc.heightScale;
 	m_meshDesc.heightScaleFunc = desc.heightScaleFunc;

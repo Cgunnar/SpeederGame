@@ -5,6 +5,7 @@
 #include "GraphicsUtilityTypes.h"
 #include "GraphicsResources.h"
 
+constexpr int chunkSize = 241;
 struct Biom
 {
 	Biom() = default;

@@ -348,10 +348,10 @@ namespace rfm
 
 	void Vector2::normalize()
 	{
-		float f = length();
-		if (f == 0) return;
-		f = 1.0f / f;
-		*this = f * *this;
+		assert(x || y);
+		float f = 1.0f / sqrt(x * x + y * y);
+		x *= f;
+		y *= f;
 	}
 
 	Vector2I::Vector2I(int x, int y) : x(x), y(y)

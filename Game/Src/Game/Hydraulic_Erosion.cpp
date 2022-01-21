@@ -45,7 +45,6 @@ constexpr float gravity = 4;
 constexpr float initialWaterVolume = 1;
 constexpr float initialSpeed = 1;
 constexpr int maxDropletLifetime = 25;
-constexpr int erosionRadius = 3;
 constexpr unsigned int seed = 421212;
 
 
@@ -114,11 +113,13 @@ void ErosionSimulator::Erode(TerrainMap& map, int maxIterations)
 				float amountToErode = std::min((sedimentCapacity - sediment) * erodeSpeed, -deltaHeight);
 
 				// Use erosion brush to erode from all nodes inside the droplet's erosion radius
-				for (int brushPointIndex = 0; brushPointIndex < s_brush.indices[dropIndex].size(); brushPointIndex++) {
-					int nodeIndex = s_brush.indices[dropIndex][brushPointIndex];
-					float weighedErodeAmount = amountToErode * s_brush.weights[dropIndex][brushPointIndex];
-					float deltaSediment = (map.heightMap[nodeIndex] < weighedErodeAmount) ? map.heightMap[nodeIndex] : weighedErodeAmount;
-					map.heightMap[nodeIndex] -= deltaSediment;
+				for (int brushPointIndex = 0; brushPointIndex < s_brush.indexAndWaight[dropIndex].size(); brushPointIndex++)
+				{
+					IndexAndWeight iw = s_brush.indexAndWaight[dropIndex][brushPointIndex];
+					float weighedErodeAmount = amountToErode * iw.weight;
+					float heightAtIndex = map.heightMap[iw.index];
+					float deltaSediment = heightAtIndex < weighedErodeAmount ? heightAtIndex : weighedErodeAmount;
+					map.heightMap[iw.index] = heightAtIndex - deltaSediment;
 					sediment += deltaSediment;
 				}
 			}
@@ -175,16 +176,13 @@ float CalculateHeight(const std::vector<float>& nodes, Vector2 pos)
 
 void ErosionSimulator::InitializeBrush(int radius)
 {
-	s_brush.indices.resize(chunkSize * chunkSize);
-	s_brush.weights.resize(chunkSize * chunkSize);
-
 	std::vector<int> xOffsets(radius * radius * 4);
 	std::vector<int> yOffsets(radius * radius * 4);
 	std::vector<float> weights(radius * radius * 4);
 	float weightSum = 0;
 	int addIndex = 0;
 
-	for (int i = 0; i < s_brush.indices.size(); i++) {
+	for (int i = 0; i < s_brush.indexAndWaight.size(); i++) {
 		int centreX = i % chunkSize;
 		int centreY = i / chunkSize;
 
@@ -212,12 +210,11 @@ void ErosionSimulator::InitializeBrush(int radius)
 		}
 
 		int numEntries = addIndex;
-		s_brush.indices[i] = std::vector<int>(numEntries);
-		s_brush.weights[i] = std::vector<float>(numEntries);
+		s_brush.indexAndWaight[i] = std::vector<IndexAndWeight>(numEntries);
 
 		for (int j = 0; j < numEntries; j++) {
-			s_brush.indices[i][j] = (yOffsets[j] + centreY) * chunkSize + xOffsets[j] + centreX;
-			s_brush.weights[i][j] = weights[j] / weightSum;
+			s_brush.indexAndWaight[i][j].index = (yOffsets[j] + centreY) * chunkSize + xOffsets[j] + centreX;
+			s_brush.indexAndWaight[i][j].weight = weights[j] / weightSum;
 		}
 	}
 	s_brush.initialized = true;

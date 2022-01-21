@@ -4,7 +4,7 @@
 #include "TerrainTypes.h"
 
 
-constexpr int chunkSize = 241;
+
 class TerrainMapGenerator
 {
 public:

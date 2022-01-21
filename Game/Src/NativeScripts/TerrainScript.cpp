@@ -120,36 +120,25 @@ void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 		m_chunksToLoad.pop();
 	}
 
-	
-	for (int y = 0; y <= m_chunksVisibleInViewDist + 1; y++)
+
+	std::vector<Vector2I> chunkCoordsToUpdate;
+	for (int y = -m_chunksVisibleInViewDist; y <= m_chunksVisibleInViewDist; y++)
 	{
-		for (int x = 0; x <= m_chunksVisibleInViewDist + 1; x++)
+		for (int x = -m_chunksVisibleInViewDist; x <= m_chunksVisibleInViewDist; x++)
 		{
-			Vector2I viewedChunk0 = chunkCoord + Vector2I(x, y);
-			Vector2I viewedChunk1 = chunkCoord + Vector2I(-x, y);
-			Vector2I viewedChunk2 = chunkCoord + Vector2I(x, -y);
-			Vector2I viewedChunk3 = chunkCoord + Vector2I(-x, -y);
-			if (!m_chunkMap.contains(viewedChunk0))
-			{
-				m_chunkMap[viewedChunk0] = new TerrainChunk(viewedChunk0, m_chunkMeshSize, transform, m_meshDesc, m_lods);
-				m_chunksToLoad.emplace(viewedChunk0);
-			}
-			if (y == 0 && x == 0) continue;
-			if (!m_chunkMap.contains(viewedChunk1))
-			{
-				m_chunkMap[viewedChunk1] = new TerrainChunk(viewedChunk1, m_chunkMeshSize, transform, m_meshDesc, m_lods);
-				m_chunksToLoad.emplace(viewedChunk1);
-			}
-			if (!m_chunkMap.contains(viewedChunk2))
-			{
-				m_chunkMap[viewedChunk2] = new TerrainChunk(viewedChunk2, m_chunkMeshSize, transform, m_meshDesc, m_lods);
-				m_chunksToLoad.emplace(viewedChunk2);
-			}
-			if (!m_chunkMap.contains(viewedChunk3))
-			{
-				m_chunkMap[viewedChunk3] = new TerrainChunk(viewedChunk3, m_chunkMeshSize, transform, m_meshDesc, m_lods);
-				m_chunksToLoad.emplace(viewedChunk3);
-			}
+			chunkCoordsToUpdate.emplace_back(x, y);
+		}
+	}
+	std::sort(chunkCoordsToUpdate.begin(), chunkCoordsToUpdate.end(), [](auto a, auto b) {
+		return a.length() < b.length(); });
+
+	for (auto& c : chunkCoordsToUpdate)
+	{
+		Vector2I viewedChunk = chunkCoord + c;
+		if (!m_chunkMap.contains(viewedChunk))
+		{
+			m_chunkMap[viewedChunk] = new TerrainChunk(viewedChunk, m_chunkMeshSize, transform, m_meshDesc, m_lods);
+			m_chunksToLoad.emplace(viewedChunk);
 		}
 	}
 }

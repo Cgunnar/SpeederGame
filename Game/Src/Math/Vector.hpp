@@ -108,6 +108,7 @@ namespace rfm
 		bool operator ==(const Vector2I& other) const;
 		int& operator[] (int index) noexcept;
 		Vector2I& operator +=(const Vector2I& other);
+		float length() const;
 		int x = 0;
 		int y = 0;
 	};

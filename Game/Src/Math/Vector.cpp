@@ -380,4 +380,8 @@ namespace rfm
 		this->y = this->y + other.y;
 		return *this;
 	}
+	float Vector2I::length() const
+	{
+		return sqrt(x * x + y * y);
+	}
 }

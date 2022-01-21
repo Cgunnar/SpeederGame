@@ -3,6 +3,9 @@
 #include "TerrainTypes.h"
 struct TerrainGUIValues
 {
+	float mapParamHFparam0 = 0;
+	float mapParamHFparam1 = 200;
+	float normFactor = 1.0f;
 	float scale = 1;
 	float frequencyScale = 10;
 	float heightScale = 10;

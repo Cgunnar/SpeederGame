@@ -17,8 +17,7 @@ public:
 	static void Destroy();
 
 private:
-	static std::vector<float> GenerateNoise(int width, int height, float frequencyScale, int octaves, float persistance, float lacunarity,
-		rfm::Vector2 offset, uint32_t seed);
+	static std::vector<float> GenerateNoise(int width, int height, const TerrainMapDesc& mapDesc);
 
 	static void BlendEdge(TerrainMap& centerMap, TerrainMap& leftMap, TerrainMap& rightMap, TerrainMap& upMap, TerrainMap& downMap,
 		TerrainMap& leftUpMap, TerrainMap& righUptMap, TerrainMap& leftDownMap, TerrainMap& rightDownMap);

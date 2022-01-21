@@ -18,7 +18,7 @@ TerrainScript::~TerrainScript()
 
 TerrainScript::TerrainScript(TerrainDesc desc)
 {	
-	m_mapDesc.bioms = desc.bioms;
+	/*m_mapDesc.bioms = desc.bioms;
 	m_mapDesc.frequencyScale = desc.frequencyScale;
 	m_mapDesc.lacunarity = desc.lacunarity;
 	m_mapDesc.octaves = desc.octaves;
@@ -26,10 +26,13 @@ TerrainScript::TerrainScript(TerrainDesc desc)
 	m_mapDesc.offset = desc.baseOffset;
 	m_mapDesc.seed = desc.seed;
 	m_mapDesc.erosionIterations = desc.erosionIterations;
+	m_mapDesc.heightScaleFunc = desc.mapHeightScaleFunc;*/
+	m_mapDesc = desc.map;
 
-	m_meshDesc.heightScale = desc.heightScale;
-	m_meshDesc.heightScaleFunc = desc.heightScaleFunc;
-	m_meshDesc.uvScale = desc.uvScale;
+	m_meshDesc = desc.mesh;
+	/*m_meshDesc.heightScale = desc.mesh.heightScale;
+	m_meshDesc.heightScaleFunc = desc.mesh.heightScaleFunc;
+	m_meshDesc.uvScale = desc.mesh.uvScale;*/
 	
 	if (desc.LODs.empty())
 	{

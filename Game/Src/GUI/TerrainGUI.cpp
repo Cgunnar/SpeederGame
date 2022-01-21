@@ -27,6 +27,9 @@ bool TerrainGUI::Show()
 	c = c || ImGui::SliderFloat2("baseOffset", (float*)&m_values.baseOffset, -50, 50);
 	c = c || ImGui::SliderInt("octaves", &m_values.octaves, 1, 20);
 	c = c || ImGui::SliderInt("erosion", &m_values.erosionIterations, 0, 100000);
+	c = c || ImGui::SliderFloat("p0", &m_values.mapParamHFparam0, 0, 1);
+	c = c || ImGui::SliderFloat("p1", &m_values.mapParamHFparam1, 100, 1000);
+	c = c || ImGui::SliderFloat("normFactor", &m_values.normFactor, 0.5f, 3.0f);
 	static int seed = m_values.seed;
 	c = c || ImGui::SliderInt("seed", &seed, 0, 10);
 	m_values.seed = seed;

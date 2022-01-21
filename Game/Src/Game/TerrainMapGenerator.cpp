@@ -69,8 +69,7 @@ TerrainMap TerrainMapGenerator::GenerateTerrinMap(const TerrainMapDesc& mapDesc)
 	TerrainMap map;
 	map.height = chunkSize;
 	map.width = chunkSize;
-	map.heightMap = GenerateNoise(chunkSize, chunkSize, mapDesc.frequencyScale, mapDesc.octaves,
-		mapDesc.persistence, mapDesc.lacunarity, mapDesc.offset, mapDesc.seed);
+	map.heightMap = GenerateNoise(chunkSize, chunkSize, mapDesc);
 	ErosionSimulator::Erode(map, mapDesc.erosionIterations);
 
 	std::vector<Vector4> colorMap;
@@ -260,21 +259,20 @@ void TerrainMapGenerator::BlendEdge(TerrainMap& centerMap, TerrainMap &leftMap, 
 
 
 
-std::vector<float> TerrainMapGenerator::GenerateNoise(int width, int height, float scale, int octaves, float persistance, float lacunarity,
-	rfm::Vector2 offset, uint32_t seed)
+std::vector<float> TerrainMapGenerator::GenerateNoise(int width, int height, const TerrainMapDesc& mapDesc)
 {
-	assert(width > 0 && height > 0 && scale > 0 && octaves >= 1 && lacunarity >= 1 && 0 <= persistance && persistance <= 1);
+	assert(width > 0 && height > 0 && mapDesc.frequencyScale > 0 && mapDesc.octaves >= 1 && mapDesc.lacunarity >= 1 && 0 <= mapDesc.persistence && mapDesc.persistence <= 1);
 
-	Vector2* octRandOffsets = new Vector2[octaves]();
-	for (int i = 0; i < octaves; i++)
+	Vector2* octRandOffsets = new Vector2[mapDesc.octaves]();
+	for (int i = 0; i < mapDesc.octaves; i++)
 	{
-		octRandOffsets[i].x = GenRandFloat(-10000, 10000, seed + i);
+		octRandOffsets[i].x = GenRandFloat(-10000, 10000, mapDesc.seed + i);
 		octRandOffsets[i].y = GenRandFloat(-10000, 10000, octRandOffsets[i].x);
-		octRandOffsets[i].x += offset.x;
-		octRandOffsets[i].y -= offset.y;
+		octRandOffsets[i].x += mapDesc.offset.x;
+		octRandOffsets[i].y -= mapDesc.offset.y;
 	}
 
-	const siv::PerlinNoise::seed_type sivseed = seed;
+	const siv::PerlinNoise::seed_type sivseed = mapDesc.seed;
 	const siv::PerlinNoise perlin{ sivseed };
 
 	
@@ -292,15 +290,15 @@ std::vector<float> TerrainMapGenerator::GenerateNoise(int width, int height, flo
 			float frequency = 1;	
 			float noiseHeight = 0;
 
-			for (int i = 0; i < octaves; i++)
+			for (int i = 0; i < mapDesc.octaves; i++)
 			{
-				float sampleX = ((float)x + octRandOffsets[i].x - width / 2.0f) * frequency / scale;
-				float sampleY = ((float)y + octRandOffsets[i].y - height / 2.0f) * frequency / scale;
+				float sampleX = ((float)x + octRandOffsets[i].x - width / 2.0f) * frequency / mapDesc.frequencyScale;
+				float sampleY = ((float)y + octRandOffsets[i].y - height / 2.0f) * frequency / mapDesc.frequencyScale;
 
 				float perlinNoise = amplitude * static_cast<float>(perlin.noise2D(sampleX, sampleY));
 				noiseHeight += perlinNoise;
-				amplitude *= persistance;
-				frequency *= lacunarity;
+				amplitude *= mapDesc.persistence;
+				frequency *= mapDesc.lacunarity;
 			}
 			if (noiseHeight > maxNoise)
 			{
@@ -314,13 +312,15 @@ std::vector<float> TerrainMapGenerator::GenerateNoise(int width, int height, flo
 			noise[y * static_cast<size_t>(width) + x] = noiseHeight;
 		}
 	}
-	float maxHeight = siv::perlin_detail::MaxAmplitude(octaves, persistance); 
+	float maxHeight = siv::perlin_detail::MaxAmplitude(mapDesc.octaves, mapDesc.persistence);
 
 	for (int i = 0; i < height * width; i++)
 	{
-		float normNoise = std::max(0.0f ,(noise[i] + 1) / (2 * maxHeight / 2.0f));
+		float normNoise = std::max(0.0f ,(noise[i] + 1) / (maxHeight * mapDesc.normalizationFactor));
+		//float normNoise = std::max(0.0f ,(noise[i] + 1) / (2 * maxHeight / 1.5f));
 		//auto f = [](float h, float k) {return h < k ? 0.0f : 1.0f - sqrt(std::max(0.0f, 1.0f - (h - k) * (h - k))); };
 		//normNoise = scale / 150  * f(normNoise, 0);
+		normNoise = mapDesc.heightScaleFunc(normNoise, mapDesc);
 		noise[i] = normNoise;
 	}
 	

@@ -25,20 +25,27 @@ Scene::Scene()
 {
 	AssetManager& am = AssetManager::Get();
 	
-	m_terrDesc.lacunarity = 2;
-	m_terrDesc.octaves = 8;
-	m_terrDesc.persistence = 0.5f;
-	m_terrDesc.frequencyScale = 150;
-	m_terrDesc.baseOffset = {0,0};
-	m_terrDesc.seed = 10;
-	m_terrDesc.heightScale = 100;
-	m_terrDesc.funktionParmK = 0;
+	m_terrDesc.map.lacunarity = 2;
+	m_terrDesc.map.octaves = 8;
+	m_terrDesc.map.persistence = 0.5f;
+	m_terrDesc.map.frequencyScale = 1600;
+	m_terrDesc.map.offset = {0,0};
+	m_terrDesc.map.seed = 10;
+	m_terrDesc.map.erosionIterations = 40000;
+	m_terrDesc.map.hFparam0 = 0;
+	m_terrDesc.map.hFparam1 = 160;
+	m_terrDesc.map.normalizationFactor = 1.1f;
+	m_terrDesc.map.heightScaleFunc = [](float h, TerrainMapDesc d){ 
+		return d.frequencyScale / d.hFparam1 * (h < d.hFparam0 ? 0.0f : 1.0f - sqrt(std::max(0.0f, 1.0f - (h - d.hFparam0) * (h - d.hFparam0)))); 
+	};
+	m_terrDesc.mesh.heightScale = 200;
+	m_terrDesc.mesh.funktionParmK = 0;
 	//m_terrDesc.heightScaleFunc = [](float h, float k) {return h < k ? 0.0f : 1.0f - sqrt(std::max(0.0f, 1.0f - (h-k)*(h-k))); };
 	/*m_terrDesc.bioms.emplace_back("water", Vector3(0,0,1), 0, !true);
 	m_terrDesc.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.3f);
 	m_terrDesc.bioms.emplace_back("mountain", 0.2f, 0.55f);
 	m_terrDesc.bioms.emplace_back("mountain_snow", 0.9f, 0.94f);*/
-	m_terrDesc.bioms.emplace_back("mountain", Vector3(0.2f, 0.2f, 0.2f), 0.0f);
+	m_terrDesc.map.bioms.emplace_back("mountain", Vector3(0.2f, 0.2f, 0.2f), 0.0f);
 	m_terrDesc.LODs.push_back({ .lod = 0, .visDistThrhold = 800 });
 	m_terrDesc.LODs.push_back({ .lod = 1, .visDistThrhold = 1200 });
 	m_terrDesc.LODs.push_back({ .lod = 2, .visDistThrhold = 1600 });
@@ -47,9 +54,9 @@ Scene::Scene()
 
 	m_terrain = EntityReg::CreateEntity();
 	m_terrain.AddComponent<TransformComp>();
-	//m_terrain.GetComponent<TransformComp>()->transform.setScale(0.6f);
+	m_terrain.GetComponent<TransformComp>()->transform.setScale(0.7f);
 	m_terrain.GetComponent<TransformComp>()->transform.setRotationDeg(0, 0, 0);
-	m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, -30, 0);
+	m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, -100, 0);
 	m_terrain.AddComponent<TerrainScript>(m_terrDesc);
 
 
@@ -139,7 +146,7 @@ void Scene::Update(float dt)
 {
 	EntityReg::RunScripts<CameraControllerScript, ShipScript, TerrainScript>(dt);
 
-	if (m_terrainGUI.Show())
+	/*if (m_terrainGUI.Show())
 	{
 		if (m_terrain.GetComponent<TerrainScript>())
 		{
@@ -147,17 +154,20 @@ void Scene::Update(float dt)
 		}
 		
 		auto guiInput = m_terrainGUI.GetValues();
-		m_terrDesc.baseOffset = guiInput.baseOffset;
-		m_terrDesc.frequencyScale = guiInput.frequencyScale;
-		m_terrDesc.lacunarity = guiInput.lacunarity;
-		m_terrDesc.octaves = guiInput.octaves;
-		m_terrDesc.persistence = guiInput.persistence;
-		m_terrDesc.heightScale = guiInput.heightScale;
-		m_terrDesc.seed = guiInput.seed;
-		m_terrDesc.erosionIterations = guiInput.erosionIterations;
+		m_terrDesc.map.offset = guiInput.baseOffset;
+		m_terrDesc.map.frequencyScale = guiInput.frequencyScale;
+		m_terrDesc.map.lacunarity = guiInput.lacunarity;
+		m_terrDesc.map.octaves = guiInput.octaves;
+		m_terrDesc.map.persistence = guiInput.persistence;
+		m_terrDesc.map.seed = guiInput.seed;
+		m_terrDesc.map.erosionIterations = guiInput.erosionIterations;
+		m_terrDesc.map.hFparam0 = guiInput.mapParamHFparam0;
+		m_terrDesc.map.hFparam1 = guiInput.mapParamHFparam1;
+		m_terrDesc.map.normalizationFactor = guiInput.normFactor;
+		m_terrDesc.mesh.heightScale = guiInput.heightScale;
 		m_terrain.AddComponent<TerrainScript>(m_terrDesc);
 		m_terrain.GetComponent<TransformComp>()->transform.setScale(guiInput.scale);
-	}
+	}*/
 
 	static bool shipCam = false;
 	if (Input::Get().keyPressed(Input::Y)) shipCam = !shipCam;

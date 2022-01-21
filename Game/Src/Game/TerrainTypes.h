@@ -26,6 +26,10 @@ struct TerrainMapDesc
 	rfm::Vector2 offset;
 	uint32_t seed = 123456u;
 	std::vector<Biom> bioms;
+	float normalizationFactor = 1.0f;
+	float hFparam0 = 0;
+	float hFparam1 = 0;
+	std::function<float(float, const TerrainMapDesc&)> heightScaleFunc = [](float s, const TerrainMapDesc& d) { return s; };
 };
 
 struct TerrainMap
@@ -94,17 +98,20 @@ struct LODinfo
 
 struct TerrainDesc
 {
-	float frequencyScale = 10;
-	float heightScale = 10;
-	int octaves = 1;
-	float persistence = 0.5f;
-	float lacunarity = 1;
-	int erosionIterations = 10000;
-	rfm::Vector2 baseOffset;
-	uint32_t seed = 123456u;
-	std::vector<Biom> bioms;
+	TerrainMapDesc map;
+	TerrainMeshDesc mesh;
 	std::vector<LODinfo> LODs;
-	rfm::Vector2 uvScale = { 0,0 }; //set to 0,0 to use width, height
-	float funktionParmK = 0;
-	std::function<float(float, float)> heightScaleFunc = [](float s, float k) { return s; };
+	//float frequencyScale = 10;
+	//float heightScale = 10;
+	//int octaves = 1;
+	//float persistence = 0.5f;
+	//float lacunarity = 1;
+	//int erosionIterations = 10000;
+	//rfm::Vector2 baseOffset;
+	//uint32_t seed = 123456u;
+	//std::vector<Biom> bioms;
+	//rfm::Vector2 uvScale = { 0,0 }; //set to 0,0 to use width, height
+	//float funktionParmK = 0;
+	//std::function<float(float, float)> meshHeightScaleFunc = [](float s, float k) { return s; };
+	//std::function<float(float, const TerrainMapDesc&)> mapHeightScaleFunc = [](float s, const TerrainMapDesc& d) { return s; };
 };

@@ -1,6 +1,6 @@
 #pragma once
 #include "GuiDebug.h"
-#include "TerreinTypes.h"
+#include "TerrainTypes.h"
 struct TerrainGUIValues
 {
 	float scale = 1;

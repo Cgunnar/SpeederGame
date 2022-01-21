@@ -1,7 +1,7 @@
 #pragma once
 
 #include "RimfrostMath.hpp"
-#include "TerreinTypes.h"
+#include "TerrainTypes.h"
 
 
 constexpr int chunkSize = 241;

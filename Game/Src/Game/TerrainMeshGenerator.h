@@ -1,7 +1,7 @@
 #pragma once
 #include "RimfrostMath.hpp"
 #include "GraphicsResources.h"
-#include "TerreinTypes.h"
+#include "TerrainTypes.h"
 
 
 class TerrainMeshGenerator

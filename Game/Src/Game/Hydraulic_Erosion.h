@@ -1,5 +1,5 @@
 #pragma once
-#include "TerreinTypes.h"
+#include "TerrainTypes.h"
 #include "RimfrostMath.hpp"
 struct HeightAndGradient
 {

@@ -6,7 +6,7 @@
 #include "RenderComponents.h"
 #include "GuiDebug.h"
 #include "TerrainGUI.h"
-#include "TerreinTypes.h"
+#include "TerrainTypes.h"
 #include "SkyBox.h"
 
 

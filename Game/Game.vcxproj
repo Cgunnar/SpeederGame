@@ -122,7 +122,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClInclude Include="Src\Game\TerrainChunk.h" />
     <ClInclude Include="Src\Game\TerrainMapGenerator.h" />
     <ClInclude Include="Src\Game\TerrainMeshGenerator.h" />
-    <ClInclude Include="Src\Game\TerreinTypes.h" />
+    <ClInclude Include="Src\Game\TerrainTypes.h" />
     <ClInclude Include="Src\Graphics\AssimpLoader.h" />
     <ClInclude Include="Src\Graphics\DX11.h" />
     <ClInclude Include="Src\Graphics\Geometry.h" />

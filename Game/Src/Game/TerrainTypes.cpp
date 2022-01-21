@@ -1,5 +1,5 @@
 #include "pch.hpp"
-#include "TerreinTypes.h"
+#include "TerrainTypes.h"
 
 #include "TerrainMeshGenerator.h"
 #include "AssetManager.h"

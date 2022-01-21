@@ -108,7 +108,7 @@
     <ClInclude Include="Src\Game\TerrainMeshGenerator.h">
       <Filter>Src\Game</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Game\TerreinTypes.h">
+    <ClInclude Include="Src\Game\TerrainTypes.h">
       <Filter>Src\Game</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\AssimpLoader.h">

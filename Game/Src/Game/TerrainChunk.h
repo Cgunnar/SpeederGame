@@ -1,7 +1,7 @@
 #pragma once
 #include "rfEntity.hpp"
 #include "RimfrostMath.hpp"
-#include "TerreinTypes.h"
+#include "TerrainTypes.h"
 
 
 

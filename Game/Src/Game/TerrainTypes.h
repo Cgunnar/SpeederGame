@@ -22,7 +22,7 @@ struct TerrainMapDesc
 	int octaves = 1;
 	float persistence = 0.5f;
 	float lacunarity = 1;
-	int erosionIterations = 20000;
+	int erosionIterations = 10000;
 	rfm::Vector2 offset;
 	uint32_t seed = 123456u;
 	std::vector<Biom> bioms;
@@ -71,14 +71,18 @@ public:
 	void OnReceive(TerrainMesh&& mesh);
 	void RequestMesh(const TerrainMap& map, TerrainMeshDesc desc);
 	void GenerateRenderMesh(MeshFormat format = MeshFormat::POS_NOR_UV_TAN_BITAN);
+	void Reset();
 	TerrainMesh mesh;
 	MeshFormat meshFormat = MeshFormat::POS_NOR_UV_TAN_BITAN;
 	GID renderMesh;
-	bool hasRequestedMesh = false;
+	bool waitingOnMesh = false;
 	bool hasMesh = false;
 	bool hasRenderMesh = false;
+	bool hasTriangles = false;
+	int GetLod() const;
 private:
 	int m_lod;
+	std::mutex m_mutex;
 };
 
 struct LODinfo
@@ -95,7 +99,7 @@ struct TerrainDesc
 	int octaves = 1;
 	float persistence = 0.5f;
 	float lacunarity = 1;
-	int erosionIterations = 50000;
+	int erosionIterations = 10000;
 	rfm::Vector2 baseOffset;
 	uint32_t seed = 123456u;
 	std::vector<Biom> bioms;

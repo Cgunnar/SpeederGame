@@ -26,7 +26,7 @@ private:
 	TerrainMap m_map;
 	Material m_material;
 	std::vector<LODinfo> m_lods;
-	std::vector<TerrainLODMesh> m_lodMeshes;
+	std::vector<std::unique_ptr<TerrainLODMesh>> m_lodMeshes;
 	int m_chunkSize = 0;
 	bool m_shouldBeRemoved = false;
 	bool m_visible = false;

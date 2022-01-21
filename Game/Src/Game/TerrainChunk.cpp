@@ -16,7 +16,7 @@ TerrainChunk::~TerrainChunk()
 {
 	for (auto& l : m_lodMeshes)
 	{
-		while (l.hasRequestedMesh && !l.hasMesh)
+		while (l->waitingOnMesh && !l->hasMesh)
 		{
 			std::this_thread::yield();
 		}
@@ -30,7 +30,7 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, Transform terrainTrans
 {
 	for (const auto& lod : m_lods)
 	{
-		m_lodMeshes.emplace_back(lod.lod);
+		m_lodMeshes.emplace_back(std::make_unique<TerrainLODMesh>(lod.lod));
 	}
 
 	m_position = size * (Vector2)coord;
@@ -80,25 +80,29 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 			if (lodIndex != m_prevLODindex)
 			{
 				auto& lodMesh = m_lodMeshes[lodIndex];
-				if (lodMesh.hasMesh)
+				if (lodMesh->hasMesh)
 				{
-					if (!lodMesh.hasRenderMesh) lodMesh.GenerateRenderMesh();
-					m_chunkEntity.GetComponent<RenderModelComp>()->SetRenderUnit(lodMesh.renderMesh, m_material);
+					if (!lodMesh->hasRenderMesh) lodMesh->GenerateRenderMesh();
+					m_chunkEntity.GetComponent<RenderModelComp>()->SetRenderUnit(lodMesh->renderMesh, m_material);
+					if (m_prevLODindex != -1)
+					{
+						m_lodMeshes[m_prevLODindex]->Reset();
+					}
 					m_prevLODindex = lodIndex;
 				}
-				else if (!lodMesh.hasRequestedMesh)
+				else if (!lodMesh->waitingOnMesh)
 				{
-					lodMesh.RequestMesh(m_map, m_meshDesc);
+					lodMesh->RequestMesh(m_map, m_meshDesc);
 					if (m_prevLODindex == -1) m_visible = false;
 				}
 			}
 		}
-		else if (viewDist > 2 * maxViewDist)
+		else if (viewDist > 1.5f * maxViewDist)
 		{
 			bool safeToRemove = true;
 			for (auto& l : m_lodMeshes)
 			{
-				safeToRemove = safeToRemove && (l.hasMesh || !l.hasRequestedMesh);
+				safeToRemove = safeToRemove && !l->waitingOnMesh;
 			}
 			m_shouldBeRemoved = safeToRemove;
 		}
@@ -137,7 +141,7 @@ void TerrainChunk::UpdateChunkTransform(rfm::Transform transform)
 
 Triangle TerrainChunk::TriangleAtLocation(Vector3 pos)
 {
-	if (m_lodMeshes.empty() || !m_lodMeshes[0].hasRenderMesh)
+	if (m_lodMeshes.empty() || !m_lodMeshes[0]->hasTriangles)
 	{
 		std::cout << "lod 0 has not loaded" << std::endl;
 		return Triangle();
@@ -152,8 +156,8 @@ Triangle TerrainChunk::TriangleAtLocation(Vector3 pos)
 	if (py == m_chunkSize) py = m_chunkSize - 1;
 	assert(px < m_chunkSize && py < m_chunkSize);
 	int index = 2 * (py * m_chunkSize + px);
-	Triangle t0 = m_lodMeshes[0].mesh.triangles[index];
-	Triangle t1 = m_lodMeshes[0].mesh.triangles[index + 1];
+	Triangle t0 = m_lodMeshes[0]->mesh.triangles[index];
+	Triangle t1 = m_lodMeshes[0]->mesh.triangles[index + 1];
 	Vector2 topLeft = { t0[0].x, t0[0].z };
 	Vector2 botRight = { t1[1].x, t1[1].z };
 

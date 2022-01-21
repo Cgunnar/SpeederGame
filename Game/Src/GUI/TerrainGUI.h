@@ -9,7 +9,7 @@ struct TerrainGUIValues
 	int octaves = 1;
 	float persistence = 0.5f;
 	float lacunarity = 1;
-	int erosionIterations = 20000;
+	int erosionIterations = 10000;
 	rfm::Vector2 baseOffset;
 	uint32_t seed = 123456u;
 	rfm::Vector2 uvScale = { 0,0 }; //set to 0,0 to use width, height

@@ -43,7 +43,7 @@ Scene::Scene()
 	m_terrDesc.LODs.push_back({ .lod = 1, .visDistThrhold = 1200 });
 	m_terrDesc.LODs.push_back({ .lod = 2, .visDistThrhold = 1600 });
 	m_terrDesc.LODs.push_back({ .lod = 3, .visDistThrhold = 2000 });
-	m_terrDesc.LODs.push_back({ .lod = 4, .visDistThrhold = 3000 });
+	m_terrDesc.LODs.push_back({ .lod = 6, .visDistThrhold = 3000 });
 
 	m_terrain = EntityReg::CreateEntity();
 	m_terrain.AddComponent<TransformComp>();
@@ -164,6 +164,8 @@ void Scene::Update(float dt)
 	if (shipCam) m_camera.GetComponent<TransformComp>()->transform = m_ship.GetComponent<ShipScript>()->GetCameraFollowTransform();;
 
 	m_dirlightContr.Show();
+
+	ImGui::Text("camera pos: %s", m_camera.GetComponent<TransformComp>()->transform.getTranslation().ToString().c_str());
 
 	sunLight.GetComponent<DirectionalLightComp>()->dirLight.dir = m_dirlightContr.slider1.value;
 	sunLight.GetComponent<DirectionalLightComp>()->dirLight.color = m_dirlightContr.slider2.value;

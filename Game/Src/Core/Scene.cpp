@@ -29,7 +29,7 @@ Scene::Scene()
 	m_terrDesc.map.octaves = 8;
 	m_terrDesc.map.persistence = 0.5f;
 	m_terrDesc.map.frequencyScale = 1600;
-	m_terrDesc.map.offset = {0,0};
+	m_terrDesc.map.offset = {-1600, -1200};
 	m_terrDesc.map.seed = 10;
 	m_terrDesc.map.erosionIterations = 40000;
 	m_terrDesc.map.hFparam0 = 0;
@@ -41,16 +41,12 @@ Scene::Scene()
 	m_terrDesc.mesh.heightScale = 200;
 	m_terrDesc.mesh.funktionParmK = 0;
 	//m_terrDesc.heightScaleFunc = [](float h, float k) {return h < k ? 0.0f : 1.0f - sqrt(std::max(0.0f, 1.0f - (h-k)*(h-k))); };
-	/*m_terrDesc.bioms.emplace_back("water", Vector3(0,0,1), 0, !true);
-	m_terrDesc.bioms.emplace_back("grassLand", Vector3(0,1,0), 0.3f);
-	m_terrDesc.bioms.emplace_back("mountain", 0.2f, 0.55f);
-	m_terrDesc.bioms.emplace_back("mountain_snow", 0.9f, 0.94f);*/
-	m_terrDesc.map.bioms.emplace_back("mountain", Vector3(0.2f, 0.2f, 0.2f), 0.0f);
+
 	m_terrDesc.LODs.push_back({ .lod = 0, .visDistThrhold = 800 });
 	m_terrDesc.LODs.push_back({ .lod = 1, .visDistThrhold = 1200 });
-	m_terrDesc.LODs.push_back({ .lod = 2, .visDistThrhold = 1600 });
-	m_terrDesc.LODs.push_back({ .lod = 3, .visDistThrhold = 2000 });
-	m_terrDesc.LODs.push_back({ .lod = 6, .visDistThrhold = 3000 });
+	m_terrDesc.LODs.push_back({ .lod = 3, .visDistThrhold = 1600 });
+	m_terrDesc.LODs.push_back({ .lod = 5, .visDistThrhold = 2000 });
+	m_terrDesc.LODs.push_back({ .lod = 6, .visDistThrhold = 2800 });
 
 	m_terrain = EntityReg::CreateEntity();
 	m_terrain.AddComponent<TransformComp>();

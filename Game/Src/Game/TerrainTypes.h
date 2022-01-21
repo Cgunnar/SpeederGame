@@ -26,7 +26,6 @@ struct TerrainMapDesc
 	int erosionIterations = 10000;
 	rfm::Vector2 offset;
 	uint32_t seed = 123456u;
-	std::vector<Biom> bioms;
 	float normalizationFactor = 1.0f;
 	float hFparam0 = 0;
 	float hFparam1 = 0;

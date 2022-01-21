@@ -79,6 +79,7 @@ void ErosionSimulator::Erode(TerrainMap& map, int maxIterations)
 			HeightAndGradient hg = CalculateHeightAndGradient(map.heightMap, pos);
 
 			direction = direction * inertia - hg.grad * (1.0f - inertia);
+			if (!(direction.x || direction.y)) break;
 			direction.normalize();
 
 			pos += direction;

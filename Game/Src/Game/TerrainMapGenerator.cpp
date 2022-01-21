@@ -70,34 +70,17 @@ TerrainMap TerrainMapGenerator::GenerateTerrinMap(const TerrainMapDesc& mapDesc)
 	map.height = chunkSize;
 	map.width = chunkSize;
 	map.heightMap = GenerateNoise(chunkSize, chunkSize, mapDesc);
+#ifdef DEBUG
+
+	ErosionSimulator::Erode(map, std::min(2000, mapDesc.erosionIterations));
+#else
+
 	ErosionSimulator::Erode(map, mapDesc.erosionIterations);
+#endif // DEBUG
+
 
 	std::vector<Vector4> colorMap;
-	colorMap.resize(chunkSize * (size_t)chunkSize);
-	for (int i = 0; i < chunkSize * chunkSize; i++)
-	{
-		for (int j = 0; j < mapDesc.bioms.size(); j++)
-		{
-			if (map.heightMap[i] >= mapDesc.bioms[j].threshold && j < mapDesc.bioms.size() - 1)
-			{
-				if (map.heightMap[i] < mapDesc.bioms[(size_t)j + 1].threshold)
-				{
-					if(mapDesc.bioms[j].flat) map.heightMap[i] = 0.99f * mapDesc.bioms[j+1].threshold;
-					colorMap[i] = Vector4(mapDesc.bioms[j].color, 1);
-				}
-			}
-			else if (map.heightMap[i] >= mapDesc.bioms[j].threshold)
-			{
-				if (mapDesc.bioms[j].flat) map.heightMap[i] = mapDesc.bioms[j].threshold;
-				colorMap[i] = Vector4(mapDesc.bioms[j].color, 1);
-			}
-			else
-			{
-				break;
-			}
-		}
-	}
-
+	colorMap.resize(chunkSize * (size_t)chunkSize, Vector4(0.2f, 0.2f, 0.2f, 1));
 	map.colorMapRGBA = util::FloatToCharRGBA((float*)colorMap.data(), chunkSize, chunkSize);
 	return map;
 }

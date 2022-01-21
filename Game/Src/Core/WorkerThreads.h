@@ -3,7 +3,7 @@
 class WorkerThreads
 {
 public:
-	static void Init(int numThreads = std::thread::hardware_concurrency() / 2);
+	static void Init(int numThreads = std::thread::hardware_concurrency() / 4 + std::thread::hardware_concurrency() / 2);
 	static void Destroy();
 
 	template<typename F, typename ... Args>

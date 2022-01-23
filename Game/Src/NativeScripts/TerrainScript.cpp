@@ -2,6 +2,7 @@
 #include "TerrainScript.h"
 #include "TerrainMapGenerator.h"
 #include "RenderComponents.h"
+#include "imgui.h"
 
 
 using namespace rfm;
@@ -62,6 +63,29 @@ void TerrainScript::OnUpdate(float dt)
 
 	Vector3 viewPosInTerrainSpace = inverse(terrainTransform) * Vector4(viewerTransform.getTranslation(), 1);
 	UpdateChunks({ viewPosInTerrainSpace.x, viewPosInTerrainSpace.z });
+
+
+
+	int visbleChunks = 0;
+	int waitingOnMap = 0;
+	int waitingOnMesh = 0;
+	for (auto& [coord, chunk] : m_chunkMap)
+	{
+		if (chunk->m_visible) visbleChunks++;
+		if (!chunk->m_hasMap) waitingOnMap++;
+		if (chunk->m_waitingOnNewLodMesh) waitingOnMesh++;
+	}
+
+	ImGui::Begin("TerrainScript");
+	ImGui::Text("number of chunks %u", m_chunkMap.size());
+	ImGui::Text("waitingOnMap %d", waitingOnMap);
+	ImGui::Text("is visable %d", visbleChunks);
+	ImGui::Text("waitingOnMesh %d", waitingOnMesh);
+
+
+	ImGui::End();
+
+
 }
 
 Triangle TerrainScript::GetTriangleAtPos(Vector3 pos)
@@ -130,7 +154,7 @@ void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 		for (int x = -m_chunksVisibleInViewDist; x <= m_chunksVisibleInViewDist; x++)
 		{
 			Vector2I coord{ x, y };
-			if(coord.length() < m_chunksVisibleInViewDist + 0.6f) //some number to allow more then 4 new chunks in the max range
+			//if(coord.length() < m_chunksVisibleInViewDist + 0.6f) //some number to allow more then 4 new chunks in the max range
 				chunkCoordsToUpdate.push_back(coord);
 		}
 	}

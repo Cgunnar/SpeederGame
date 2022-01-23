@@ -6,6 +6,7 @@
 #include "RfextendedMath.hpp"
 #include "TerrainMapGenerator.h"
 #include "TerrainMeshGenerator.h"
+#include "FrameTimer.hpp"
 
 using namespace rfe;
 using namespace rfm;
@@ -62,10 +63,10 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 		float viewDist = (viewPos3D - NearestPointOnEdgeFromPoint(m_corners, viewPos3D)).length();
 
 		m_visible = viewDist <= maxViewDist;
-		
+
 		if (m_visible)
 		{
-			
+
 			assert(std::is_sorted(m_lods.begin(), m_lods.end(),
 				[](auto a, auto b) {return a.visDistThrhold < b.visDistThrhold; }));
 
@@ -89,10 +90,12 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 						m_lodMeshes[m_prevLODindex]->Reset();
 					}
 					m_prevLODindex = lodIndex;
+					m_waitingOnNewLodMesh = false;
 				}
 				else if (!lodMesh->waitingOnMesh)
 				{
 					lodMesh->RequestMesh(m_map, m_meshDesc);
+					m_waitingOnNewLodMesh = true;
 					if (m_prevLODindex == -1) m_visible = false;
 				}
 			}
@@ -111,14 +114,22 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 	}
 	else
 	{
-		auto optMap = TerrainMapGenerator::GetTerrainMap(m_coord);
-		if (optMap)
+		static double deltaTime = 0;
+		static double timeStep = 5;
+		deltaTime += FrameTimer::dt();
+
+		//if (deltaTime > timeStep)
 		{
-			m_map = *optMap;
-			m_material.baseColorTexture = AssetManager::Get().LoadTex2DFromMemoryR8G8B8A8(
-				optMap->colorMapRGBA.data(), optMap->width, optMap->height, LoadTexFlag::GenerateMips);
-			m_material.emissiveFactor = 0;
-			m_hasMap = true;
+			deltaTime = 0;
+			auto optMap = TerrainMapGenerator::GetTerrainMap(m_coord);
+			if (optMap)
+			{
+				m_map = *optMap;
+				m_material.baseColorTexture = AssetManager::Get().LoadTex2DFromMemoryR8G8B8A8(
+					optMap->colorMapRGBA.data(), optMap->width, optMap->height, LoadTexFlag::GenerateMips);
+				m_material.emissiveFactor = 0;
+				m_hasMap = true;
+			}
 		}
 	}
 }
@@ -134,7 +145,7 @@ void TerrainChunk::UpdateChunkTransform(rfm::Transform transform)
 {
 	auto& chunkTransform = m_chunkEntity.GetComponent<TransformComp>()->transform;
 	chunkTransform = transform;
-	Transform T;	
+	Transform T;
 	T.setTranslation(m_position.x, 0, m_position.y);
 	chunkTransform = chunkTransform * T;
 }
@@ -154,7 +165,7 @@ Triangle TerrainChunk::TriangleAtLocation(Vector3 pos)
 	int py = static_cast<int>(m_chunkSize / 2 - localPos.y);
 	if (px == m_chunkSize) px = m_chunkSize - 1;
 	if (py == m_chunkSize) py = m_chunkSize - 1;
-	assert(px < m_chunkSize && py < m_chunkSize);
+	assert(px < m_chunkSize&& py < m_chunkSize);
 	int index = 2 * (py * m_chunkSize + px);
 	Triangle t0 = m_lodMeshes[0]->mesh.triangles[index];
 	Triangle t1 = m_lodMeshes[0]->mesh.triangles[index + 1];

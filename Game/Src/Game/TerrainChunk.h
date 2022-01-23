@@ -33,5 +33,6 @@ private:
 	bool m_createRenderMesh = false;
 	int m_prevLODindex = -1;
 	bool m_hasMap = false;
+	bool m_waitingOnNewLodMesh = false;
 };
 

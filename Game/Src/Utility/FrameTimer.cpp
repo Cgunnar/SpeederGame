@@ -19,13 +19,13 @@ void FrameTimer::print(std::wstring headerMsg)
 {
     std::wstring outputStr(
         L"\n--- " + headerMsg + L" ---\n" +
-        L"Elapsed: " + std::to_wstring(getTime(Duration::MILLISECONDS)) + L"ms " +
-        L"(" + std::to_wstring(getTime(Duration::SECONDS)) + L"s).\n"
+        L"Elapsed: " + std::to_wstring(getDuration(Duration::MILLISECONDS)) + L"ms " +
+        L"(" + std::to_wstring(getDuration(Duration::SECONDS)) + L"s).\n"
     );
     std::wcout << outputStr.c_str();
 }
 
-double FrameTimer::getTime(Duration duration)
+double FrameTimer::getDuration(Duration duration)
 {
     switch (duration)
     {
@@ -45,6 +45,22 @@ double FrameTimer::getTime(Duration duration)
     }
 }
 
+double FrameTimer::TimeFromLaunch(Duration duration)
+{
+    microseconds micro = duration_cast<microseconds>(InternalTimer::s_timer.m_end - InternalTimer::s_timer.m_timeZero);
+    switch (duration)
+    {
+    case Duration::MILLISECONDS:
+        return static_cast<double>(micro.count() * 1E-03);
+    case Duration::SECONDS:
+        return static_cast<double>(micro.count() * 1E-06);
+    case Duration::MICROSECONDS:
+        return static_cast<double>(micro.count());
+    default:
+        return static_cast<double>(InternalTimer::s_timer.m_duration.count());
+    }
+}
+
 double FrameTimer::dt()
 {
     return InternalTimer::s_timer.m_duration.count() * 1E-06;    // Seconds with decimal
@@ -55,12 +71,16 @@ uint64_t FrameTimer::frame()
     return InternalTimer::m_frameCount;
 }
 
+void FrameTimer::Init()
+{
+    InternalTimer::s_timer = InternalTimer();
+}
+
 FrameTimer::InternalTimer::InternalTimer() :
     m_start(high_resolution_clock::now()),
         m_end(high_resolution_clock::now()),
-        m_duration(0)
-{
-
+        m_duration(0), m_timeZero(high_resolution_clock::now())
+{       
 }
 
 void FrameTimer::InternalTimer::start()

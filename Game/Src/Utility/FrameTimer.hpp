@@ -9,18 +9,19 @@ private:
 	{
 		friend FrameTimer;
 	private:
-		std::chrono::time_point<std::chrono::high_resolution_clock> m_start, m_end;
+		std::chrono::time_point<std::chrono::high_resolution_clock> m_start, m_end, m_timeZero;
 		std::chrono::microseconds m_duration;
 
 		static InternalTimer s_timer;
 		static uint64_t m_frameCount;
+		
 
 	private:
 		InternalTimer();
 		~InternalTimer() = default;
 
-		InternalTimer(const InternalTimer&) = delete;
-		InternalTimer& operator=(const InternalTimer&) = delete;
+		/*InternalTimer(const InternalTimer&) = delete;
+		InternalTimer& operator=(const InternalTimer&) = delete;*/
 
 		void start();
 		void stop();
@@ -31,6 +32,7 @@ private:
 public:
 	FrameTimer() = default;
 	~FrameTimer() = default;
+	static void Init();
 
 	enum class Duration
 	{
@@ -46,7 +48,8 @@ public:
 	static void print(std::wstring headerMsg);
 
 	// Get duration: MILLISECONDS, SECONDS
-	static double getTime(Duration duration);
+	static double getDuration(Duration duration);
+	static double TimeFromLaunch(Duration duration = Duration::SECONDS);
 
 	// Shorthand for get duration seconds
 	static double dt();

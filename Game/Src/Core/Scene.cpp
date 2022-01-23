@@ -45,12 +45,12 @@ Scene::Scene()
 	m_terrDesc.LODs.push_back({ .lod = 0, .visDistThrhold = 800 });
 	m_terrDesc.LODs.push_back({ .lod = 1, .visDistThrhold = 1200 });
 	m_terrDesc.LODs.push_back({ .lod = 3, .visDistThrhold = 1600 });
-	m_terrDesc.LODs.push_back({ .lod = 5, .visDistThrhold = 2000 });
-	m_terrDesc.LODs.push_back({ .lod = 6, .visDistThrhold = 2800 });
+	//m_terrDesc.LODs.push_back({ .lod = 5, .visDistThrhold = 2500 });
+	m_terrDesc.LODs.push_back({ .lod = 6, .visDistThrhold = 4500 });
 
 	m_terrain = EntityReg::CreateEntity();
 	m_terrain.AddComponent<TransformComp>();
-	m_terrain.GetComponent<TransformComp>()->transform.setScale(0.7f);
+	m_terrain.GetComponent<TransformComp>()->transform.setScale(1.0f);
 	m_terrain.GetComponent<TransformComp>()->transform.setRotationDeg(0, 0, 0);
 	m_terrain.GetComponent<TransformComp>()->transform.setTranslation(0, -100, 0);
 	m_terrain.AddComponent<TerrainScript>(m_terrDesc);

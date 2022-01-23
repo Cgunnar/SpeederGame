@@ -129,7 +129,9 @@ void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 	{
 		for (int x = -m_chunksVisibleInViewDist; x <= m_chunksVisibleInViewDist; x++)
 		{
-			chunkCoordsToUpdate.emplace_back(x, y);
+			Vector2I coord{ x, y };
+			if(coord.length() < m_chunksVisibleInViewDist + 0.6f) //some number to allow more then 4 new chunks in the max range
+				chunkCoordsToUpdate.push_back(coord);
 		}
 	}
 	std::sort(chunkCoordsToUpdate.begin(), chunkCoordsToUpdate.end(), [](auto a, auto b) {

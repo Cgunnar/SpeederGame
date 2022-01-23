@@ -97,7 +97,7 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 				}
 			}
 		}
-		else if (viewDist > 1.5f * maxViewDist)
+		else if (viewDist > 1.2f * maxViewDist)
 		{
 			bool safeToRemove = true;
 			for (auto& l : m_lodMeshes)

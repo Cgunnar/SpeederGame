@@ -24,7 +24,7 @@ using namespace rfm;
 Application::Application()
 {
 	FrameTimer::Init();
-	WorkerThreads::Init(1);
+	WorkerThreads::Init();
 	m_window = new Window();
 	LowLvlGfx::Init(m_window->GetHwnd(), m_window->GetClientSize());
 	

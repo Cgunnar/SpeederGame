@@ -54,7 +54,7 @@ void TerrainMeshGenerator::AsyncCreateTerrainMeshInternal(const TerrainMap& terr
 
 void TerrainMeshGenerator::AsyncCreateTerrainMesh(const TerrainMap& terrainMap, std::function<void(TerrainMesh)> callback, TerrainMeshDesc desc)
 {
-    WorkerThreads::AddTask(TerrainMeshGenerator::AsyncCreateTerrainMeshInternal, terrainMap, callback, desc);
+    WorkerThreads::AddFastTask(TerrainMeshGenerator::AsyncCreateTerrainMeshInternal, terrainMap, callback, desc);
 }
 
 TerrainMesh TerrainMeshGenerator::CreateTerrainMeshFromHeightMapMemory(const float* hightMap, int width, int height,

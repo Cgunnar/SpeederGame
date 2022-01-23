@@ -9,11 +9,16 @@ public:
 	template<typename F, typename ... Args>
 	static void AddTask(F&& func, Args&&... args);
 
+	template<typename F, typename ... Args>
+	static void AddFastTask(F&& func, Args&&... args);
+
 private:
 	static std::queue<std::packaged_task<void()>> s_workQueue;
-	static void Work();
+	static std::queue<std::packaged_task<void()>> s_fastWorkQueue;
+	static void Work(int id);
 	static std::vector<std::thread> s_threads;
 	static std::mutex s_workQueueMutex;
+	static std::mutex s_fastWorkQueueMutex;
 	static std::atomic<bool> s_keepWorking;
 };
 
@@ -31,5 +36,20 @@ inline void WorkerThreads::AddTask(F&& func, Args&&... args)
 			std::apply(func, std::move(args));
 		});
 		s_workQueueMutex.unlock();
+	}
+}
+
+template<typename F, typename ...Args>
+inline void WorkerThreads::AddFastTask(F&& func, Args&&... args)
+{
+	if (s_keepWorking)
+	{
+		s_fastWorkQueueMutex.lock();
+		s_fastWorkQueue.emplace(
+			[func = std::forward<F>(func), args = std::make_tuple(std::forward<Args>(args)...)]()  mutable
+		{
+			std::apply(func, std::move(args));
+		});
+		s_fastWorkQueueMutex.unlock();
 	}
 }

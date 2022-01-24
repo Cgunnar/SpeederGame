@@ -17,6 +17,14 @@ struct RenderUnitComp : rfe::Component<RenderUnitComp>
 	{
 		unitID = AssetManager::Get().AddRenderUnit(mesh, material);
 	}
+	void ReplaceMesh(GID newMeshID, bool removeOldMesh = false)
+	{
+		assert(unitID);
+		auto& ru = AssetManager::Get().GetRenderUnit(unitID);
+		if(removeOldMesh)
+			AssetManager::Get().RemoveMesh(ru.meshID);
+		ru.meshID = newMeshID;
+	}
 	/*void SetRenderUnit(GID meshID, const Material& material, bool visible = true)
 	{
 		unitID = AssetManager::Get().AddRenderUnit(meshID, material);

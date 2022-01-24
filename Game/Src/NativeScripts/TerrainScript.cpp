@@ -116,7 +116,7 @@ void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 
 	for (auto& c : m_prevFrameVisibleChunksCoord)
 	{
-		m_chunkMap[c]->m_chunkEntity.GetComponent<RenderModelComp>()->visible = false;
+		m_chunkMap[c]->m_chunkEntity.GetComponent<RenderUnitComp>()->visible = false;
 	}
 	m_prevFrameVisibleChunksCoord.clear();
 

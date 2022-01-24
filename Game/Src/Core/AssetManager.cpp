@@ -90,9 +90,8 @@ Mesh AssetManager::GetMesh(GID id) const
 
 void AssetManager::RemoveMesh(GID id)
 {
-	if (id == 0) return;
-	assert(m_meshes.contains(id));
-	m_meshes.erase(id);
+	if(m_meshes.contains(id))
+		m_meshes.erase(id);
 }
 
 const RenderUnit& AssetManager::GetRenderUnit(RenderUnitID id) const

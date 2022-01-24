@@ -23,7 +23,7 @@ TerrainChunk::~TerrainChunk()
 		}
 	}
 	TerrainMapGenerator::RemoveTerrainMap(m_coord);
-	AssetManager::Get().RemoveTexture2D(m_material.baseColorTexture);
+	//AssetManager::Get().RemoveTexture2D(m_material.baseColorTexture);
 }
 
 TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, Transform terrainTransform, TerrainMeshDesc mapDesc, std::vector<LODinfo> lods)
@@ -50,8 +50,11 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, Transform terrainTrans
 	m_material.baseColorFactor = Vector4(Pow(Vector3(0.2), 2.2f), 1);
 	m_material.emissiveFactor = 0;
 	m_material.flags |= RenderFlag::sampler_anisotropic_clamp /*| RenderFlag::wireframe*/;
-	auto rc = m_chunkEntity.AddComponent<RenderModelComp>();
-	rc->SetRenderUnit(AssetManager::Get().GetMesh(SimpleMesh::Quad_POS_NOR_UV), m_material, false);
+	RenderUnit terranRendUnit;
+	terranRendUnit.material = m_material;
+	auto rc = m_chunkEntity.AddComponent<RenderUnitComp>();
+	rc->unitID = AssetManager::Get().AddRenderUnit(terranRendUnit);
+	rc->visible = false;
 }
 
 void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
@@ -84,7 +87,7 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 				if (lodMesh->hasMesh)
 				{
 					if (!lodMesh->hasRenderMesh) lodMesh->GenerateRenderMesh();
-					m_chunkEntity.GetComponent<RenderModelComp>()->SetRenderUnit(lodMesh->renderMesh, m_material);
+					m_chunkEntity.GetComponent<RenderUnitComp>()->ReplaceMesh(lodMesh->renderMesh);
 					if (m_prevLODindex != -1)
 					{
 						m_lodMeshes[m_prevLODindex]->Reset();
@@ -99,8 +102,12 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 					{
 						lodMesh->RequestMesh(*map, m_meshDesc);
 						m_waitingOnNewLodMesh = true;
-						if (m_prevLODindex == -1) m_visible = false;
 					}
+					if (m_prevLODindex == -1) m_visible = false;
+				}
+				else
+				{
+					if (m_prevLODindex == -1) m_visible = false;
 				}
 			}
 		}
@@ -113,8 +120,7 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 			}
 			m_shouldBeRemoved = safeToRemove;
 		}
-		m_chunkEntity.GetComponent<RenderModelComp>()->visible = m_visible;
-
+		m_chunkEntity.GetComponent<RenderUnitComp>()->visible = m_visible;
 	}
 	else
 	{

@@ -79,9 +79,6 @@ TerrainMap TerrainMapGenerator::GenerateTerrinMap(const TerrainMapDesc& mapDesc)
 #endif // DEBUG
 
 
-	std::vector<Vector4> colorMap;
-	colorMap.resize(chunkSize * (size_t)chunkSize, Vector4(0.2f, 0.2f, 0.2f, 1));
-	map.colorMapRGBA = util::FloatToCharRGBA((float*)colorMap.data(), chunkSize, chunkSize);
 	return map;
 }
 
@@ -104,26 +101,40 @@ std::optional<TerrainMap> TerrainMapGenerator::GetTerrainMap(rfm::Vector2I coord
 	s_mapMutex.lock();
 	if (s_terrainMapHolder.contains(coord))
 	{
-		//outOpt = std::make_optional(std::move(s_terrainMapHolder[coord]));
-		//s_terrainMapHolder.erase(coord);
-		auto& map = s_terrainMapHolder[coord];
-		if (map.map.blendedDown && map.map.blendedLeft && map.map.blendedRight && map.map.blendedUp)
+		auto& map = s_terrainMapHolder[coord].map;
+		if (map.blendedBotLeftCorner && map.blendedBotRightCorner && map.blendedTopLeftCorner && map.blendedTopRightCorner &&
+			map.blendedDown && map.blendedLeft && map.blendedRight && map.blendedUp)
 		{
-			outOpt = std::make_optional(s_terrainMapHolder[coord].map);
+			map.debugBool = true;
+			outOpt = std::make_optional(map);
 			//s_terrainMapHolder.erase(coord);
+
 		}
-		else if (s_terrainMapHolder.contains(coord + Vector2I(0, 1)) && s_terrainMapHolder.contains(coord + Vector2I(0, -1)) &&
-			s_terrainMapHolder.contains(coord + Vector2I(1, 0)) && s_terrainMapHolder.contains(coord + Vector2I(-1, 0)) &&
-			s_terrainMapHolder.contains(coord + Vector2I(-1, 1)) && s_terrainMapHolder.contains(coord + Vector2I(1, 1)) &&
-			s_terrainMapHolder.contains(coord + Vector2I(-1, -1)) && s_terrainMapHolder.contains(coord + Vector2I(1, -1)))
+		else
 		{
-			//hope this function is not to slow to hog the mutex for to long
-			BlendEdge(s_terrainMapHolder[coord].map, s_terrainMapHolder[coord + Vector2I(-1, 0)].map,
-				s_terrainMapHolder[coord + Vector2I(1, 0)].map, s_terrainMapHolder[coord + Vector2I(0, 1)].map,
-				s_terrainMapHolder[coord + Vector2I(0, -1)].map, s_terrainMapHolder[coord + Vector2I(-1, 1)].map,
-				s_terrainMapHolder[coord + Vector2I(1, 1)].map, s_terrainMapHolder[coord + Vector2I(-1, -1)].map,
-				s_terrainMapHolder[coord + Vector2I(1, -1)].map);
-			//map.blendedEdges = true;
+			TerrainMap* botLeft = s_terrainMapHolder.contains(coord + Vector2I(-1, -1)) ? &s_terrainMapHolder[coord + Vector2I(-1, -1)].map : nullptr;
+			TerrainMap* botRight = s_terrainMapHolder.contains(coord + Vector2I(1, -1)) ? &s_terrainMapHolder[coord + Vector2I(1, -1)].map : nullptr;
+			TerrainMap* topLeft = s_terrainMapHolder.contains(coord + Vector2I(-1, 1)) ? &s_terrainMapHolder[coord + Vector2I(-1, 1)].map : nullptr;
+			TerrainMap* topRight = s_terrainMapHolder.contains(coord + Vector2I(1, 1)) ? &s_terrainMapHolder[coord + Vector2I(1, 1)].map : nullptr;
+			TerrainMap* left = s_terrainMapHolder.contains(coord + Vector2I(-1, 0)) ? &s_terrainMapHolder[coord + Vector2I(-1, 0)].map : nullptr;
+			TerrainMap* right = s_terrainMapHolder.contains(coord + Vector2I(1, 0)) ? &s_terrainMapHolder[coord + Vector2I(1, 0)].map : nullptr;
+			TerrainMap* top = s_terrainMapHolder.contains(coord + Vector2I(0, 1)) ? &s_terrainMapHolder[coord + Vector2I(0, 1)].map : nullptr;
+			TerrainMap* bot = s_terrainMapHolder.contains(coord + Vector2I(0, -1)) ? &s_terrainMapHolder[coord + Vector2I(0, -1)].map : nullptr;
+			
+			bool needToWait = false;
+			if (!((botLeft && bot && left) || map.blendedBotLeftCorner)) needToWait = true;
+			if (!((botRight && bot && right) || map.blendedBotRightCorner)) needToWait = true;
+			if (!((topLeft && top && left) || map.blendedTopLeftCorner)) needToWait = true;
+			if (!((topRight && top && right) || map.blendedTopRightCorner)) needToWait = true;
+			if (!(left || map.blendedLeft)) needToWait = true;
+			if (!(right || map.blendedRight)) needToWait = true;
+			if (!(top || map.blendedUp)) needToWait = true;
+			if (!(bot || map.blendedDown)) needToWait = true;
+
+			if (!needToWait)
+			{
+				BlendEdge(map, left, right, top, bot, topLeft, topRight, botLeft, botRight);
+			}
 		}
 	}
 	s_mapMutex.unlock();
@@ -138,64 +149,86 @@ void TerrainMapGenerator::RemoveTerrainMap(rfm::Vector2I coord)
 	s_mapMutex.unlock();
 }
 
-//void TerrainMapGenerator::BlendEdge(TerrainMap& centerMap, const TerrainMap& leftMap, const TerrainMap& rightMap, const TerrainMap& upMap, const TerrainMap& downMap, const TerrainMap& leftUpMap, const TerrainMap& righUptMap, const TerrainMap& leftDownMap, const TerrainMap& rightDownMap)
-void TerrainMapGenerator::BlendEdge(TerrainMap& centerMap, TerrainMap &leftMap, TerrainMap &rightMap, TerrainMap &upMap, TerrainMap &downMap, TerrainMap& leftUpMap, TerrainMap& rightUpMap, TerrainMap& leftDownMap, TerrainMap& rightDownMap)
+void TerrainMapGenerator::BlendEdge(TerrainMap& centerMap, TerrainMap *leftMap, TerrainMap *rightMap, TerrainMap *upMap, TerrainMap *downMap, TerrainMap* leftUpMap, TerrainMap* rightUpMap, TerrainMap* leftDownMap, TerrainMap* rightDownMap)
 {
-	/*Timer timer;*/
-	assert(!centerMap.blendedEdges);
-	assert(centerMap.width == centerMap.height && centerMap.width == upMap.width); //all should be tested but this should be enugh
 	int size = centerMap.width;
-	float f;
-
 
 	int _00 = 0;
 	int _10 = size - 1;
 	int _01 = size * (size - 1);
 	int _11 = size * size - 1;
 
-	float cornerAvg;
+	if (!centerMap.blendedTopLeftCorner)
+	{
+		float cornerAvg = (centerMap.heightMap[_00] + leftMap->heightMap[_10] +
+			upMap->heightMap[_01] + leftUpMap->heightMap[_11]) * 0.25f;
 
-	cornerAvg = (centerMap.heightMap[_00] + leftMap.heightMap[_10] +
-		 upMap.heightMap[_01] + leftUpMap.heightMap[_11]) * 0.25f;
+		centerMap.heightMap[_00] = cornerAvg;
+		leftMap->heightMap[_10] = cornerAvg;
+		upMap->heightMap[_01] = cornerAvg;
+		leftUpMap->heightMap[_11] = cornerAvg;
 
-	centerMap.heightMap[_00] = cornerAvg;
-	leftMap.heightMap[_10] = cornerAvg;
-	upMap.heightMap[_01] = cornerAvg;
-	leftUpMap.heightMap[_11] = cornerAvg;
+		centerMap.blendedTopLeftCorner = true;
+		leftMap->blendedTopRightCorner = true;
+		upMap->blendedBotLeftCorner= true;
+		leftUpMap->blendedBotRightCorner = true;
+	}
 
-	cornerAvg = (rightMap.heightMap[_00] + centerMap.heightMap[_10] +
-		rightUpMap.heightMap[_01] + upMap.heightMap[_11]) * 0.25f;
+	if (!centerMap.blendedTopRightCorner)
+	{
+		float cornerAvg = (rightMap->heightMap[_00] + centerMap.heightMap[_10] +
+			rightUpMap->heightMap[_01] + upMap->heightMap[_11]) * 0.25f;
 
-	rightMap.heightMap[_00] = cornerAvg;
-	centerMap.heightMap[_10] = cornerAvg;
-	rightUpMap.heightMap[_01] = cornerAvg;
-	upMap.heightMap[_11] = cornerAvg;
+		rightMap->heightMap[_00] = cornerAvg;
+		centerMap.heightMap[_10] = cornerAvg;
+		rightUpMap->heightMap[_01] = cornerAvg;
+		upMap->heightMap[_11] = cornerAvg;
 
+		rightMap->blendedTopLeftCorner = true;
+		centerMap.blendedTopRightCorner = true;
+		rightUpMap->blendedBotLeftCorner = true;
+		upMap->blendedBotRightCorner = true;
+	}
 
-	cornerAvg = (rightDownMap.heightMap[_00] + downMap.heightMap[_10] +
-		rightMap.heightMap[_01] + centerMap.heightMap[_11]) * 0.25f;
+	if (!centerMap.blendedBotRightCorner)
+	{
+		float cornerAvg = (rightDownMap->heightMap[_00] + downMap->heightMap[_10] +
+			rightMap->heightMap[_01] + centerMap.heightMap[_11]) * 0.25f;
 
-	rightDownMap.heightMap[_00] = cornerAvg;
-	downMap.heightMap[_10] = cornerAvg;
-	rightMap.heightMap[_01] = cornerAvg;
-	centerMap.heightMap[_11] = cornerAvg;
+		rightDownMap->heightMap[_00] = cornerAvg;
+		downMap->heightMap[_10] = cornerAvg;
+		rightMap->heightMap[_01] = cornerAvg;
+		centerMap.heightMap[_11] = cornerAvg;
 
-	cornerAvg = (downMap.heightMap[_00] + leftDownMap.heightMap[_10] +
-		centerMap.heightMap[_01] + leftMap.heightMap[_11]) * 0.25f;
+		rightDownMap->blendedTopLeftCorner = true;
+		downMap->blendedTopRightCorner = true;
+		rightMap->blendedBotLeftCorner = true;
+		centerMap.blendedBotRightCorner = true;
+	}
 
-	downMap.heightMap[_00] = cornerAvg;
-	leftDownMap.heightMap[_10] = cornerAvg;
-	centerMap.heightMap[_01] = cornerAvg;
-	leftMap.heightMap[_11] = cornerAvg;
+	if (!centerMap.blendedBotLeftCorner)
+	{
+		float cornerAvg = (downMap->heightMap[_00] + leftDownMap->heightMap[_10] +
+			centerMap.heightMap[_01] + leftMap->heightMap[_11]) * 0.25f;
 
-	int x = 4;
+		downMap->heightMap[_00] = cornerAvg;
+		leftDownMap->heightMap[_10] = cornerAvg;
+		centerMap.heightMap[_01] = cornerAvg;
+		leftMap->heightMap[_11] = cornerAvg;
 
+		downMap->blendedTopLeftCorner = true;
+		leftDownMap->blendedTopRightCorner = true;
+		centerMap.blendedBotLeftCorner = true;
+		leftMap->blendedBotRightCorner = true;
+	}
+
+	constexpr int x = 4;
 	//upBlend
 	if (!centerMap.blendedUp)
 	{
 		for (int i = 1; i < size - 1; i++)
 		{
-			float upFromEdge = upMap.heightMap[size * (size - 1 - x) + i];
+			float upFromEdge = upMap->heightMap[size * (size - 1 - x) + i];
 			float downFromEdge = centerMap.heightMap[x*size + i];
 			float avg = 0.5f*upFromEdge + 0.5f*downFromEdge;
 
@@ -203,103 +236,69 @@ void TerrainMapGenerator::BlendEdge(TerrainMap& centerMap, TerrainMap &leftMap, 
 			{
 				float s = static_cast<float>(j) / static_cast<float>(x);
 				centerMap.heightMap[j * size + i] = std::lerp(downFromEdge, avg, 1-s);
-				upMap.heightMap[size * (size - 1 - j) + i] = std::lerp(avg, upFromEdge, s);
+				upMap->heightMap[size * (size - 1 - j) + i] = std::lerp(avg, upFromEdge, s);
 			}
 			centerMap.blendedUp = true;
-			upMap.blendedDown = true;
-
-			/*centerMap.heightMap[i] += f * (upMap.heightMap[size * (size - 1) + i] - centerMap.heightMap[i]);
-
-			centerMap.heightMap[i + size] += 0.5f * (centerMap.heightMap[i] - centerMap.heightMap[i + size]);
-			centerMap.heightMap[i + 2*size] += 0.5f * (centerMap.heightMap[i+size] - centerMap.heightMap[i + 2*size]);
-			centerMap.heightMap[i + 3*size] += 0.5f * (centerMap.heightMap[i+2*size] - centerMap.heightMap[i + 3*size]);
-			centerMap.heightMap[i + 4*size] += 0.5f * (centerMap.heightMap[i+3*size] - centerMap.heightMap[i + 4*size]);*/
+			upMap->blendedDown = true;
 		}
 	}
 
 	if (!centerMap.blendedRight)
 	{
 		//rightBlend
-		//f = rightMap.blendedEdges ? 1.0f : 0.5f;
 		for (int i = 1; i < size - 1; i++)
 		{
-			float rightFromEdge = rightMap.heightMap[i * size + x];
+			float rightFromEdge = rightMap->heightMap[i * size + x];
 			float leftFromEdge = centerMap.heightMap[i * size + size - 1 - x];
 			float avg = 0.5f*rightFromEdge + 0.5f*leftFromEdge;
 			for (int j = 0; j < x; j++)
 			{
 				float s = static_cast<float>(j) / static_cast<float>(x);
 				centerMap.heightMap[i * size + size - 1 - j] = std::lerp(leftFromEdge, avg, 1 - s);
-				rightMap.heightMap[i * size + j] = std::lerp(avg, rightFromEdge, s);
+				rightMap->heightMap[i * size + j] = std::lerp(avg, rightFromEdge, s);
 			}
 			centerMap.blendedRight = true;
-			rightMap.blendedLeft = true;
-
-			/*centerMap.heightMap[i * size + size - 1] += f * (rightMap.heightMap[i * size] - centerMap.heightMap[i * size + size - 1]);
-
-			centerMap.heightMap[i * size + size - 2] += 0.5f * (centerMap.heightMap[i * size + size - 1] - centerMap.heightMap[i * size + size - 2]);
-			centerMap.heightMap[i * size + size - 3] += 0.5f * (centerMap.heightMap[i * size + size - 2] - centerMap.heightMap[i * size + size - 3]);
-			centerMap.heightMap[i * size + size - 4] += 0.5f * (centerMap.heightMap[i * size + size - 3] - centerMap.heightMap[i * size + size - 4]);
-			centerMap.heightMap[i * size + size - 5] += 0.5f * (centerMap.heightMap[i * size + size - 4] - centerMap.heightMap[i * size + size - 5]);*/
+			rightMap->blendedLeft = true;
 		}
 	}
 
 	if (!centerMap.blendedDown)
 	{
 		//downBlend
-		//f = downMap.blendedEdges ? 1.0f : 0.5f;
 		for (int i = 1; i < size - 1; i++)
 		{
-			float downFromEdge = downMap.heightMap[x*size + i];
+			float downFromEdge = downMap->heightMap[x*size + i];
 			float upFromEdge = centerMap.heightMap[size * (size - 1 - x) + i];
 			float avg = 0.5f*downFromEdge + 0.5f*upFromEdge;
 			for (int j = 0; j < x; j++)
 			{
 				float s = static_cast<float>(j) / static_cast<float>(x);
 				centerMap.heightMap[size * (size - 1 - j) + i] = std::lerp(upFromEdge, avg, 1 - s);
-				downMap.heightMap[j * size + i] = std::lerp(avg, downFromEdge, s);
+				downMap->heightMap[j * size + i] = std::lerp(avg, downFromEdge, s);
 			}
 			centerMap.blendedDown = true;
-			downMap.blendedUp = true;
-
-			/*centerMap.heightMap[size * (size - 1) + i] += f * (downMap.heightMap[i] - centerMap.heightMap[size * (size - 1) + i]);
-
-			centerMap.heightMap[size * (size - 2) + i] += 0.5f * (centerMap.heightMap[size * (size - 1) + i] - centerMap.heightMap[size * (size - 2) + i]);
-			centerMap.heightMap[size * (size - 3) + i] += 0.5f * (centerMap.heightMap[size * (size - 2) + i] - centerMap.heightMap[size * (size - 3) + i]);
-			centerMap.heightMap[size * (size - 4) + i] += 0.5f * (centerMap.heightMap[size * (size - 3) + i] - centerMap.heightMap[size * (size - 4) + i]);
-			centerMap.heightMap[size * (size - 5) + i] += 0.5f * (centerMap.heightMap[size * (size - 4) + i] - centerMap.heightMap[size * (size - 5) + i]);*/
+			downMap->blendedUp = true;
 		}
 	}
 
 	if (!centerMap.blendedLeft)
 	{
 		//leftBlend
-		//f = leftMap.blendedEdges ? 1.0f : 0.5f;
 		for (int i = 1; i < size - 1; i++)
 		{
-			float leftFromEdge = leftMap.heightMap[i * size + size - 1 - x];
+			float leftFromEdge = leftMap->heightMap[i * size + size - 1 - x];
 			float rightFromEdge = centerMap.heightMap[i * size + x];
 			float avg = 0.5f*leftFromEdge + 0.5f*rightFromEdge;
 			for (int j = 0; j < x; j++)
 			{
 				float s = static_cast<float>(j) / static_cast<float>(x);
 				centerMap.heightMap[i * size + j] = std::lerp(rightFromEdge, avg, 1 - s);
-				leftMap.heightMap[i * size + size - 1 - j] = std::lerp(avg, leftFromEdge, s);
+				leftMap->heightMap[i * size + size - 1 - j] = std::lerp(avg, leftFromEdge, s);
 			}
 			centerMap.blendedLeft = true;
-			leftMap.blendedRight = true;
-
-
-			/*centerMap.heightMap[i * size] += f * (leftMap.heightMap[i * size + size - 1] - centerMap.heightMap[i * size]);
-
-			centerMap.heightMap[i * size + 1] += 0.5f * (centerMap.heightMap[i * size] - centerMap.heightMap[i * size + 1]);
-			centerMap.heightMap[i * size + 2] += 0.5f * (centerMap.heightMap[i * size + 1] - centerMap.heightMap[i * size + 2]);
-			centerMap.heightMap[i * size + 3] += 0.5f * (centerMap.heightMap[i * size + 2] - centerMap.heightMap[i * size + 3]);
-			centerMap.heightMap[i * size + 4] += 0.5f * (centerMap.heightMap[i * size + 3] - centerMap.heightMap[i * size + 4]);*/
+			leftMap->blendedRight = true;
 		}
 	}
-	
-	//centerMap.blendedEdges = true;
 }
 
 

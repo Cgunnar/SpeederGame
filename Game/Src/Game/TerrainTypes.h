@@ -34,14 +34,17 @@ struct TerrainMapDesc
 
 struct TerrainMap
 {
+	bool debugBool = false;
 	bool blendedUp = false;
 	bool blendedDown = false;
 	bool blendedLeft = false;
 	bool blendedRight = false;
-	//bool blendedEdges = false;
+	bool blendedTopRightCorner = false;
+	bool blendedBotRightCorner = false;
+	bool blendedTopLeftCorner = false;
+	bool blendedBotLeftCorner = false;
 	int width, height;
 	std::vector<float> heightMap;
-	std::vector<uint8_t> colorMapRGBA;
 };
 
 struct TerrainMeshDesc

@@ -24,6 +24,7 @@ namespace rfm
 	float dot2(const Vector4& v, const Vector4& u);
 	float dot3(const Vector4& v, const Vector4& u);
 	float dot4(const Vector4& v, const Vector4& u);
+	Vector4 Pow(Vector4 v, float exp);
 	Vector4 operator +(const Vector4& l, const Vector4& r);
 	Vector4 operator +(const Vector4& l, const Vector3& r);
 	Vector4 operator +(const Vector3& l, const Vector4& r);
@@ -59,7 +60,7 @@ namespace rfm
 	float dot(const Vector3& v, const Vector3& u);
 	Vector3 cross(const Vector3& v, const Vector3& u);
 	Vector3 normalize(const Vector3& v);
-	
+	Vector3 Pow(Vector3 v, float exp);
 	Vector3 operator +(const Vector3& l, const Vector3& r);
 	Vector3 operator -(const Vector3& l, const Vector3& r);
 	Vector3 operator -(const Vector3& v);

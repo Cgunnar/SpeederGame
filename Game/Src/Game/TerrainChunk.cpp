@@ -47,7 +47,7 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, Transform terrainTrans
 	UpdateChunkTransform(terrainTransform);
 
 
-	m_material.baseColorFactor = 1;
+	m_material.baseColorFactor = Vector4(Pow(Vector3(0.2), 2.2f), 1);
 	m_material.emissiveFactor = 0;
 	m_material.flags |= RenderFlag::sampler_anisotropic_clamp /*| RenderFlag::wireframe*/;
 	auto rc = m_chunkEntity.AddComponent<RenderModelComp>();
@@ -94,9 +94,13 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 				}
 				else if (!lodMesh->waitingOnMesh)
 				{
-					lodMesh->RequestMesh(m_map, m_meshDesc);
-					m_waitingOnNewLodMesh = true;
-					if (m_prevLODindex == -1) m_visible = false;
+					auto map = TerrainMapGenerator::GetTerrainMap(m_coord);
+					if (map)
+					{
+						lodMesh->RequestMesh(*map, m_meshDesc);
+						m_waitingOnNewLodMesh = true;
+						if (m_prevLODindex == -1) m_visible = false;
+					}
 				}
 			}
 		}
@@ -115,21 +119,14 @@ void TerrainChunk::Update(rfm::Vector2 viewPos, float maxViewDist)
 	else
 	{
 		static double deltaTime = 0;
-		static double timeStep = 5;
+		static double timeStep = 0.5;
 		deltaTime += FrameTimer::dt();
 
-		//if (deltaTime > timeStep)
+		if (deltaTime > timeStep)
 		{
 			deltaTime = 0;
 			auto optMap = TerrainMapGenerator::GetTerrainMap(m_coord);
-			if (optMap)
-			{
-				m_map = *optMap;
-				m_material.baseColorTexture = AssetManager::Get().LoadTex2DFromMemoryR8G8B8A8(
-					optMap->colorMapRGBA.data(), optMap->width, optMap->height, LoadTexFlag::GenerateMips);
-				m_material.emissiveFactor = 0;
-				m_hasMap = true;
-			}
+			m_hasMap = (bool)optMap;
 		}
 	}
 }

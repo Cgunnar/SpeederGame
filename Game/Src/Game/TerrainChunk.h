@@ -23,7 +23,6 @@ private:
 	rfm::Vector2 m_position;
 	rfm::Vector3 m_corners[4];
 	TerrainMeshDesc m_meshDesc;
-	TerrainMap m_map;
 	Material m_material;
 	std::vector<LODinfo> m_lods;
 	std::vector<std::unique_ptr<TerrainLODMesh>> m_lodMeshes;

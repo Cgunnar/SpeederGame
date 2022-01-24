@@ -71,6 +71,10 @@ namespace rfm
 	{
 		return v.x * u.x + v.y * u.y + v.z * u.z + v.w * u.w;
 	}
+	Vector4 Pow(Vector4 v, float exp)
+	{
+		return Vector4(pow(v.x, exp), pow(v.y, exp), pow(v.z, exp), pow(v.w, exp));
+	}
 	Vector4 operator+(const Vector4& l, const Vector4& r)
 	{
 		return Vector4(l.x + r.x, l.y + r.y, l.z + r.z, l.w + r.w);
@@ -195,6 +199,11 @@ namespace rfm
 
 		f = 1.0f / f;
 		return f * v;
+	}
+
+	Vector3 Pow(Vector3 v, float exp)
+	{
+		return Vector3(pow(v.x, exp), pow(v.y, exp), pow(v.z, exp));
 	}
 
 	Vector3 operator+(const Vector3& l, const Vector3& r)

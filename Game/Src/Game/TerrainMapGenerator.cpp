@@ -107,9 +107,10 @@ std::optional<TerrainMap> TerrainMapGenerator::GetTerrainMap(rfm::Vector2I coord
 		//outOpt = std::make_optional(std::move(s_terrainMapHolder[coord]));
 		//s_terrainMapHolder.erase(coord);
 		auto& map = s_terrainMapHolder[coord];
-		if (map.map.blendedEdges)
+		if (map.map.blendedDown && map.map.blendedLeft && map.map.blendedRight && map.map.blendedUp)
 		{
 			outOpt = std::make_optional(s_terrainMapHolder[coord].map);
+			//s_terrainMapHolder.erase(coord);
 		}
 		else if (s_terrainMapHolder.contains(coord + Vector2I(0, 1)) && s_terrainMapHolder.contains(coord + Vector2I(0, -1)) &&
 			s_terrainMapHolder.contains(coord + Vector2I(1, 0)) && s_terrainMapHolder.contains(coord + Vector2I(-1, 0)) &&
@@ -187,56 +188,118 @@ void TerrainMapGenerator::BlendEdge(TerrainMap& centerMap, TerrainMap &leftMap, 
 	centerMap.heightMap[_01] = cornerAvg;
 	leftMap.heightMap[_11] = cornerAvg;
 
+	int x = 4;
 
 	//upBlend
-	f = upMap.blendedEdges ? 1.0f : 0.5f;
-	for (int i = 1; i < size - 1; i++)
+	if (!centerMap.blendedUp)
 	{
-		centerMap.heightMap[i] += f * (upMap.heightMap[size * (size - 1) + i] - centerMap.heightMap[i]);
+		for (int i = 1; i < size - 1; i++)
+		{
+			float upFromEdge = upMap.heightMap[size * (size - 1 - x) + i];
+			float downFromEdge = centerMap.heightMap[x*size + i];
+			float avg = 0.5f*upFromEdge + 0.5f*downFromEdge;
 
-		centerMap.heightMap[i + size] += 0.5f * (centerMap.heightMap[i] - centerMap.heightMap[i + size]);
-		centerMap.heightMap[i + 2*size] += 0.5f * (centerMap.heightMap[i+size] - centerMap.heightMap[i + 2*size]);
-		centerMap.heightMap[i + 3*size] += 0.5f * (centerMap.heightMap[i+2*size] - centerMap.heightMap[i + 3*size]);
-		centerMap.heightMap[i + 4*size] += 0.5f * (centerMap.heightMap[i+3*size] - centerMap.heightMap[i + 4*size]);
+			for (int j = 0; j < x; j++)
+			{
+				float s = static_cast<float>(j) / static_cast<float>(x);
+				centerMap.heightMap[j * size + i] = std::lerp(downFromEdge, avg, 1-s);
+				upMap.heightMap[size * (size - 1 - j) + i] = std::lerp(avg, upFromEdge, s);
+			}
+			centerMap.blendedUp = true;
+			upMap.blendedDown = true;
+
+			/*centerMap.heightMap[i] += f * (upMap.heightMap[size * (size - 1) + i] - centerMap.heightMap[i]);
+
+			centerMap.heightMap[i + size] += 0.5f * (centerMap.heightMap[i] - centerMap.heightMap[i + size]);
+			centerMap.heightMap[i + 2*size] += 0.5f * (centerMap.heightMap[i+size] - centerMap.heightMap[i + 2*size]);
+			centerMap.heightMap[i + 3*size] += 0.5f * (centerMap.heightMap[i+2*size] - centerMap.heightMap[i + 3*size]);
+			centerMap.heightMap[i + 4*size] += 0.5f * (centerMap.heightMap[i+3*size] - centerMap.heightMap[i + 4*size]);*/
+		}
 	}
 
-	//rightBlend
-	f = rightMap.blendedEdges ? 1.0f : 0.5f;
-	for (int i = 1; i < size - 1; i++)
+	if (!centerMap.blendedRight)
 	{
-		centerMap.heightMap[i * size + size - 1] += f * (rightMap.heightMap[i * size] - centerMap.heightMap[i * size + size - 1]);
+		//rightBlend
+		//f = rightMap.blendedEdges ? 1.0f : 0.5f;
+		for (int i = 1; i < size - 1; i++)
+		{
+			float rightFromEdge = rightMap.heightMap[i * size + x];
+			float leftFromEdge = centerMap.heightMap[i * size + size - 1 - x];
+			float avg = 0.5f*rightFromEdge + 0.5f*leftFromEdge;
+			for (int j = 0; j < x; j++)
+			{
+				float s = static_cast<float>(j) / static_cast<float>(x);
+				centerMap.heightMap[i * size + size - 1 - j] = std::lerp(leftFromEdge, avg, 1 - s);
+				rightMap.heightMap[i * size + j] = std::lerp(avg, rightFromEdge, s);
+			}
+			centerMap.blendedRight = true;
+			rightMap.blendedLeft = true;
 
-		centerMap.heightMap[i * size + size - 2] += 0.5f * (centerMap.heightMap[i * size + size - 1] - centerMap.heightMap[i * size + size - 2]);
-		centerMap.heightMap[i * size + size - 3] += 0.5f * (centerMap.heightMap[i * size + size - 2] - centerMap.heightMap[i * size + size - 3]);
-		centerMap.heightMap[i * size + size - 4] += 0.5f * (centerMap.heightMap[i * size + size - 3] - centerMap.heightMap[i * size + size - 4]);
-		centerMap.heightMap[i * size + size - 5] += 0.5f * (centerMap.heightMap[i * size + size - 4] - centerMap.heightMap[i * size + size - 5]);
+			/*centerMap.heightMap[i * size + size - 1] += f * (rightMap.heightMap[i * size] - centerMap.heightMap[i * size + size - 1]);
+
+			centerMap.heightMap[i * size + size - 2] += 0.5f * (centerMap.heightMap[i * size + size - 1] - centerMap.heightMap[i * size + size - 2]);
+			centerMap.heightMap[i * size + size - 3] += 0.5f * (centerMap.heightMap[i * size + size - 2] - centerMap.heightMap[i * size + size - 3]);
+			centerMap.heightMap[i * size + size - 4] += 0.5f * (centerMap.heightMap[i * size + size - 3] - centerMap.heightMap[i * size + size - 4]);
+			centerMap.heightMap[i * size + size - 5] += 0.5f * (centerMap.heightMap[i * size + size - 4] - centerMap.heightMap[i * size + size - 5]);*/
+		}
 	}
 
-	//downBlend
-	f = downMap.blendedEdges ? 1.0f : 0.5f;
-	for (int i = 1; i < size - 1; i++)
+	if (!centerMap.blendedDown)
 	{
-		centerMap.heightMap[size * (size - 1) + i] += f * (downMap.heightMap[i] - centerMap.heightMap[size * (size - 1) + i]);
-		
-		centerMap.heightMap[size * (size - 2) + i] += 0.5f * (centerMap.heightMap[size * (size - 1) + i] - centerMap.heightMap[size * (size - 2) + i]);
-		centerMap.heightMap[size * (size - 3) + i] += 0.5f * (centerMap.heightMap[size * (size - 2) + i] - centerMap.heightMap[size * (size - 3) + i]);
-		centerMap.heightMap[size * (size - 4) + i] += 0.5f * (centerMap.heightMap[size * (size - 3) + i] - centerMap.heightMap[size * (size - 4) + i]);
-		centerMap.heightMap[size * (size - 5) + i] += 0.5f * (centerMap.heightMap[size * (size - 4) + i] - centerMap.heightMap[size * (size - 5) + i]);
+		//downBlend
+		//f = downMap.blendedEdges ? 1.0f : 0.5f;
+		for (int i = 1; i < size - 1; i++)
+		{
+			float downFromEdge = downMap.heightMap[x*size + i];
+			float upFromEdge = centerMap.heightMap[size * (size - 1 - x) + i];
+			float avg = 0.5f*downFromEdge + 0.5f*upFromEdge;
+			for (int j = 0; j < x; j++)
+			{
+				float s = static_cast<float>(j) / static_cast<float>(x);
+				centerMap.heightMap[size * (size - 1 - j) + i] = std::lerp(upFromEdge, avg, 1 - s);
+				downMap.heightMap[j * size + i] = std::lerp(avg, downFromEdge, s);
+			}
+			centerMap.blendedDown = true;
+			downMap.blendedUp = true;
+
+			/*centerMap.heightMap[size * (size - 1) + i] += f * (downMap.heightMap[i] - centerMap.heightMap[size * (size - 1) + i]);
+
+			centerMap.heightMap[size * (size - 2) + i] += 0.5f * (centerMap.heightMap[size * (size - 1) + i] - centerMap.heightMap[size * (size - 2) + i]);
+			centerMap.heightMap[size * (size - 3) + i] += 0.5f * (centerMap.heightMap[size * (size - 2) + i] - centerMap.heightMap[size * (size - 3) + i]);
+			centerMap.heightMap[size * (size - 4) + i] += 0.5f * (centerMap.heightMap[size * (size - 3) + i] - centerMap.heightMap[size * (size - 4) + i]);
+			centerMap.heightMap[size * (size - 5) + i] += 0.5f * (centerMap.heightMap[size * (size - 4) + i] - centerMap.heightMap[size * (size - 5) + i]);*/
+		}
 	}
 
-	//leftBlend
-	f = leftMap.blendedEdges ? 1.0f : 0.5f;
-	for (int i = 1; i < size - 1; i++)
+	if (!centerMap.blendedLeft)
 	{
-		centerMap.heightMap[i * size] += f * (leftMap.heightMap[i * size + size - 1] - centerMap.heightMap[i * size]);
+		//leftBlend
+		//f = leftMap.blendedEdges ? 1.0f : 0.5f;
+		for (int i = 1; i < size - 1; i++)
+		{
+			float leftFromEdge = leftMap.heightMap[i * size + size - 1 - x];
+			float rightFromEdge = centerMap.heightMap[i * size + x];
+			float avg = 0.5f*leftFromEdge + 0.5f*rightFromEdge;
+			for (int j = 0; j < x; j++)
+			{
+				float s = static_cast<float>(j) / static_cast<float>(x);
+				centerMap.heightMap[i * size + j] = std::lerp(rightFromEdge, avg, 1 - s);
+				leftMap.heightMap[i * size + size - 1 - j] = std::lerp(avg, leftFromEdge, s);
+			}
+			centerMap.blendedLeft = true;
+			leftMap.blendedRight = true;
 
-		centerMap.heightMap[i * size + 1] += 0.5f * (centerMap.heightMap[i * size] - centerMap.heightMap[i * size + 1]);
-		centerMap.heightMap[i * size + 2] += 0.5f * (centerMap.heightMap[i * size + 1] - centerMap.heightMap[i * size + 2]);
-		centerMap.heightMap[i * size + 3] += 0.5f * (centerMap.heightMap[i * size + 2] - centerMap.heightMap[i * size + 3]);
-		centerMap.heightMap[i * size + 4] += 0.5f * (centerMap.heightMap[i * size + 3] - centerMap.heightMap[i * size + 4]);
+
+			/*centerMap.heightMap[i * size] += f * (leftMap.heightMap[i * size + size - 1] - centerMap.heightMap[i * size]);
+
+			centerMap.heightMap[i * size + 1] += 0.5f * (centerMap.heightMap[i * size] - centerMap.heightMap[i * size + 1]);
+			centerMap.heightMap[i * size + 2] += 0.5f * (centerMap.heightMap[i * size + 1] - centerMap.heightMap[i * size + 2]);
+			centerMap.heightMap[i * size + 3] += 0.5f * (centerMap.heightMap[i * size + 2] - centerMap.heightMap[i * size + 3]);
+			centerMap.heightMap[i * size + 4] += 0.5f * (centerMap.heightMap[i * size + 3] - centerMap.heightMap[i * size + 4]);*/
+		}
 	}
 	
-	centerMap.blendedEdges = true;
+	//centerMap.blendedEdges = true;
 }
 
 

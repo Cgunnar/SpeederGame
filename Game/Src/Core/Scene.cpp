@@ -31,7 +31,7 @@ Scene::Scene()
 	m_terrDesc.map.frequencyScale = 1600;
 	m_terrDesc.map.offset = {-1600, -1200};
 	m_terrDesc.map.seed = 10;
-	m_terrDesc.map.erosionIterations = 40000;
+	m_terrDesc.map.erosionIterations = 40000;// 200000;
 	m_terrDesc.map.hFparam0 = 0;
 	m_terrDesc.map.hFparam1 = 160;
 	m_terrDesc.map.normalizationFactor = 1.1f;

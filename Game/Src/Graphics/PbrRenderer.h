@@ -38,6 +38,7 @@ private:
 	Shader m_PS_PBR_AL;
 	Shader m_PS_PBR_NOTEXTURES;
 	Shader m_PS_PBR_AL_NOR;
+	Shader m_PS_terrainShading;
 
 	bool m_prePocessed = false;
 	void DrawGeometry(const Mesh& mesh, ConstantBuffer& cb, const void* transform);

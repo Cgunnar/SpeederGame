@@ -413,5 +413,6 @@
       <Filter>Src\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\CS\CS_ErosionSim.hlsl" />
+    <FxCompile Include="Src\Shaders\PBR\PS_terrainShading.hlsl" />
   </ItemGroup>
 </Project>

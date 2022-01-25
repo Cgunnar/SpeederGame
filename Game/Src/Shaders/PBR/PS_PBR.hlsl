@@ -200,26 +200,9 @@ float4 main(vs_out input) : SV_TARGET
     normal = NormalMap(normalTanSpace, input.tangent_world, input.biTangent_world, input.normal_world.xyz);
 #endif
     
-    //terrain shading, move to seperate shader
-    float blendAmount;
-    float3 c = albedo;
-    float slope = 1.0 - normal.y;
-    float vegH = 1.0 - clamp(input.position_world.y/250.0, 0.0, 1.0);
-    float3 grassColor = vegH * float3(0, 0.02, 0);
-    float3 slopeColor = lerp(albedo, 0.4 * albedo + 0.6 * grassColor, vegH);
-    if (slope < 0.17)
-    {
-        blendAmount = slope / 0.2f;
-        c = lerp(grassColor, slopeColor, blendAmount);
-    }
-    else if ((slope < 0.4) && (slope >= 0.17f))
-    {
-        blendAmount = (slope - 0.2f) * (1.0f / (0.7f - 0.2f));
-        
-        c = lerp(slopeColor, albedo, blendAmount);
-    }
-    albedo = c;
-    
+#ifdef TERRAINSHADING
+    albedo = TerrainShader(input.position_world.xyz, normal, albedo);
+#endif
     
     
     float3 cameraPos = -mul((float3x3) transpose(viewMatrix), float3(viewMatrix[0][3], viewMatrix[1][3], viewMatrix[2][3]));

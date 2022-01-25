@@ -24,6 +24,7 @@ PbrRenderer::PbrRenderer(std::weak_ptr<SharedRenderResources> sharedRes) : m_sha
 	m_PS_PBR_NOTEXTURES = LowLvlGfx::CreateShader("Src/Shaders/PBR/PS_PBR_NOTEXTURES.hlsl", ShaderType::PIXELSHADER);
 	m_PS_PBR_AL = LowLvlGfx::CreateShader("Src/Shaders/PBR/PS_PBR_AL.hlsl", ShaderType::PIXELSHADER);
 	m_PS_PBR_AL_NOR = LowLvlGfx::CreateShader("Src/Shaders/PBR/PS_PBR_AL_NOR.hlsl", ShaderType::PIXELSHADER);
+	m_PS_terrainShading = LowLvlGfx::CreateShader("Src/Shaders/PBR/PS_terrainShading.hlsl", ShaderType::PIXELSHADER);
 
 	BufferDesc desc;
 	desc.size = sizeof(PbrMaterialCBStruct);
@@ -308,7 +309,12 @@ void PbrRenderer::RenderPBR_NO_TEXTURES(RenderFlag flag)
 	auto rendRes = m_sharedRenderResources.lock();
 	const AssetManager& assetMan = AssetManager::Get();
 	LowLvlGfx::Bind(rendRes->m_vertexShader);
-	LowLvlGfx::Bind(m_PS_PBR_NOTEXTURES);
+
+	if ((flag & RenderFlag::pixel_shader_terrain) != 0)
+		LowLvlGfx::Bind(m_PS_terrainShading);
+	else
+		LowLvlGfx::Bind(m_PS_PBR_NOTEXTURES);
+		
 	//LowLvlGfx::BindRTVs({ rendRes->m_hdrRenderTarget }, LowLvlGfx::GetDepthBuffer());
 
 

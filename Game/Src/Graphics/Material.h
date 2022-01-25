@@ -16,7 +16,8 @@ enum class RenderFlag
 	sampler_anisotropic_clamp = 1 << 8,
 	sampler_point_wrap = 1 << 9,
 	sampler_point_clamp = 1 << 10,
-	end = 1 << 11,
+	pixel_shader_terrain = 1 << 11,
+	end = 1 << 12,
 };
 inline RenderFlag operator &(RenderFlag l, RenderFlag r)
 {

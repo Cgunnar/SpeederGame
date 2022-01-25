@@ -49,7 +49,8 @@ TerrainChunk::TerrainChunk(rfm::Vector2I coord, int size, Transform terrainTrans
 
 	m_material.baseColorFactor = Vector4(Pow(Vector3(0.2), 2.2f), 1);
 	m_material.emissiveFactor = 0;
-	m_material.flags |= RenderFlag::sampler_anisotropic_clamp | RenderFlag::pixel_shader_terrain; /*| RenderFlag::wireframe*/;
+	m_material.flags |= RenderFlag::sampler_anisotropic_clamp | RenderFlag::pixel_shader_terrain;
+	//m_material.flags |= RenderFlag::sampler_anisotropic_clamp | RenderFlag::pixel_shader_terrain | RenderFlag::wireframe;
 	RenderUnit terranRendUnit;
 	terranRendUnit.material = m_material;
 	auto rc = m_chunkEntity.AddComponent<RenderUnitComp>();

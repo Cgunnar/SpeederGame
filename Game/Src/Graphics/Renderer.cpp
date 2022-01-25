@@ -16,7 +16,7 @@ std::shared_ptr<SharedRenderResources> Renderer::s_sharedRenderResources = nullp
 
 Renderer::Renderer()
 {
-	m_vp.P = PerspectiveProjectionMatrix(PIDIV4, 16.0f / 9.0f, 0.01f, 4000.0f);
+	m_vp.P = PerspectiveProjectionMatrix(PIDIV4, 16.0f / 9.0f, 0.01f, 7000.0f);
 	s_sharedRenderResources = std::make_shared<SharedRenderResources>();
 
 	s_sharedRenderResources->m_worldMatrixCB = LowLvlGfx::CreateConstantBuffer({ sizeof(Matrix), BufferDesc::USAGE::DYNAMIC });

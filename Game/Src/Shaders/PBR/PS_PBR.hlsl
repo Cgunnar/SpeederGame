@@ -257,7 +257,7 @@ float4 main(vs_out input) : SV_TARGET
     float3 finalColor = LightOutPut + ambient + emissive;
     
     
-    float s = saturate((length(cameraPos - input.position_world.xyz) - 3000.0f) / 800.0f);
+    float s = saturate((length(cameraPos - input.position_world.xyz) - 6000.0f) / 800.0f);
     s *= s;
     float3 sky = skyMap.Sample(linearWrapSampler, -vDir).xyz;
     finalColor = lerp(finalColor, sky, float3(s, s, s));

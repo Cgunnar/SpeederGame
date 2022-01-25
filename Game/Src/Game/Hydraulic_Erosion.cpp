@@ -132,7 +132,6 @@ void ErosionSimulator::Erode(TerrainMap& map, int maxIterations)
 	}
 }
 
-
 HeightAndGradient ErosionSimulator::CalculateHeightAndGradient(const std::vector<float>& nodes, Vector2 pos)
 {
 	int coordX = static_cast<int>(pos.x);
@@ -219,4 +218,11 @@ void ErosionSimulator::InitializeBrush(int radius)
 		}
 	}
 	s_brush.initialized = true;
+}
+
+
+
+void ErosionSimulator::ErodeOnGPU(TerrainMap& map, int maxIterations)
+{
+	assert(false); //not implemented
 }

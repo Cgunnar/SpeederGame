@@ -5,7 +5,9 @@
 #include "GraphicsUtilityTypes.h"
 #include "GraphicsResources.h"
 
-constexpr int chunkSize = 241;
+//constexpr int chunkSize = 1681; //max lod = 8
+constexpr int chunkSize = 241; //max lod = 6
+//constexpr int chunkSize = 841; //max lod = 7
 struct Biom
 {
 	Biom() = default;

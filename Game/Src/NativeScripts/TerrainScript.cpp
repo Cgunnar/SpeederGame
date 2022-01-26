@@ -107,6 +107,13 @@ Triangle TerrainScript::GetTriangleAtPos(Vector3 pos)
 	return triLocalToChunk;
 }
 
+float TerrainScript::GetHeightOverTerrain(rfm::Vector3 pos)
+{
+	Triangle tri = GetTriangleAtPos(pos);
+	float groundHeight = (dot(tri.normal, tri[0]) - tri.normal.x * pos.x - tri.normal.z * pos.z) / tri.normal.y;
+	return pos.y - groundHeight;
+}
+
 void TerrainScript::UpdateChunks(rfm::Vector2 viewPos)
 {
 	Vector2I chunkCoord;

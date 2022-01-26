@@ -11,6 +11,7 @@ public:
 	void OnStart();
 	void OnUpdate(float dt);
 	Triangle GetTriangleAtPos(rfm::Vector3 pos);
+	float GetHeightOverTerrain(rfm::Vector3 pos);
 private:
 	void UpdateChunks(rfm::Vector2 viewPos);
 	float m_maxViewDistance = 0;

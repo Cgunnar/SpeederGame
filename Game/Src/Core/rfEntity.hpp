@@ -288,7 +288,14 @@ namespace rfe
 
 		template<typename T>
 		static std::vector<T>& GetComponentArray();
+
+		template<typename T, typename ... Args>
+		static std::vector<Entity*> ViewEntities();
+
+		
 	private:
+		template<typename T>
+		static bool ViewEntitiesHelper(Entity* entity);
 		inline static EntityComponentManager m_entCompManInstance;
 	};
 
@@ -370,6 +377,30 @@ namespace rfe
 	inline std::vector<T>& EntityReg::GetComponentArray()
 	{
 		return T::componentArray;
+	}
+
+	template<typename T, typename ...Args>
+	inline std::vector<Entity*> EntityReg::ViewEntities()
+	{
+		std::vector<Entity*> entities;
+		entities.reserve(T::componentArray.size());
+		for (auto& comp : T::componentArray)
+		{
+			Entity* entity = &m_entCompManInstance.m_entityRegistry[comp.entityIndex];
+			bool hasComponent = true;
+			int e[]{ 0, (hasComponent = hasComponent && ViewEntitiesHelper<Args>(entity), 0)... };
+			if (hasComponent)
+			{
+				entities.push_back(entity);
+			}
+		}
+		return entities;
+	}
+
+	template<typename T>
+	inline bool EntityReg::ViewEntitiesHelper(Entity* entity)
+	{
+		return entity->GetComponent<T>() != nullptr;
 	}
 
 	inline const std::vector<Entity>& EntityReg::getAllEntities()

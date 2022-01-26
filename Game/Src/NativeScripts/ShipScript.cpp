@@ -7,6 +7,7 @@
 #include "AssetManager.h"
 #include "RfextendedMath.hpp"
 #include "imgui.h"
+#include "TerrainScript.h"
 
 using namespace rfm;
 using namespace rfe;
@@ -75,7 +76,9 @@ void ShipScript::OnUpdate(float dt)
 		ImGui::Text("velocity: %s", GetRigidBody().velocity.ToString().c_str());
 		
 
-
+		auto& t = EntityReg::GetComponentArray<TerrainScript>().front();
+		float altitude = t.GetHeightOverTerrain(GetTransform().getTranslation());
+		ImGui::Text("altitude: %f", altitude);
 	}
 }
 

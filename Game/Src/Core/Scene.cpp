@@ -31,7 +31,7 @@ Scene::Scene()
 	m_terrDesc.map.frequencyScale = 1600;
 	m_terrDesc.map.offset = {-1600, -1200};
 	m_terrDesc.map.seed = 10;
-	m_terrDesc.map.erosionIterations = 40000;// 200000;
+	m_terrDesc.map.erosionIterations = 30000;// 200000;
 	m_terrDesc.map.hFparam0 = 0;
 	m_terrDesc.map.hFparam1 = 160;
 	m_terrDesc.map.normalizationFactor = 1.1f;
@@ -73,8 +73,8 @@ Scene::Scene()
 	sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr");
 
 
-	/*CreateEntityModel("Assets/Models/MetalRoughSpheres/glTF/pbrSpheres.gltf", {-2, 3, 4}, {0, 0, 0}, 0.2f);
-	CreateEntityModel("Assets/Models/pbr/razor_crest/scene.gltf", { 4, 5, 0 }, { 0, 0, 0 }, 0.2f);
+	CreateEntityModel("Assets/Models/MetalRoughSpheres/glTF/pbrSpheres.gltf", {-2, 3, 4}, {0, 0, 0}, 0.2f);
+	/*CreateEntityModel("Assets/Models/pbr/razor_crest/scene.gltf", { 4, 5, 0 }, { 0, 0, 0 }, 0.2f);
 	CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 4, 2, 2 }, 0, 0.03f);
 	CreateEntityModel("Assets/Models/cerberus/scene.gltf", { 3, 2, 4 }, { 0,-70, 0 }, 0.03f);
 	CreateEntityModel("Assets/Models/nanosuit/nanosuit.obj", { 2, 1, 5 }, 0, 0.1f);*/

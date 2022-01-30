@@ -52,7 +52,7 @@ void Input::SetNewWidthAndHight(int width, int height)
 	m_height = height;
 }
 
-bool Input::keyBeingPressed(Keys key)
+bool Input::keyBeingPressed(DirectX::Keyboard::Keys key)
 {
 	auto kb = m_keyboard->GetState();
 	DirectX::Keyboard::Keys dxkey;
@@ -60,14 +60,14 @@ bool Input::keyBeingPressed(Keys key)
 	return kb.IsKeyDown(dxkey);
 }
 
-bool Input::keyPressed(Keys key)
+bool Input::keyPressed(DirectX::Keyboard::Keys key)
 {
 	DirectX::Keyboard::Keys dxkey;
 	dxkey = (DirectX::Keyboard::Keys)key;
 	return m_keys.IsKeyPressed(dxkey);
 }
 
-bool Input::keyReleased(Keys key)
+bool Input::keyReleased(DirectX::Keyboard::Keys key)
 {
 	DirectX::Keyboard::Keys dxkey;
 	dxkey = (DirectX::Keyboard::Keys)key;

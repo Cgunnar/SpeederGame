@@ -227,6 +227,8 @@
     <ClInclude Include="Src\Physics\PhysicsEngine.h" />
     <ClInclude Include="Src\Physics\TerrainVsBoxPhysics.h" />
     <ClInclude Include="Src\Game\Hydraulic_Erosion.h" />
+    <ClInclude Include="Src\NativeScripts\ShipControllerKBM.h" />
+    <ClInclude Include="Src\NativeScripts\ShipControllerGamePad.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">
@@ -356,6 +358,8 @@
     <ClCompile Include="Src\Physics\TerrainVsBoxPhysics.cpp" />
     <ClCompile Include="Src\Game\Hydraulic_Erosion.cpp" />
     <ClCompile Include="Src\Utility\RandGen.cpp" />
+    <ClCompile Include="Src\NativeScripts\ShipControllerKBM.cpp" />
+    <ClCompile Include="Src\NativeScripts\ShipControllerGamePad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\CS\CS_convolute_DiffIrrCube.hlsl">

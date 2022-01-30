@@ -20,10 +20,10 @@ void CameraControllerScript::OnUpdate(float dt)
 	m_yaw = fmod(m_yaw, PI2);
 
 	Vector3 moveDir{ 0,0,0 };
-	if (in.keyBeingPressed(Input::D)) moveDir += {1, 0, 0};
-	if (in.keyBeingPressed(Input::A)) moveDir += {-1, 0, 0};
-	if (in.keyBeingPressed(Input::W)) moveDir += {0, 0, 1};
-	if (in.keyBeingPressed(Input::S)) moveDir += {0, 0, -1};
+	if (in.keyBeingPressed(Input::Keys::D)) moveDir += {1, 0, 0};
+	if (in.keyBeingPressed(Input::Keys::A)) moveDir += {-1, 0, 0};
+	if (in.keyBeingPressed(Input::Keys::W)) moveDir += {0, 0, 1};
+	if (in.keyBeingPressed(Input::Keys::S)) moveDir += {0, 0, -1};
 
 
 	Transform& cameraTransform = GetComponent<TransformComp>()->transform;
@@ -31,11 +31,11 @@ void CameraControllerScript::OnUpdate(float dt)
 
 	moveDir = cameraTransform.getRotationMatrix() * moveDir;
 
-	if (in.keyBeingPressed(Input::Space)) moveDir += {0, 1, 0};
-	if (in.keyBeingPressed(Input::C)) moveDir += {0, -1, 0};
+	if (in.keyBeingPressed(Input::Keys::Space)) moveDir += {0, 1, 0};
+	if (in.keyBeingPressed(Input::Keys::C)) moveDir += {0, -1, 0};
 	moveDir.normalize();
 
-	if (in.keyBeingPressed(Input::Shift)) moveDir *= 2;
+	if (in.keyBeingPressed(Input::Keys::LeftShift)) moveDir *= 2;
 	moveDir *= m_moveSpeed;
 	cameraTransform.translateW(moveDir * dt);
 	

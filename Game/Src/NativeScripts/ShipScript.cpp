@@ -38,7 +38,7 @@ void ShipScript::OnUpdate(float dt)
 {
 	auto gPad = Input::Get().GamePadState();
 	auto gPadOld = Input::Get().OldGamePadState();
-	if (gPad.IsConnected())
+	/*if (gPad.IsConnected())
 	{
 		if (gPad.IsBPressed() && !gPadOld.IsBPressed())
 		{
@@ -49,7 +49,7 @@ void ShipScript::OnUpdate(float dt)
 			m_docked ? UnDockShip() : DockShip();
 		}
 		Transform tr = GetComponent<TransformComp>()->transform;
-		
+
 		auto [shipTranslation, shipRotation, shipScale] = decomposeToTRS(tr);
 		m_controllInputPYR = Vector3(
 			-gPad.thumbSticks.leftY * m_pitchSpeed,
@@ -67,19 +67,38 @@ void ShipScript::OnUpdate(float dt)
 
 		m_cameraPitch += gPad.thumbSticks.rightY * dt;
 		m_cameraYaw += gPad.thumbSticks.rightX * dt;
+	}*/
+
+	m_controllInputPYR = Vector3(
+		shipController.pitchInput * m_pitchSpeed,
+		shipController.yawInput * m_yawSpeed,
+		shipController.rollInput * m_rollSpeed);
+	Matrix3 shipRotation = GetComponent<TransformComp>()->transform.getRotationMatrix();
+	m_controllInputPYR = shipRotation * m_controllInputPYR;
+
+	m_controllInputXYZ = Vector3(0, shipController.secondaryThrottle * m_thrustSpeed, shipController.mainThrottle * m_thrustSpeed);
+	m_controllInputXYZ = shipRotation * m_controllInputXYZ;
+
+	if (shipController.dockToggle)
+		m_docked ? UnDockShip() : DockShip();
+	if (shipController.reset)
+		reset();
+
+	m_cameraPitch = shipController.cameraPitch;
+	m_cameraYaw = shipController.cameraYaw;
 
 
-		ImGui::Text("aoa: %f", rfm::RadToDeg(CalcAOA(GetRigidBody().velocity)));
-		ImGui::Text("aos: %f", rfm::RadToDeg(CalcAOS(GetRigidBody().velocity)));
+
+	ImGui::Text("aoa: %f", rfm::RadToDeg(CalcAOA(GetRigidBody().velocity)));
+	ImGui::Text("aos: %f", rfm::RadToDeg(CalcAOS(GetRigidBody().velocity)));
 
 
-		ImGui::Text("velocity: %s", GetRigidBody().velocity.ToString().c_str());
-		
+	ImGui::Text("velocity: %s", GetRigidBody().velocity.ToString().c_str());
 
-		auto& t = EntityReg::GetComponentArray<TerrainScript>().front();
-		float altitude = t.GetHeightOverTerrain(GetTransform().getTranslation());
-		ImGui::Text("altitude: %f", altitude);
-	}
+
+	auto& t = EntityReg::GetComponentArray<TerrainScript>().front();
+	float altitude = t.GetHeightOverTerrain(GetTransform().getTranslation());
+	ImGui::Text("altitude: %f", altitude);
 }
 
 
@@ -131,7 +150,7 @@ void ShipScript::OnFixedUpdate(float dt)
 			rigidBody.angularVelocity += angularAcc * dt;
 			rigidBody.velocity += (dragForce / rigidBody.mass) * dt;
 
-			
+
 		}
 
 	}
@@ -187,7 +206,7 @@ float ShipScript::CalcAOA(rfm::Vector3 airVelocity)
 	if (fwUpVelocityDir.length() == 0) return 0;
 	fwUpVelocityDir.normalize();
 	float angle = acos(dot(fwUpVelocityDir, tr.forward()));
-	if(dot(fwUpVelocityDir, tr.up()) > 0) angle*=-1;
+	if (dot(fwUpVelocityDir, tr.up()) > 0) angle *= -1;
 	return angle;
 }
 

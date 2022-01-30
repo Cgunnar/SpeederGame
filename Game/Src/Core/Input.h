@@ -14,7 +14,9 @@ class Input
 {
 	friend Window;
 public:
-	enum Keys
+	using Keys = DirectX::Keyboard::Keys;
+
+	/*enum Keys
 	{
 		A = DirectX::Keyboard::Keys::A, B = DirectX::Keyboard::Keys::B, C = DirectX::Keyboard::Keys::C, D = DirectX::Keyboard::Keys::D, E = DirectX::Keyboard::Keys::E, F = DirectX::Keyboard::Keys::F,
 		G = DirectX::Keyboard::Keys::G, H = DirectX::Keyboard::Keys::H, I = DirectX::Keyboard::Keys::I, J = DirectX::Keyboard::Keys::J, K = DirectX::Keyboard::Keys::K, L = DirectX::Keyboard::Keys::L,
@@ -24,7 +26,7 @@ public:
 		Shift = DirectX::Keyboard::Keys::LeftShift, F1 = DirectX::Keyboard::Keys::F1, F2 = DirectX::Keyboard::Keys::F2, F3 = DirectX::Keyboard::Keys::F3, F4 = DirectX::Keyboard::Keys::F4,
 		F5 = DirectX::Keyboard::Keys::F5, F6 = DirectX::Keyboard::Keys::F6, F7 = DirectX::Keyboard::Keys::F7, F8 = DirectX::Keyboard::Keys::F8, F9 = DirectX::Keyboard::Keys::F9, F10 = DirectX::Keyboard::Keys::F10,
 		F11 = DirectX::Keyboard::Keys::F11, F12 = DirectX::Keyboard::Keys::F12
-	};
+	};*/
 
 	/*enum MouseKeys
 	{
@@ -48,9 +50,9 @@ public:
 	
 	//rfm::Vector2 mousePos();
 	//void mouseMovement(float& m_pitch, float& m_yaw);
-	bool keyBeingPressed(Keys key);
-	bool keyPressed(Keys key);
-	bool keyReleased(Keys key);
+	bool keyBeingPressed(DirectX::Keyboard::Keys key);
+	bool keyPressed(DirectX::Keyboard::Keys key);
+	bool keyReleased(DirectX::Keyboard::Keys key);
 	//bool mouseBeingPressed(MouseKeys key);
 	//bool mousePressed(MouseKeys key);
 	//bool mouseReleased(MouseKeys key);

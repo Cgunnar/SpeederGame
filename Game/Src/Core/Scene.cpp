@@ -16,6 +16,8 @@
 #include "PhysicsComponents.h"
 #include "FrameTimer.hpp"
 #include "imgui.h"
+#include "ShipControllerKBM.h"
+#include "ShipControllerGamePad.h"
 
 using namespace rfm;
 using namespace rfe;
@@ -63,6 +65,8 @@ Scene::Scene()
 	m_ship = CreateEntityModel("Assets/Models/pbr/ajf-12_dvergr/scene.gltf", { 0, 10, 3 });
 	m_ship.AddComponent<ShipScript>();
 	m_ship.AddComponent<PlayerComp>();
+	m_ship.AddComponent<ShipControllerKBM>();
+	m_ship.AddComponent<ShipControllerGamePad>();
 
 	m_camera = EntityReg::CreateEntity();
 	m_camera.AddComponent<TransformComp>()->transform.setTranslation(0, 10, -4);
@@ -141,7 +145,7 @@ Scene::~Scene()
 
 void Scene::Update(float dt)
 {
-	EntityReg::RunScripts<CameraControllerScript, ShipScript, TerrainScript>(dt);
+	EntityReg::RunScripts<ShipControllerKBM, ShipControllerGamePad, CameraControllerScript, ShipScript, TerrainScript>(dt);
 
 	/*if (m_terrainGUI.Show())
 	{
@@ -167,7 +171,7 @@ void Scene::Update(float dt)
 	}*/
 
 	static bool shipCam = false;
-	if (Input::Get().keyPressed(Input::Y)) shipCam = !shipCam;
+	if (Input::Get().keyPressed(Input::Keys::Y)) shipCam = !shipCam;
 	if (shipCam) m_camera.GetComponent<TransformComp>()->transform = m_ship.GetComponent<ShipScript>()->GetCameraFollowTransform();;
 
 	m_dirlightContr.Show();

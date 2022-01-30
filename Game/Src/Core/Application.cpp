@@ -60,14 +60,14 @@ void Application::Run()
 		LowLvlGfx::BeginFrame();
 		Input::Get().update(dt);
 
-		if (Input::Get().keyPressed(Input::Esc))
+		if (Input::Get().keyPressed(Input::Keys::Escape))
 		{
 			Mouse& mouse = Input::Get().GetMouse();
 			mouse.SetMode(~mouse.GetMode());
 			m_scene->GetCamera().GetComponent<CameraControllerScript>()->ToggleCameraLock();
 		}
 
-		if (Input::Get().keyPressed(Input::F11) && LowLvlGfx::IsValid())
+		if (Input::Get().keyPressed(Input::Keys::F11) && LowLvlGfx::IsValid())
 		{
 			if (LowLvlGfx::IsFullScreen())
 				LowLvlGfx::LeaveFullScreen();

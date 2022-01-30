@@ -10,6 +10,22 @@ public:
 	void OnUpdate(float dt);
 	void OnFixedUpdate(float dt);
 	rfm::Matrix GetCameraFollowTransform();
+
+	struct ShipControls
+	{
+		//use this struct for now to remove xbox controller input from ShipScript
+		float mainThrottle = 0;
+		float secondaryThrottle = 0;
+		float pitchInput = 0;
+		float yawInput = 0;
+		float rollInput = 0;
+		bool dockToggle = true;
+		bool fireMainWeapon = false;
+		bool reset = false;
+		float cameraYaw = 0;
+		float cameraPitch = 0;
+	} shipController;
+
 private:
 	void reset();
 	void DockShip();

@@ -98,7 +98,6 @@ Triangle TerrainScript::GetTriangleAtPos(Vector3 pos)
 	chunkCoord.y = static_cast<int>(round(viewPos.y / m_chunkMeshSize));
 	if (!m_chunkMap.contains(chunkCoord))
 	{
-		std::cout << "chunk does not exist, return hight above y=0" << std::endl;
 		return Triangle();
 	}
 

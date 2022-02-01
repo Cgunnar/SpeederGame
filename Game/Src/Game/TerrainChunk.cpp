@@ -158,7 +158,6 @@ Triangle TerrainChunk::TriangleAtLocation(Vector3 pos)
 {
 	if (m_lodMeshes.empty() || !m_lodMeshes[0]->hasTriangles)
 	{
-		std::cout << "lod 0 has not loaded" << std::endl;
 		return Triangle();
 	}
 

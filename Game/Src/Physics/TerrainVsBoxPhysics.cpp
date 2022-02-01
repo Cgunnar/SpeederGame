@@ -31,7 +31,8 @@ namespace phySys
 					AABB aabb = aabbComp->aabb;
 
 					vector<ConstraintInfo> constraints = FindCollision(aabb, transform, r.rigidBody);
-					RespondToCollision(dt, constraints, transform, r.rigidBody);
+					if(!constraints.empty())
+						RespondToCollision(dt, constraints, transform, r.rigidBody);
 				}
 			}
 		}
@@ -116,7 +117,7 @@ namespace phySys
 		{
 			ConstraintInfo c;
 			Triangle tri = terrain.GetTriangleAtPos(p);
-			if (!tri) return vector<ConstraintInfo>();
+			if (!tri) continue;
 			Plane plane = Plane(tri.normal, tri[0]);
 			CollisionPoint colPoint = colDetect::PlaneVSPoint(plane, p);
 			if (!colPoint) continue;

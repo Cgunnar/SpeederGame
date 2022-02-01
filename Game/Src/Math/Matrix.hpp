@@ -81,6 +81,7 @@ namespace rfm
 	};
 
 	Matrix3 operator*(const Matrix3& l, const Matrix3& r);
+	Matrix3 operator*(float scale, const Matrix3& m);
 	Vector3 operator*(const Matrix3& m, const Vector3& v);
 	Matrix3 transpose(Matrix3 matrix);
 }

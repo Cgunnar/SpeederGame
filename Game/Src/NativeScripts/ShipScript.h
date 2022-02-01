@@ -2,6 +2,7 @@
 #include "NativeScript.h"
 #include "RimfrostMath.hpp"
 #include "PhysicsComponents.h"
+#include "GraphicsResources.h"
 
 class ShipScript : public rfe::NativeScriptComponent<ShipScript>
 {
@@ -27,6 +28,7 @@ public:
 	} shipController;
 
 private:
+	void FireMainWeapon();
 	void reset();
 	void DockShip();
 	void UnDockShip();
@@ -34,6 +36,15 @@ private:
 	float CalcAOS(rfm::Vector3 airVelocity);
 	RigidBody& GetRigidBody();
 	rfm::Transform& GetTransform();
+
+	struct MainWeaponProjectile
+	{
+		RenderUnitID renderUnitID;
+		RigidBody rigidBody;
+		AABB aabb;
+	} m_mainWeaponProjectile;
+
+	std::vector<rfe::Entity> m_mainWeaponBullets;
 
 	bool m_docked = true;
 	float m_yawSpeed = rfm::DegToRad(30);

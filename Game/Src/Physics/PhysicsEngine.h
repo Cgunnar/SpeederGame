@@ -8,6 +8,7 @@ public:
 
 private:
 	void ApplyGravity();
+	void Integrate();
 
 	double m_timeStep;
 	float m_g;

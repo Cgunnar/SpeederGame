@@ -72,10 +72,7 @@ namespace phySys
 			}
 		}
 
-		transform.translateW(rigidBody.velocity * dt); //update the position
-		if (rigidBody.angularVelocity.length() > 0) //update the rotation
-			transform.rotateW(rotationMatrixFromNormal(
-				normalize(rigidBody.angularVelocity), -rigidBody.angularVelocity.length() * dt));
+		
 	}
 
 	vector<ConstraintInfo> FindCollision(const AABB& aabb, const Transform& transform, const RigidBody& rigidBody)

@@ -246,6 +246,15 @@ namespace rfm
 		return result;
 	}
 
+	Matrix3 operator*(float scale, const Matrix3& m)
+	{
+		Matrix3 ret;
+		ret[0] = scale * m[0];
+		ret[1] = scale * m[1];
+		ret[2] = scale * m[2];
+		return ret;
+	}
+
 	Vector3 operator*(const Matrix3& m, const Vector3& v)
 	{
 		Matrix3 t = transpose(m);

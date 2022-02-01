@@ -4,6 +4,7 @@
 #include "TerrainVsBoxPhysics.h"
 #include "rfEntity.hpp"
 #include "PhysicsComponents.h"
+#include "StandardComponents.h"
 
 using namespace rfe;
 using namespace rfm;
@@ -21,6 +22,7 @@ void PhysicsEngine::Run(double dt)
 	{
 		ApplyGravity();
 		phySys::FindAndResolveTerrainBoxCollision(m_timeStep);
+		Integrate();
 		deltaTime -= m_timeStep;
 	}
 }
@@ -31,5 +33,18 @@ void PhysicsEngine::ApplyGravity()
 	for (auto& r : rigidBodys)
 	{
 		r.rigidBody.velocity.y -= m_g * m_timeStep;
+	}
+}
+
+void PhysicsEngine::Integrate()
+{
+	auto& rigidBodys = EntityReg::GetComponentArray<RigidBodyComp>();
+	for (auto& r : rigidBodys)
+	{
+		auto& t = EntityReg::GetComponent<TransformComp>(r.GetEntityID())->transform;
+		t.translateW(r.rigidBody.velocity * m_timeStep); //update the position
+		if (r.rigidBody.angularVelocity.length() > 0) //update the rotation
+			t.rotateW(rotationMatrixFromNormal(
+				normalize(r.rigidBody.angularVelocity), -r.rigidBody.angularVelocity.length() * m_timeStep));
 	}
 }

@@ -8,6 +8,7 @@
 #include "RfextendedMath.hpp"
 #include "imgui.h"
 #include "TerrainScript.h"
+#include "FrameTimer.hpp"
 
 using namespace rfm;
 using namespace rfe;
@@ -32,43 +33,28 @@ void ShipScript::OnStart()
 	m_rigidBodyDockCopy.frictionCof = 0.7f;
 
 	AddComponent<AABBComp>()->aabb = shipAABB;
+
+
+
+	//create bullet for main weapon
+	float r = 0.3f;
+	constexpr float mass = 4;
+	m_mainWeaponProjectile.rigidBody.momentOfInertia = (2.0f / 5.0f) * r * r * mass * Matrix3();
+	m_mainWeaponProjectile.rigidBody.mass = mass;
+	m_mainWeaponProjectile.rigidBody.frictionCof = 0.5f;
+
+	Material bulletMaterial;
+	bulletMaterial.name = "bullet";
+	bulletMaterial.baseColorFactor = { 0,0,0,1 };
+	bulletMaterial.emissiveFactor = { 1,0,0 };
+	Geometry::Sphere_POS_NOR_UV_TAN_BITAN sphere = Geometry::Sphere_POS_NOR_UV_TAN_BITAN(16, r);
+	m_mainWeaponProjectile.aabb = AABB(-Vector3(r, r, r), Vector3(r, r, r));
+	Mesh sphereMesh = Mesh(sphere.VertexData(), sphere.IndexData(), m_mainWeaponProjectile.aabb);
+	m_mainWeaponProjectile.renderUnitID = AssetManager::Get().AddRenderUnit(sphereMesh, bulletMaterial);
 }
 constexpr float AirDensity = 1.225f;
 void ShipScript::OnUpdate(float dt)
 {
-	auto gPad = Input::Get().GamePadState();
-	auto gPadOld = Input::Get().OldGamePadState();
-	/*if (gPad.IsConnected())
-	{
-		if (gPad.IsBPressed() && !gPadOld.IsBPressed())
-		{
-			reset();
-		}
-		if (gPad.IsAPressed() && !gPadOld.IsAPressed())
-		{
-			m_docked ? UnDockShip() : DockShip();
-		}
-		Transform tr = GetComponent<TransformComp>()->transform;
-
-		auto [shipTranslation, shipRotation, shipScale] = decomposeToTRS(tr);
-		m_controllInputPYR = Vector3(
-			-gPad.thumbSticks.leftY * m_pitchSpeed,
-			0,
-			gPad.thumbSticks.leftX * m_rollSpeed);
-
-
-		if (gPad.IsLeftShoulderPressed()) m_controllInputPYR.y += m_yawSpeed;
-		if (gPad.IsRightShoulderPressed()) m_controllInputPYR.y -= m_yawSpeed;
-
-		m_controllInputPYR = shipRotation * m_controllInputPYR;
-
-		m_controllInputXYZ = Vector3(0, gPad.triggers.left * m_thrustSpeed, gPad.triggers.right * m_thrustSpeed);
-		m_controllInputXYZ = shipRotation * m_controllInputXYZ;
-
-		m_cameraPitch += gPad.thumbSticks.rightY * dt;
-		m_cameraYaw += gPad.thumbSticks.rightX * dt;
-	}*/
-
 	m_controllInputPYR = Vector3(
 		shipController.pitchInput * m_pitchSpeed,
 		shipController.yawInput * m_yawSpeed,
@@ -87,7 +73,8 @@ void ShipScript::OnUpdate(float dt)
 	m_cameraPitch = shipController.cameraPitch;
 	m_cameraYaw = shipController.cameraYaw;
 
-
+	if (shipController.fireMainWeapon)
+		FireMainWeapon();
 
 	ImGui::Text("aoa: %f", rfm::RadToDeg(CalcAOA(GetRigidBody().velocity)));
 	ImGui::Text("aos: %f", rfm::RadToDeg(CalcAOS(GetRigidBody().velocity)));
@@ -167,6 +154,25 @@ Matrix ShipScript::GetCameraFollowTransform()
 	m_followCamera.translateL(0, 0, -m_cameraArmLength);
 	return m_followCamera;
 }
+
+void ShipScript::FireMainWeapon()
+{
+	static double lastTime = 0;
+	if (FrameTimer::TimeFromLaunch() - lastTime > 0.1f)
+	{
+		lastTime = FrameTimer::TimeFromLaunch();
+		Entity projectile = EntityReg::CreateEntity();
+		projectile.AddComponent<TransformComp>()->transform = GetTransform();
+		auto projRg = projectile.AddComponent<RigidBodyComp>();
+		projRg->rigidBody = m_mainWeaponProjectile.rigidBody;
+		projRg->rigidBody.velocity = GetRigidBody().velocity + 20 * GetTransform().forward();
+
+		auto rendUnit = projectile.AddComponent<RenderUnitComp>()->unitID = m_mainWeaponProjectile.renderUnitID;
+		projectile.AddComponent<AABBComp>()->aabb = m_mainWeaponProjectile.aabb;
+		m_mainWeaponBullets.push_back(projectile);
+	}
+}
+
 void ShipScript::reset()
 {
 	Transform tr = GetComponent<TransformComp>()->transform;

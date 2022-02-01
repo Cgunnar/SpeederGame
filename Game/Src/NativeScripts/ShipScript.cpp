@@ -87,6 +87,11 @@ void ShipScript::OnUpdate(float dt)
 	float altitude = t.GetHeightOverTerrain(GetTransform().getTranslation());
 	ImGui::Text("altitude: %f", altitude);
 	ImGui::Text("resting: %s", std::to_string(GetRigidBody().resting).c_str());
+
+
+	//remove old bullets
+	while (!m_mainWeaponBullets.empty() && FrameTimer::TimeFromLaunch() - m_mainWeaponBullets.front().spawnTime > m_mainWeaponProjectile.lifeTime)
+		m_mainWeaponBullets.pop();
 }
 
 
@@ -170,7 +175,7 @@ void ShipScript::FireMainWeapon()
 
 		auto rendUnit = projectile.AddComponent<RenderUnitComp>()->unitID = m_mainWeaponProjectile.renderUnitID;
 		projectile.AddComponent<AABBComp>()->aabb = m_mainWeaponProjectile.aabb;
-		m_mainWeaponBullets.push_back(projectile);
+		m_mainWeaponBullets.emplace(projectile, FrameTimer::TimeFromLaunch());
 	}
 }
 

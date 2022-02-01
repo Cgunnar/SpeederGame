@@ -44,9 +44,15 @@ private:
 		AABB aabb;
 		float speed = 100;
 		double roundsPerSecond = 20;
+		double lifeTime = 6;
 	} m_mainWeaponProjectile;
-
-	std::vector<rfe::Entity> m_mainWeaponBullets;
+	
+	struct BulletAndTime
+	{
+		rfe::Entity bullet;
+		double spawnTime;
+	};
+	std::queue<BulletAndTime> m_mainWeaponBullets;
 
 	bool m_docked = true;
 	float m_yawSpeed = rfm::DegToRad(30);

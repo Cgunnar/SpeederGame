@@ -25,7 +25,7 @@ void ShipControllerGamePad::OnUpdate(float dt)
 
 		if (gPad.IsLeftShoulderPressed())
 			shipController.yawInput = 1;
-		else if (gPad.IsLeftShoulderPressed())
+		else if (gPad.IsRightShoulderPressed())
 			shipController.yawInput = -1;
 		else
 			shipController.yawInput = 0;

@@ -37,16 +37,16 @@ void ShipScript::OnStart()
 
 
 	//create bullet for main weapon
-	float r = 0.3f;
-	constexpr float mass = 4;
+	float r = 0.05f;
+	constexpr float mass = 2;
 	m_mainWeaponProjectile.rigidBody.momentOfInertia = (2.0f / 5.0f) * r * r * mass * Matrix3();
 	m_mainWeaponProjectile.rigidBody.mass = mass;
-	m_mainWeaponProjectile.rigidBody.frictionCof = 0.5f;
+	m_mainWeaponProjectile.rigidBody.frictionCof = 0.1f;
 
 	Material bulletMaterial;
 	bulletMaterial.name = "bullet";
 	bulletMaterial.baseColorFactor = { 0,0,0,1 };
-	bulletMaterial.emissiveFactor = { 1,0,0 };
+	bulletMaterial.emissiveFactor = { 1,1,0 };
 	Geometry::Sphere_POS_NOR_UV_TAN_BITAN sphere = Geometry::Sphere_POS_NOR_UV_TAN_BITAN(16, r);
 	m_mainWeaponProjectile.aabb = AABB(-Vector3(r, r, r), Vector3(r, r, r));
 	Mesh sphereMesh = Mesh(sphere.VertexData(), sphere.IndexData(), m_mainWeaponProjectile.aabb);
@@ -86,6 +86,7 @@ void ShipScript::OnUpdate(float dt)
 	auto& t = EntityReg::GetComponentArray<TerrainScript>().front();
 	float altitude = t.GetHeightOverTerrain(GetTransform().getTranslation());
 	ImGui::Text("altitude: %f", altitude);
+	ImGui::Text("resting: %s", std::to_string(GetRigidBody().resting).c_str());
 }
 
 
@@ -158,14 +159,14 @@ Matrix ShipScript::GetCameraFollowTransform()
 void ShipScript::FireMainWeapon()
 {
 	static double lastTime = 0;
-	if (FrameTimer::TimeFromLaunch() - lastTime > 0.1f)
+	if (FrameTimer::TimeFromLaunch() - lastTime > 1.0 / m_mainWeaponProjectile.roundsPerSecond)
 	{
 		lastTime = FrameTimer::TimeFromLaunch();
 		Entity projectile = EntityReg::CreateEntity();
 		projectile.AddComponent<TransformComp>()->transform = GetTransform();
 		auto projRg = projectile.AddComponent<RigidBodyComp>();
 		projRg->rigidBody = m_mainWeaponProjectile.rigidBody;
-		projRg->rigidBody.velocity = GetRigidBody().velocity + 20 * GetTransform().forward();
+		projRg->rigidBody.velocity = GetRigidBody().velocity + m_mainWeaponProjectile.speed * GetTransform().forward();
 
 		auto rendUnit = projectile.AddComponent<RenderUnitComp>()->unitID = m_mainWeaponProjectile.renderUnitID;
 		projectile.AddComponent<AABBComp>()->aabb = m_mainWeaponProjectile.aabb;

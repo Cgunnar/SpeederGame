@@ -13,7 +13,7 @@ using namespace rfe;
 
 namespace phySys
 {
-	vector<ConstraintInfo> FindCollision(const AABB& aabb, const Transform &transform, const RigidBody& rigidBody);
+	vector<ConstraintInfo> FindCollision(const AABB& aabb, const Transform& transform, const RigidBody& rigidBody);
 	void RespondToCollision(float dt, vector<ConstraintInfo>& constraints, Transform& transform, RigidBody& rigidBody);
 
 	void FindAndResolveTerrainBoxCollision(float dt)
@@ -21,15 +21,18 @@ namespace phySys
 		auto& rigidbodys = EntityReg::GetComponentArray<RigidBodyComp>();
 		for (auto& r : rigidbodys)
 		{
-			EntityID id = r.GetEntityID();
-			if (auto aabbComp = EntityReg::GetComponent<AABBComp>(id); aabbComp)
+			if (!r.rigidBody.resting)
 			{
-				assert(EntityReg::GetComponent<TransformComp>(id));
-				Transform& transform = EntityReg::GetComponent<TransformComp>(id)->transform;
-				AABB aabb = aabbComp->aabb;
+				EntityID id = r.GetEntityID();
+				if (auto aabbComp = EntityReg::GetComponent<AABBComp>(id); aabbComp)
+				{
+					assert(EntityReg::GetComponent<TransformComp>(id));
+					Transform& transform = EntityReg::GetComponent<TransformComp>(id)->transform;
+					AABB aabb = aabbComp->aabb;
 
-				vector<ConstraintInfo> constraints = FindCollision(aabb, transform, r.rigidBody);
-				RespondToCollision(dt, constraints, transform, r.rigidBody);
+					vector<ConstraintInfo> constraints = FindCollision(aabb, transform, r.rigidBody);
+					RespondToCollision(dt, constraints, transform, r.rigidBody);
+				}
 			}
 		}
 	}
@@ -51,7 +54,7 @@ namespace phySys
 				float constraintN = dot(constraint, c.normal);
 				float constraintT = dot(constraint, c.tangent);
 				//0.8 is just some hardcoded cof to make it bounce more
-				float eMassN = invMass * 0.8f + dot(c.normal, cross(c.r, (invI * cross(c.normal, c.r))));
+				float eMassN = invMass /** 0.8f*/ + dot(c.normal, cross(c.r, (invI * cross(c.normal, c.r))));
 				float eMassT = invMass + dot(c.tangent, cross(c.r, (invI * cross(c.tangent, c.r))));
 				float b = biasFactor * std::max(c.pen - 0.02f, 0.0f);
 				b = std::min(b, abs(constraintN));
@@ -69,10 +72,10 @@ namespace phySys
 				pCorrectedT = c.sumPt - oldP;
 				rigidBody.velocity += invMass * pCorrectedT * c.tangent;
 				rigidBody.angularVelocity += invI * pCorrectedT * cross(c.tangent, c.r);
+				rigidBody.resting = rigidBody.velocity.length() < 0.1f && rigidBody.angularVelocity.length() < 0.1f;
 			}
 		}
 
-		
 	}
 
 	vector<ConstraintInfo> FindCollision(const AABB& aabb, const Transform& transform, const RigidBody& rigidBody)

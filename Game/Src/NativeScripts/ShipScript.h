@@ -42,6 +42,8 @@ private:
 		RenderUnitID renderUnitID;
 		RigidBody rigidBody;
 		AABB aabb;
+		float speed = 100;
+		double roundsPerSecond = 20;
 	} m_mainWeaponProjectile;
 
 	std::vector<rfe::Entity> m_mainWeaponBullets;

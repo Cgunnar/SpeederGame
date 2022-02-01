@@ -12,9 +12,10 @@ struct RigidBody
 {
 	rfm::Matrix3 momentOfInertia;
 	rfm::Vector3 angularVelocity;
-	float mass;
+	float mass = 1;
 	rfm::Vector3 velocity;
-	float frictionCof;
+	float frictionCof = 0.5f;
+	bool resting = false;
 };
 struct RigidBodyComp : rfe::Component<RigidBodyComp>
 {

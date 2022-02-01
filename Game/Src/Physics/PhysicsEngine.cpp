@@ -32,7 +32,8 @@ void PhysicsEngine::ApplyGravity()
 	auto& rigidBodys = EntityReg::GetComponentArray<RigidBodyComp>();
 	for (auto& r : rigidBodys)
 	{
-		r.rigidBody.velocity.y -= m_g * m_timeStep;
+		if (!r.rigidBody.resting)
+			r.rigidBody.velocity.y -= m_g * m_timeStep;
 	}
 }
 
@@ -41,10 +42,15 @@ void PhysicsEngine::Integrate()
 	auto& rigidBodys = EntityReg::GetComponentArray<RigidBodyComp>();
 	for (auto& r : rigidBodys)
 	{
-		auto& t = EntityReg::GetComponent<TransformComp>(r.GetEntityID())->transform;
-		t.translateW(r.rigidBody.velocity * m_timeStep); //update the position
-		if (r.rigidBody.angularVelocity.length() > 0) //update the rotation
-			t.rotateW(rotationMatrixFromNormal(
-				normalize(r.rigidBody.angularVelocity), -r.rigidBody.angularVelocity.length() * m_timeStep));
+		if(r.rigidBody.resting)
+			r.rigidBody.resting = r.rigidBody.velocity.length() < 0.1f && r.rigidBody.angularVelocity.length() < 0.1f;
+		if (!r.rigidBody.resting)
+		{
+			auto& t = EntityReg::GetComponent<TransformComp>(r.GetEntityID())->transform;
+			t.translateW(r.rigidBody.velocity * m_timeStep); //update the position
+			if (r.rigidBody.angularVelocity.length() > 0) //update the rotation
+				t.rotateW(rotationMatrixFromNormal(
+					normalize(r.rigidBody.angularVelocity), -r.rigidBody.angularVelocity.length() * m_timeStep));
+		}
 	}
 }

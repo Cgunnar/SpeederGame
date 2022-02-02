@@ -103,6 +103,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Graphics\SpriteRendering\SpriteRendere.h" />
     <ClInclude Include="Src\Components\PhysicsComponents.h" />
     <ClInclude Include="Src\Components\RenderComponents.h" />
     <ClInclude Include="Src\Components\StandardComponents.h" />
@@ -169,6 +170,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClInclude Include="vendor\singleHeaders\stb_image_write.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Graphics\SpriteRendering\SpriteRendere.cpp" />
     <ClCompile Include="Src\Core\Application.cpp" />
     <ClCompile Include="Src\Core\AssetManager.cpp" />
     <ClCompile Include="Src\Core\Input.cpp" />

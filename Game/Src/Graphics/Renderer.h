@@ -8,6 +8,7 @@
 #include "RenderComponents.h"
 #include "SkyBox.h"
 #include "ShadowMappingPass.h"
+#include "SpriteRendere.h"
 
 class Renderer
 {
@@ -45,7 +46,7 @@ private:
 	std::vector<RendCompAndTransform> m_rendCompAndTransformFromECS;
 	std::unordered_map<RenderFlag, std::vector<RendUnitIDAndTransform>> m_renderPassesFlagged;
 
-	//PhongRenderer m_phongRenderer;
+	SpriteRendere m_spriteRenderer;
 	PbrRenderer m_pbrRenderer;
 	ShadowMappingPass m_shadowPass;
 

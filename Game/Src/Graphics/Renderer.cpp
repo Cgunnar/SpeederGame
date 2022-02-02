@@ -13,7 +13,7 @@ using namespace rfe;
 
 std::shared_ptr<SharedRenderResources> Renderer::s_sharedRenderResources = nullptr;
 
-
+Sprite testSprite;
 Renderer::Renderer()
 {
 	m_vp.P = PerspectiveProjectionMatrix(PIDIV4, 16.0f / 9.0f, 0.01f, 7000.0f);
@@ -36,7 +36,11 @@ Renderer::Renderer()
 
 	SetUpHdrRTV();
 
-	//m_phongRenderer = PhongRenderer(s_sharedRenderResources->weak_from_this());
+	m_spriteRenderer.Init();
+	GID texID = AssetManager::Get().LoadTex2DFromFile("Assets/testImg.png", LoadTexFlag::none);
+	//GID texID = AssetManager::Get().LoadTex2DFromFile("Assets/Hej.png", LoadTexFlag::none);
+	//testSprite = Sprite(AssetManager::Get().GetTexture2D(texID), { -0.5f, 0.5f }, { 2,2 });
+	testSprite = Sprite(AssetManager::Get().GetTexture2D(texID), { 0.5, 0.5 }, { 2,2 });
 	m_pbrRenderer = PbrRenderer(s_sharedRenderResources->weak_from_this());
 	m_shadowPass = ShadowMappingPass(s_sharedRenderResources->weak_from_this(), 8192 / 2);
 }
@@ -117,6 +121,11 @@ void Renderer::Render(rfe::Entity& camera, DirectionalLight dirLight)
 	RenderAllPasses(m_vp, camera);
 	SubmitAndRenderTransparentToInternalRenderers(m_vp, camera);
 
+
+
+	//sprite rendering
+	m_spriteRenderer.Draw({ testSprite });
+	
 }
 
 SharedRenderResources& Renderer::GetSharedRenderResources()

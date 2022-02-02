@@ -49,6 +49,8 @@ private:
 	SpriteRendere m_spriteRenderer;
 	PbrRenderer m_pbrRenderer;
 	ShadowMappingPass m_shadowPass;
+	const float m_farPlane = 7000.0f;
+	const float m_nearPlane = 0.01f;
 
 	VP m_vp;
 };

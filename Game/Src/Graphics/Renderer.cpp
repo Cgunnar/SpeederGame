@@ -16,7 +16,7 @@ std::shared_ptr<SharedRenderResources> Renderer::s_sharedRenderResources = nullp
 Sprite testSprite;
 Renderer::Renderer()
 {
-	m_vp.P = PerspectiveProjectionMatrix(PIDIV4, 16.0f / 9.0f, 0.01f, 7000.0f);
+	m_vp.P = PerspectiveProjectionMatrix(PIDIV4, 16.0f / 9.0f, m_nearPlane, m_farPlane);
 	s_sharedRenderResources = std::make_shared<SharedRenderResources>();
 
 	s_sharedRenderResources->m_worldMatrixCB = LowLvlGfx::CreateConstantBuffer({ sizeof(Matrix), BufferDesc::USAGE::DYNAMIC });
@@ -37,10 +37,9 @@ Renderer::Renderer()
 	SetUpHdrRTV();
 
 	m_spriteRenderer.Init();
-	GID texID = AssetManager::Get().LoadTex2DFromFile("Assets/testImg.png", LoadTexFlag::none);
-	//GID texID = AssetManager::Get().LoadTex2DFromFile("Assets/Hej.png", LoadTexFlag::none);
-	//testSprite = Sprite(AssetManager::Get().GetTexture2D(texID), { -0.5f, 0.5f }, { 2,2 });
-	testSprite = Sprite(AssetManager::Get().GetTexture2D(texID), { 0.5, 0.5 }, { 2,2 });
+	//GID texID = AssetManager::Get().LoadTex2DFromFile("Assets/testImg.png", LoadTexFlag::none);
+	GID texID = AssetManager::Get().LoadTex2DFromFile("Assets/Hej.png", LoadTexFlag::none);
+	testSprite = Sprite(AssetManager::Get().GetTexture2D(texID), { 0.5, 0.5 }, { 0.1,0.1 });
 	m_pbrRenderer = PbrRenderer(s_sharedRenderResources->weak_from_this());
 	m_shadowPass = ShadowMappingPass(s_sharedRenderResources->weak_from_this(), 8192 / 2);
 }
@@ -56,9 +55,10 @@ void Renderer::RenderBegin(rfe::Entity& camera)
 {
 	LowLvlGfx::ClearRTV(0.1f, 0.2f, 0.4f, 0.0f, LowLvlGfx::GetBackBuffer());
 	LowLvlGfx::ClearDSV(LowLvlGfx::GetDepthBuffer());
-
+	Resolution res = LowLvlGfx::GetResolution();
 	LowLvlGfx::SetViewPort(LowLvlGfx::GetResolution());
 	m_vp.V = inverse(*camera.GetComponent<TransformComp>());
+	m_vp.P = PerspectiveProjectionMatrix(PIDIV4, static_cast<float>(res.width) / static_cast<float>(res.height), m_nearPlane, m_farPlane);
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_vpCB, &m_vp);
 }
 

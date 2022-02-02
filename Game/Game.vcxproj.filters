@@ -22,6 +22,9 @@
     <Filter Include="Src\Graphics">
       <UniqueIdentifier>{EDA9DC45-D90C-6CEA-8292-A4A06ED4376D}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Src\Graphics\SpriteRendering">
+      <UniqueIdentifier>{31B41C5E-1D6F-0C0A-C626-8554B2C0569A}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Src\Math">
       <UniqueIdentifier>{0678E746-F244-4252-1B5E-30FA078A77E0}</UniqueIdentifier>
     </Filter>
@@ -99,6 +102,9 @@
     <ClInclude Include="Src\GUI\TerrainGUI.h">
       <Filter>Src\GUI</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Game\Hydraulic_Erosion.h">
+      <Filter>Src\Game</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Game\TerrainChunk.h">
       <Filter>Src\Game</Filter>
     </ClInclude>
@@ -150,6 +156,9 @@
     <ClInclude Include="Src\Graphics\SkyBox.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Graphics\SpriteRendering\Sprite.h">
+      <Filter>Src\Graphics\SpriteRendering</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Math\Matrix.hpp">
       <Filter>Src\Math</Filter>
     </ClInclude>
@@ -165,6 +174,9 @@
     <ClInclude Include="Src\Math\Vector.hpp">
       <Filter>Src\Math</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Math\rfmFunctions.h">
+      <Filter>Src\Math</Filter>
+    </ClInclude>
     <ClInclude Include="Src\NativeScripts\CameraControllerScript.h">
       <Filter>Src\NativeScripts</Filter>
     </ClInclude>
@@ -174,6 +186,12 @@
     <ClInclude Include="Src\NativeScripts\NativeScriptCollection.h">
       <Filter>Src\NativeScripts</Filter>
     </ClInclude>
+    <ClInclude Include="Src\NativeScripts\ShipControllerGamePad.h">
+      <Filter>Src\NativeScripts</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\NativeScripts\ShipControllerKBM.h">
+      <Filter>Src\NativeScripts</Filter>
+    </ClInclude>
     <ClInclude Include="Src\NativeScripts\ShipScript.h">
       <Filter>Src\NativeScripts</Filter>
     </ClInclude>
@@ -181,6 +199,15 @@
       <Filter>Src\NativeScripts</Filter>
     </ClInclude>
     <ClInclude Include="Src\Physics\CollisionDetection.h">
+      <Filter>Src\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics\PhysicsEngine.h">
+      <Filter>Src\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics\PhysicsTypes.h">
+      <Filter>Src\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Physics\TerrainVsBoxPhysics.h">
       <Filter>Src\Physics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Utility\FileUtility.hpp">
@@ -222,13 +249,9 @@
     <ClInclude Include="vendor\singleHeaders\stb_image.h">
       <Filter>vendor\singleHeaders</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Math\rfmFunctions.h" />
-    <ClInclude Include="Src\Physics\PhysicsTypes.h" />
-    <ClInclude Include="Src\Physics\PhysicsEngine.h" />
-    <ClInclude Include="Src\Physics\TerrainVsBoxPhysics.h" />
-    <ClInclude Include="Src\Game\Hydraulic_Erosion.h" />
-    <ClInclude Include="Src\NativeScripts\ShipControllerKBM.h" />
-    <ClInclude Include="Src\NativeScripts\ShipControllerGamePad.h" />
+    <ClInclude Include="vendor\singleHeaders\stb_image_write.h">
+      <Filter>vendor\singleHeaders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">
@@ -263,6 +286,9 @@
     </ClCompile>
     <ClCompile Include="Src\GUI\TerrainGUI.cpp">
       <Filter>Src\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Game\Hydraulic_Erosion.cpp">
+      <Filter>Src\Game</Filter>
     </ClCompile>
     <ClCompile Include="Src\Game\TerrainChunk.cpp">
       <Filter>Src\Game</Filter>
@@ -309,6 +335,9 @@
     <ClCompile Include="Src\Graphics\SkyBox.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Graphics\SpriteRendering\Sprite.cpp">
+      <Filter>Src\Graphics\SpriteRendering</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Math\Matrix.cpp">
       <Filter>Src\Math</Filter>
     </ClCompile>
@@ -324,6 +353,12 @@
     <ClCompile Include="Src\NativeScripts\CameraControllerScript.cpp">
       <Filter>Src\NativeScripts</Filter>
     </ClCompile>
+    <ClCompile Include="Src\NativeScripts\ShipControllerGamePad.cpp">
+      <Filter>Src\NativeScripts</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\NativeScripts\ShipControllerKBM.cpp">
+      <Filter>Src\NativeScripts</Filter>
+    </ClCompile>
     <ClCompile Include="Src\NativeScripts\ShipScript.cpp">
       <Filter>Src\NativeScripts</Filter>
     </ClCompile>
@@ -333,7 +368,16 @@
     <ClCompile Include="Src\Physics\CollisionDetection.cpp">
       <Filter>Src\Physics</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Physics\PhysicsEngine.cpp">
+      <Filter>Src\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Physics\TerrainVsBoxPhysics.cpp">
+      <Filter>Src\Physics</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Utility\FrameTimer.cpp">
+      <Filter>Src\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Utility\RandGen.cpp">
       <Filter>Src\Utility</Filter>
     </ClCompile>
     <ClCompile Include="Src\Utility\ReadImg.cpp">
@@ -354,14 +398,11 @@
     <ClCompile Include="vendor\imgui\backends\imgui_impl_win32.cpp">
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Physics\PhysicsEngine.cpp" />
-    <ClCompile Include="Src\Physics\TerrainVsBoxPhysics.cpp" />
-    <ClCompile Include="Src\Game\Hydraulic_Erosion.cpp" />
-    <ClCompile Include="Src\Utility\RandGen.cpp" />
-    <ClCompile Include="Src\NativeScripts\ShipControllerKBM.cpp" />
-    <ClCompile Include="Src\NativeScripts\ShipControllerGamePad.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Src\Shaders\CS\CS_ErosionSim.hlsl">
+      <Filter>Src\Shaders\CS</Filter>
+    </FxCompile>
     <FxCompile Include="Src\Shaders\CS\CS_convolute_DiffIrrCube.hlsl">
       <Filter>Src\Shaders\CS</Filter>
     </FxCompile>
@@ -395,6 +436,9 @@
     <FxCompile Include="Src\Shaders\PBR\PS_PBR_NOTEXTURES.hlsl">
       <Filter>Src\Shaders\PBR</Filter>
     </FxCompile>
+    <FxCompile Include="Src\Shaders\PBR\PS_terrainShading.hlsl">
+      <Filter>Src\Shaders\PBR</Filter>
+    </FxCompile>
     <FxCompile Include="Src\Shaders\PS_SkyBox.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
@@ -416,7 +460,5 @@
     <FxCompile Include="Src\Shaders\VertexShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\CS\CS_ErosionSim.hlsl" />
-    <FxCompile Include="Src\Shaders\PBR\PS_terrainShading.hlsl" />
   </ItemGroup>
 </Project>

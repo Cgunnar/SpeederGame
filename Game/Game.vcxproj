@@ -60,7 +60,7 @@
       <PrecompiledHeaderFile>pch.hpp</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_UNICODE;UNICODE;_DEBUG;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Src;Src\Components;Src\Core;Src\EngineStuff;Src\Game;Src\Graphics;Src\GUI;Src\Math;Src\NativeScripts;Src\Physics;Src\Shaders;Src\Utility;Src\Shaders\CS;Src\Shaders\PBR;vendor\assimp;vendor\directxtk;vendor\imgui;vendor\singleHeaders;vendor\vld;vendor\assimp\Debug;vendor\assimp\include;vendor\assimp\Release;vendor\assimp\Debug\dll;vendor\assimp\Debug\lib;vendor\assimp\include\assimp;vendor\assimp\include\assimp\Compiler;vendor\assimp\include\assimp\port;vendor\assimp\include\assimp\port\AndroidJNI;vendor\assimp\Release\dll;vendor\assimp\Release\lib;vendor\directxtk\Audio;vendor\directxtk\bin;vendor\directxtk\bin-int;vendor\directxtk\DirectXTK;vendor\directxtk\Inc;vendor\directxtk\Src;vendor\directxtk\bin\Debug;vendor\directxtk\bin\Debug-x86_64;vendor\directxtk\bin\Release;vendor\directxtk\bin\Release-x86_64;vendor\directxtk\bin\Debug\DirectXTK;vendor\directxtk\bin\Debug-x86_64\DirectXTK;vendor\directxtk\bin\Release\DirectXTK;vendor\directxtk\bin\Release-x86_64\DirectXTK;vendor\directxtk\bin-int\Debug;vendor\directxtk\bin-int\Debug-x86_64;vendor\directxtk\bin-int\Release;vendor\directxtk\bin-int\Release-x86_64;vendor\directxtk\bin-int\Debug\DirectXTK;vendor\directxtk\bin-int\Debug\DirectXTK\DirectXTK.tlog;vendor\directxtk\bin-int\Debug-x86_64\DirectXTK;vendor\directxtk\bin-int\Debug-x86_64\DirectXTK\DirectXTK.tlog;vendor\directxtk\bin-int\Release\DirectXTK;vendor\directxtk\bin-int\Release\DirectXTK\DirectXTK.tlog;vendor\directxtk\bin-int\Release-x86_64\DirectXTK;vendor\directxtk\bin-int\Release-x86_64\DirectXTK\DirectXTK.tlog;vendor\directxtk\Src\Shaders;vendor\directxtk\Src\Shaders\Compiled;vendor\imgui\backends;vendor\imgui\bin;vendor\imgui\bin-int;vendor\imgui\docs;vendor\imgui\examples;vendor\imgui\ImGui;vendor\imgui\misc;vendor\imgui\backends\vulkan;vendor\imgui\bin\Debug;vendor\imgui\bin\Debug-x86_64;vendor\imgui\bin\Release;vendor\imgui\bin\Release-x86_64;vendor\imgui\bin\Debug\ImGui;vendor\imgui\bin\Debug-x86_64\ImGui;vendor\imgui\bin\Release\ImGui;vendor\imgui\bin\Release-x86_64\ImGui;vendor\imgui\bin-int\Debug;vendor\imgui\bin-int\Debug-x86_64;vendor\imgui\bin-int\Release;vendor\imgui\bin-int\Release-x86_64;vendor\imgui\bin-int\Debug\ImGui;vendor\imgui\bin-int\Debug\ImGui\ImGui.tlog;vendor\imgui\bin-int\Debug-x86_64\ImGui;vendor\imgui\bin-int\Debug-x86_64\ImGui\ImGui.tlog;vendor\imgui\bin-int\Release\ImGui;vendor\imgui\bin-int\Release\ImGui\ImGui.tlog;vendor\imgui\bin-int\Release-x86_64\ImGui;vendor\imgui\bin-int\Release-x86_64\ImGui\ImGui.tlog;vendor\imgui\examples\example_allegro5;vendor\imgui\examples\example_android_opengl3;vendor\imgui\examples\example_apple_metal;vendor\imgui\examples\example_apple_opengl2;vendor\imgui\examples\example_emscripten_opengl3;vendor\imgui\examples\example_emscripten_wgpu;vendor\imgui\examples\example_glfw_metal;vendor\imgui\examples\example_glfw_opengl2;vendor\imgui\examples\example_glfw_opengl3;vendor\imgui\examples\example_glfw_vulkan;vendor\imgui\examples\example_glut_opengl2;vendor\imgui\examples\example_marmalade;vendor\imgui\examples\example_null;vendor\imgui\examples\example_sdl_directx11;vendor\imgui\examples\example_sdl_metal;vendor\imgui\examples\example_sdl_opengl2;vendor\imgui\examples\example_sdl_opengl3;vendor\imgui\examples\example_sdl_vulkan;vendor\imgui\examples\example_win32_directx10;vendor\imgui\examples\example_win32_directx11;vendor\imgui\examples\example_win32_directx12;vendor\imgui\examples\example_win32_directx9;vendor\imgui\examples\libs;vendor\imgui\examples\example_android_opengl3\android;vendor\imgui\examples\example_android_opengl3\android\app;vendor\imgui\examples\example_android_opengl3\android\app\src;vendor\imgui\examples\example_android_opengl3\android\app\src\main;vendor\imgui\examples\example_android_opengl3\android\app\src\main\java;vendor\imgui\examples\example_apple_metal\example_apple_metal.xcodeproj;vendor\imgui\examples\example_apple_metal\iOS;vendor\imgui\examples\example_apple_metal\macOS;vendor\imgui\examples\example_apple_opengl2\example_apple_opengl2.xcodeproj;vendor\imgui\examples\example_marmalade\data;vendor\imgui\examples\libs\gl3w;vendor\imgui\examples\libs\glfw;vendor\imgui\examples\libs\usynergy;vendor\imgui\examples\libs\gl3w\GL;vendor\imgui\examples\libs\glfw\include;vendor\imgui\examples\libs\glfw\lib-vc2010-32;vendor\imgui\examples\libs\glfw\lib-vc2010-64;vendor\imgui\examples\libs\glfw\include\GLFW;vendor\imgui\misc\cpp;vendor\imgui\misc\debuggers;vendor\imgui\misc\fonts;vendor\imgui\misc\freetype;vendor\imgui\misc\single_file;vendor\vld\dlls;vendor\vld\include;vendor\vld\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Src;Src\Components;Src\Core;Src\EngineStuff;Src\Game;Src\Graphics;Src\GUI;Src\Math;Src\NativeScripts;Src\Physics;Src\Shaders;Src\Utility;Src\Graphics\SpriteRendering;Src\Shaders\CS;Src\Shaders\PBR;vendor\assimp;vendor\directxtk;vendor\imgui;vendor\singleHeaders;vendor\vld;vendor\assimp\Debug;vendor\assimp\include;vendor\assimp\Release;vendor\assimp\Debug\dll;vendor\assimp\Debug\lib;vendor\assimp\include\assimp;vendor\assimp\include\assimp\Compiler;vendor\assimp\include\assimp\port;vendor\assimp\include\assimp\port\AndroidJNI;vendor\assimp\Release\dll;vendor\assimp\Release\lib;vendor\directxtk\Audio;vendor\directxtk\bin;vendor\directxtk\bin-int;vendor\directxtk\DirectXTK;vendor\directxtk\Inc;vendor\directxtk\Src;vendor\directxtk\bin\Debug;vendor\directxtk\bin\Debug-x86_64;vendor\directxtk\bin\Release;vendor\directxtk\bin\Release-x86_64;vendor\directxtk\bin\Debug\DirectXTK;vendor\directxtk\bin\Debug-x86_64\DirectXTK;vendor\directxtk\bin\Release\DirectXTK;vendor\directxtk\bin\Release-x86_64\DirectXTK;vendor\directxtk\bin-int\Debug;vendor\directxtk\bin-int\Debug-x86_64;vendor\directxtk\bin-int\Release;vendor\directxtk\bin-int\Release-x86_64;vendor\directxtk\bin-int\Debug\DirectXTK;vendor\directxtk\bin-int\Debug\DirectXTK\DirectXTK.tlog;vendor\directxtk\bin-int\Debug-x86_64\DirectXTK;vendor\directxtk\bin-int\Debug-x86_64\DirectXTK\DirectXTK.tlog;vendor\directxtk\bin-int\Release\DirectXTK;vendor\directxtk\bin-int\Release\DirectXTK\DirectXTK.tlog;vendor\directxtk\bin-int\Release-x86_64\DirectXTK;vendor\directxtk\bin-int\Release-x86_64\DirectXTK\DirectXTK.tlog;vendor\directxtk\Src\Shaders;vendor\directxtk\Src\Shaders\Compiled;vendor\imgui\backends;vendor\imgui\bin;vendor\imgui\bin-int;vendor\imgui\docs;vendor\imgui\examples;vendor\imgui\ImGui;vendor\imgui\misc;vendor\imgui\backends\vulkan;vendor\imgui\bin\Debug;vendor\imgui\bin\Debug-x86_64;vendor\imgui\bin\Release;vendor\imgui\bin\Release-x86_64;vendor\imgui\bin\Debug\ImGui;vendor\imgui\bin\Debug-x86_64\ImGui;vendor\imgui\bin\Release\ImGui;vendor\imgui\bin\Release-x86_64\ImGui;vendor\imgui\bin-int\Debug;vendor\imgui\bin-int\Debug-x86_64;vendor\imgui\bin-int\Release;vendor\imgui\bin-int\Release-x86_64;vendor\imgui\bin-int\Debug\ImGui;vendor\imgui\bin-int\Debug\ImGui\ImGui.tlog;vendor\imgui\bin-int\Debug-x86_64\ImGui;vendor\imgui\bin-int\Debug-x86_64\ImGui\ImGui.tlog;vendor\imgui\bin-int\Release\ImGui;vendor\imgui\bin-int\Release\ImGui\ImGui.tlog;vendor\imgui\bin-int\Release-x86_64\ImGui;vendor\imgui\bin-int\Release-x86_64\ImGui\ImGui.tlog;vendor\imgui\examples\example_allegro5;vendor\imgui\examples\example_android_opengl3;vendor\imgui\examples\example_apple_metal;vendor\imgui\examples\example_apple_opengl2;vendor\imgui\examples\example_emscripten_opengl3;vendor\imgui\examples\example_emscripten_wgpu;vendor\imgui\examples\example_glfw_metal;vendor\imgui\examples\example_glfw_opengl2;vendor\imgui\examples\example_glfw_opengl3;vendor\imgui\examples\example_glfw_vulkan;vendor\imgui\examples\example_glut_opengl2;vendor\imgui\examples\example_marmalade;vendor\imgui\examples\example_null;vendor\imgui\examples\example_sdl_directx11;vendor\imgui\examples\example_sdl_metal;vendor\imgui\examples\example_sdl_opengl2;vendor\imgui\examples\example_sdl_opengl3;vendor\imgui\examples\example_sdl_vulkan;vendor\imgui\examples\example_win32_directx10;vendor\imgui\examples\example_win32_directx11;vendor\imgui\examples\example_win32_directx12;vendor\imgui\examples\example_win32_directx9;vendor\imgui\examples\libs;vendor\imgui\examples\example_android_opengl3\android;vendor\imgui\examples\example_android_opengl3\android\app;vendor\imgui\examples\example_android_opengl3\android\app\src;vendor\imgui\examples\example_android_opengl3\android\app\src\main;vendor\imgui\examples\example_android_opengl3\android\app\src\main\java;vendor\imgui\examples\example_apple_metal\example_apple_metal.xcodeproj;vendor\imgui\examples\example_apple_metal\iOS;vendor\imgui\examples\example_apple_metal\macOS;vendor\imgui\examples\example_apple_opengl2\example_apple_opengl2.xcodeproj;vendor\imgui\examples\example_emscripten_wgpu\web;vendor\imgui\examples\example_marmalade\data;vendor\imgui\examples\libs\gl3w;vendor\imgui\examples\libs\glfw;vendor\imgui\examples\libs\usynergy;vendor\imgui\examples\libs\gl3w\GL;vendor\imgui\examples\libs\glfw\include;vendor\imgui\examples\libs\glfw\lib-vc2010-32;vendor\imgui\examples\libs\glfw\lib-vc2010-64;vendor\imgui\examples\libs\glfw\include\GLFW;vendor\imgui\misc\cpp;vendor\imgui\misc\debuggers;vendor\imgui\misc\fonts;vendor\imgui\misc\freetype;vendor\imgui\misc\single_file;vendor\vld\dlls;vendor\vld\include;vendor\vld\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -82,7 +82,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Debug\dll\**"\ (xcopy /Q /E /Y /I "$(Proje
       <PrecompiledHeaderFile>pch.hpp</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_UNICODE;UNICODE;_NDEBUG;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>Src;Src\Components;Src\Core;Src\EngineStuff;Src\Game;Src\Graphics;Src\GUI;Src\Math;Src\NativeScripts;Src\Physics;Src\Shaders;Src\Utility;Src\Shaders\CS;Src\Shaders\PBR;vendor\assimp;vendor\directxtk;vendor\imgui;vendor\singleHeaders;vendor\vld;vendor\assimp\Debug;vendor\assimp\include;vendor\assimp\Release;vendor\assimp\Debug\dll;vendor\assimp\Debug\lib;vendor\assimp\include\assimp;vendor\assimp\include\assimp\Compiler;vendor\assimp\include\assimp\port;vendor\assimp\include\assimp\port\AndroidJNI;vendor\assimp\Release\dll;vendor\assimp\Release\lib;vendor\directxtk\Audio;vendor\directxtk\bin;vendor\directxtk\bin-int;vendor\directxtk\DirectXTK;vendor\directxtk\Inc;vendor\directxtk\Src;vendor\directxtk\bin\Debug;vendor\directxtk\bin\Debug-x86_64;vendor\directxtk\bin\Release;vendor\directxtk\bin\Release-x86_64;vendor\directxtk\bin\Debug\DirectXTK;vendor\directxtk\bin\Debug-x86_64\DirectXTK;vendor\directxtk\bin\Release\DirectXTK;vendor\directxtk\bin\Release-x86_64\DirectXTK;vendor\directxtk\bin-int\Debug;vendor\directxtk\bin-int\Debug-x86_64;vendor\directxtk\bin-int\Release;vendor\directxtk\bin-int\Release-x86_64;vendor\directxtk\bin-int\Debug\DirectXTK;vendor\directxtk\bin-int\Debug\DirectXTK\DirectXTK.tlog;vendor\directxtk\bin-int\Debug-x86_64\DirectXTK;vendor\directxtk\bin-int\Debug-x86_64\DirectXTK\DirectXTK.tlog;vendor\directxtk\bin-int\Release\DirectXTK;vendor\directxtk\bin-int\Release\DirectXTK\DirectXTK.tlog;vendor\directxtk\bin-int\Release-x86_64\DirectXTK;vendor\directxtk\bin-int\Release-x86_64\DirectXTK\DirectXTK.tlog;vendor\directxtk\Src\Shaders;vendor\directxtk\Src\Shaders\Compiled;vendor\imgui\backends;vendor\imgui\bin;vendor\imgui\bin-int;vendor\imgui\docs;vendor\imgui\examples;vendor\imgui\ImGui;vendor\imgui\misc;vendor\imgui\backends\vulkan;vendor\imgui\bin\Debug;vendor\imgui\bin\Debug-x86_64;vendor\imgui\bin\Release;vendor\imgui\bin\Release-x86_64;vendor\imgui\bin\Debug\ImGui;vendor\imgui\bin\Debug-x86_64\ImGui;vendor\imgui\bin\Release\ImGui;vendor\imgui\bin\Release-x86_64\ImGui;vendor\imgui\bin-int\Debug;vendor\imgui\bin-int\Debug-x86_64;vendor\imgui\bin-int\Release;vendor\imgui\bin-int\Release-x86_64;vendor\imgui\bin-int\Debug\ImGui;vendor\imgui\bin-int\Debug\ImGui\ImGui.tlog;vendor\imgui\bin-int\Debug-x86_64\ImGui;vendor\imgui\bin-int\Debug-x86_64\ImGui\ImGui.tlog;vendor\imgui\bin-int\Release\ImGui;vendor\imgui\bin-int\Release\ImGui\ImGui.tlog;vendor\imgui\bin-int\Release-x86_64\ImGui;vendor\imgui\bin-int\Release-x86_64\ImGui\ImGui.tlog;vendor\imgui\examples\example_allegro5;vendor\imgui\examples\example_android_opengl3;vendor\imgui\examples\example_apple_metal;vendor\imgui\examples\example_apple_opengl2;vendor\imgui\examples\example_emscripten_opengl3;vendor\imgui\examples\example_emscripten_wgpu;vendor\imgui\examples\example_glfw_metal;vendor\imgui\examples\example_glfw_opengl2;vendor\imgui\examples\example_glfw_opengl3;vendor\imgui\examples\example_glfw_vulkan;vendor\imgui\examples\example_glut_opengl2;vendor\imgui\examples\example_marmalade;vendor\imgui\examples\example_null;vendor\imgui\examples\example_sdl_directx11;vendor\imgui\examples\example_sdl_metal;vendor\imgui\examples\example_sdl_opengl2;vendor\imgui\examples\example_sdl_opengl3;vendor\imgui\examples\example_sdl_vulkan;vendor\imgui\examples\example_win32_directx10;vendor\imgui\examples\example_win32_directx11;vendor\imgui\examples\example_win32_directx12;vendor\imgui\examples\example_win32_directx9;vendor\imgui\examples\libs;vendor\imgui\examples\example_android_opengl3\android;vendor\imgui\examples\example_android_opengl3\android\app;vendor\imgui\examples\example_android_opengl3\android\app\src;vendor\imgui\examples\example_android_opengl3\android\app\src\main;vendor\imgui\examples\example_android_opengl3\android\app\src\main\java;vendor\imgui\examples\example_apple_metal\example_apple_metal.xcodeproj;vendor\imgui\examples\example_apple_metal\iOS;vendor\imgui\examples\example_apple_metal\macOS;vendor\imgui\examples\example_apple_opengl2\example_apple_opengl2.xcodeproj;vendor\imgui\examples\example_marmalade\data;vendor\imgui\examples\libs\gl3w;vendor\imgui\examples\libs\glfw;vendor\imgui\examples\libs\usynergy;vendor\imgui\examples\libs\gl3w\GL;vendor\imgui\examples\libs\glfw\include;vendor\imgui\examples\libs\glfw\lib-vc2010-32;vendor\imgui\examples\libs\glfw\lib-vc2010-64;vendor\imgui\examples\libs\glfw\include\GLFW;vendor\imgui\misc\cpp;vendor\imgui\misc\debuggers;vendor\imgui\misc\fonts;vendor\imgui\misc\freetype;vendor\imgui\misc\single_file;vendor\vld\dlls;vendor\vld\include;vendor\vld\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>Src;Src\Components;Src\Core;Src\EngineStuff;Src\Game;Src\Graphics;Src\GUI;Src\Math;Src\NativeScripts;Src\Physics;Src\Shaders;Src\Utility;Src\Graphics\SpriteRendering;Src\Shaders\CS;Src\Shaders\PBR;vendor\assimp;vendor\directxtk;vendor\imgui;vendor\singleHeaders;vendor\vld;vendor\assimp\Debug;vendor\assimp\include;vendor\assimp\Release;vendor\assimp\Debug\dll;vendor\assimp\Debug\lib;vendor\assimp\include\assimp;vendor\assimp\include\assimp\Compiler;vendor\assimp\include\assimp\port;vendor\assimp\include\assimp\port\AndroidJNI;vendor\assimp\Release\dll;vendor\assimp\Release\lib;vendor\directxtk\Audio;vendor\directxtk\bin;vendor\directxtk\bin-int;vendor\directxtk\DirectXTK;vendor\directxtk\Inc;vendor\directxtk\Src;vendor\directxtk\bin\Debug;vendor\directxtk\bin\Debug-x86_64;vendor\directxtk\bin\Release;vendor\directxtk\bin\Release-x86_64;vendor\directxtk\bin\Debug\DirectXTK;vendor\directxtk\bin\Debug-x86_64\DirectXTK;vendor\directxtk\bin\Release\DirectXTK;vendor\directxtk\bin\Release-x86_64\DirectXTK;vendor\directxtk\bin-int\Debug;vendor\directxtk\bin-int\Debug-x86_64;vendor\directxtk\bin-int\Release;vendor\directxtk\bin-int\Release-x86_64;vendor\directxtk\bin-int\Debug\DirectXTK;vendor\directxtk\bin-int\Debug\DirectXTK\DirectXTK.tlog;vendor\directxtk\bin-int\Debug-x86_64\DirectXTK;vendor\directxtk\bin-int\Debug-x86_64\DirectXTK\DirectXTK.tlog;vendor\directxtk\bin-int\Release\DirectXTK;vendor\directxtk\bin-int\Release\DirectXTK\DirectXTK.tlog;vendor\directxtk\bin-int\Release-x86_64\DirectXTK;vendor\directxtk\bin-int\Release-x86_64\DirectXTK\DirectXTK.tlog;vendor\directxtk\Src\Shaders;vendor\directxtk\Src\Shaders\Compiled;vendor\imgui\backends;vendor\imgui\bin;vendor\imgui\bin-int;vendor\imgui\docs;vendor\imgui\examples;vendor\imgui\ImGui;vendor\imgui\misc;vendor\imgui\backends\vulkan;vendor\imgui\bin\Debug;vendor\imgui\bin\Debug-x86_64;vendor\imgui\bin\Release;vendor\imgui\bin\Release-x86_64;vendor\imgui\bin\Debug\ImGui;vendor\imgui\bin\Debug-x86_64\ImGui;vendor\imgui\bin\Release\ImGui;vendor\imgui\bin\Release-x86_64\ImGui;vendor\imgui\bin-int\Debug;vendor\imgui\bin-int\Debug-x86_64;vendor\imgui\bin-int\Release;vendor\imgui\bin-int\Release-x86_64;vendor\imgui\bin-int\Debug\ImGui;vendor\imgui\bin-int\Debug\ImGui\ImGui.tlog;vendor\imgui\bin-int\Debug-x86_64\ImGui;vendor\imgui\bin-int\Debug-x86_64\ImGui\ImGui.tlog;vendor\imgui\bin-int\Release\ImGui;vendor\imgui\bin-int\Release\ImGui\ImGui.tlog;vendor\imgui\bin-int\Release-x86_64\ImGui;vendor\imgui\bin-int\Release-x86_64\ImGui\ImGui.tlog;vendor\imgui\examples\example_allegro5;vendor\imgui\examples\example_android_opengl3;vendor\imgui\examples\example_apple_metal;vendor\imgui\examples\example_apple_opengl2;vendor\imgui\examples\example_emscripten_opengl3;vendor\imgui\examples\example_emscripten_wgpu;vendor\imgui\examples\example_glfw_metal;vendor\imgui\examples\example_glfw_opengl2;vendor\imgui\examples\example_glfw_opengl3;vendor\imgui\examples\example_glfw_vulkan;vendor\imgui\examples\example_glut_opengl2;vendor\imgui\examples\example_marmalade;vendor\imgui\examples\example_null;vendor\imgui\examples\example_sdl_directx11;vendor\imgui\examples\example_sdl_metal;vendor\imgui\examples\example_sdl_opengl2;vendor\imgui\examples\example_sdl_opengl3;vendor\imgui\examples\example_sdl_vulkan;vendor\imgui\examples\example_win32_directx10;vendor\imgui\examples\example_win32_directx11;vendor\imgui\examples\example_win32_directx12;vendor\imgui\examples\example_win32_directx9;vendor\imgui\examples\libs;vendor\imgui\examples\example_android_opengl3\android;vendor\imgui\examples\example_android_opengl3\android\app;vendor\imgui\examples\example_android_opengl3\android\app\src;vendor\imgui\examples\example_android_opengl3\android\app\src\main;vendor\imgui\examples\example_android_opengl3\android\app\src\main\java;vendor\imgui\examples\example_apple_metal\example_apple_metal.xcodeproj;vendor\imgui\examples\example_apple_metal\iOS;vendor\imgui\examples\example_apple_metal\macOS;vendor\imgui\examples\example_apple_opengl2\example_apple_opengl2.xcodeproj;vendor\imgui\examples\example_emscripten_wgpu\web;vendor\imgui\examples\example_marmalade\data;vendor\imgui\examples\libs\gl3w;vendor\imgui\examples\libs\glfw;vendor\imgui\examples\libs\usynergy;vendor\imgui\examples\libs\gl3w\GL;vendor\imgui\examples\libs\glfw\include;vendor\imgui\examples\libs\glfw\lib-vc2010-32;vendor\imgui\examples\libs\glfw\lib-vc2010-64;vendor\imgui\examples\libs\glfw\include\GLFW;vendor\imgui\misc\cpp;vendor\imgui\misc\debuggers;vendor\imgui\misc\fonts;vendor\imgui\misc\freetype;vendor\imgui\misc\single_file;vendor\vld\dlls;vendor\vld\include;vendor\vld\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -103,10 +103,6 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Src\NativeScripts\ShipControllerGamePad.h" />
-    <ClInclude Include="Src\NativeScripts\ShipControllerKBM.h" />
-    <ClInclude Include="Src\Game\Hydraulic_Erosion.h" />
-    <ClInclude Include="Src\Physics\PhysicsEngine.h" />
     <ClInclude Include="Src\Components\PhysicsComponents.h" />
     <ClInclude Include="Src\Components\RenderComponents.h" />
     <ClInclude Include="Src\Components\StandardComponents.h" />
@@ -121,6 +117,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClInclude Include="Src\EngineStuff\boundingVolumes.h" />
     <ClInclude Include="Src\GUI\GuiDebug.h" />
     <ClInclude Include="Src\GUI\TerrainGUI.h" />
+    <ClInclude Include="Src\Game\Hydraulic_Erosion.h" />
     <ClInclude Include="Src\Game\TerrainChunk.h" />
     <ClInclude Include="Src\Game\TerrainMapGenerator.h" />
     <ClInclude Include="Src\Game\TerrainMeshGenerator.h" />
@@ -138,18 +135,22 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClInclude Include="Src\Graphics\ShadowMappingPass.h" />
     <ClInclude Include="Src\Graphics\SharedRendererResources.h" />
     <ClInclude Include="Src\Graphics\SkyBox.h" />
+    <ClInclude Include="Src\Graphics\SpriteRendering\Sprite.h" />
     <ClInclude Include="Src\Math\Matrix.hpp" />
     <ClInclude Include="Src\Math\RfextendedMath.hpp" />
-    <ClInclude Include="Src\Math\rfmFunctions.h" />
     <ClInclude Include="Src\Math\RimfrostMath.hpp" />
     <ClInclude Include="Src\Math\Transform.hpp" />
     <ClInclude Include="Src\Math\Vector.hpp" />
+    <ClInclude Include="Src\Math\rfmFunctions.h" />
     <ClInclude Include="Src\NativeScripts\CameraControllerScript.h" />
     <ClInclude Include="Src\NativeScripts\NativeScript.h" />
     <ClInclude Include="Src\NativeScripts\NativeScriptCollection.h" />
+    <ClInclude Include="Src\NativeScripts\ShipControllerGamePad.h" />
+    <ClInclude Include="Src\NativeScripts\ShipControllerKBM.h" />
     <ClInclude Include="Src\NativeScripts\ShipScript.h" />
     <ClInclude Include="Src\NativeScripts\TerrainScript.h" />
     <ClInclude Include="Src\Physics\CollisionDetection.h" />
+    <ClInclude Include="Src\Physics\PhysicsEngine.h" />
     <ClInclude Include="Src\Physics\PhysicsTypes.h" />
     <ClInclude Include="Src\Physics\TerrainVsBoxPhysics.h" />
     <ClInclude Include="Src\Utility\FileUtility.hpp" />
@@ -165,12 +166,9 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClInclude Include="vendor\singleHeaders\PerlinNoise.hpp" />
     <ClInclude Include="vendor\singleHeaders\json.hpp" />
     <ClInclude Include="vendor\singleHeaders\stb_image.h" />
+    <ClInclude Include="vendor\singleHeaders\stb_image_write.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Src\NativeScripts\ShipControllerGamePad.cpp" />
-    <ClCompile Include="Src\NativeScripts\ShipControllerKBM.cpp" />
-    <ClCompile Include="Src\Game\Hydraulic_Erosion.cpp" />
-    <ClCompile Include="Src\Physics\PhysicsEngine.cpp" />
     <ClCompile Include="Src\Core\Application.cpp" />
     <ClCompile Include="Src\Core\AssetManager.cpp" />
     <ClCompile Include="Src\Core\Input.cpp" />
@@ -182,6 +180,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClCompile Include="Src\EngineStuff\boundingVolumes.cpp" />
     <ClCompile Include="Src\GUI\GuiDebug.cpp" />
     <ClCompile Include="Src\GUI\TerrainGUI.cpp" />
+    <ClCompile Include="Src\Game\Hydraulic_Erosion.cpp" />
     <ClCompile Include="Src\Game\TerrainChunk.cpp" />
     <ClCompile Include="Src\Game\TerrainMapGenerator.cpp" />
     <ClCompile Include="Src\Game\TerrainMeshGenerator.cpp" />
@@ -197,14 +196,18 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     <ClCompile Include="Src\Graphics\Renderer.cpp" />
     <ClCompile Include="Src\Graphics\ShadowMappingPass.cpp" />
     <ClCompile Include="Src\Graphics\SkyBox.cpp" />
+    <ClCompile Include="Src\Graphics\SpriteRendering\Sprite.cpp" />
     <ClCompile Include="Src\Math\Matrix.cpp" />
     <ClCompile Include="Src\Math\RfextendedMath.cpp" />
     <ClCompile Include="Src\Math\Transform.cpp" />
     <ClCompile Include="Src\Math\Vector.cpp" />
     <ClCompile Include="Src\NativeScripts\CameraControllerScript.cpp" />
+    <ClCompile Include="Src\NativeScripts\ShipControllerGamePad.cpp" />
+    <ClCompile Include="Src\NativeScripts\ShipControllerKBM.cpp" />
     <ClCompile Include="Src\NativeScripts\ShipScript.cpp" />
     <ClCompile Include="Src\NativeScripts\TerrainScript.cpp" />
     <ClCompile Include="Src\Physics\CollisionDetection.cpp" />
+    <ClCompile Include="Src\Physics\PhysicsEngine.cpp" />
     <ClCompile Include="Src\Physics\TerrainVsBoxPhysics.cpp" />
     <ClCompile Include="Src\Utility\FrameTimer.cpp" />
     <ClCompile Include="Src\Utility\RandGen.cpp" />
@@ -222,19 +225,14 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="Src\Shaders\CS\CS_ErosionSim.hlsl">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="Src\Shaders\CS\CS_convolute_DiffIrrCube.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Src\Shaders\CS\CS_equirect2cube.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="Src\Shaders\CS\CS_ErosionSim.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Src\Shaders\CS\spbrdf.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>
@@ -264,12 +262,7 @@ IF EXIST "$(ProjectDir)\vendor\assimp\Release\dll\**"\ (xcopy /Q /E /Y /I "$(Pro
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Src\Shaders\PBR\PS_terrainShading.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild>true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Src\Shaders\PS_SkyBox.hlsl">
       <ExcludedFromBuild>true</ExcludedFromBuild>

@@ -3,6 +3,7 @@
 #include "RimfrostMath.hpp"
 #include "PhysicsComponents.h"
 #include "GraphicsResources.h"
+#include "hoverThrusters.h"
 
 class ShipScript : public rfe::NativeScriptComponent<ShipScript>
 {
@@ -69,6 +70,8 @@ private:
 	float m_cameraPitch = 0;
 	float m_cameraArmLength = 4;
 	float m_friction = 0.7f;
+
+	HoverThrusters m_hoverTrusters;
 
 	//airplane stuff
 	float m_Cd = 0.25f; //drag cof

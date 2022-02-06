@@ -253,6 +253,7 @@
       <Filter>vendor\singleHeaders</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\SpriteRendering\SpriteRendere.h" />
+    <ClInclude Include="Src\Game\hoverThrusters.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">
@@ -400,6 +401,7 @@
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\SpriteRendering\SpriteRendere.cpp" />
+    <ClCompile Include="Src\Game\hoverThrusters.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\CS\CS_ErosionSim.hlsl">

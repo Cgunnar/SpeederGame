@@ -9,6 +9,7 @@
 #include "imgui.h"
 #include "TerrainScript.h"
 #include "FrameTimer.hpp"
+#include "hoverThrusters.h"
 
 using namespace rfm;
 using namespace rfe;
@@ -33,8 +34,6 @@ void ShipScript::OnStart()
 	m_rigidBodyDockCopy.frictionCof = 0.7f;
 
 	AddComponent<AABBComp>()->aabb = shipAABB;
-
-
 
 	//create bullet for main weapon
 	float r = 0.05f;
@@ -85,6 +84,7 @@ void ShipScript::OnUpdate(float dt)
 
 	auto& t = EntityReg::GetComponentArray<TerrainScript>().front();
 	float altitude = t.GetHeightOverTerrain(GetTransform().getTranslation());
+	m_hoverTrusters.distanceOverGround = altitude;
 	ImGui::Text("altitude: %f", altitude);
 	ImGui::Text("resting: %s", std::to_string(GetRigidBody().resting).c_str());
 
@@ -103,8 +103,13 @@ void ShipScript::OnFixedUpdate(float dt)
 		Transform& transform = GetTransform();
 		Matrix3 rot = transform.getRotationMatrix();
 		Matrix3 rotT = transpose(rot);
+		Matrix3 Iw = rotT * rigidBody.momentOfInertia * rot;
+		Matrix3 invIw = inverse(Iw);
 		rigidBody.velocity += m_controllInputXYZ * dt;
 		rigidBody.angularVelocity += m_controllInputPYR * dt;
+
+		Vector3 resultingForce;
+		Vector3 moment;
 
 		Vector3 airVelocity = rigidBody.velocity - Vector3(0, 0, 0); // - winds Velocity
 		if (airVelocity.length() > 1)
@@ -122,9 +127,7 @@ void ShipScript::OnFixedUpdate(float dt)
 
 			float drag = dynamicPressure * area * m_Cd;
 
-			Vector3 dragForce = drag * -airVelDir;
-
-
+			resultingForce += drag * -airVelDir;
 
 			float pitchDampening = m_Cmq * m_chord * m_chord * m_liftSurfaceArea * dynamicPressure / (2 * airVelocity.length());
 			float rollDampening = m_Clp * m_wingspann * m_wingspann * m_liftSurfaceArea * dynamicPressure / (2 * airVelocity.length());
@@ -137,15 +140,20 @@ void ShipScript::OnFixedUpdate(float dt)
 			localMoment.y = angVelLocal.y * yawDampening;
 			localMoment.z = angVelLocal.z * rollDampening;
 
-			Vector3 localAngAcc = inverse(rigidBody.momentOfInertia) * localMoment;
-
-			Vector3 angularAcc = rot * localAngAcc;
-			rigidBody.angularVelocity += angularAcc * dt;
-			rigidBody.velocity += (dragForce / rigidBody.mass) * dt;
-
-
+			moment += rot * localMoment;
 		}
 
+		Vector3 hoverTrust = m_hoverTrusters.CalculateForce(110000);
+		resultingForce += hoverTrust;
+
+
+
+		Vector3 pointLowOnShip = transform * Vector4(0, 0.14f, 0, 1);
+		Vector3 r = pointLowOnShip - transform.getTranslation();
+		moment += cross(hoverTrust, r);
+
+		rigidBody.angularVelocity += invIw * moment * dt;
+		rigidBody.velocity += (resultingForce / rigidBody.mass) * dt;
 	}
 }
 

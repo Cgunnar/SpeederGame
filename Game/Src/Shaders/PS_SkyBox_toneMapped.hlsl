@@ -7,10 +7,11 @@ struct vs_out
     float3 samplePos : POSITION;
 };
 
-static const float planetRadius = 2010.0f;
-static const float atmosphereRadius = 2110.0f;
-static const float densityFallOff = 0.5f;
-static const float3 scatteringCoefficients = float3(1, 1, 1);
+static const float planetRadius = 2000.0f;
+static const float atmosphereRadius = 2100.0f;
+static const float densityFallOff = 4.0f;
+static const float3 scatteringStrength = 1.0f;
+static const float3 scatteringCoefficients = scatteringStrength * float3(pow(400.0f / 700.0f, 4), pow(400.0f / 530.0f, 4), pow(400.0f / 440.0f, 4));
 static const int numOpticalDepthPoints = 10;
 static const int numScatterPoints = 10;
 #define FLT_MAX 3.402823466E+38
@@ -68,7 +69,7 @@ float3 AtmosphereicScattering(float3 rayOrigin, float3 rayDir, float rayLength)
     
     float3 inScatterPoint = rayOrigin;
     float stepSize = rayLength / (float)(numScatterPoints - 1);
-    float3 inScatterdLight = 0;
+    float3 inScatterdLight = float3(0, 0, 0);
     
     for (int i = 0; i < numScatterPoints; i++)
     {
@@ -91,23 +92,28 @@ float4 main(vs_out input) : SV_TARGET
     //sky = sky / (sky + float3(1, 1, 1));
     //return float4(sky, 1.0f);
     
-    float3 rayOrigin = float3(0, 0, 0);
+    float3 rayOrigin = float3(0, 50, 0);
     float3 rayDir = input.samplePos;
     
-    float dstToSurfance = 0;
+    float dstToSurfance = RaySphere(planetCenter, planetRadius, rayOrigin, rayDir);
     float2 hitInfo = RaySphere(planetCenter, atmosphereRadius, rayOrigin, rayDir);
     float dstToAtmosphere = hitInfo.x;
     float dstThroughAtmosphere = min(hitInfo.y, dstToSurfance - dstToAtmosphere);
-    return float4(dstToAtmosphere, dstThroughAtmosphere, 0, 1);
-    //if (dstThroughAtmosphere > 0)
+   
+    //float dstToAtmosphere = hitInfo.x;
+    //float dstThroughAtmosphere = min(hitInfo.y, 60 - dstToAtmosphere);
+    if (dstThroughAtmosphere > 0.0f)
     {
+        //return float4(1, 1, 0, 1);
         const float epsilon = 0.0001f;
         float3 pointInAtmosphere = rayOrigin + rayDir * (dstToAtmosphere + epsilon);
-        float3 sky = AtmosphereicScattering(pointInAtmosphere, rayDir, dstThroughAtmosphere - epsilon * 2);
+        //float3 pointInAtmosphere = rayOrigin;
+        float3 sky = AtmosphereicScattering(pointInAtmosphere, rayDir, dstThroughAtmosphere - epsilon * 2.0f);
+        sky = sky / (sky + float3(1, 1, 1));
         return float4(sky, 1);
     }
-    //else
-    //{
-    //    return float4(1, 0, 0, 1);
-    //}
+    else
+    {
+        return float4(0, 1, 0, 1);
+    }
 }

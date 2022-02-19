@@ -48,7 +48,7 @@ class Shader
 	friend LowLvlGfx;
 public:
 	Shader() = default;
-
+	bool IsValid() const { return m_id != -1; }
 private:
 	Shader(uint32_t id) : m_id(id) {}
 	uint32_t m_id = -1;

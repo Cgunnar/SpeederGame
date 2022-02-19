@@ -73,13 +73,13 @@ void Renderer::RenderSkyBox(SkyBox& sky)
 		LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		LowLvlGfx::Context()->Draw(36, 0);
 
-		if (sky.m_irradianceCubeMap)
+		if (sky.m_envMap.GetIrradianceCubeMap())
 		{
-			m_pbrRenderer.SetDiffuseIrradianceCubeMap(sky.m_irradianceCubeMap);
+			m_pbrRenderer.SetDiffuseIrradianceCubeMap(sky.m_envMap.GetIrradianceCubeMap());
 		}
-		if (sky.m_specularCubeMap)
+		if (sky.m_envMap.GetSpecularCubeMap())
 		{
-			m_pbrRenderer.SetSpecularCubeMap(sky.m_specularCubeMap);
+			m_pbrRenderer.SetSpecularCubeMap(sky.m_envMap.GetSpecularCubeMap());
 		}
 		if (sky.m_splitSumMap)
 		{

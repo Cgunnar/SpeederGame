@@ -117,10 +117,16 @@
     <ClInclude Include="Src\Game\TerrainTypes.h">
       <Filter>Src\Game</Filter>
     </ClInclude>
+    <ClInclude Include="Src\Game\hoverThrusters.h">
+      <Filter>Src\Game</Filter>
+    </ClInclude>
     <ClInclude Include="Src\Graphics\AssimpLoader.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\DX11.h">
+      <Filter>Src\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\EnvironmentMap.h">
       <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\Geometry.h">
@@ -157,6 +163,9 @@
       <Filter>Src\Graphics</Filter>
     </ClInclude>
     <ClInclude Include="Src\Graphics\SpriteRendering\Sprite.h">
+      <Filter>Src\Graphics\SpriteRendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Src\Graphics\SpriteRendering\SpriteRendere.h">
       <Filter>Src\Graphics\SpriteRendering</Filter>
     </ClInclude>
     <ClInclude Include="Src\Math\Matrix.hpp">
@@ -252,8 +261,6 @@
     <ClInclude Include="vendor\singleHeaders\stb_image_write.h">
       <Filter>vendor\singleHeaders</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Graphics\SpriteRendering\SpriteRendere.h" />
-    <ClInclude Include="Src\Game\hoverThrusters.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\Core\Application.cpp">
@@ -304,10 +311,16 @@
     <ClCompile Include="Src\Game\TerrainTypes.cpp">
       <Filter>Src\Game</Filter>
     </ClCompile>
+    <ClCompile Include="Src\Game\hoverThrusters.cpp">
+      <Filter>Src\Game</Filter>
+    </ClCompile>
     <ClCompile Include="Src\Graphics\AssimpLoader.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\DX11.cpp">
+      <Filter>Src\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\EnvironmentMap.cpp">
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\Geometry.cpp">
@@ -338,6 +351,9 @@
       <Filter>Src\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Src\Graphics\SpriteRendering\Sprite.cpp">
+      <Filter>Src\Graphics\SpriteRendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\Graphics\SpriteRendering\SpriteRendere.cpp">
       <Filter>Src\Graphics\SpriteRendering</Filter>
     </ClCompile>
     <ClCompile Include="Src\Math\Matrix.cpp">
@@ -400,8 +416,6 @@
     <ClCompile Include="vendor\imgui\backends\imgui_impl_win32.cpp">
       <Filter>vendor\imgui\backends</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Graphics\SpriteRendering\SpriteRendere.cpp" />
-    <ClCompile Include="Src\Game\hoverThrusters.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Src\Shaders\CS\CS_ErosionSim.hlsl">
@@ -411,6 +425,9 @@
       <Filter>Src\Shaders\CS</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\CS\CS_equirect2cube.hlsl">
+      <Filter>Src\Shaders\CS</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\CS\CS_sky_scattering.hlsl">
       <Filter>Src\Shaders\CS</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\CS\spbrdf.hlsl">
@@ -464,6 +481,5 @@
     <FxCompile Include="Src\Shaders\VertexShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\CS\CS_sky_scattering.hlsl" />
   </ItemGroup>
 </Project>

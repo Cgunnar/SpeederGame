@@ -145,7 +145,6 @@ void SkyBox::InitCubeMapHDR(const std::string& path)
 	m_roughnessCB = LowLvlGfx::CreateConstantBuffer({ .size = 16, .usage = BufferDesc::USAGE::DYNAMIC });
 	m_skyBoxPS = LowLvlGfx::CreateShader("Src/Shaders/PS_SkyBox_toneMapped.hlsl", ShaderType::PIXELSHADER);
 	m_convolute_DiffIrrCubeCS = LowLvlGfx::CreateShader("Src/Shaders/CS/CS_convolute_DiffIrrCube.hlsl", ShaderType::COMPUTESHADER);
-	m_spbrdfCS = LowLvlGfx::CreateShader("Src/Shaders/CS/spbrdf.hlsl", ShaderType::COMPUTESHADER);
 	m_spmapCS = LowLvlGfx::CreateShader("Src/Shaders/CS/spmap.hlsl", ShaderType::COMPUTESHADER);
 	m_splitSumAprxCS = LowLvlGfx::CreateShader("Src/Shaders/CS/spbrdf.hlsl", ShaderType::COMPUTESHADER);
 	

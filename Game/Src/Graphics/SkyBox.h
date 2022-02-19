@@ -36,7 +36,6 @@ private:
 
 	Shader m_eq2cubeCS;
 	Shader m_convolute_DiffIrrCubeCS;
-	Shader m_spbrdfCS;
 	Shader m_spmapCS;
 	Shader m_splitSumAprxCS;
 	Shader m_atmospheric_scatteringCS;

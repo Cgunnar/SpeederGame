@@ -24,7 +24,7 @@ private:
 	void CreateSplitSumSpecMap();
 	std::shared_ptr<Texture2D> GenerateSky(uint32_t cubeSideLength, bool mipMapping);
 	std::shared_ptr<Texture2D> LoadEquirectangularMapToCubeMap(const std::string& path, uint32_t cubeSideLength, bool mipMapping);
-	std::shared_ptr<Texture2D> CreateEmptySkyBoxCubeMap(uint32_t cubeSideLength, bool mipMapping);
+	//std::shared_ptr<Texture2D> CreateEmptySkyBoxCubeMap(uint32_t cubeSideLength, bool mipMapping);
 	bool m_ldr = false;
 	bool m_hdr = false;
 	std::shared_ptr<Texture2D> m_skyBoxCubeMap;

@@ -53,6 +53,11 @@ namespace rfm
 		setRotation(rotationFromAngles(x, y, z));
 	}
 
+	void Transform::setRotation(const Vector3& rotation)
+	{
+		setRotation(rotationFromAngles(rotation.x, rotation.y, rotation.z));
+	}
+
 	void Transform::setRotation(const Matrix& rotationMatrix)
 	{
 		auto [T, R, S] = decomposeToTRS(m_matrix);
@@ -104,6 +109,10 @@ namespace rfm
 		auto [T, R, S] = decomposeToTRS(m_matrix);
 		S = scaleMatrix(x, y, z);
 		m_matrix = T * R * S;
+	}
+	void Transform::setScale(const Vector3& scale)
+	{
+		setScale(scale.x, scale.y, scale.z);
 	}
 	void Transform::setScale(float scale)
 	{

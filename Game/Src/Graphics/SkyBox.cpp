@@ -300,7 +300,7 @@ void SkyBox::CreateSplitSumSpecMap()
 
 std::shared_ptr<Texture2D> SkyBox::GenerateSky(uint32_t cubeSideLength, bool mipMapping)
 {
-	std::shared_ptr<Texture2D> cubeMap = CreateEmptySkyBoxCubeMap(cubeSideLength, mipMapping);
+	std::shared_ptr<Texture2D> cubeMap = GfxHelpers::CreateEmptyCubeMap(cubeSideLength, mipMapping);
 	m_atmospheric_scatteringCS = LowLvlGfx::CreateShader("Src/Shaders/CS/CS_sky_scattering.hlsl", ShaderType::COMPUTESHADER);
 	LowLvlGfx::BindUAV(cubeMap, 0);
 
@@ -350,7 +350,7 @@ std::shared_ptr<Texture2D> LoadHdrTexture(const std::string& path)
 std::shared_ptr<Texture2D> SkyBox::LoadEquirectangularMapToCubeMap(const std::string& path, uint32_t cubeSideLength, bool mipMapping)
 {
 	std::shared_ptr<Texture2D> equirectTex = LoadHdrTexture(path);
-	std::shared_ptr<Texture2D> cubeMap = CreateEmptySkyBoxCubeMap(cubeSideLength, mipMapping);
+	std::shared_ptr<Texture2D> cubeMap = GfxHelpers::CreateEmptyCubeMap(cubeSideLength, mipMapping);
 
 	m_eq2cubeCS = LowLvlGfx::CreateShader("Src/Shaders/CS/CS_equirect2cube.hlsl", ShaderType::COMPUTESHADER);
 
@@ -368,38 +368,38 @@ std::shared_ptr<Texture2D> SkyBox::LoadEquirectangularMapToCubeMap(const std::st
 	return cubeMap;
 }
 
-std::shared_ptr<Texture2D> SkyBox::CreateEmptySkyBoxCubeMap(uint32_t cubeSideLength, bool mipMapping)
-{
-	D3D11_TEXTURE2D_DESC descCube = {};
-	descCube.Width = cubeSideLength;
-	descCube.Height = cubeSideLength;
-	descCube.MipLevels = mipMapping ? GfxHelpers::CalcMipNumber(cubeSideLength, cubeSideLength) : 1;
-	descCube.ArraySize = 6;
-	descCube.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-	descCube.BindFlags = mipMapping ? D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_RENDER_TARGET : D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
-	descCube.MiscFlags = mipMapping ? D3D11_RESOURCE_MISC_TEXTURECUBE | D3D11_RESOURCE_MISC_GENERATE_MIPS : D3D11_RESOURCE_MISC_TEXTURECUBE;
-	descCube.Usage = D3D11_USAGE_DEFAULT;
-	descCube.CPUAccessFlags = 0;
-	descCube.SampleDesc.Count = 1;
-	descCube.SampleDesc.Quality = 0;
-
-	std::shared_ptr<Texture2D> cubeMap = LowLvlGfx::CreateTexture2D(descCube);
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc = {};
-	viewDesc.Format = descCube.Format;
-	viewDesc.TextureCube.MostDetailedMip = 0;
-	viewDesc.TextureCube.MipLevels = -1;
-	viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
-
-	LowLvlGfx::CreateSRV(cubeMap, &viewDesc);
-
-	D3D11_UNORDERED_ACCESS_VIEW_DESC uDesc = {};
-	uDesc.Format = descCube.Format;
-	uDesc.Texture2DArray.ArraySize = descCube.ArraySize;
-	uDesc.Texture2DArray.FirstArraySlice = 0;
-	uDesc.Texture2DArray.MipSlice = 0;
-	uDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2DARRAY;
-
-	LowLvlGfx::CreateUAV(cubeMap, &uDesc);
-	return cubeMap;
-}
+//std::shared_ptr<Texture2D> SkyBox::CreateEmptySkyBoxCubeMap(uint32_t cubeSideLength, bool mipMapping)
+//{
+//	D3D11_TEXTURE2D_DESC descCube = {};
+//	descCube.Width = cubeSideLength;
+//	descCube.Height = cubeSideLength;
+//	descCube.MipLevels = mipMapping ? GfxHelpers::CalcMipNumber(cubeSideLength, cubeSideLength) : 1;
+//	descCube.ArraySize = 6;
+//	descCube.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+//	descCube.BindFlags = mipMapping ? D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_RENDER_TARGET : D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
+//	descCube.MiscFlags = mipMapping ? D3D11_RESOURCE_MISC_TEXTURECUBE | D3D11_RESOURCE_MISC_GENERATE_MIPS : D3D11_RESOURCE_MISC_TEXTURECUBE;
+//	descCube.Usage = D3D11_USAGE_DEFAULT;
+//	descCube.CPUAccessFlags = 0;
+//	descCube.SampleDesc.Count = 1;
+//	descCube.SampleDesc.Quality = 0;
+//
+//	std::shared_ptr<Texture2D> cubeMap = LowLvlGfx::CreateTexture2D(descCube);
+//
+//	D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc = {};
+//	viewDesc.Format = descCube.Format;
+//	viewDesc.TextureCube.MostDetailedMip = 0;
+//	viewDesc.TextureCube.MipLevels = -1;
+//	viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+//
+//	LowLvlGfx::CreateSRV(cubeMap, &viewDesc);
+//
+//	D3D11_UNORDERED_ACCESS_VIEW_DESC uDesc = {};
+//	uDesc.Format = descCube.Format;
+//	uDesc.Texture2DArray.ArraySize = descCube.ArraySize;
+//	uDesc.Texture2DArray.FirstArraySlice = 0;
+//	uDesc.Texture2DArray.MipSlice = 0;
+//	uDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2DARRAY;
+//
+//	LowLvlGfx::CreateUAV(cubeMap, &uDesc);
+//	return cubeMap;
+//}

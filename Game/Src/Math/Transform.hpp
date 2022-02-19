@@ -23,6 +23,7 @@ namespace rfm
 		void translateL(const Vector3& position);
 
 		void setRotation(float x, float y, float z);
+		void setRotation(const Vector3& rotation);
 		void setRotation(const Matrix& rotationMatrix);
 		void setRotationDeg(float x, float y, float z);
 		void rotateW(float x, float y, float z);
@@ -32,6 +33,7 @@ namespace rfm
 		void rotateDegL(float x, float y, float z);
 
 		void setScale(float x, float y, float z);
+		void setScale(const Vector3& scale);
 		void setScale(float scale);
 		void scale(float x, float y, float z);
 		void scale(float scale);

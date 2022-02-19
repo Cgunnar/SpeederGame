@@ -8,5 +8,7 @@ namespace GfxHelpers
 
 	std::shared_ptr<Texture2D> LoadImageToTex2D(const std::string& path, LoadTexFlag flags);
 	void SetSubResDataMips(const void* dataPtr, D3D11_SUBRESOURCE_DATA*& subResMipArray, int mipNumber, int stride);
+
+	std::shared_ptr<Texture2D> CreateEmptyCubeMap(uint32_t cubeSideLength, bool mipMapping);
 }
 

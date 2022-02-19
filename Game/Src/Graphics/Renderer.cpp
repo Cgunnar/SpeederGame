@@ -7,6 +7,7 @@
 #include "AssetManager.h"
 #include "RimfrostMath.hpp"
 #include "Material.h"
+#include "GraphicsHelperFunctions.h"
 
 using namespace rfm;
 using namespace rfe;
@@ -126,6 +127,37 @@ void Renderer::Render(rfe::Entity& camera, DirectionalLight dirLight)
 	//sprite rendering
 	//m_spriteRenderer.Draw({ testSprite });
 	
+}
+
+EnvironmentMap Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res)
+{
+	
+	VP vp;
+	auto cubeMap = GfxHelpers::CreateEmptyCubeMap(res, true);
+	
+	LowLvlGfx::SetViewPort({ res, res });
+
+	D3D11_RENDER_TARGET_VIEW_DESC desc = {};
+	desc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
+	desc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+	desc.Texture2DArray.MipSlice = 0;
+	desc.Texture2DArray.ArraySize = 1;
+	
+	
+	//down
+	desc.Texture2DArray.FirstArraySlice = D3D11_TEXTURECUBE_FACE_NEGATIVE_Y;
+	LowLvlGfx::CreateRTV(cubeMap, &desc);
+
+	rfe::Entity cameraYn = rfe::EntityReg::CreateEntity();
+	cameraYn.AddComponent<TransformComp>(position, Vector3(rfm::PIDIV2));
+	vp.V = inverse(*cameraYn.GetComponent<TransformComp>());
+	vp.P = PerspectiveProjectionMatrix(PIDIV4, 1, m_nearPlane, m_farPlane);
+
+	LowLvlGfx::ClearDSV(LowLvlGfx::GetDepthBuffer());
+	LowLvlGfx::BindRTVs({ cubeMap }, LowLvlGfx::GetDepthBuffer());
+	fortsätt binda allt som behövs och kom på ett sätt att rita geometrin med PbrRenderer
+
+	return EnvironmentMap();
 }
 
 SharedRenderResources& Renderer::GetSharedRenderResources()

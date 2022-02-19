@@ -9,6 +9,7 @@
 #include "SkyBox.h"
 #include "ShadowMappingPass.h"
 #include "SpriteRendere.h"
+#include "Scene.h"
 
 class Renderer
 {
@@ -22,6 +23,7 @@ public:
 	void RenderBegin(rfe::Entity& camera);
 	void RenderSkyBox(SkyBox& sky);
 	void Render(rfe::Entity& camera, DirectionalLight dirLight);
+	EnvironmentMap RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res);
 	static SharedRenderResources& GetSharedRenderResources();
 private:
 	static std::shared_ptr<SharedRenderResources> s_sharedRenderResources;

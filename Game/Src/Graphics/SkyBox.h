@@ -21,7 +21,9 @@ private:
 	std::shared_ptr<Texture2D> ConvoluteDiffuseCubeMap(std::shared_ptr<Texture2D> envMap);
 	std::shared_ptr<Texture2D> ConvoluteSpecularCubeMap(std::shared_ptr<Texture2D> envMap);
 	void CreateSplitSumSpecMap();
+	std::shared_ptr<Texture2D> GenerateSky(uint32_t cubeSideLength, bool mipMapping);
 	std::shared_ptr<Texture2D> LoadEquirectangularMapToCubeMap(const std::string& path, uint32_t cubeSideLength, bool mipMapping);
+	std::shared_ptr<Texture2D> CreateEmptySkyBoxCubeMap(uint32_t cubeSideLength, bool mipMapping);
 	bool m_ldr = false;
 	bool m_hdr = false;
 	std::shared_ptr<Texture2D> m_skyBoxCubeMap;
@@ -37,6 +39,7 @@ private:
 	Shader m_spbrdfCS;
 	Shader m_spmapCS;
 	Shader m_splitSumAprxCS;
+	Shader m_atmospheric_scatteringCS;
 
 	ConstantBuffer m_roughnessCB;
 	Rasterizer m_rasterizer;

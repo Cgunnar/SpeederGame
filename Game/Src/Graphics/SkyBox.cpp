@@ -12,7 +12,7 @@ std::shared_ptr<Texture2D> LoadHdrTexture(const std::string& path);
 
 void SkyBox::Init(const std::string& path)
 {
-	if (path.substr(path.length() - 4, 4) == ".hdr")
+	if (path.empty() || path.substr(path.length() - 4, 4) == ".hdr")
 		InitCubeMapHDR(path);
 	else
 		InitCubeMapLDR(path);
@@ -128,9 +128,19 @@ void SkyBox::InitCubeMapLDR(const std::string& path)
 
 void SkyBox::InitCubeMapHDR(const std::string& path)
 {
-	assert(std::filesystem::exists(path));
 	assert(!m_ldr && !m_hdr);
 	m_hdr = true;
+	if (path.empty())
+	{
+		m_skyBoxCubeMap = GenerateSky(1024, true);
+	}
+	else
+	{
+		assert(std::filesystem::exists(path));
+		m_skyBoxCubeMap = LoadEquirectangularMapToCubeMap(path, 1024, true);
+	}
+	
+	
 
 	m_roughnessCB = LowLvlGfx::CreateConstantBuffer({ .size = 16, .usage = BufferDesc::USAGE::DYNAMIC });
 	m_skyBoxPS = LowLvlGfx::CreateShader("Src/Shaders/PS_SkyBox_toneMapped.hlsl", ShaderType::PIXELSHADER);
@@ -138,7 +148,7 @@ void SkyBox::InitCubeMapHDR(const std::string& path)
 	m_spbrdfCS = LowLvlGfx::CreateShader("Src/Shaders/CS/spbrdf.hlsl", ShaderType::COMPUTESHADER);
 	m_spmapCS = LowLvlGfx::CreateShader("Src/Shaders/CS/spmap.hlsl", ShaderType::COMPUTESHADER);
 	m_splitSumAprxCS = LowLvlGfx::CreateShader("Src/Shaders/CS/spbrdf.hlsl", ShaderType::COMPUTESHADER);
-	m_skyBoxCubeMap = LoadEquirectangularMapToCubeMap(path, 1024, true);
+	
 
 	m_irradianceCubeMap = ConvoluteDiffuseCubeMap(m_skyBoxCubeMap);
 	m_specularCubeMap = ConvoluteSpecularCubeMap(m_skyBoxCubeMap);
@@ -288,6 +298,22 @@ void SkyBox::CreateSplitSumSpecMap()
 	LowLvlGfx::BindUAVs({}); // unbind
 }
 
+std::shared_ptr<Texture2D> SkyBox::GenerateSky(uint32_t cubeSideLength, bool mipMapping)
+{
+	std::shared_ptr<Texture2D> cubeMap = CreateEmptySkyBoxCubeMap(cubeSideLength, mipMapping);
+	m_atmospheric_scatteringCS = LowLvlGfx::CreateShader("Src/Shaders/CS/CS_sky_scattering.hlsl", ShaderType::COMPUTESHADER);
+	LowLvlGfx::BindUAV(cubeMap, 0);
+
+	LowLvlGfx::Bind(m_atmospheric_scatteringCS);
+
+	LowLvlGfx::Context()->Dispatch(cubeSideLength / 32, cubeSideLength / 32, 6);
+	LowLvlGfx::BindUAVs({}); // unbind
+
+	if (mipMapping)
+		LowLvlGfx::Context()->GenerateMips(cubeMap->srv.Get());
+	return cubeMap;
+}
+
 std::shared_ptr<Texture2D> LoadHdrTexture(const std::string& path)
 {
 	int w, h, c;
@@ -324,7 +350,26 @@ std::shared_ptr<Texture2D> LoadHdrTexture(const std::string& path)
 std::shared_ptr<Texture2D> SkyBox::LoadEquirectangularMapToCubeMap(const std::string& path, uint32_t cubeSideLength, bool mipMapping)
 {
 	std::shared_ptr<Texture2D> equirectTex = LoadHdrTexture(path);
+	std::shared_ptr<Texture2D> cubeMap = CreateEmptySkyBoxCubeMap(cubeSideLength, mipMapping);
 
+	m_eq2cubeCS = LowLvlGfx::CreateShader("Src/Shaders/CS/CS_equirect2cube.hlsl", ShaderType::COMPUTESHADER);
+
+	LowLvlGfx::BindUAVs({ cubeMap });
+	LowLvlGfx::BindSRV(equirectTex, ShaderType::COMPUTESHADER, 0);
+	LowLvlGfx::Bind(Renderer::GetSharedRenderResources().m_linearWrapSampler, ShaderType::COMPUTESHADER, 0);
+	LowLvlGfx::Bind(m_eq2cubeCS);
+
+	LowLvlGfx::Context()->Dispatch(cubeSideLength / 32, cubeSideLength / 32, 6);
+	LowLvlGfx::BindUAVs({}); // unbind
+
+	if(mipMapping)
+		LowLvlGfx::Context()->GenerateMips(cubeMap->srv.Get());
+
+	return cubeMap;
+}
+
+std::shared_ptr<Texture2D> SkyBox::CreateEmptySkyBoxCubeMap(uint32_t cubeSideLength, bool mipMapping)
+{
 	D3D11_TEXTURE2D_DESC descCube = {};
 	descCube.Width = cubeSideLength;
 	descCube.Height = cubeSideLength;
@@ -356,19 +401,5 @@ std::shared_ptr<Texture2D> SkyBox::LoadEquirectangularMapToCubeMap(const std::st
 	uDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2DARRAY;
 
 	LowLvlGfx::CreateUAV(cubeMap, &uDesc);
-
-	m_eq2cubeCS = LowLvlGfx::CreateShader("Src/Shaders/CS/CS_equirect2cube.hlsl", ShaderType::COMPUTESHADER);
-
-	LowLvlGfx::BindUAVs({ cubeMap });
-	LowLvlGfx::BindSRV(equirectTex, ShaderType::COMPUTESHADER, 0);
-	LowLvlGfx::Bind(Renderer::GetSharedRenderResources().m_linearWrapSampler, ShaderType::COMPUTESHADER, 0);
-	LowLvlGfx::Bind(m_eq2cubeCS);
-
-	LowLvlGfx::Context()->Dispatch(cubeSideLength / 32, cubeSideLength / 32, 6);
-	LowLvlGfx::BindUAVs({}); // unbind
-
-	if(mipMapping)
-		LowLvlGfx::Context()->GenerateMips(cubeMap->srv.Get());
-
 	return cubeMap;
 }

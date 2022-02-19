@@ -74,7 +74,8 @@ Scene::Scene()
 	m_camera.AddComponent<CameraComp>();
 
 
-	sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr");
+	//sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr");
+	sky.Init("");
 
 
 	CreateEntityModel("Assets/Models/MetalRoughSpheres/glTF/pbrSpheres.gltf", {-2, 3, 4}, {0, 0, 0}, 0.2f);

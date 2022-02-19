@@ -464,5 +464,6 @@
     <FxCompile Include="Src\Shaders\VertexShader.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
+    <FxCompile Include="Src\Shaders\CS\CS_sky_scattering.hlsl" />
   </ItemGroup>
 </Project>

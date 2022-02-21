@@ -13,6 +13,7 @@ public:
 	void Submit(RenderUnitID unitID, const rfm::Transform& worlMatrix, MaterialVariantEnum type);
 	void PreProcess(const VP& viewAndProjMatrix, rfe::Entity& camera, RenderFlag flag);
 	void Render(const VP& viewAndProjMatrix, rfe::Entity& camera, RenderFlag flag);
+	void ClearRenderSubmits();
 private:
 	std::weak_ptr<SharedRenderResources> m_sharedRenderResources;
 	std::shared_ptr<Texture2D> m_irradSkyMap;

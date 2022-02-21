@@ -128,14 +128,23 @@ void Renderer::Render(rfe::Entity& camera, DirectionalLight dirLight)
 	//m_spriteRenderer.Draw({ testSprite });
 	
 }
-
+std::shared_ptr<Texture2D> cubeMap = nullptr;
+std::shared_ptr<Texture2D> dsv = nullptr;
 EnvironmentMap Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res)
 {
 	
 	VP vp;
-	auto cubeMap = GfxHelpers::CreateEmptyCubeMap(res, true);
 	
 	LowLvlGfx::SetViewPort({ res, res });
+
+	auto& pointLights = rfe::EntityReg::GetComponentArray<PointLightComp>();
+	assert(!pointLights.empty());
+	PointLight p = pointLights[0].pointLight;
+	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_pointLightCB, &p);
+	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_dirLightCB, &scene.sunLight.GetComponent<DirectionalLightComp>()->dirLight);
+
+	CopyFromECS();
+	SubmitToRender();
 
 	D3D11_RENDER_TARGET_VIEW_DESC desc = {};
 	desc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
@@ -143,21 +152,182 @@ EnvironmentMap Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uin
 	desc.Texture2DArray.MipSlice = 0;
 	desc.Texture2DArray.ArraySize = 1;
 	
+	if (!cubeMap)
+	{
+		cubeMap = GfxHelpers::CreateEmptyCubeMap(res, true);
+		
+
+		D3D11_TEXTURE2D_DESC desc;
+		desc.Width = res;
+		desc.Height = res;
+		desc.MipLevels = 1;
+		desc.ArraySize = 1;
+		desc.SampleDesc.Count = 1;
+		desc.SampleDesc.Quality = 0;
+		desc.MiscFlags = 0;
+		desc.CPUAccessFlags = 0;
+		desc.Usage = D3D11_USAGE_DEFAULT;
+		desc.Format = DXGI_FORMAT_R32_TYPELESS;
+		desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		dsv = LowLvlGfx::CreateTexture2D(desc);
+
+		D3D11_DEPTH_STENCIL_VIEW_DESC depthDesc{};
+		depthDesc.Format = DXGI_FORMAT_D32_FLOAT;
+		depthDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		depthDesc.Texture2D.MipSlice = 0;
+		LowLvlGfx::CreateDSV(dsv, &depthDesc);
+	}
 	
 	//down
 	desc.Texture2DArray.FirstArraySlice = D3D11_TEXTURECUBE_FACE_NEGATIVE_Y;
 	LowLvlGfx::CreateRTV(cubeMap, &desc);
-
+	LowLvlGfx::BindRTVs({ cubeMap }, dsv);
 	rfe::Entity cameraYn = rfe::EntityReg::CreateEntity();
-	cameraYn.AddComponent<TransformComp>(position, Vector3(rfm::PIDIV2));
+	cameraYn.AddComponent<TransformComp>(position, Vector3(rfm::PIDIV2, 0, 0));
 	vp.V = inverse(*cameraYn.GetComponent<TransformComp>());
 	vp.P = PerspectiveProjectionMatrix(PIDIV4, 1, m_nearPlane, m_farPlane);
+	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_vpCB, &vp);
+	LowLvlGfx::ClearDSV(dsv);
+	LowLvlGfx::ClearRTV(1, 1, 1, 0, cubeMap);
+	for (auto& [flag, units] : m_renderPassesFlagged)
+	{
+		if (!units.empty())
+		{
+			for (auto& unit : units)
+			{
+				m_pbrRenderer.Submit(unit.id, unit.worldMatrix, unit.type);
+			}
+			m_pbrRenderer.Render(vp, cameraYn, flag);
+			m_pbrRenderer.ClearRenderSubmits();
+		}
+	}
 
-	LowLvlGfx::ClearDSV(LowLvlGfx::GetDepthBuffer());
-	LowLvlGfx::BindRTVs({ cubeMap }, LowLvlGfx::GetDepthBuffer());
-	fortsätt binda allt som behövs och kom på ett sätt att rita geometrin med PbrRenderer
+	//right
+	desc.Texture2DArray.FirstArraySlice = D3D11_TEXTURECUBE_FACE_POSITIVE_X;
+	LowLvlGfx::CreateRTV(cubeMap, &desc);
+	LowLvlGfx::BindRTVs({ cubeMap }, dsv);
+	rfe::Entity cameraXp = rfe::EntityReg::CreateEntity();
+	cameraXp.AddComponent<TransformComp>(position, Vector3(0, rfm::PIDIV2, 0));
+	vp.V = inverse(*cameraXp.GetComponent<TransformComp>());
+	vp.P = PerspectiveProjectionMatrix(PIDIV4, 1, m_nearPlane, m_farPlane);
+	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_vpCB, &vp);
+	LowLvlGfx::ClearDSV(dsv);
+	LowLvlGfx::ClearRTV(1, 1, 1, 0, cubeMap);
+	for (auto& [flag, units] : m_renderPassesFlagged)
+	{
+		if (!units.empty())
+		{
+			for (auto& unit : units)
+			{
+				m_pbrRenderer.Submit(unit.id, unit.worldMatrix, unit.type);
+			}
+			m_pbrRenderer.Render(vp, cameraYn, flag);
+			m_pbrRenderer.ClearRenderSubmits();
+		}
+	}
 
-	return EnvironmentMap();
+	//forward
+	desc.Texture2DArray.FirstArraySlice = D3D11_TEXTURECUBE_FACE_POSITIVE_Z;
+	LowLvlGfx::CreateRTV(cubeMap, &desc);
+	LowLvlGfx::BindRTVs({ cubeMap }, dsv);
+	rfe::Entity cameraZp = rfe::EntityReg::CreateEntity();
+	cameraZp.AddComponent<TransformComp>(position, Vector3(0, 0, 0));
+	vp.V = inverse(*cameraZp.GetComponent<TransformComp>());
+	vp.P = PerspectiveProjectionMatrix(PIDIV4, 1, m_nearPlane, m_farPlane);
+	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_vpCB, &vp);
+	LowLvlGfx::ClearDSV(dsv);
+	LowLvlGfx::ClearRTV(1, 1, 1, 0, cubeMap);
+	for (auto& [flag, units] : m_renderPassesFlagged)
+	{
+		if (!units.empty())
+		{
+			for (auto& unit : units)
+			{
+				m_pbrRenderer.Submit(unit.id, unit.worldMatrix, unit.type);
+			}
+			m_pbrRenderer.Render(vp, cameraYn, flag);
+			m_pbrRenderer.ClearRenderSubmits();
+		}
+	}
+
+	//up
+	desc.Texture2DArray.FirstArraySlice = D3D11_TEXTURECUBE_FACE_POSITIVE_Y;
+	LowLvlGfx::CreateRTV(cubeMap, &desc);
+	LowLvlGfx::BindRTVs({ cubeMap }, dsv);
+	rfe::Entity cameraYp = rfe::EntityReg::CreateEntity();
+	cameraYp.AddComponent<TransformComp>(position, Vector3(-rfm::PIDIV2, 0, 0));
+	vp.V = inverse(*cameraYp.GetComponent<TransformComp>());
+	vp.P = PerspectiveProjectionMatrix(PIDIV4, 1, m_nearPlane, m_farPlane);
+	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_vpCB, &vp);
+	LowLvlGfx::ClearDSV(dsv);
+	LowLvlGfx::ClearRTV(1, 1, 1, 0, cubeMap);
+	for (auto& [flag, units] : m_renderPassesFlagged)
+	{
+		if (!units.empty())
+		{
+			for (auto& unit : units)
+			{
+				m_pbrRenderer.Submit(unit.id, unit.worldMatrix, unit.type);
+			}
+			m_pbrRenderer.Render(vp, cameraYn, flag);
+			m_pbrRenderer.ClearRenderSubmits();
+		}
+	}
+
+	//left
+	desc.Texture2DArray.FirstArraySlice = D3D11_TEXTURECUBE_FACE_NEGATIVE_X;
+	LowLvlGfx::CreateRTV(cubeMap, &desc);
+	LowLvlGfx::BindRTVs({ cubeMap }, dsv);
+	rfe::Entity cameraXn = rfe::EntityReg::CreateEntity();
+	cameraXn.AddComponent<TransformComp>(position, Vector3(0, -rfm::PIDIV2, 0));
+	vp.V = inverse(*cameraXn.GetComponent<TransformComp>());
+	vp.P = PerspectiveProjectionMatrix(PIDIV4, 1, m_nearPlane, m_farPlane);
+	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_vpCB, &vp);
+	LowLvlGfx::ClearDSV(dsv);
+	LowLvlGfx::ClearRTV(1, 1, 1, 0, cubeMap);
+	for (auto& [flag, units] : m_renderPassesFlagged)
+	{
+		if (!units.empty())
+		{
+			for (auto& unit : units)
+			{
+				m_pbrRenderer.Submit(unit.id, unit.worldMatrix, unit.type);
+			}
+			m_pbrRenderer.Render(vp, cameraYn, flag);
+			m_pbrRenderer.ClearRenderSubmits();
+		}
+	}
+
+	//back
+	desc.Texture2DArray.FirstArraySlice = D3D11_TEXTURECUBE_FACE_NEGATIVE_Z;
+	LowLvlGfx::CreateRTV(cubeMap, &desc);
+	LowLvlGfx::BindRTVs({ cubeMap }, dsv);
+	rfe::Entity cameraZn = rfe::EntityReg::CreateEntity();
+	cameraZn.AddComponent<TransformComp>(position, Vector3(0, rfm::PI, 0));
+	vp.V = inverse(*cameraZn.GetComponent<TransformComp>());
+	vp.P = PerspectiveProjectionMatrix(PIDIV4, 1, m_nearPlane, m_farPlane);
+	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_vpCB, &vp);
+	LowLvlGfx::ClearDSV(dsv);
+	LowLvlGfx::ClearRTV(1, 1, 1, 0, cubeMap);
+	for (auto& [flag, units] : m_renderPassesFlagged)
+	{
+		if (!units.empty())
+		{
+			for (auto& unit : units)
+			{
+				m_pbrRenderer.Submit(unit.id, unit.worldMatrix, unit.type);
+			}
+			m_pbrRenderer.Render(vp, cameraYn, flag);
+			m_pbrRenderer.ClearRenderSubmits();
+		}
+	}
+	
+
+	for (auto& [flag, units] : m_renderPassesFlagged)
+		units.clear();
+
+	LowLvlGfx::Context()->GenerateMips(cubeMap->srv.Get());
+	return EnvironmentMap(cubeMap);
 }
 
 SharedRenderResources& Renderer::GetSharedRenderResources()
@@ -257,12 +427,14 @@ void Renderer::SubmitAndRenderTransparentToInternalRenderers(const VP& viewAndPr
 		if (traUnit.unit.type != previusType || previusRenderFlag != traUnit.rendFlag)
 		{
 			m_pbrRenderer.Render(viewAndProjMatrix, camera, previusRenderFlag);
+			m_pbrRenderer.ClearRenderSubmits();
 		}
 		m_pbrRenderer.Submit(traUnit.unit.id, traUnit.unit.worldMatrix, traUnit.unit.type);
 		previusType = traUnit.unit.type;
 		previusRenderFlag = traUnit.rendFlag;
 	}
 	m_pbrRenderer.Render(viewAndProjMatrix, camera, previusRenderFlag);
+	m_pbrRenderer.ClearRenderSubmits();
 
 	m_transparentRenderUnits.clear();
 }
@@ -279,6 +451,7 @@ void Renderer::RenderAllPasses(const VP& viewAndProjMatrix, rfe::Entity& camera)
 		}
 		units.clear();
 		m_pbrRenderer.Render(viewAndProjMatrix, camera, flag);
+		m_pbrRenderer.ClearRenderSubmits();
 	}
 }
 

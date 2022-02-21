@@ -262,7 +262,7 @@ float4 main(vs_out input) : SV_TARGET
     float3 sky = skyMap.Sample(linearWrapSampler, -vDir).xyz;
     finalColor = lerp(finalColor, sky, float3(s, s, s));
     
-    finalColor = finalColor / (finalColor + 1);
+    //finalColor = finalColor / (finalColor + 1);
     return float4(finalColor, alpha);
     //return float4(normal, 1);
 //#ifdef NORMAL_MAP

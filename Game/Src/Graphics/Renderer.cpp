@@ -130,7 +130,7 @@ void Renderer::Render(rfe::Entity& camera, DirectionalLight dirLight)
 }
 std::shared_ptr<Texture2D> cubeMap = nullptr;
 std::shared_ptr<Texture2D> dsv = nullptr;
-EnvironmentMap Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res)
+EnvironmentMap Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res, SkyBox* sky)
 {
 	
 	VP vp;
@@ -155,6 +155,8 @@ EnvironmentMap Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uin
 	if (!cubeMap)
 	{
 		cubeMap = GfxHelpers::CreateEmptyCubeMap(res, true);
+
+		if(sky) LowLvlGfx::Context()->CopyResource(cubeMap->buffer.Get(), sky->m_skyBoxCubeMap->buffer.Get());
 		
 
 		D3D11_TEXTURE2D_DESC desc;
@@ -188,7 +190,7 @@ EnvironmentMap Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uin
 	vp.P = PerspectiveProjectionMatrix(PIDIV4, 1, m_nearPlane, m_farPlane);
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_vpCB, &vp);
 	LowLvlGfx::ClearDSV(dsv);
-	LowLvlGfx::ClearRTV(1, 1, 1, 0, cubeMap);
+	//LowLvlGfx::ClearRTV(0, 0, 0, 0, cubeMap);
 	for (auto& [flag, units] : m_renderPassesFlagged)
 	{
 		if (!units.empty())
@@ -212,7 +214,7 @@ EnvironmentMap Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uin
 	vp.P = PerspectiveProjectionMatrix(PIDIV4, 1, m_nearPlane, m_farPlane);
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_vpCB, &vp);
 	LowLvlGfx::ClearDSV(dsv);
-	LowLvlGfx::ClearRTV(1, 1, 1, 0, cubeMap);
+	//LowLvlGfx::ClearRTV(0, 0, 0, 0, cubeMap);
 	for (auto& [flag, units] : m_renderPassesFlagged)
 	{
 		if (!units.empty())
@@ -236,7 +238,7 @@ EnvironmentMap Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uin
 	vp.P = PerspectiveProjectionMatrix(PIDIV4, 1, m_nearPlane, m_farPlane);
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_vpCB, &vp);
 	LowLvlGfx::ClearDSV(dsv);
-	LowLvlGfx::ClearRTV(1, 1, 1, 0, cubeMap);
+	//LowLvlGfx::ClearRTV(0, 0, 0, 0, cubeMap);
 	for (auto& [flag, units] : m_renderPassesFlagged)
 	{
 		if (!units.empty())
@@ -260,7 +262,7 @@ EnvironmentMap Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uin
 	vp.P = PerspectiveProjectionMatrix(PIDIV4, 1, m_nearPlane, m_farPlane);
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_vpCB, &vp);
 	LowLvlGfx::ClearDSV(dsv);
-	LowLvlGfx::ClearRTV(1, 1, 1, 0, cubeMap);
+	//LowLvlGfx::ClearRTV(0, 0, 0, 0, cubeMap);
 	for (auto& [flag, units] : m_renderPassesFlagged)
 	{
 		if (!units.empty())
@@ -284,7 +286,7 @@ EnvironmentMap Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uin
 	vp.P = PerspectiveProjectionMatrix(PIDIV4, 1, m_nearPlane, m_farPlane);
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_vpCB, &vp);
 	LowLvlGfx::ClearDSV(dsv);
-	LowLvlGfx::ClearRTV(1, 1, 1, 0, cubeMap);
+	//LowLvlGfx::ClearRTV(0, 0, 0, 0, cubeMap);
 	for (auto& [flag, units] : m_renderPassesFlagged)
 	{
 		if (!units.empty())
@@ -305,10 +307,10 @@ EnvironmentMap Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uin
 	rfe::Entity cameraZn = rfe::EntityReg::CreateEntity();
 	cameraZn.AddComponent<TransformComp>(position, Vector3(0, rfm::PI, 0));
 	vp.V = inverse(*cameraZn.GetComponent<TransformComp>());
-	vp.P = PerspectiveProjectionMatrix(PIDIV4, 1, m_nearPlane, m_farPlane);
+	vp.P = PerspectiveProjectionMatrix(PIDIV2, 1, m_nearPlane, m_farPlane);
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_vpCB, &vp);
 	LowLvlGfx::ClearDSV(dsv);
-	LowLvlGfx::ClearRTV(1, 1, 1, 0, cubeMap);
+	//LowLvlGfx::ClearRTV(0,0,0,0, cubeMap);
 	for (auto& [flag, units] : m_renderPassesFlagged)
 	{
 		if (!units.empty())
@@ -322,12 +324,14 @@ EnvironmentMap Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uin
 		}
 	}
 	
-
 	for (auto& [flag, units] : m_renderPassesFlagged)
 		units.clear();
 
 	LowLvlGfx::Context()->GenerateMips(cubeMap->srv.Get());
-	return EnvironmentMap(cubeMap);
+	LowLvlGfx::BindRTVs(); //unbind
+	auto envMap = EnvironmentMap(cubeMap);
+	sky->m_envMap = envMap;
+	return envMap;
 }
 
 SharedRenderResources& Renderer::GetSharedRenderResources()

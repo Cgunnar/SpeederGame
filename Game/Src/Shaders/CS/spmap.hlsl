@@ -169,5 +169,5 @@ void main(uint3 ThreadID : SV_DispatchThreadID)
 	}
 	color /= weight;
 
-	outputTexture[ThreadID] = float4(50.0f*color, 1.0);
+	outputTexture[ThreadID] = float4(color, 1.0);
 }

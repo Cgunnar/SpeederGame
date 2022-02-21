@@ -90,8 +90,7 @@ void Application::Run()
 
 
 		
-		auto envM = m_renderer->RenderToEnvMap(m_scene->GetCamera().GetComponent<TransformComp>()->transform.getTranslation(), *m_scene, 1024);
-
+		auto envM = m_renderer->RenderToEnvMap(m_scene->GetCamera().GetComponent<TransformComp>()->transform.getTranslation(), *m_scene, 1024, &m_scene->sky);
 		LowLvlGfx::EndFrame();
 
 	}

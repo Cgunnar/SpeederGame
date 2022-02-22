@@ -130,7 +130,7 @@ void Renderer::Render(rfe::Entity& camera, DirectionalLight dirLight)
 }
 std::shared_ptr<Texture2D> cubeMap = nullptr;
 std::shared_ptr<Texture2D> dsv = nullptr;
-EnvironmentMap Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res, SkyBox* sky)
+void Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res, SkyBox* sky)
 {
 	
 	VP vp;
@@ -324,9 +324,11 @@ EnvironmentMap Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uin
 
 	LowLvlGfx::Context()->GenerateMips(cubeMap->srv.Get());
 	LowLvlGfx::BindRTVs(); //unbind
-	auto envMap = EnvironmentMap(cubeMap);
-	sky->m_envMap = envMap;
-	return envMap;
+
+	if (sky)
+	{
+		sky->m_envMap.UpdateEnvMap(cubeMap);
+	}
 }
 
 SharedRenderResources& Renderer::GetSharedRenderResources()

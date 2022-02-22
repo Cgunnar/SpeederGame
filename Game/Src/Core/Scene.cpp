@@ -98,11 +98,12 @@ Scene::Scene()
 
 
 	Material rusteIronMat;
-	rusteIronMat.SetBaseColorTexture("Assets/Textures/rustediron/basecolor.png");
+	/*rusteIronMat.SetBaseColorTexture("Assets/Textures/rustediron/basecolor.png");
 	rusteIronMat.SetMetallicRoughnessTexture("Assets/Textures/rustediron/metallic_roughness.png");
-	rusteIronMat.SetNormalTexture("Assets/Textures/rustediron/normal.png");
+	rusteIronMat.SetNormalTexture("Assets/Textures/rustediron/normal.png");*/
 	rusteIronMat.metallicFactor = 1;
-	rusteIronMat.roughnessFactor = 1;
+	//rusteIronMat.roughnessFactor = 1;
+	rusteIronMat.roughnessFactor = 0;
 
 	m_ironSphere = EntityReg::CreateEntity();
 	m_ironSphere.AddComponent(TransformComp())->transform.setTranslation(-4, 3, 1);

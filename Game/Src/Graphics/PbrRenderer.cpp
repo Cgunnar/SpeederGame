@@ -177,6 +177,8 @@ void PbrRenderer::Render(const VP& viewAndProjMatrix, rfe::Entity& camera, Rende
 	RenderPBR_ALBEDO_NOR(flag);
 	RenderPBR_ALBEDO(flag);
 
+	LowLvlGfx::UnBindSRV(ShaderType::PIXELSHADER, 5);
+	LowLvlGfx::UnBindSRV(ShaderType::PIXELSHADER, 6);
 	LowLvlGfx::UnBindSRV(ShaderType::PIXELSHADER, 7);
 
 	m_prePocessed = false;

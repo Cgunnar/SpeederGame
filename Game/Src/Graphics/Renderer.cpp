@@ -158,9 +158,12 @@ void Renderer::RenderScene(Scene& scene)
 	
 }
 
-void Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res, EnvironmentMap& envMapOut)
+void Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, EnvironmentMap& envMapOut)
 {
-	
+	D3D11_TEXTURE2D_DESC envMapOutDesc;
+	envMapOut.GetSpecularCubeMap()->buffer->GetDesc(&envMapOutDesc);
+	UINT res = envMapOutDesc.Width;
+
 	VP vp;
 	vp.P = PerspectiveProjectionMatrix(PIDIV2, 1, m_nearPlane, m_farPlane);
 	LowLvlGfx::SetViewPort({ res, res });
@@ -185,7 +188,10 @@ void Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res,
 		D3D11_TEXTURE2D_DESC desc;
 		m_targetForEnvMapCreation->buffer->GetDesc(&desc);
 		if (desc.Height != res || desc.Width != res)
+		{
 			m_targetForEnvMapCreation = nullptr;
+			std::cout << "Warning: RenderToEnvMap is called with non matching resolution" << std::endl;
+		}
 	}
 	if (!m_targetForEnvMapCreation)
 	{
@@ -211,7 +217,18 @@ void Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res,
 		depthDesc.Texture2D.MipSlice = 0;
 		LowLvlGfx::CreateDSV(m_dsvForEnvMapCreation, &depthDesc);
 	}
-	LowLvlGfx::Context()->CopyResource(m_targetForEnvMapCreation->buffer.Get(), scene.sky.m_skyBoxCubeMap->buffer.Get());
+
+	D3D11_TEXTURE2D_DESC skyDesc;
+	scene.sky.m_skyBoxCubeMap->buffer.Get()->GetDesc(&skyDesc);
+	assert(res % 2 == 0 && skyDesc.Width % 2 == 0 && skyDesc.Width == skyDesc.Height);
+	UINT mipSrc = log2(skyDesc.Width / res); // find the mip map that matches the resolution of the cubemap that shall be filled
+	assert(mipSrc < skyDesc.MipLevels);
+	for (int i = 0; i < 6; i++)
+	{
+		UINT destIndex = D3D11CalcSubresource(0, i, GfxHelpers::CalcMipNumber(res, res));
+		UINT srcIndex = D3D11CalcSubresource(mipSrc, i, skyDesc.MipLevels);
+		LowLvlGfx::Context()->CopySubresourceRegion(m_targetForEnvMapCreation->buffer.Get(), destIndex, 0, 0, 0, scene.sky.m_skyBoxCubeMap->buffer.Get(), srcIndex, nullptr);
+	}
 	
 	//down
 	desc.Texture2DArray.FirstArraySlice = D3D11_TEXTURECUBE_FACE_NEGATIVE_Y;

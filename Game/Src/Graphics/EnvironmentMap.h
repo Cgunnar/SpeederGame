@@ -5,6 +5,7 @@ class EnvironmentMap
 {
 public:
 	EnvironmentMap();
+	EnvironmentMap(uint32_t sideLength);
 	EnvironmentMap(std::shared_ptr<Texture2D> cubeMap);
 	void UpdateEnvMap(std::shared_ptr<Texture2D> cubeMap);
 	std::shared_ptr<Texture2D> GetIrradianceCubeMap();

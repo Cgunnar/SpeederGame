@@ -104,7 +104,7 @@ void Application::Run()
 		m_renderer->RenderPostProcess();
 
 		
-		//m_renderer->RenderToEnvMap(m_scene->GetCamera().GetComponent<TransformComp>()->transform.getTranslation(), *m_scene, 1024, *m_scene->GetEnvMap());
+		m_renderer->RenderToEnvMap(m_scene->GetCamera().GetComponent<TransformComp>()->transform.getTranslation(), *m_scene, *m_scene->GetEnvMap());
 		LowLvlGfx::EndFrame();
 
 	}

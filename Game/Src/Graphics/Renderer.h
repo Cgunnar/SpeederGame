@@ -24,7 +24,7 @@ public:
 	void RenderPostProcess();
 	void RenderSkyBox(SkyBox& sky);
 	void RenderScene(Scene& scene);
-	void RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res, EnvironmentMap& envMapOut);
+	void RenderToEnvMap(rfm::Vector3 position, Scene& scene, EnvironmentMap& envMapOut);
 	static SharedRenderResources& GetSharedRenderResources();
 private:
 	static std::shared_ptr<SharedRenderResources> s_sharedRenderResources;

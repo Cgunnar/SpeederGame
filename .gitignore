@@ -16,6 +16,9 @@
 # Mono auto generated files
 mono_crash.*
 
+
+Game/imgui.ini
+
 # Build results
 
 bin/
@@ -364,6 +367,3 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 *.diagsession
-Game/imgui.ini
-Game/imgui.ini
-*.ini

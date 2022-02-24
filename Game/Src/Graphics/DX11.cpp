@@ -321,7 +321,7 @@ void  DX11::CreateDeviceAndSwapChain(HWND hwnd, Resolution res)
 	std::wcout << Adesc.Description << std::endl;
 
 	UINT deviceFlags = D3D11_CREATE_DEVICE_SINGLETHREADED;
-#if defined(DEBUG) || defined(_DEBUG)
+#if defined(DEBUG) || defined(_DEBUG) || defined (DX11DEVICE_DEBUG)
 	deviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif // _DEBUG
 

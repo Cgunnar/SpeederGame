@@ -1,6 +1,6 @@
 workspace "SpeederGame"
     architecture "x64"
-    configurations { "Debug", "Release" }
+    configurations { "Debug", "Release", "DbgRelease" }
     startproject "Game"
 
    -- -%{cfg.architecture}
@@ -20,7 +20,7 @@ project "Game"
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
-    libdirs { "%{prj.name}/vendor/vld/lib/", "%{prj.name}/vendor/assimp/%{cfg.buildcfg}/lib/" }
+    -- libdirs { "%{prj.name}/vendor/vld/lib/", "%{prj.name}/vendor/assimp/%{cfg.buildcfg}/lib/" }
 
     pchheader "pch.hpp"
     pchsource "%{prj.name}/Src/pch.cpp"
@@ -54,15 +54,11 @@ project "Game"
         "UNICODE",
     }
 
-    postbuildcommands 
-    {
-        --"{COPY} \"%{prj.location}/vendor/vld/dlls/**\" \"%{prj.location}\""
-        "{COPY} \"%{prj.location}/vendor/vld/dlls/**\" \"%{cfg.buildtarget.directory}\"",
-        "{COPY} \"%{prj.location}/vendor/assimp/%{cfg.buildcfg}/dll/**\" \"%{cfg.buildtarget.directory}\""
-        
-        
-       -- ("{COPY} vendor/vld/dlls/vld_x64.dll ..bin/" .. outputdir .. "/%{prj.name}")
-    }
+    -- postbuildcommands 
+    -- {
+    --     "{COPY} \"%{prj.location}/vendor/vld/dlls/**\" \"%{cfg.buildtarget.directory}\"",
+    --     "{COPY} \"%{prj.location}/vendor/assimp/%{cfg.buildcfg}/dll/**\" \"%{cfg.buildtarget.directory}\""
+    -- }
 
     links
     {
@@ -72,14 +68,38 @@ project "Game"
 
 
     filter { "configurations:Debug" }
-        defines { "_DEBUG", "DEBUG" }
+        libdirs { "%{prj.name}/vendor/vld/lib/", "%{prj.name}/vendor/assimp/Debug/lib/" }
+        defines { "_DEBUG", "DEBUG", "D3D11_DEBUG" }
         runtime "Debug"
         symbols "on"
+        postbuildcommands 
+        {
+            "{COPY} \"%{prj.location}/vendor/vld/dlls/**\" \"%{cfg.buildtarget.directory}\"",
+            "{COPY} \"%{prj.location}/vendor/assimp/Debug/dll/**\" \"%{cfg.buildtarget.directory}\""
+        }
 
     filter { "configurations:Release" }
-       defines { "_NDEBUG", "NDEBUG" }
-       runtime "Release"
-       optimize "on"
+        libdirs { "%{prj.name}/vendor/vld/lib/", "%{prj.name}/vendor/assimp/Release/lib/" }
+        defines { "_NDEBUG", "NDEBUG" }
+        runtime "Release"
+        optimize "on"
+        postbuildcommands 
+        {
+            "{COPY} \"%{prj.location}/vendor/vld/dlls/**\" \"%{cfg.buildtarget.directory}\"",
+            "{COPY} \"%{prj.location}/vendor/assimp/Release/dll/**\" \"%{cfg.buildtarget.directory}\""
+        }
+
+    filter { "configurations:DbgRelease" }
+        libdirs { "%{prj.name}/vendor/vld/lib/", "%{prj.name}/vendor/assimp/Release/lib/" }
+        defines { "_NDEBUG", "NDEBUG","DBG_RELEASE", "DX11DEVICE_DEBUG" }
+        runtime "Release"
+        optimize "on"
+        postbuildcommands 
+        {
+            "{COPY} \"%{prj.location}/vendor/vld/dlls/**\" \"%{cfg.buildtarget.directory}\"",
+            "{COPY} \"%{prj.location}/vendor/assimp/Release/dll/**\" \"%{cfg.buildtarget.directory}\""
+        }
+      
 
     filter {"files:**.hlsl"}
         flags {"ExcludeFromBuild"}

@@ -76,6 +76,11 @@ void SkyBox::SetRotation(rfm::Matrix rot)
 	m_rotation = rot;
 }
 
+std::shared_ptr<Texture2D> SkyBox::GetSkyCubeMap()
+{
+	return m_skyBoxCubeMap;
+}
+
 void SkyBox::InitCubeMapLDR(const std::string& path)
 {
 	assert(!m_ldr && !m_hdr);
@@ -146,14 +151,12 @@ void SkyBox::InitCubeMapHDR(const std::string& path)
 	m_skyBoxPS = LowLvlGfx::CreateShader("Src/Shaders/PS_SkyBox_toneMapped.hlsl", ShaderType::PIXELSHADER);
 	//m_convolute_DiffIrrCubeCS = LowLvlGfx::CreateShader("Src/Shaders/CS/CS_convolute_DiffIrrCube.hlsl", ShaderType::COMPUTESHADER);
 	//m_spmapCS = LowLvlGfx::CreateShader("Src/Shaders/CS/spmap.hlsl", ShaderType::COMPUTESHADER);
-	m_splitSumAprxCS = LowLvlGfx::CreateShader("Src/Shaders/CS/spbrdf.hlsl", ShaderType::COMPUTESHADER);
+	
 	
 
 	//m_irradianceCubeMap = ConvoluteDiffuseCubeMap(m_skyBoxCubeMap);
 	//m_specularCubeMap = ConvoluteSpecularCubeMap(m_skyBoxCubeMap);
 	m_envMap = EnvironmentMap(m_skyBoxCubeMap);
-
-	CreateSplitSumSpecMap();
 	
 }
 
@@ -270,33 +273,7 @@ void SkyBox::InitCubeMapHDR(const std::string& path)
 //	return outPutCubeMap;
 //}
 
-void SkyBox::CreateSplitSumSpecMap()
-{
-	
 
-	constexpr int mapSize = 512;
-	D3D11_TEXTURE2D_DESC desc = {};
-	desc.Width = mapSize;
-	desc.Height = mapSize;
-	desc.MipLevels = 1;
-	desc.ArraySize = 1;
-	desc.Format = DXGI_FORMAT_R16G16_FLOAT;
-	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
-	desc.MiscFlags = 0;
-	desc.Usage = D3D11_USAGE_DEFAULT;
-	desc.CPUAccessFlags = 0;
-	desc.SampleDesc.Count = 1;
-	desc.SampleDesc.Quality = 0;
-
-	m_splitSumMap = LowLvlGfx::CreateTexture2D(desc);
-	LowLvlGfx::CreateSRV(m_splitSumMap);
-	LowLvlGfx::CreateUAV(m_splitSumMap);
-
-	LowLvlGfx::BindUAV(m_splitSumMap, 0);
-	LowLvlGfx::Bind(m_splitSumAprxCS);
-	LowLvlGfx::Context()->Dispatch(mapSize / 32, mapSize / 32, 1);
-	LowLvlGfx::BindUAVs({}); // unbind
-}
 
 std::shared_ptr<Texture2D> SkyBox::GenerateSky(uint32_t cubeSideLength, bool mipMapping)
 {

@@ -91,16 +91,13 @@ PbrRenderer::PbrRenderer(std::weak_ptr<SharedRenderResources> sharedRes) : m_sha
 	};
 
 	m_shadowMapSampler = LowLvlGfx::Create(samplerDesc);
+
+	CreateSplitSumSpecMap();
 }
 
 void PbrRenderer::SetDiffuseIrradianceCubeMap(std::shared_ptr<Texture2D> irrMap)
 {
 	m_irradSkyMap = irrMap;
-}
-
-void PbrRenderer::SetSplitSumAproxLookUpMap(std::shared_ptr<Texture2D> splitSumLUMap)
-{
-	m_splitSumLookUpMap = splitSumLUMap;
 }
 
 void PbrRenderer::SetSpecularCubeMap(std::shared_ptr<Texture2D> specMap)
@@ -470,4 +467,32 @@ void PbrRenderer::HandleRenderFlag(RenderFlag flag)
 	}
 
 
+}
+
+void PbrRenderer::CreateSplitSumSpecMap()
+{
+	m_splitSumAprxCS = LowLvlGfx::CreateShader("Src/Shaders/CS/spbrdf.hlsl", ShaderType::COMPUTESHADER);
+
+	constexpr int mapSize = 512;
+	D3D11_TEXTURE2D_DESC desc = {};
+	desc.Width = mapSize;
+	desc.Height = mapSize;
+	desc.MipLevels = 1;
+	desc.ArraySize = 1;
+	desc.Format = DXGI_FORMAT_R16G16_FLOAT;
+	desc.BindFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS;
+	desc.MiscFlags = 0;
+	desc.Usage = D3D11_USAGE_DEFAULT;
+	desc.CPUAccessFlags = 0;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+
+	m_splitSumLookUpMap = LowLvlGfx::CreateTexture2D(desc);
+	LowLvlGfx::CreateSRV(m_splitSumLookUpMap);
+	LowLvlGfx::CreateUAV(m_splitSumLookUpMap);
+
+	LowLvlGfx::BindUAV(m_splitSumLookUpMap, 0);
+	LowLvlGfx::Bind(m_splitSumAprxCS);
+	LowLvlGfx::Context()->Dispatch(mapSize / 32, mapSize / 32, 1);
+	LowLvlGfx::BindUAVs({}); // unbind
 }

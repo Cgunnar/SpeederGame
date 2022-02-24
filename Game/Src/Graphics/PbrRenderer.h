@@ -41,6 +41,8 @@ private:
 	Shader m_PS_PBR_AL_NOR;
 	Shader m_PS_terrainShading;
 
+	Shader m_splitSumAprxCS;
+
 	bool m_prePocessed = false;
 	void DrawGeometry(const Mesh& mesh, ConstantBuffer& cb, const void* transform);
 	void RenderPBR_ALBEDO_METROUG_NOR(RenderFlag flag);
@@ -51,6 +53,7 @@ private:
 	void RenderPBR_ALBEDO_NOR(RenderFlag flag);
 
 	void HandleRenderFlag(RenderFlag flag);
+	void CreateSplitSumSpecMap();
 
 	std::vector<RendUnitIDAndTransform> m_PBR_ALBEDO_METROUG_NOR;
 	std::vector<RendUnitIDAndTransform> m_PBR_ALBEDO_METROUG_NOR_EMIS;

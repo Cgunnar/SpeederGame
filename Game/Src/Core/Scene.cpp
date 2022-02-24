@@ -76,7 +76,7 @@ Scene::Scene()
 
 	//sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr");
 	sky.Init("");
-
+	m_envMap = std::make_unique<EnvironmentMap>(sky.GetSkyCubeMap());
 
 	CreateEntityModel("Assets/Models/MetalRoughSpheres/glTF/pbrSpheres.gltf", {-2, 3, 4}, {0, 0, 0}, 0.2f);
 	/*CreateEntityModel("Assets/Models/pbr/razor_crest/scene.gltf", { 4, 5, 0 }, { 0, 0, 0 }, 0.2f);

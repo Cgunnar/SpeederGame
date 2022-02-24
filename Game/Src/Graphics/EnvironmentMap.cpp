@@ -6,7 +6,7 @@
 Shader EnvironmentMap::s_convolute_DiffIrrCubeCS;
 Shader EnvironmentMap::s_spmapCS;
 
-EnvironmentMap::EnvironmentMap()
+EnvironmentMap::EnvironmentMap() : m_isValid(false)
 {
 
 }
@@ -80,12 +80,21 @@ EnvironmentMap::EnvironmentMap(std::shared_ptr<Texture2D> cubeMap)
 	LowLvlGfx::CreateSRV(m_specularCubeMap, &specViewDesc);
 
 	ConvoluteSpecularCubeMap(cubeMap, m_specularCubeMap);
+
+	m_isValid = true;
 }
 
 void EnvironmentMap::UpdateEnvMap(std::shared_ptr<Texture2D> cubeMap)
 {
-	ConvoluteDiffuseCubeMap(cubeMap, m_irradianceCubeMap);
-	ConvoluteSpecularCubeMap(cubeMap, m_specularCubeMap);
+	if (m_isValid)
+	{
+		ConvoluteDiffuseCubeMap(cubeMap, m_irradianceCubeMap);
+		ConvoluteSpecularCubeMap(cubeMap, m_specularCubeMap);
+	}
+	else
+	{
+		*this = EnvironmentMap(cubeMap);
+	}
 }
 
 std::shared_ptr<Texture2D> EnvironmentMap::GetIrradianceCubeMap()
@@ -96,6 +105,11 @@ std::shared_ptr<Texture2D> EnvironmentMap::GetIrradianceCubeMap()
 std::shared_ptr<Texture2D> EnvironmentMap::GetSpecularCubeMap()
 {
 	return m_specularCubeMap;
+}
+
+bool EnvironmentMap::IsValid()
+{
+	return m_isValid;
 }
 
 

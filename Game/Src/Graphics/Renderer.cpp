@@ -74,18 +74,14 @@ void Renderer::RenderSkyBox(SkyBox& sky)
 		LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		LowLvlGfx::Context()->Draw(36, 0);
 
-		if (sky.m_envMap.GetIrradianceCubeMap())
+		/*if (sky.m_envMap.GetIrradianceCubeMap())
 		{
 			m_pbrRenderer.SetDiffuseIrradianceCubeMap(sky.m_envMap.GetIrradianceCubeMap());
 		}
 		if (sky.m_envMap.GetSpecularCubeMap())
 		{
 			m_pbrRenderer.SetSpecularCubeMap(sky.m_envMap.GetSpecularCubeMap());
-		}
-		if (sky.m_splitSumMap)
-		{
-			m_pbrRenderer.SetSplitSumAproxLookUpMap(sky.m_splitSumMap);
-		}
+		}*/
 	}
 }
 
@@ -120,6 +116,17 @@ void Renderer::RenderScene(Scene& scene)
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_shadowMapViewProjCB, m_shadowPass.GetViewProjectionMatrix());
 
 	//main rendering
+	if (scene.GetEnvMap()->IsValid())
+	{
+		m_pbrRenderer.SetDiffuseIrradianceCubeMap(scene.GetEnvMap()->GetIrradianceCubeMap());
+		m_pbrRenderer.SetSpecularCubeMap(scene.GetEnvMap()->GetSpecularCubeMap());
+	}
+	else
+	{
+		assert(scene.sky.m_envMap.IsValid());
+		m_pbrRenderer.SetDiffuseIrradianceCubeMap(scene.sky.m_envMap.GetIrradianceCubeMap());
+		m_pbrRenderer.SetSpecularCubeMap(scene.sky.m_envMap.GetSpecularCubeMap());
+	}
 	LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }, LowLvlGfx::GetDepthBuffer());
 	LowLvlGfx::SetViewPort(LowLvlGfx::GetResolution());
 
@@ -132,9 +139,8 @@ void Renderer::RenderScene(Scene& scene)
 	//m_spriteRenderer.Draw({ testSprite });
 	
 }
-std::shared_ptr<Texture2D> cubeMap = nullptr;
-std::shared_ptr<Texture2D> dsv = nullptr;
-void Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res, SkyBox* sky)
+
+void Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res, EnvironmentMap& envMapOut)
 {
 	
 	VP vp;
@@ -156,12 +162,16 @@ void Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res,
 	desc.Texture2DArray.MipSlice = 0;
 	desc.Texture2DArray.ArraySize = 1;
 	
-	if (!cubeMap)
+	if (m_targetForEnvMapCreation)
 	{
-		cubeMap = GfxHelpers::CreateEmptyCubeMap(res, true);
-
-		
-		
+		D3D11_TEXTURE2D_DESC desc;
+		m_targetForEnvMapCreation->buffer->GetDesc(&desc);
+		if (desc.Height != res || desc.Width != res)
+			m_targetForEnvMapCreation = nullptr;
+	}
+	if (!m_targetForEnvMapCreation)
+	{
+		m_targetForEnvMapCreation = GfxHelpers::CreateEmptyCubeMap(res, true);
 
 		D3D11_TEXTURE2D_DESC desc;
 		desc.Width = res;
@@ -175,25 +185,25 @@ void Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res,
 		desc.Usage = D3D11_USAGE_DEFAULT;
 		desc.Format = DXGI_FORMAT_R32_TYPELESS;
 		desc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-		dsv = LowLvlGfx::CreateTexture2D(desc);
+		m_dsvForEnvMapCreation = LowLvlGfx::CreateTexture2D(desc);
 
 		D3D11_DEPTH_STENCIL_VIEW_DESC depthDesc{};
 		depthDesc.Format = DXGI_FORMAT_D32_FLOAT;
 		depthDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 		depthDesc.Texture2D.MipSlice = 0;
-		LowLvlGfx::CreateDSV(dsv, &depthDesc);
+		LowLvlGfx::CreateDSV(m_dsvForEnvMapCreation, &depthDesc);
 	}
-	if (sky) LowLvlGfx::Context()->CopyResource(cubeMap->buffer.Get(), sky->m_skyBoxCubeMap->buffer.Get());
+	LowLvlGfx::Context()->CopyResource(m_targetForEnvMapCreation->buffer.Get(), scene.sky.m_skyBoxCubeMap->buffer.Get());
 	
 	//down
 	desc.Texture2DArray.FirstArraySlice = D3D11_TEXTURECUBE_FACE_NEGATIVE_Y;
-	LowLvlGfx::CreateRTV(cubeMap, &desc);
-	LowLvlGfx::BindRTVs({ cubeMap }, dsv);
+	LowLvlGfx::CreateRTV(m_targetForEnvMapCreation, &desc);
+	LowLvlGfx::BindRTVs({ m_targetForEnvMapCreation }, m_dsvForEnvMapCreation);
 	rfe::Entity cameraYn = rfe::EntityReg::CreateEntity();
 	cameraYn.AddComponent<TransformComp>(position, Vector3(rfm::PIDIV2, 0, 0));
 	vp.V = inverse(*cameraYn.GetComponent<TransformComp>());
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_vpCB, &vp);
-	LowLvlGfx::ClearDSV(dsv);
+	LowLvlGfx::ClearDSV(m_dsvForEnvMapCreation);
 	//LowLvlGfx::ClearRTV(0, 0, 0, 0, cubeMap);
 	for (auto& [flag, units] : m_renderPassesFlagged)
 	{
@@ -210,13 +220,13 @@ void Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res,
 
 	//right
 	desc.Texture2DArray.FirstArraySlice = D3D11_TEXTURECUBE_FACE_POSITIVE_X;
-	LowLvlGfx::CreateRTV(cubeMap, &desc);
-	LowLvlGfx::BindRTVs({ cubeMap }, dsv);
+	LowLvlGfx::CreateRTV(m_targetForEnvMapCreation, &desc);
+	LowLvlGfx::BindRTVs({ m_targetForEnvMapCreation }, m_dsvForEnvMapCreation);
 	rfe::Entity cameraXp = rfe::EntityReg::CreateEntity();
 	cameraXp.AddComponent<TransformComp>(position, Vector3(0, rfm::PIDIV2, 0));
 	vp.V = inverse(*cameraXp.GetComponent<TransformComp>());
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_vpCB, &vp);
-	LowLvlGfx::ClearDSV(dsv);
+	LowLvlGfx::ClearDSV(m_dsvForEnvMapCreation);
 	//LowLvlGfx::ClearRTV(0, 0, 0, 0, cubeMap);
 	for (auto& [flag, units] : m_renderPassesFlagged)
 	{
@@ -233,13 +243,13 @@ void Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res,
 
 	//forward
 	desc.Texture2DArray.FirstArraySlice = D3D11_TEXTURECUBE_FACE_POSITIVE_Z;
-	LowLvlGfx::CreateRTV(cubeMap, &desc);
-	LowLvlGfx::BindRTVs({ cubeMap }, dsv);
+	LowLvlGfx::CreateRTV(m_targetForEnvMapCreation, &desc);
+	LowLvlGfx::BindRTVs({ m_targetForEnvMapCreation }, m_dsvForEnvMapCreation);
 	rfe::Entity cameraZp = rfe::EntityReg::CreateEntity();
 	cameraZp.AddComponent<TransformComp>(position, Vector3(0, 0, 0));
 	vp.V = inverse(*cameraZp.GetComponent<TransformComp>());
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_vpCB, &vp);
-	LowLvlGfx::ClearDSV(dsv);
+	LowLvlGfx::ClearDSV(m_dsvForEnvMapCreation);
 	//LowLvlGfx::ClearRTV(0, 0, 0, 0, cubeMap);
 	for (auto& [flag, units] : m_renderPassesFlagged)
 	{
@@ -256,13 +266,13 @@ void Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res,
 
 	//up
 	desc.Texture2DArray.FirstArraySlice = D3D11_TEXTURECUBE_FACE_POSITIVE_Y;
-	LowLvlGfx::CreateRTV(cubeMap, &desc);
-	LowLvlGfx::BindRTVs({ cubeMap }, dsv);
+	LowLvlGfx::CreateRTV(m_targetForEnvMapCreation, &desc);
+	LowLvlGfx::BindRTVs({ m_targetForEnvMapCreation }, m_dsvForEnvMapCreation);
 	rfe::Entity cameraYp = rfe::EntityReg::CreateEntity();
 	cameraYp.AddComponent<TransformComp>(position, Vector3(-rfm::PIDIV2, 0, 0));
 	vp.V = inverse(*cameraYp.GetComponent<TransformComp>());
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_vpCB, &vp);
-	LowLvlGfx::ClearDSV(dsv);
+	LowLvlGfx::ClearDSV(m_dsvForEnvMapCreation);
 	//LowLvlGfx::ClearRTV(0, 0, 0, 0, cubeMap);
 	for (auto& [flag, units] : m_renderPassesFlagged)
 	{
@@ -279,13 +289,13 @@ void Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res,
 
 	//left
 	desc.Texture2DArray.FirstArraySlice = D3D11_TEXTURECUBE_FACE_NEGATIVE_X;
-	LowLvlGfx::CreateRTV(cubeMap, &desc);
-	LowLvlGfx::BindRTVs({ cubeMap }, dsv);
+	LowLvlGfx::CreateRTV(m_targetForEnvMapCreation, &desc);
+	LowLvlGfx::BindRTVs({ m_targetForEnvMapCreation }, m_dsvForEnvMapCreation);
 	rfe::Entity cameraXn = rfe::EntityReg::CreateEntity();
 	cameraXn.AddComponent<TransformComp>(position, Vector3(0, -rfm::PIDIV2, 0));
 	vp.V = inverse(*cameraXn.GetComponent<TransformComp>());
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_vpCB, &vp);
-	LowLvlGfx::ClearDSV(dsv);
+	LowLvlGfx::ClearDSV(m_dsvForEnvMapCreation);
 	//LowLvlGfx::ClearRTV(0, 0, 0, 0, cubeMap);
 	for (auto& [flag, units] : m_renderPassesFlagged)
 	{
@@ -302,13 +312,13 @@ void Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res,
 
 	//back
 	desc.Texture2DArray.FirstArraySlice = D3D11_TEXTURECUBE_FACE_NEGATIVE_Z;
-	LowLvlGfx::CreateRTV(cubeMap, &desc);
-	LowLvlGfx::BindRTVs({ cubeMap }, dsv);
+	LowLvlGfx::CreateRTV(m_targetForEnvMapCreation, &desc);
+	LowLvlGfx::BindRTVs({ m_targetForEnvMapCreation }, m_dsvForEnvMapCreation);
 	rfe::Entity cameraZn = rfe::EntityReg::CreateEntity();
 	cameraZn.AddComponent<TransformComp>(position, Vector3(0, rfm::PI, 0));
 	vp.V = inverse(*cameraZn.GetComponent<TransformComp>());
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_vpCB, &vp);
-	LowLvlGfx::ClearDSV(dsv);
+	LowLvlGfx::ClearDSV(m_dsvForEnvMapCreation);
 	//LowLvlGfx::ClearRTV(0,0,0,0, cubeMap);
 	for (auto& [flag, units] : m_renderPassesFlagged)
 	{
@@ -326,13 +336,10 @@ void Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res,
 	for (auto& [flag, units] : m_renderPassesFlagged)
 		units.clear();
 
-	LowLvlGfx::Context()->GenerateMips(cubeMap->srv.Get());
+	LowLvlGfx::Context()->GenerateMips(m_targetForEnvMapCreation->srv.Get());
 	LowLvlGfx::BindRTVs(); //unbind
 
-	if (sky)
-	{
-		sky->m_envMap.UpdateEnvMap(cubeMap);
-	}
+	envMapOut.UpdateEnvMap(m_targetForEnvMapCreation);
 }
 
 SharedRenderResources& Renderer::GetSharedRenderResources()
@@ -487,3 +494,4 @@ void Renderer::SetUpHdrRTV()
 	desc.Texture2D.MipSlice = 0;
 	LowLvlGfx::CreateRTV(s_sharedRenderResources->m_hdrRenderTarget);
 }
+

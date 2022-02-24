@@ -23,7 +23,7 @@ public:
 	void RenderBegin(rfe::Entity& camera);
 	void RenderSkyBox(SkyBox& sky);
 	void RenderScene(Scene& scene);
-	void RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res, SkyBox* sky = nullptr);
+	void RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res, EnvironmentMap& envMapOut);
 	static SharedRenderResources& GetSharedRenderResources();
 private:
 	static std::shared_ptr<SharedRenderResources> s_sharedRenderResources;
@@ -55,5 +55,8 @@ private:
 	const float m_nearPlane = 0.01f;
 
 	VP m_vp;
+	std::shared_ptr<Texture2D> m_targetForEnvMapCreation = nullptr;
+	std::shared_ptr<Texture2D> m_dsvForEnvMapCreation = nullptr;
+
 };
 

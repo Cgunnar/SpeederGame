@@ -21,6 +21,7 @@ public:
 	Renderer& operator=(const Renderer& other) = delete;
 
 	void RenderBegin(rfe::Entity& camera);
+	void RenderPostProcess();
 	void RenderSkyBox(SkyBox& sky);
 	void RenderScene(Scene& scene);
 	void RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res, EnvironmentMap& envMapOut);
@@ -35,7 +36,6 @@ private:
 	void SubmitAndRenderTransparentToInternalRenderers(const VP& viewAndProjMatrix, rfe::Entity& camera);
 
 	void RenderAllPasses(const VP& viewAndProjMatrix, rfe::Entity& camera);
-	void SetUpHdrRTV();
 
 	struct PassForTransparentUnits
 	{
@@ -58,5 +58,8 @@ private:
 	std::shared_ptr<Texture2D> m_targetForEnvMapCreation = nullptr;
 	std::shared_ptr<Texture2D> m_dsvForEnvMapCreation = nullptr;
 
+	Shader m_VS_quad;
+	Shader m_PS_post_proc;
+	Sampler m_pointClampSampler;
 };
 

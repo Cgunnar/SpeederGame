@@ -463,10 +463,10 @@
     <FxCompile Include="Src\Shaders\PS_SkyBox.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\PS_SkyBox_toneMapped.hlsl">
+    <FxCompile Include="Src\Shaders\PS_empty.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="Src\Shaders\PS_empty.hlsl">
+    <FxCompile Include="Src\Shaders\PS_post_proc.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\VS_NormalMap.hlsl">
@@ -476,6 +476,9 @@
       <Filter>Src\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\VS_SkyBox.hlsl">
+      <Filter>Src\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Src\Shaders\VS_quad.hlsl">
       <Filter>Src\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Src\Shaders\VertexShader.hlsl">

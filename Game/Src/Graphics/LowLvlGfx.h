@@ -35,7 +35,8 @@ public:
 	LowLvlGfx& operator=(const LowLvlGfx& other) = delete;
 	static void ResizeWindow(Resolution newRes);
 
-	static void Init(HWND hwnd, Resolution res);
+	static void Init(HWND hwnd, Resolution res, Resolution renderRes);
+	static void SetRenderResolution(Resolution renderRes);
 	static void Destroy();
 	static void OnResize(Resolution res);
 	static bool IsValid();
@@ -43,6 +44,8 @@ public:
 	static void LeaveFullScreen();
 	static bool IsFullScreen();
 	static Resolution GetResolution();
+	static Resolution GetNativeResolution();
+	static Resolution GetRenderResolution();
 	static MemoryInfo GetMemoryUsage();
 	static Microsoft::WRL::ComPtr<IDXGISwapChain>& SwapChain();
 	static Microsoft::WRL::ComPtr<ID3D11Device>& Device();
@@ -95,6 +98,7 @@ public:
 	static void EndFrame(bool vsync = false);
 
 	static std::shared_ptr<Texture2D> GetBackBuffer();
+	static std::shared_ptr<Texture2D> GetRenderTarget();
 	static std::shared_ptr<Texture2D> GetDepthBuffer();
 
 private:

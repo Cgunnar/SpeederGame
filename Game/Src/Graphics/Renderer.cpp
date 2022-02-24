@@ -35,7 +35,9 @@ Renderer::Renderer()
 
 	s_sharedRenderResources->m_linearWrapSampler = LowLvlGfx::Create(standardDescriptors::g_sample_linear_wrap);
 
-	SetUpHdrRTV();
+	m_pointClampSampler = LowLvlGfx::Create(standardDescriptors::g_sample_point_clamp);
+	m_VS_quad = LowLvlGfx::CreateShader("Src/Shaders/VS_quad.hlsl", ShaderType::VERTEXSHADER);
+	m_PS_post_proc = LowLvlGfx::CreateShader("Src/Shaders/PS_post_proc.hlsl", ShaderType::PIXELSHADER);
 
 	m_spriteRenderer.Init();
 	//GID texID = AssetManager::Get().LoadTex2DFromFile("Assets/testImg.png", LoadTexFlag::none);
@@ -54,8 +56,12 @@ Renderer::~Renderer()
 
 void Renderer::RenderBegin(rfe::Entity& camera)
 {
-	LowLvlGfx::ClearRTV(0.1f, 0.2f, 0.4f, 0.0f, LowLvlGfx::GetBackBuffer());
+	//LowLvlGfx::ClearRTV(0.1f, 0.2f, 0.4f, 0.0f, LowLvlGfx::GetRenderTarget());
+	LowLvlGfx::ClearRTV(1, 0.2f, 0.4f, 0.0f, LowLvlGfx::GetRenderTarget());
 	LowLvlGfx::ClearDSV(LowLvlGfx::GetDepthBuffer());
+
+	LowLvlGfx::ClearRTV(0, 0, 0, 0, LowLvlGfx::GetBackBuffer()); //is this needed?
+
 	Resolution res = LowLvlGfx::GetResolution();
 	LowLvlGfx::SetViewPort(LowLvlGfx::GetResolution());
 	m_vp.V = inverse(*camera.GetComponent<TransformComp>());
@@ -63,25 +69,37 @@ void Renderer::RenderBegin(rfe::Entity& camera)
 	LowLvlGfx::UpdateBuffer(s_sharedRenderResources->m_vpCB, &m_vp);
 }
 
+void Renderer::RenderPostProcess()
+{
+#ifdef DEBUG
+	D3D11_TEXTURE2D_DESC desc;
+	LowLvlGfx::GetBackBuffer()->buffer->GetDesc(&desc);
+	auto res = LowLvlGfx::GetResolution();
+	assert(res.height == desc.Height && res.width == desc.Width);
+#endif // DEBUG
+
+	LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() });
+	LowLvlGfx::BindSRV(LowLvlGfx::GetRenderTarget(), ShaderType::PIXELSHADER, 0);
+	LowLvlGfx::Bind(m_VS_quad);
+	LowLvlGfx::Bind(m_PS_post_proc);
+	LowLvlGfx::Bind(m_pointClampSampler, ShaderType::PIXELSHADER, 5);
+	LowLvlGfx::Context()->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+	LowLvlGfx::SetViewPort(LowLvlGfx::GetResolution());
+	LowLvlGfx::Draw(6);
+	LowLvlGfx::UnBindSRV(ShaderType::PIXELSHADER, 0);
+}
+
 void Renderer::RenderSkyBox(SkyBox& sky)
 {
 	if (sky.Ldr() != sky.Hdr())
 	{
-		LowLvlGfx::SetViewPort(LowLvlGfx::GetResolution());
+		LowLvlGfx::SetViewPort(LowLvlGfx::GetRenderResolution());
+		LowLvlGfx::BindRTVs({ LowLvlGfx::GetRenderTarget() }); // this should unbind the z-buffer
 		sky.Bind(*s_sharedRenderResources);
 		LowLvlGfx::Context()->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
 		LowLvlGfx::Context()->IASetInputLayout(nullptr);
 		LowLvlGfx::Context()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		LowLvlGfx::Context()->Draw(36, 0);
-
-		/*if (sky.m_envMap.GetIrradianceCubeMap())
-		{
-			m_pbrRenderer.SetDiffuseIrradianceCubeMap(sky.m_envMap.GetIrradianceCubeMap());
-		}
-		if (sky.m_envMap.GetSpecularCubeMap())
-		{
-			m_pbrRenderer.SetSpecularCubeMap(sky.m_envMap.GetSpecularCubeMap());
-		}*/
 	}
 }
 
@@ -127,13 +145,13 @@ void Renderer::RenderScene(Scene& scene)
 		m_pbrRenderer.SetDiffuseIrradianceCubeMap(scene.sky.m_envMap.GetIrradianceCubeMap());
 		m_pbrRenderer.SetSpecularCubeMap(scene.sky.m_envMap.GetSpecularCubeMap());
 	}
-	LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }, LowLvlGfx::GetDepthBuffer());
-	LowLvlGfx::SetViewPort(LowLvlGfx::GetResolution());
+
+	LowLvlGfx::SetViewPort(LowLvlGfx::GetRenderResolution());
+	//LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }, LowLvlGfx::GetDepthBuffer());
+	LowLvlGfx::BindRTVs({ LowLvlGfx::GetRenderTarget() }, LowLvlGfx::GetDepthBuffer());
 
 	RenderAllPasses(m_vp, scene.GetCamera());
 	SubmitAndRenderTransparentToInternalRenderers(m_vp, scene.GetCamera());
-
-
 
 	//sprite rendering
 	//m_spriteRenderer.Draw({ testSprite });
@@ -465,33 +483,5 @@ void Renderer::RenderAllPasses(const VP& viewAndProjMatrix, rfe::Entity& camera)
 		m_pbrRenderer.Render(viewAndProjMatrix, camera, flag);
 		m_pbrRenderer.ClearRenderSubmits();
 	}
-}
-
-void Renderer::SetUpHdrRTV()
-{
-	Resolution res = LowLvlGfx::GetResolution();
-
-	D3D11_TEXTURE2D_DESC desc2d;
-	desc2d.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-	desc2d.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	desc2d.Usage = D3D11_USAGE_DEFAULT;
-	desc2d.CPUAccessFlags = 0;
-	desc2d.MiscFlags = 0;
-	desc2d.SampleDesc.Count = 1;
-	desc2d.SampleDesc.Quality = 0;
-	desc2d.ArraySize = 1;
-	desc2d.Width = res.width;
-	desc2d.Height = res.height;
-	desc2d.MipLevels = 0;
-
-	s_sharedRenderResources->m_hdrRenderTarget = LowLvlGfx::CreateTexture2D(desc2d, nullptr, false);
-
-	LowLvlGfx::CreateSRV(s_sharedRenderResources->m_hdrRenderTarget);
-
-	D3D11_RENDER_TARGET_VIEW_DESC desc = {};
-	desc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-	desc.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
-	desc.Texture2D.MipSlice = 0;
-	LowLvlGfx::CreateRTV(s_sharedRenderResources->m_hdrRenderTarget);
 }
 

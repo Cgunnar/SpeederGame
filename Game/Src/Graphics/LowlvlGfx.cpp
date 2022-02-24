@@ -5,10 +5,18 @@ using namespace Microsoft::WRL;
 
 DX11* LowLvlGfx::s_dx11 = nullptr;
 
-void LowLvlGfx::Init(HWND hwnd, Resolution res)
+void LowLvlGfx::Init(HWND hwnd, Resolution res, Resolution renderRes)
 {
 	assert(!s_dx11);
-	s_dx11 = new DX11(hwnd, res);
+	s_dx11 = new DX11(hwnd, res, renderRes);
+}
+
+void LowLvlGfx::SetRenderResolution(Resolution renderRes)
+{
+	if (renderRes == s_dx11->m_renderResolution) return;
+
+	s_dx11->m_renderResolution = renderRes;
+	s_dx11->SetUpInternalRenderTarget(renderRes);
 }
 
 void LowLvlGfx::Destroy()
@@ -75,6 +83,16 @@ bool LowLvlGfx::IsFullScreen()
 Resolution LowLvlGfx::GetResolution()
 {
 	return s_dx11->m_resolution;
+}
+
+Resolution LowLvlGfx::GetNativeResolution()
+{
+	return s_dx11->m_nativeRes;
+}
+
+Resolution LowLvlGfx::GetRenderResolution()
+{
+	return s_dx11->m_renderResolution;
 }
 
 MemoryInfo LowLvlGfx::GetMemoryUsage()
@@ -525,7 +543,14 @@ std::shared_ptr<Texture2D> LowLvlGfx::GetBackBuffer()
 	return s_dx11->m_backBuffer;
 }
 
+std::shared_ptr<Texture2D> LowLvlGfx::GetRenderTarget()
+{
+	return s_dx11->m_internalRenderTarget;
+}
+
 std::shared_ptr<Texture2D> LowLvlGfx::GetDepthBuffer()
 {
-	return s_dx11->m_zBuffer;
+	//return s_dx11->m_zBuffer;
+	return s_dx11->m_internalRenderTargetDSV;
+
 }

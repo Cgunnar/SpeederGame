@@ -25,12 +25,13 @@ using namespace Microsoft::WRL;
 
 
 
-DX11::DX11(HWND hwnd, Resolution res) : m_resolution(res)
+DX11::DX11(HWND hwnd, Resolution res, Resolution renderRes) : m_resolution(res), m_renderResolution(renderRes)
 {
 	CreateDeviceAndSwapChain(hwnd, res);
 	m_backBuffer = std::make_shared<Texture2D>();
 	m_zBuffer = std::make_shared<Texture2D>();
 	CreateRTVandDSV();
+	SetUpInternalRenderTarget(m_renderResolution);
 
 	CheckMonitorRes();
 	//imgui
@@ -113,7 +114,6 @@ void DX11::OnResize(Resolution res)
 	assert(SUCCEEDED(hr));
 
 	CreateRTVandDSV();
-	SetViewPort(res);
 	m_resolution = res;
 }
 
@@ -428,4 +428,58 @@ Microsoft::WRL::ComPtr<ID3DBlob> DX11::CompileShader(const std::string& path, co
 		assert(false);
 	}
 	return shaderBlob;
+}
+
+void DX11::SetUpInternalRenderTarget(Resolution internalRenderRes)
+{
+	D3D11_TEXTURE2D_DESC desc2d;
+	desc2d.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+	desc2d.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	desc2d.Usage = D3D11_USAGE_DEFAULT;
+	desc2d.CPUAccessFlags = 0;
+	desc2d.MiscFlags = 0;
+	desc2d.SampleDesc.Count = 1;
+	desc2d.SampleDesc.Quality = 0;
+	desc2d.ArraySize = 1;
+	desc2d.Width = internalRenderRes.width;
+	desc2d.Height = internalRenderRes.height;
+	desc2d.MipLevels = 1;
+
+	m_internalRenderTarget = std::make_shared<Texture2D>();
+	m_internalRenderTarget->fixedRes = true;
+	HRESULT hr = m_device->CreateTexture2D(&desc2d, nullptr, &m_internalRenderTarget->buffer);
+	assert(SUCCEEDED(hr));
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Format = desc2d.Format;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = -1;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	hr = m_device->CreateShaderResourceView(m_internalRenderTarget->buffer.Get(), &srvDesc, &m_internalRenderTarget->srv);
+	assert(SUCCEEDED(hr));
+
+	D3D11_RENDER_TARGET_VIEW_DESC rtvDesc = {};
+	rtvDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	rtvDesc.Format = desc2d.Format;
+	rtvDesc.Texture2D.MipSlice = 0;
+	hr = m_device->CreateRenderTargetView(m_internalRenderTarget->buffer.Get(), &rtvDesc, &m_internalRenderTarget->rtv);
+	assert(SUCCEEDED(hr));
+
+	//dsv
+	desc2d.Usage = D3D11_USAGE_DEFAULT;
+	desc2d.Format = DXGI_FORMAT_R32_TYPELESS;
+	desc2d.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+
+	m_internalRenderTargetDSV = std::make_shared<Texture2D>();
+	m_internalRenderTargetDSV->fixedRes = true;
+	hr = m_device->CreateTexture2D(&desc2d, nullptr, &m_internalRenderTargetDSV->buffer);
+	assert(SUCCEEDED(hr));
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC depthDesc = {};
+	depthDesc.Format = DXGI_FORMAT_D32_FLOAT;
+	depthDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	depthDesc.Texture2D.MipSlice = 0;
+
+	hr = m_device->CreateDepthStencilView(m_internalRenderTargetDSV->buffer.Get(), &depthDesc, &m_internalRenderTargetDSV->dsv);
+	assert(SUCCEEDED(hr));
 }

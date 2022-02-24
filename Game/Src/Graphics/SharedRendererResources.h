@@ -12,6 +12,6 @@ struct SharedRenderResources : public std::enable_shared_from_this<SharedRenderR
 	ConstantBuffer m_pointLightCB;
 	ConstantBuffer m_dirLightCB;
 	ConstantBuffer m_shadowMapViewProjCB;
-	std::shared_ptr<Texture2D> m_hdrRenderTarget;
+
 	std::shared_ptr<Texture2D> shadowMap;
 };

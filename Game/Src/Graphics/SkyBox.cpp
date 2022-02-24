@@ -18,7 +18,7 @@ void SkyBox::Init(const std::string& path)
 		InitCubeMapLDR(path);
 
 	m_skyBoxVS = LowLvlGfx::CreateShader("Src/Shaders/VS_SkyBox.hlsl", ShaderType::VERTEXSHADER);
-	
+	m_skyBoxPS = LowLvlGfx::CreateShader("Src/Shaders/PS_SkyBox.hlsl", ShaderType::PIXELSHADER);
 
 
 	D3D11_RASTERIZER_DESC rzDesc = {};
@@ -62,7 +62,6 @@ void SkyBox::Bind(SharedRenderResources& rendRes)
 		LowLvlGfx::UpdateBuffer(rendRes.m_worldMatrixCB, &m_rotation);
 		LowLvlGfx::Bind(rendRes.m_worldMatrixCB, ShaderType::VERTEXSHADER, 0);
 		LowLvlGfx::Bind(rendRes.m_vpCB, ShaderType::VERTEXSHADER, 1);
-		LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }); // this should unbind the z-buffer
 		LowLvlGfx::Bind(m_skyBoxVS);
 		LowLvlGfx::Bind(m_skyBoxPS);
 		LowLvlGfx::BindSRV(m_skyBoxCubeMap, ShaderType::PIXELSHADER, 4);
@@ -85,8 +84,6 @@ void SkyBox::InitCubeMapLDR(const std::string& path)
 {
 	assert(!m_ldr && !m_hdr);
 	m_ldr = true;
-
-	m_skyBoxPS = LowLvlGfx::CreateShader("Src/Shaders/PS_SkyBox.hlsl", ShaderType::PIXELSHADER);
 
 	MyImageStruct skyFacesData[6]{};
 	readImage(skyFacesData[0], path + "/posx.jpg");
@@ -148,7 +145,7 @@ void SkyBox::InitCubeMapHDR(const std::string& path)
 	
 
 	m_roughnessCB = LowLvlGfx::CreateConstantBuffer({ .size = 16, .usage = BufferDesc::USAGE::DYNAMIC });
-	m_skyBoxPS = LowLvlGfx::CreateShader("Src/Shaders/PS_SkyBox_toneMapped.hlsl", ShaderType::PIXELSHADER);
+	
 	//m_convolute_DiffIrrCubeCS = LowLvlGfx::CreateShader("Src/Shaders/CS/CS_convolute_DiffIrrCube.hlsl", ShaderType::COMPUTESHADER);
 	//m_spmapCS = LowLvlGfx::CreateShader("Src/Shaders/CS/spmap.hlsl", ShaderType::COMPUTESHADER);
 	

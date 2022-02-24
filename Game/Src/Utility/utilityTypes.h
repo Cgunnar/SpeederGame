@@ -7,6 +7,10 @@ struct Resolution
 	uint32_t width = 0;
 	uint32_t height = 0;
 };
+inline bool operator==(const Resolution& l, const Resolution& r)
+{
+	return l.width == r.width && l.height == r.height;
+}
 
 enum class SimpleMesh
 {

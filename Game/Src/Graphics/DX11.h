@@ -55,7 +55,7 @@ class DX11
 	};
 
 	DX11() = delete;
-	DX11(HWND hwnd, Resolution res);
+	DX11(HWND hwnd, Resolution res, Resolution renderRes);
 	~DX11();
 	void BeginFrame();
 	void EndFrame(bool vsync);
@@ -66,6 +66,8 @@ class DX11
 	void CreateDeviceAndSwapChain(HWND hwnd, Resolution res);
 	void CreateRTVandDSV();
 	static Microsoft::WRL::ComPtr<ID3DBlob> CompileShader(const std::string& path, const std::string& shaderModel, const std::string& entryPoint);
+
+	void SetUpInternalRenderTarget(Resolution internalRenderRes);
 	
 #ifdef D3D11_DEBUG
 	ID3D11Debug* m_debug = nullptr;
@@ -80,9 +82,13 @@ class DX11
 	std::shared_ptr<Texture2D> m_backBuffer;
 	std::shared_ptr<Texture2D> m_zBuffer;
 
+	std::shared_ptr<Texture2D> m_internalRenderTarget;
+	std::shared_ptr<Texture2D> m_internalRenderTargetDSV;
+
 	BOOL m_fullScreen = false;
 	Resolution m_nativeRes;
 	Resolution m_resolution;
+	Resolution m_renderResolution;
 
 	
 	std::vector<ShaderDX> m_shaders;

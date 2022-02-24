@@ -8,7 +8,7 @@
 #include "TerrainGUI.h"
 #include "TerrainTypes.h"
 #include "SkyBox.h"
-
+#include "EnvironmentMap.h"
 
 class Scene
 {
@@ -18,7 +18,7 @@ public:
 
 	void Update(float dt);
 	rfe::Entity& GetCamera();
-
+	std::unique_ptr<EnvironmentMap>& GetEnvMap();
 	SkyBox sky;
 	rfe::Entity sunLight;
 private:
@@ -36,6 +36,8 @@ private:
 	rfe::Entity m_pointLight;
 
 	std::vector<rfe::Entity> m_entities;
+
+	std::unique_ptr<EnvironmentMap> m_envMap = nullptr;
 
 	GuiTest m_dirlightContr = GuiTest("dirLight controller");
 	TerrainGUI m_terrainGUI = TerrainGUI("terrain generation");

@@ -190,6 +190,11 @@ rfe::Entity& Scene::GetCamera()
 	return m_camera;
 }
 
+std::unique_ptr<EnvironmentMap>& Scene::GetEnvMap()
+{
+	return m_envMap;
+}
+
 rfe::Entity Scene::CreateEntityModel(const std::string path, Vector3 pos, Vector3 rotDeg, Vector3 scale)
 {
 	m_entities.push_back(EntityReg::CreateEntity());

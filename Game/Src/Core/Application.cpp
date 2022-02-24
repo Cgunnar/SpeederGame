@@ -82,12 +82,7 @@ void Application::Run()
 		ImGui::Text(memInfo.adapterName.c_str());
 		ImGui::Text("vram usage: %u MB", memInfo.applicationMemoryUsage / 1000000);
 
-		
-
-		m_renderer->RenderBegin(m_scene->GetCamera());
-		m_renderer->RenderSkyBox(m_scene->sky);
-		m_renderer->Render(m_scene->GetCamera(), m_scene->sunLight.GetComponent<DirectionalLightComp>()->dirLight);
-
+		m_renderer->RenderScene(*m_scene);
 
 		
 		m_renderer->RenderToEnvMap(m_scene->GetCamera().GetComponent<TransformComp>()->transform.getTranslation(), *m_scene, 1024,  &m_scene->sky);

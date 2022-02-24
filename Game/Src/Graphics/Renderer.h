@@ -22,7 +22,7 @@ public:
 
 	void RenderBegin(rfe::Entity& camera);
 	void RenderSkyBox(SkyBox& sky);
-	void Render(rfe::Entity& camera, DirectionalLight dirLight);
+	void RenderScene(Scene& scene);
 	void RenderToEnvMap(rfm::Vector3 position, Scene& scene, uint32_t res, SkyBox* sky = nullptr);
 	static SharedRenderResources& GetSharedRenderResources();
 private:

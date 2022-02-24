@@ -89,8 +89,12 @@ void Renderer::RenderSkyBox(SkyBox& sky)
 	}
 }
 
-void Renderer::Render(rfe::Entity& camera, DirectionalLight dirLight)
+void Renderer::RenderScene(Scene& scene)
 {
+	RenderBegin(scene.GetCamera());
+	RenderSkyBox(scene.sky);
+	DirectionalLight dirLight = scene.sunLight.GetComponent<DirectionalLightComp>()->dirLight;
+
 	LowLvlGfx::UnBindRasterizer(); // this will use the default rasterizer
 
 	auto& pointLights = rfe::EntityReg::GetComponentArray<PointLightComp>();
@@ -104,7 +108,7 @@ void Renderer::Render(rfe::Entity& camera, DirectionalLight dirLight)
 	SubmitToRender();
 
 	//shadowMapping
-	m_shadowPass.Bind(camera, dirLight.dir);
+	m_shadowPass.Bind(scene.GetCamera(), dirLight.dir);
 	for (auto& [flag, units] : m_renderPassesFlagged)
 	{
 		if (units.empty()) continue;
@@ -119,8 +123,8 @@ void Renderer::Render(rfe::Entity& camera, DirectionalLight dirLight)
 	LowLvlGfx::BindRTVs({ LowLvlGfx::GetBackBuffer() }, LowLvlGfx::GetDepthBuffer());
 	LowLvlGfx::SetViewPort(LowLvlGfx::GetResolution());
 
-	RenderAllPasses(m_vp, camera);
-	SubmitAndRenderTransparentToInternalRenderers(m_vp, camera);
+	RenderAllPasses(m_vp, scene.GetCamera());
+	SubmitAndRenderTransparentToInternalRenderers(m_vp, scene.GetCamera());
 
 
 

@@ -100,11 +100,10 @@ void Application::Run()
 		ImGui::Text(memInfo.adapterName.c_str());
 		ImGui::Text("vram usage: %u MB", memInfo.applicationMemoryUsage / 1000000);
 
+		m_renderer->RenderToEnvMap(m_scene->GetCamera().GetComponent<TransformComp>()->transform.getTranslation(), *m_scene);
 		m_renderer->RenderScene(*m_scene);
 		m_renderer->RenderPostProcess();
 
-		
-		m_renderer->RenderToEnvMap(m_scene->GetCamera().GetComponent<TransformComp>()->transform.getTranslation(), *m_scene, *m_scene->GetEnvMap());
 		LowLvlGfx::EndFrame();
 
 	}

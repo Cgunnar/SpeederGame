@@ -2,6 +2,7 @@
 #include "EnvironmentMap.h"
 #include "LowLvlGfx.h"
 #include "Renderer.h"
+#include "FrameTimer.hpp"
 
 Shader EnvironmentMap::s_convolute_DiffIrrCubeCS;
 Shader EnvironmentMap::s_spmapCS;
@@ -16,6 +17,9 @@ EnvironmentMap::EnvironmentMap(uint32_t sideLength) : m_isValid(true)
 	if (!s_convolute_DiffIrrCubeCS.IsValid()) s_convolute_DiffIrrCubeCS = LowLvlGfx::CreateShader("Src/Shaders/CS/CS_convolute_DiffIrrCube.hlsl", ShaderType::COMPUTESHADER);
 	if (!s_spmapCS.IsValid()) s_spmapCS = LowLvlGfx::CreateShader("Src/Shaders/CS/spmap.hlsl", ShaderType::COMPUTESHADER);
 	m_roughnessCB = LowLvlGfx::CreateConstantBuffer({ .size = 16, .usage = BufferDesc::USAGE::DYNAMIC });
+
+	m_state = State::safe_to_read;
+	m_frameLastUpdated = FrameTimer::frame();
 
 	assert(sideLength > 32);
 	constexpr UINT irrCubeSideLength = 32;
@@ -81,6 +85,9 @@ EnvironmentMap::EnvironmentMap(std::shared_ptr<Texture2D> cubeMap)
 	if(!s_convolute_DiffIrrCubeCS.IsValid()) s_convolute_DiffIrrCubeCS = LowLvlGfx::CreateShader("Src/Shaders/CS/CS_convolute_DiffIrrCube.hlsl", ShaderType::COMPUTESHADER);
 	if(!s_spmapCS.IsValid()) s_spmapCS = LowLvlGfx::CreateShader("Src/Shaders/CS/spmap.hlsl", ShaderType::COMPUTESHADER);
 	m_roughnessCB = LowLvlGfx::CreateConstantBuffer({ .size = 16, .usage = BufferDesc::USAGE::DYNAMIC });
+
+	m_state = State::writing_spec;
+	m_frameLastUpdated = FrameTimer::frame();
 
 	D3D11_TEXTURE2D_DESC cubeDesc;
 	cubeMap->buffer->GetDesc(&cubeDesc);
@@ -150,16 +157,43 @@ EnvironmentMap::EnvironmentMap(std::shared_ptr<Texture2D> cubeMap)
 	m_isValid = true;
 }
 
-void EnvironmentMap::UpdateEnvMap(std::shared_ptr<Texture2D> cubeMap)
+EnvironmentMap::State EnvironmentMap::UpdateEnvMap(std::shared_ptr<Texture2D> cubeMap)
 {
 	if (m_isValid)
 	{
-		ConvoluteDiffuseCubeMap(cubeMap, m_irradianceCubeMap);
-		ConvoluteSpecularCubeMap(cubeMap, m_specularCubeMap);
+		if (FrameTimer::frame() == m_frameLastUpdated) return m_state;
+		m_frameLastUpdated = FrameTimer::frame();
+		switch (m_state)
+		{
+		case EnvironmentMap::State::safe_to_read:
+			m_tempSourceToUpdateFrom = nullptr;
+			m_state = EnvironmentMap::State::safe_to_update;
+			return m_state;
+		case EnvironmentMap::State::safe_to_update:
+			if (cubeMap)
+			{
+				m_tempSourceToUpdateFrom = cubeMap;
+				m_state = EnvironmentMap::State::writing_diff;
+				ConvoluteDiffuseCubeMap(m_tempSourceToUpdateFrom, m_irradianceCubeMap);
+			}
+			return m_state;
+		case EnvironmentMap::State::writing_diff:
+			assert(!cubeMap && m_tempSourceToUpdateFrom);
+			m_state = EnvironmentMap::State::writing_spec;
+			ConvoluteSpecularCubeMap(m_tempSourceToUpdateFrom, m_specularCubeMap);
+			return m_state;
+		case EnvironmentMap::State::writing_spec:
+			assert(!cubeMap && m_tempSourceToUpdateFrom);
+			m_tempSourceToUpdateFrom = nullptr;
+			m_state = EnvironmentMap::State::safe_to_read;
+			return m_state;
+		}
 	}
 	else
 	{
+		assert(cubeMap);
 		*this = EnvironmentMap(cubeMap);
+		return m_state;
 	}
 }
 
@@ -176,6 +210,15 @@ std::shared_ptr<Texture2D> EnvironmentMap::GetSpecularCubeMap()
 bool EnvironmentMap::IsValid()
 {
 	return m_isValid;
+}
+
+EnvironmentMap::State EnvironmentMap::GetState()
+{
+	if (m_state == EnvironmentMap::State::writing_spec && m_frameLastUpdated < FrameTimer::frame())
+	{
+		m_state = EnvironmentMap::State::safe_to_read;
+	}
+	return m_state;
 }
 
 

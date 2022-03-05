@@ -77,6 +77,7 @@ Scene::Scene()
 	//sky.Init("Assets/Textures/MonValley_Lookout/MonValley_A_LookoutPoint_2k.hdr");
 	sky.Init("");
 	m_envMap = std::make_unique<EnvironmentMap>(64);
+	m_envMap2 = std::make_unique<EnvironmentMap>(64);
 
 	CreateEntityModel("Assets/Models/MetalRoughSpheres/glTF/pbrSpheres.gltf", {-2, 3, 4}, {0, 0, 0}, 0.2f);
 	/*CreateEntityModel("Assets/Models/pbr/razor_crest/scene.gltf", { 4, 5, 0 }, { 0, 0, 0 }, 0.2f);
@@ -190,9 +191,14 @@ rfe::Entity& Scene::GetCamera()
 	return m_camera;
 }
 
-std::unique_ptr<EnvironmentMap>& Scene::GetEnvMap()
+std::unique_ptr<EnvironmentMap>& Scene::GetReadEnvMap()
 {
 	return m_envMap;
+}
+
+std::unique_ptr<EnvironmentMap>& Scene::GetWriteEnvMap()
+{
+	return m_envMap2;
 }
 
 rfe::Entity Scene::CreateEntityModel(const std::string path, Vector3 pos, Vector3 rotDeg, Vector3 scale)

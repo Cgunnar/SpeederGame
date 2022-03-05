@@ -18,7 +18,8 @@ public:
 
 	void Update(float dt);
 	rfe::Entity& GetCamera();
-	std::unique_ptr<EnvironmentMap>& GetEnvMap();
+	std::unique_ptr<EnvironmentMap>& GetWriteEnvMap();
+	std::unique_ptr<EnvironmentMap>& GetReadEnvMap();
 	SkyBox sky;
 	rfe::Entity sunLight;
 private:
@@ -38,6 +39,7 @@ private:
 	std::vector<rfe::Entity> m_entities;
 
 	std::unique_ptr<EnvironmentMap> m_envMap = nullptr;
+	std::unique_ptr<EnvironmentMap> m_envMap2 = nullptr;
 
 	GuiTest m_dirlightContr = GuiTest("dirLight controller");
 	TerrainGUI m_terrainGUI = TerrainGUI("terrain generation");

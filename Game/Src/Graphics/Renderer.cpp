@@ -176,6 +176,7 @@ void Renderer::RenderToEnvMap(rfm::Vector3 position, Scene& scene, EnvironmentMa
 
 	CopyFromECS();
 	SubmitToRender();
+	m_transparentRenderUnits.clear(); //ignore transparent renderunits
 
 	D3D11_RENDER_TARGET_VIEW_DESC desc = {};
 	desc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
